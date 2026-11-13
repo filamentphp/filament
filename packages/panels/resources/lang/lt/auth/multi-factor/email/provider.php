@@ -6,13 +6,13 @@ return [
 
         'actions' => [
 
-            'label' => 'Email verification codes',
+            'label' => 'El. pašto patvirtinimo kodai',
 
-            'below_content' => 'Receive a temporary code at your email address to verify your identity during login.',
+            'below_content' => 'Prisijungdami gaukite laikiną kodą savo el. pašto adresu, kad patvirtintumėte savo tapatybę.',
 
             'messages' => [
-                'enabled' => 'Enabled',
-                'disabled' => 'Disabled',
+                'enabled' => 'Įgalinta',
+                'disabled' => 'Išjungta',
             ],
 
         ],
@@ -21,28 +21,28 @@ return [
 
     'login_form' => [
 
-        'label' => 'Send a code to your email',
+        'label' => 'Siųsti kodą į el. paštą',
 
         'code' => [
 
-            'label' => 'Enter the 6-digit code we sent you by email',
+            'label' => 'Įveskite 6 skaitmenų kodą, kurį atsiuntėme el. paštu',
 
-            'validation_attribute' => 'code',
+            'validation_attribute' => 'kodas',
 
             'actions' => [
 
                 'resend' => [
 
-                    'label' => 'Send a new code by email',
+                    'label' => 'Siųsti naują kodą el. paštu',
 
                     'notifications' => [
 
                         'resent' => [
-                            'title' => 'We\'ve sent you a new code by email',
+                            'title' => 'Išsiuntėme jums naują kodą el. paštu',
                         ],
 
                         'throttled' => [
-                            'title' => 'Too many resend attempts. Please wait before requesting another code.',
+                            'title' => 'Per daug bandymų siųsti kodą. Palaukite prieš prašydami naujo kodo.',
                         ],
 
                     ],
@@ -53,7 +53,7 @@ return [
 
             'messages' => [
 
-                'invalid' => 'The code you entered is invalid.',
+                'invalid' => 'Įvestas kodas yra neteisingas.',
 
             ],
 

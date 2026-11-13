@@ -2,16 +2,16 @@
 
 return [
 
-    'title' => 'Peržiūrėti :label',
+    'title' => 'Įrašo peržiūra',
 
-    'breadcrumb' => 'Peržiūrėti',
+    'breadcrumb' => 'Peržiūra',
 
-    'navigation_label' => 'Peržiūrėti',
+    'navigation_label' => 'Peržiūra',
 
     'content' => [
 
         'tab' => [
-            'label' => 'Peržiūrėti',
+            'label' => 'Peržiūra',
         ],
 
     ],

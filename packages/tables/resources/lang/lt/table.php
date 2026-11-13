@@ -6,14 +6,38 @@ return [
 
         'heading' => 'Stulpeliai',
 
+        'position' => 'Pozicija :position iš :count.',
+
+        'position_in_group' => 'Pozicija :position iš :count grupėje :group.',
+
+        'reordered' => ':column perkeltas į poziciją :position iš :count.',
+
+        'reordered_deferred' => ':column perkeltas į poziciją :position iš :count. Pritaikykite stulpelius, kad pakeitimai būtų išsaugoti.',
+
+        'reordered_in_group' => ':column perkeltas į poziciją :position iš :count grupėje :group.',
+
+        'reordered_in_group_deferred' => ':column perkeltas į poziciją :position iš :count grupėje :group. Pritaikykite stulpelius, kad pakeitimai būtų išsaugoti.',
+
         'actions' => [
 
             'apply' => [
-                'label' => 'Taikyti stulpelius',
+                'label' => 'Pritaikyti stulpelius',
+            ],
+
+            'move_up' => [
+                'label' => 'Perkelti :column aukštyn',
+            ],
+
+            'move_down' => [
+                'label' => 'Perkelti :column žemyn',
+            ],
+
+            'reorder' => [
+                'label' => 'Pertvarkyti stulpelį',
             ],
 
             'reset' => [
-                'label' => 'Atstatyti',
+                'label' => 'Pirminiai stulpeliai',
             ],
 
         ],
@@ -23,12 +47,28 @@ return [
     'columns' => [
 
         'actions' => [
-            'label' => 'Veiksmas|Veiksmai',
+            'label' => 'Veiksmas|Veiksmai|Veiksmų',
+        ],
+
+        'editable' => [
+            'saving' => 'Išsaugoma...',
+            'saved' => 'Pakeitimai išsaugoti.',
+            'failure' => 'Nepavyko patvirtinti išsaugojimo. Atnaujinkite puslapį ir bandykite dar kartą.',
+            'unavailable' => 'Šio elemento nebegalima redaguoti.',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Taip',
+                'false' => 'Ne',
+            ],
+
         ],
 
         'select' => [
 
-            'loading_message' => 'Kraunama...',
+            'loading_message' => 'Įkeliama...',
 
             'no_options_message' => 'Nėra galimų parinkčių.',
 
@@ -38,7 +78,7 @@ return [
 
             'searching_message' => 'Ieškoma...',
 
-            'search_prompt' => 'Pradėkite rašyti, kad ieškotumėte...',
+            'search_prompt' => 'Norėdami ieškoti pradėkite rašyti...',
 
         ],
 
@@ -107,11 +147,23 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Pabaik pertvarkyti įrašus',
+            'label' => 'Baigti pertvarkyti įrašus',
         ],
 
         'enable_reordering' => [
             'label' => 'Pertvarkyti įrašus',
+        ],
+
+        'reorder_record' => [
+            'label' => 'Pertvarkyti įrašą :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Perkelti :label aukštyn',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Perkelti :label žemyn',
         ],
 
         'filter' => [
@@ -123,11 +175,15 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Atidaryti veiksmus',
+            'label' => 'Masiniai veiksmai',
         ],
 
         'column_manager' => [
-            'label' => 'Perjungti stulpelius',
+            'label' => 'Stulpelių tvarkymas',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Išskleisti/sutraukti įrašą :key',
         ],
 
     ],
@@ -136,7 +192,7 @@ return [
 
         'heading' => 'Nerasta įrašų',
 
-        'description' => 'Norėdami pradėti, sukurkite :model.',
+        'description' => 'Norėdami pradėti, sukurkite įrašą.',
 
     ],
 
@@ -158,7 +214,7 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Nustatyti filtrus iš naujo',
+                'label' => 'Pirminiai filtrai',
             ],
 
         ],
@@ -216,11 +272,20 @@ return [
 
     ],
 
+    'loading' => 'Įkeliama...',
+
     'reorder_indicator' => 'Vilkite ir paleiskite įrašų rikiavimui.',
+
+    'reordering' => [
+        'position' => ':label, pozicija :position iš :count.',
+        'moved' => ':label perkeltas į poziciją :position iš :count.',
+    ],
+
+    'result_count' => ':count rezultatas|:count rezultatai|:count rezultatų',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 įrašas pasirinktas|:count įrašai pasirinkti',
+        'selected_count' => '1 įrašas pasirinktas|:count įrašai pasirinkti|:count įrašų pasirinkta',
 
         'actions' => [
 

@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Pereiti prie turinio',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,10 +20,11 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Atidaryti pranešimus',
+            'label_with_unread_count' => 'Pranešimai, :count neperskaitytas pranešimas|Pranešimai, :count neperskaityti pranešimai|Pranešimai, :count neperskaitytų pranešimų',
         ],
 
         'open_user_menu' => [
-            'label' => 'Vartotojo meniu',
+            'label' => 'Naudotojo meniu',
         ],
 
         'sidebar' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Tema',
+
             'dark' => [
                 'label' => 'Perjungti tamsos režimą',
             ],
@@ -50,6 +57,14 @@ return [
 
         ],
 
+    ],
+
+    'navigation' => [
+        'label' => 'Šoninės juostos navigacija',
+    ],
+
+    'topbar' => [
+        'label' => 'Viršutinė juosta',
     ],
 
     'avatar' => [
