@@ -320,9 +320,9 @@ trait HasBulkActions
                 // SQLite allows aliases in `WHERE` and `JOIN`, and PostgreSQL
                 // set-returning projections can determine which rows exist.
                 // Preserve the projection while pruning unused output columns.
-                if (in_array($baseQuery->getConnection()->getDriverName(), ['pgsql', 'sqlite'])) {
+                if (in_array($query->getModel()->getConnection()->getDriverName(), ['pgsql', 'sqlite'])) {
                     $baseQuery->addSelect($qualifiedKeyName . ' as filament_record_key');
-                    $baseQuery = $baseQuery->getConnection()->query()
+                    $baseQuery = $baseQuery->newQuery()
                         ->fromSub($baseQuery, 'filament_bulk_records')
                         ->when($baseQuery->useWritePdo, static fn ($query) => $query->useWritePdo());
                     $qualifiedKeyName = 'filament_record_key';
