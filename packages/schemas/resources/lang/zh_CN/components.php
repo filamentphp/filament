@@ -29,6 +29,18 @@ return [
 
     ],
 
+    'tabs' => [
+
+        'actions' => [
+
+            'more' => [
+                'label' => '更多选项卡',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

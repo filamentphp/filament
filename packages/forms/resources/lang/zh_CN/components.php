@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => '块',
+            'position' => ':label，位于第 :position 项，共 :count 项',
+            'moved' => ':label 已移至第 :position 项，共 :count 项',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -164,6 +170,8 @@ return [
 
     'file_upload' => [
 
+        'placeholder' => '尚未上传文件',
+
         'actions' => [
 
             'download' => [
@@ -316,6 +324,14 @@ return [
                 'label' => '删除行',
             ],
 
+            'move_down' => [
+                'label' => '下移',
+            ],
+
+            'move_up' => [
+                'label' => '上移',
+            ],
+
             'reorder' => [
                 'label' => '重新排序行',
             ],
@@ -344,6 +360,12 @@ return [
                 'label' => '值',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => '行',
+            'position' => ':label，位于第 :position 行，共 :count 行',
+            'moved' => ':label 已移至第 :position 行，共 :count 行',
         ],
 
     ],
@@ -404,6 +426,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => '条目',
+            'position' => ':label，位于第 :position 项，共 :count 项',
+            'moved' => ':label 已移至第 :position 项，共 :count 项',
+        ],
 
         'columns' => [
 
@@ -831,6 +859,8 @@ return [
             'false' => '否',
         ],
 
+        'error_message' => '无法加载选项，请重试。',
+
         'loading_message' => '加载中...',
 
         'max_items_message' => '只能选择 :count 个。',
@@ -840,6 +870,8 @@ return [
         'no_search_results_message' => '没有选项匹配您的搜索。',
 
         'placeholder' => '选择选项',
+
+        'required_description' => '请选择一项。',
 
         'searching_message' => '搜索中...',
 
