@@ -292,6 +292,44 @@ describe('selection limits', function (): void {
         expect(User::query()->where('name', 'Selected')->pluck('id')->all())->toEqualCanonicalizing($expectedKeys);
     })->with(['eager', 'ids', 'chunked'])->with([false, true])->with([false, true])->with([false, true]);
 
+    it('only selects record keys for unbounded selections when not fetching records', function (bool $sortsByAggregate, bool $tracksDeselectedRecords): void {
+        $users = User::factory()->count(3)->create();
+        Post::factory()->count(2)->create(['author_id' => $users[1]->getKey()]);
+        $queries = new ArrayObject;
+        $actionRan = new ArrayObject;
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->defaultSort($sortsByAggregate ? 'posts_count' : 'users.id', 'desc'),
+            during: static fn () => BulkAction::configureUsing(
+                static fn (BulkAction $action): BulkAction => $action
+                    ->fetchSelectedRecords(false)
+                    ->action(function (Collection $records, BulkAction $action) use ($users, $actionRan): void {
+                        $actionRan[] = true;
+                        expect($records->all())->toEqualCanonicalizing($users->modelKeys());
+                        expect($action->getTotalSelectedRecordsCount())->toBe(3);
+                    }),
+                during: function () use ($users, $tracksDeselectedRecords, $queries): void {
+                    $component = livewire(AggregateBulkSelectionTable::class)
+                        ->set('isTrackingDeselectedTableRecords', $tracksDeselectedRecords);
+
+                    DB::listen(function ($query) use ($queries): void {
+                        $queries[] = $query->sql;
+                    });
+
+                    $component->callTableBulkAction('inspect', $tracksDeselectedRecords ? [] : $users);
+                },
+            ),
+        );
+
+        $queries = $queries->getArrayCopy();
+        $keyOnlyQueries = array_filter($queries, static fn (string $sql): bool => preg_match('/^select ["`\[]?users["`\]]?\.["`\[]?id["`\]]? from /i', $sql) === 1);
+        $unboundedFullRowQueries = array_filter($queries, static fn (string $sql): bool => preg_match('/^select ["`\[]?users["`\]]?\.\*/i', $sql) === 1 && ! preg_match('/\b(limit|top|fetch)\b/i', $sql));
+
+        expect($actionRan)->toHaveCount(1);
+        expect($keyOnlyQueries)->toHaveCount(1);
+        expect($unboundedFullRowQueries)->toBeEmpty();
+    })->with([false, true])->with([false, true]);
+
     it('preserves aggregates in nested `getFilteredTableQuery()` calls and after sorting fails', function (): void {
         $user = User::factory()->create();
         Post::factory()->count(3)->create(['author_id' => $user->getKey()]);

@@ -300,7 +300,24 @@ trait HasBulkActions
         $query = $this->getSelectedTableRecordsQuery(chunkSize: $chunkSize);
 
         if ((! $shouldFetchSelectedRecords) && (! $table->checksIfRecordIsSelectable())) {
-            return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
+            $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
+            $baseQuery = $query->toBase();
+
+            // Without a limit or offset, neither the ordering nor the selected
+            // columns can affect which keys are returned, unless another
+            // clause could still reference a selected column alias.
+            if (
+                ($baseQuery->limit === null) &&
+                (! $baseQuery->offset) &&
+                blank($baseQuery->havings) &&
+                blank($baseQuery->groups) &&
+                blank($baseQuery->unions) &&
+                (! $baseQuery->distinct)
+            ) {
+                $baseQuery->reorder()->select($qualifiedKeyName);
+            }
+
+            return $this->cachedSelectedTableRecords = $baseQuery->pluck($qualifiedKeyName);
         }
 
         if ($chunkSize || (! $shouldFetchSelectedRecords)) {
