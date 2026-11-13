@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Pranešimai',
 
+        'unread_label' => 'Neperskaitytas pranešimas',
+
         'actions' => [
 
             'clear' => [

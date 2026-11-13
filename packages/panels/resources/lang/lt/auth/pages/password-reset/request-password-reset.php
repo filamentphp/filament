@@ -9,7 +9,7 @@ return [
     'actions' => [
 
         'login' => [
-            'label' => 'grįžti į prisijungimą',
+            'label' => 'grįžti į prisijungimo puslapį',
         ],
 
     ],
@@ -17,13 +17,13 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'El. paštas',
+            'label' => 'El. pašto adresas',
         ],
 
         'actions' => [
 
             'request' => [
-                'label' => 'Siųsti',
+                'label' => 'Siųsti el. laišką',
             ],
 
         ],
@@ -37,8 +37,8 @@ return [
         ],
 
         'throttled' => [
-            'title' => 'Per daug bandymų',
-            'body' => 'Bandykite dar kartą už :seconds sekundžių.',
+            'title' => 'Per daug užklausų',
+            'body' => 'Bandykite dar kartą po :seconds sekundžių.',
         ],
 
     ],

@@ -63,6 +63,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     protected TextSize | string | Closure | null $limitedRemainingTextSize = null;
 
+    protected string | Htmlable | Closure | null $limitedRemainingTextTooltip = null;
+
     protected bool | Closure $shouldCheckFileExistence = true;
 
     public function disk(string | Closure | null $disk): static
@@ -382,6 +384,18 @@ class ImageEntry extends Entry implements HasEmbeddedView
         return (bool) $this->evaluate($this->isLimitedRemainingTextSeparate);
     }
 
+    public function limitedRemainingTextTooltip(string | Htmlable | Closure | null $tooltip): static
+    {
+        $this->limitedRemainingTextTooltip = $tooltip;
+
+        return $this;
+    }
+
+    public function getLimitedRemainingTextTooltip(): string | Htmlable | null
+    {
+        return $this->evaluate($this->limitedRemainingTextTooltip);
+    }
+
     public function limitedRemainingTextSize(TextSize | string | Closure | null $size): static
     {
         $this->limitedRemainingTextSize = $size;
@@ -544,6 +558,15 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
             <?php if ($hasLimitedRemainingText) { ?>
                 <div <?= (new FilamentComponentAttributeBag)
+                ->merge([
+                    'x-tooltip' => filled($tooltip = $this->getLimitedRemainingTextTooltip())
+                        ? '{
+                                content: ' . Js::from($tooltip instanceof Htmlable ? $tooltip->toHtml() : $tooltip) . ',
+                                theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
+                            }'
+                        : null,
+                ], escape: false)
                 ->class([
                     'fi-in-image-limited-remaining-text',
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,

@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Blokas',
+            'position' => ':label, pozicija :position iš :count',
+            'moved' => ':label perkeltas į poziciją :position iš :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -100,9 +106,19 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Nėra blokų, atitinkančių paiešką.',
+
+            'search_prompt' => 'Ieškoti blokų',
+
+        ],
+
     ],
 
     'checkbox_list' => [
+
+        'required_description' => 'Pasirinkite bent vieną parinktį.',
 
         'actions' => [
 
@@ -118,9 +134,55 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Spalvos parinkiklis',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Mėnuo',
+        ],
+
+        'year_input' => [
+            'label' => 'Metai',
+        ],
+
+        'hour_input' => [
+            'label' => 'Valanda',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minutė',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekundė',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'placeholder' => 'Failai neįkelti',
+
+        'actions' => [
+
+            'download' => [
+                'label' => 'Atsisiųsti',
+            ],
+
+            'open' => [
+                'label' => 'Atidaryti naujame skirtuke',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Vaizdo redaktorius',
 
             'actions' => [
 
@@ -169,11 +231,11 @@ return [
                 ],
 
                 'rotate_right' => [
-                    'label' => 'Pasukti nuotrauka į dešinę',
+                    'label' => 'Pasukti nuotrauką į dešinę',
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'Nustatyti kraštinių santikį į :ratio',
+                    'label' => 'Nustatyti kraštinių santykį :ratio',
                 ],
 
                 'save' => [
@@ -246,6 +308,10 @@ return [
 
     ],
 
+    'js_field' => [
+        'failed_to_load' => 'Šio lauko įkelti nepavyko. Įkelkite puslapį iš naujo ir bandykite dar kartą.',
+    ],
+
     'key_value' => [
 
         'actions' => [
@@ -258,8 +324,28 @@ return [
                 'label' => 'Ištrinti eilutę',
             ],
 
+            'move_down' => [
+                'label' => 'Perkelti žemyn',
+            ],
+
+            'move_up' => [
+                'label' => 'Perkelti aukštyn',
+            ],
+
             'reorder' => [
-                'label' => 'Pastumti',
+                'label' => 'Pertvarkyti eilutę',
+            ],
+
+        ],
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Veiksmai',
+            ],
+
+            'reorder' => [
+                'label' => 'Pertvarkyti',
             ],
 
         ],
@@ -274,6 +360,12 @@ return [
                 'label' => 'Reikšmė',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Eilutė',
+            'position' => ':label, pozicija :position iš :count',
+            'moved' => ':label perkeltas į poziciją :position iš :count',
         ],
 
     ],
@@ -317,12 +409,12 @@ return [
 
             'select' => [
 
-                'label' => 'Select',
+                'label' => 'Pasirinkti',
 
                 'actions' => [
 
                     'select' => [
-                        'label' => 'Select',
+                        'label' => 'Pasirinkti',
                     ],
 
                 ],
@@ -334,6 +426,24 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Elementas',
+            'position' => ':label, pozicija :position iš :count',
+            'moved' => ':label perkeltas į poziciją :position iš :count',
+        ],
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Veiksmai',
+            ],
+
+            'reorder' => [
+                'label' => 'Pertvarkyti',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -421,6 +531,10 @@ return [
 
                 ],
 
+            ],
+
+            'close_panel' => [
+                'label' => 'Uždaryti skydelį',
             ],
 
             'custom_block' => [
@@ -541,6 +655,35 @@ return [
 
                         'color' => [
                             'label' => 'Spalva',
+
+                            'options' => [
+                                'slate' => 'Šiferio',
+                                'gray' => 'Pilka',
+                                'zinc' => 'Cinko',
+                                'neutral' => 'Neutrali',
+                                'stone' => 'Akmens',
+                                'mauve' => 'Alyvinė',
+                                'olive' => 'Alyvuogių',
+                                'mist' => 'Miglos',
+                                'taupe' => 'Pilkai ruda',
+                                'red' => 'Raudona',
+                                'orange' => 'Oranžinė',
+                                'amber' => 'Gintarinė',
+                                'yellow' => 'Geltona',
+                                'lime' => 'Laimo',
+                                'green' => 'Žalia',
+                                'emerald' => 'Smaragdinė',
+                                'teal' => 'Žalsvai mėlyna',
+                                'cyan' => 'Žydra',
+                                'sky' => 'Dangaus mėlyna',
+                                'blue' => 'Mėlyna',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violetinė',
+                                'purple' => 'Purpurinė',
+                                'fuchsia' => 'Fuksija',
+                                'pink' => 'Rausva',
+                                'rose' => 'Rožinė',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -555,6 +698,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Ištrinti bloką',
+                ],
+
+                'edit' => [
+                    'label' => 'Redaguoti bloką',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'Nėra blokų, atitinkančių paiešką.',
+
+            'search_label' => 'Ieškoti blokų',
+
+            'search_prompt' => 'Ieškoti blokų',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'Įkelti failai turi būti šių tipų: :values.',
 
         'file_attachments_max_size_message' => 'Įkelti failai negali būti didesni nei :max kilobaitų.',
@@ -565,6 +730,10 @@ return [
             'no_search_results_message' => 'Paieškos rezultatų nėra.',
             'search_prompt' => 'Pradėkite rašyti, kad ieškotumėte...',
             'searching_message' => 'Ieškoma...',
+        ],
+
+        'toolbar' => [
+            'label' => 'Redaktoriaus įrankių juosta',
         ],
 
         'tools' => [
@@ -584,6 +753,9 @@ return [
             'h1' => 'Pavadinimas',
             'h2' => 'Antraštė',
             'h3' => 'Paantraštė',
+            'h4' => 'Antraštė 4',
+            'h5' => 'Antraštė 5',
+            'h6' => 'Antraštė 6',
             'grid' => 'Tinklelis',
             'grid_delete' => 'Ištrinti tinklelį',
             'highlight' => 'Paryškinimas',
@@ -593,6 +765,7 @@ return [
             'link' => 'Nuoroda',
             'merge_tags' => 'Sujungimo žymos',
             'ordered_list' => 'Sunumeruotas sąrašas',
+            'paragraph' => 'Pastraipa',
             'redo' => 'Perdaryti',
             'small' => 'Mažas tekstas',
             'strike' => 'Perbraukta',
@@ -622,6 +795,10 @@ return [
     'select' => [
 
         'actions' => [
+
+            'clear' => [
+                'label' => 'Išvalyti pasirinkimą',
+            ],
 
             'create_option' => [
 
@@ -667,6 +844,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Pašalinti :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -674,19 +855,25 @@ return [
             'false' => 'Ne',
         ],
 
-        'loading_message' => 'Kraunasi...',
+        'error_message' => 'Parinkčių įkelti nepavyko. Bandykite dar kartą.',
 
-        'max_items_message' => 'Pažymėti gali būti tik :count .',
+        'loading_message' => 'Įkeliama...',
 
-        'no_options_message' => 'Nėra paieškos rezultatų.',
+        'max_items_message' => 'Galima pasirinkti tik :count.',
+
+        'no_options_message' => 'Nėra galimų parinkčių.',
 
         'no_search_results_message' => 'Nėra paieškos rezultatų.',
 
-        'placeholder' => 'Pasirinkite',
+        'placeholder' => 'Pasirinkite parinktį',
+
+        'required_description' => 'Pasirinkite parinktį.',
 
         'searching_message' => 'Ieškoma...',
 
-        'search_prompt' => 'Pradėkite rašykite paieškai...',
+        'search_label' => 'Paieška',
+
+        'search_prompt' => 'Norėdami ieškoti pradėkite rašyti...',
 
     ],
 
@@ -701,6 +888,11 @@ return [
         ],
 
         'placeholder' => 'Nauja žyma',
+
+        'tag_added' => 'Pridėta: :tag',
+
+        'tag_removed' => 'Pašalinta: :tag',
+
     ],
 
     'text_input' => [
@@ -725,6 +917,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Pasirinkite bent vieną parinktį.',
 
         'boolean' => [
             'true' => 'Taip',

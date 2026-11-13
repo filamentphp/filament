@@ -27,7 +27,7 @@ return [
 
         'password' => [
             'label' => 'Slaptažodis',
-            'validation_attribute' => 'slaptažodžio',
+            'validation_attribute' => 'slaptažodis',
         ],
 
         'password_confirmation' => [
@@ -48,7 +48,7 @@ return [
 
         'throttled' => [
             'title' => 'Per daug registracijos bandymų',
-            'body' => 'Pabandykite dar kartą už :seconds sekundžių.',
+            'body' => 'Pabandykite dar kartą po :seconds sekundžių.',
         ],
 
     ],

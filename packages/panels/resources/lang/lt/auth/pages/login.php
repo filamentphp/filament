@@ -77,7 +77,7 @@ return [
 
         'throttled' => [
             'title' => 'Per daug bandymų prisijungti. Bandykite po :seconds sekundžių.',
-            'body' => 'Pabandykite dar katą už :seconds sekundžių.',
+            'body' => 'Pabandykite dar kartą po :seconds sekundžių.',
         ],
 
     ],

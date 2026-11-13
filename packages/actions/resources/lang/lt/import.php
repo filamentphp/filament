@@ -50,7 +50,7 @@ return [
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => 'Atsisiųsti informaciją apie nepavykusią eilutę|Atsisiųsti informaciją apie nepavykusias eilutes',
+                    'label' => 'Atsisiųsti informaciją apie nepavykusią eilutę|Atsisiųsti informaciją apie nepavykusias eilutes|Atsisiųsti informaciją apie nepavykusias eilutes',
                 ],
 
             ],
@@ -59,12 +59,12 @@ return [
 
         'max_rows' => [
             'title' => 'Įkeltas CSV filas per didelis',
-            'body' => 'Negalite importuoti daugiau nei 1 eilutės vienu metu.|Negalite importuoti dagiau nei :count eilučių vienu metu.',
+            'body' => 'Negalite importuoti daugiau nei 1 eilutės vienu metu.|Negalite importuoti daugiau nei :count eilutės vienu metu.|Negalite importuoti daugiau nei :count eilučių vienu metu.',
         ],
 
         'started' => [
             'title' => 'Importas pradėtas',
-            'body' => 'Importas pradėtas ir 1 eilutė bus apdorojama fone.|Importas pradėtas ir :count eilutės bus apdorojamos fone.',
+            'body' => 'Importas pradėtas ir 1 eilutė bus apdorojama fone.|Importas pradėtas ir :count eilutės bus apdorojamos fone.|Importas pradėtas ir :count eilučių bus apdorojama fone.',
         ],
 
     ],
