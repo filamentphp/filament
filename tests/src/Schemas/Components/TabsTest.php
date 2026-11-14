@@ -684,16 +684,31 @@ it('can render `Tabs` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
-it('loads deferred badges in both tab renderers', function (bool $livewireTabs): void {
+it('loads lazy badges when the tab bar becomes visible in both tab renderers', function (bool $livewireTabs): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/tabs-browser-test?deferred=1&livewire=' . (int) $livewireTabs);
+    $page = visit('/tabs-browser-test?deferred=1&dropdown=1&livewire=' . (int) $livewireTabs);
+    $page->page()->context()->addInitScript(<<<'JS'
+        window.tabBadgeCalls = [];
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('request', ({ options }) => {
+                window.tabBadgeCalls.push(...JSON.parse(options.body).components.flatMap(component => component.calls).filter(call => call.method === 'callSchemaComponentMethod' && call.params[1] === 'getLazyLoadedTabBadges'));
+            });
+        });
+        JS);
+    $page->refresh()->assertVisible('[data-testid="enclosing-dropdown-trigger"]');
 
-    $page->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
+    expect($page->script('window.tabBadgeCalls'))->toBe([]);
+
+    $page->click('[data-testid="enclosing-dropdown-trigger"]')
+        ->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
+    expect($page->script('window.tabBadgeCalls'))->toHaveCount(1);
+
     $page->inDarkMode()
+        ->click('[data-testid="enclosing-dropdown-trigger"]')
         ->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
         ->assertNoAccessibilityIssues();
 })->with(['Alpine' => false, 'Livewire' => true]);

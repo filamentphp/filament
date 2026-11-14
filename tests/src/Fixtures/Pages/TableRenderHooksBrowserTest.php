@@ -5,11 +5,13 @@ namespace Filament\Tests\Fixtures\Pages;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Livewire\Attributes\Url;
 
 class TableRenderHooksBrowserTest extends Page implements HasTable
 {
@@ -17,10 +19,14 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
 
     protected static bool $shouldRegisterNavigation = false;
 
+    #[Url]
+    public bool $isTableLazyLoaded = false;
+
     public function table(Table $table): Table
     {
         return $table
             ->query(Post::query())
+            ->lazyLoaded(fn (): bool => $this->isTableLazyLoaded)
             ->loadingSkeleton()
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
@@ -38,7 +44,12 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
     {
         return $schema
             ->components([
-                EmbeddedTable::make(),
+                $this->isTableLazyLoaded
+                    ? Section::make('Lazy table')
+                        ->collapsed()
+                        ->extraAttributes(['data-testid' => 'lazy-table-section'])
+                        ->schema([EmbeddedTable::make()])
+                    : EmbeddedTable::make(),
             ]);
     }
 

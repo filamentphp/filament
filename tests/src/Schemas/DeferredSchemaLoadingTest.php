@@ -66,6 +66,23 @@ it('loads deferred sections, tabs, and wizard steps as they are revealed', funct
         ->assertNoAccessibilityIssues();
 });
 
+it('shows an accessible inline error when a lazy-loaded schema fails', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/deferred-schema-loading-browser-test?shouldFailLoading=1');
+
+    $page->page()->locator('[data-testid="concealed-deferred-section"] [aria-expanded]')->click();
+    $page->assertVisible('[data-testid="concealed-deferred-section"] [role="alert"][aria-busy="false"]')
+        ->assertNotPresent('#form\\.concealedDeferredDetails\\.concealed_deferred_name')
+        ->assertMissing('dialog[open]')
+        ->assertNoAccessibilityIssues();
+
+    $darkPage = $page->inDarkMode();
+    $darkPage->page()->locator('[data-testid="concealed-deferred-section"] [aria-expanded]')->click();
+    $darkPage->assertVisible('[data-testid="concealed-deferred-section"] [role="alert"][aria-busy="false"]')
+        ->assertNoAccessibilityIssues();
+});
+
 it('loads a deferred schema when it contains a validation error', function (): void {
     $this->actingAs(User::factory()->create());
 

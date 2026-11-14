@@ -84,6 +84,41 @@ describe('defer loading', function (): void {
 
         expect($table->isLoadingDeferred())->toBeTrue();
     });
+
+    it('loads table records once when the table becomes visible', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create(['title' => 'Viewport table record']);
+
+        $page = visit('/table-render-hooks-browser-test?isTableLazyLoaded=1');
+        $page->page()->context()->addInitScript(<<<'JS'
+            window.tableLoadCalls = [];
+            document.addEventListener('livewire:init', () => {
+                Livewire.hook('request', ({ options }) => {
+                    window.tableLoadCalls.push(...JSON.parse(options.body).components.flatMap(component => component.calls).filter(call => call.method === 'loadTable'));
+                });
+            });
+            JS);
+        $page->refresh()->assertVisible('[data-testid="lazy-table-section"] [aria-expanded="false"]')
+            ->assertDontSee('Viewport table record');
+
+        expect($page->script('window.tableLoadCalls'))->toBe([]);
+
+        $page->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+        $page->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record');
+
+        expect($page->script('window.tableLoadCalls'))->toHaveCount(1);
+
+        $page->inDarkMode()
+            ->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record')
+            ->assertNoAccessibilityIssues();
+    });
 });
 
 describe('loading skeleton', function (): void {

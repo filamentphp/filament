@@ -13,6 +13,8 @@ use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Attributes\Url;
+use RuntimeException;
 
 class DeferredSchemaLoadingBrowserTest extends Page
 {
@@ -25,6 +27,9 @@ class DeferredSchemaLoadingBrowserTest extends Page
     protected static bool $shouldRegisterNavigation = false;
 
     public ?array $data = [];
+
+    #[Url]
+    public bool $shouldFailLoading = false;
 
     public function mount(): void
     {
@@ -45,7 +50,9 @@ class DeferredSchemaLoadingBrowserTest extends Page
                         Schema::make()
                             ->components([
                                 TextInput::make('concealed_deferred_name')
-                                    ->label('Concealed deferred name'),
+                                    ->label(fn (): string => $this->shouldFailLoading
+                                        ? throw new RuntimeException('Simulated schema loading failure.')
+                                        : 'Concealed deferred name'),
                             ])
                             ->deferLoading(),
                     ),
