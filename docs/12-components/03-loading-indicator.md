@@ -50,5 +50,8 @@ class CustomLoadingIndicator implements LoadingIndicator
 
 The attributes already contain the `fi-icon fi-loading-indicator` and size hook classes, so you can forward them directly to your root element.
 
+> [!NOTE]
+> Buttons, icon buttons, links, badges, and dropdown items render your implementation while their Livewire request is running. With the default implementation, they instead draw the same indicator with CSS on an empty element with the `fi-control-loading-indicator` hook class, which keeps the HTML of pages with many actions small.
+
 > [!WARNING]
 > The resolved `LoadingIndicator` instance is cached for the lifetime of the PHP process. Under Laravel Octane, this means the binding is only resolved once when the worker boots and will not be re-resolved between requests. Register your binding in a service provider rather than rebinding it at runtime.

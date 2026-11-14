@@ -27,6 +27,7 @@ use function Filament\Support\apply_search_constraint;
 use function Filament\Support\encode_key_segments;
 use function Filament\Support\format_money;
 use function Filament\Support\format_number;
+use function Filament\Support\generate_control_loading_indicator_html;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
@@ -35,6 +36,7 @@ use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 use function Filament\Support\get_color_css_variables;
 use function Filament\Support\get_component_color_classes;
+use function Filament\Support\get_control_loading_content_attributes;
 use function Filament\Support\get_model_label;
 use function Filament\Support\is_app_url;
 use function Filament\Support\is_path_within_directory;
@@ -183,6 +185,17 @@ describe('`generate_loading_indicator_html()`', function (): void {
         expect(generate_loading_indicator_html()->toHtml())->toContain('<svg', 'fi-loading-indicator', 'fi-size-md')
             ->and(generate_loading_indicator_html(new ComponentAttributeBag(['aria-label' => 'Loading']), IconSize::Small)->toHtml())
             ->toContain('aria-label="Loading"', 'fi-size-sm');
+    });
+});
+
+describe('`generate_control_loading_indicator_html()`', function (): void {
+    it('renders the default loading indicator of a control without an SVG, revealed by a single delayed directive', function (): void {
+        expect(generate_control_loading_indicator_html('save', 'default', size: IconSize::Small)->toHtml())
+            ->toStartWith('<span ')
+            ->not->toContain('<svg')
+            ->toContain('fi-loading-indicator', 'fi-size-sm', 'aria-hidden="true"', 'wire:loading.class.delay.default="fi-active"', 'wire:target="save"')
+            ->and(get_control_loading_content_attributes('save', 'default'))
+            ->toBe([]);
     });
 });
 

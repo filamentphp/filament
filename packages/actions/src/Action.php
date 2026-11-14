@@ -43,9 +43,10 @@ use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component;
 use Livewire\Drawer\Utils;
 
+use function Filament\Support\generate_control_loading_indicator_html;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\generate_loading_indicator_html;
+use function Filament\Support\get_control_loading_content_attributes;
 
 class Action extends ViewComponent implements Arrayable
 {
@@ -916,20 +917,11 @@ class Action extends ViewComponent implements Arrayable
 
         $iconHtml = $icon ? generate_icon_html(
             $icon,
-            attributes: (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => true,
-                'wire:target' => $handler,
-            ])),
+            attributes: new FilamentComponentAttributeBag(get_control_loading_content_attributes($handler, $loadingDelay)),
             size: IconSize::Small,
         )?->toHtml() : '';
 
-        $loadingHtml = generate_loading_indicator_html(
-            (new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $handler,
-            ])),
-            size: IconSize::Small,
-        )->toHtml();
+        $loadingHtml = generate_control_loading_indicator_html($handler, $loadingDelay, size: IconSize::Small)->toHtml();
 
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handler = str_replace('"', '\\"', $handler);
@@ -1000,18 +992,10 @@ class Action extends ViewComponent implements Arrayable
 
         $iconHtml = $icon ? generate_icon_html(
             $icon,
-            attributes: (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => true,
-                'wire:target' => $handler,
-            ]))->color(IconComponent::class, $color),
+            attributes: (new FilamentComponentAttributeBag(get_control_loading_content_attributes($handler, $loadingDelay)))->color(IconComponent::class, $color),
         )?->toHtml() : '';
 
-        $loadingHtml = generate_loading_indicator_html(
-            (new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $handler,
-            ])),
-        )->toHtml();
+        $loadingHtml = generate_control_loading_indicator_html($handler, $loadingDelay)->toHtml();
 
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handlerEscaped = str_replace('"', '\\"', $handler);

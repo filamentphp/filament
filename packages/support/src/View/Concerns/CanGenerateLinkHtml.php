@@ -14,9 +14,10 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
+use function Filament\Support\generate_control_loading_indicator_html;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\generate_loading_indicator_html;
+use function Filament\Support\get_control_loading_content_attributes;
 
 trait CanGenerateLinkHtml
 {
@@ -133,15 +134,11 @@ trait CanGenerateLinkHtml
             ? config('filament.livewire_loading_delay', 'default')
             : null;
 
-        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize)?->toHtml() ?? '' : '';
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag(
+            $hasLoadingIndicator ? get_control_loading_content_attributes($loadingIndicatorTarget, $loadingDelay) : [],
+        )), size: $iconSize)?->toHtml() ?? '' : '';
 
-        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-            'wire:loading.delay.' . $loadingDelay => '',
-            'wire:target' => $loadingIndicatorTarget,
-        ])), size: $iconSize)->toHtml() : '';
+        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_control_loading_indicator_html($loadingIndicatorTarget, $loadingDelay, size: $iconSize)->toHtml() : '';
 
         ob_start(); ?>
 

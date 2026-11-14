@@ -15,6 +15,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\DefaultLoadingIndicator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -252,11 +253,91 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
             "fi-size-{$size->value}",
         ]);
 
+        return new HtmlString(resolve_loading_indicator()->toHtml($attributes));
+    }
+}
+
+if (! function_exists('Filament\Support\resolve_loading_indicator')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function resolve_loading_indicator(): LoadingIndicator
+    {
         static $loadingIndicator = null;
 
-        $loadingIndicator ??= app(LoadingIndicator::class);
+        return $loadingIndicator ??= app(LoadingIndicator::class);
+    }
+}
 
-        return new HtmlString($loadingIndicator->toHtml($attributes));
+if (! function_exists('Filament\Support\generate_control_loading_indicator_html')) {
+    /**
+     * Renders the loading indicator of a control (button, link, badge, dropdown item) that shows while
+     * the `$target` Livewire request is running. The default indicator is an empty element drawn with
+     * CSS and revealed by a single `wire:loading.class` directive, instead of a full SVG per control.
+     *
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function generate_control_loading_indicator_html(string $target, string $delay, ?ComponentAttributeBag $attributes = null, ?IconSize $size = null): Htmlable
+    {
+        if (! has_default_loading_indicator()) {
+            return generate_loading_indicator_html(
+                ($attributes ?? new FilamentComponentAttributeBag)->merge([
+                    "wire:loading.delay.{$delay}" => '',
+                    'wire:target' => $target,
+                ], escape: false),
+                $size,
+            );
+        }
+
+        $size ??= IconSize::Medium;
+
+        $attributes = ($attributes ?? new FilamentComponentAttributeBag)
+            ->merge([
+                'aria-hidden' => 'true',
+                "wire:loading.class.delay.{$delay}" => 'fi-active',
+                'wire:target' => $target,
+            ], escape: false)
+            ->class([
+                'fi-icon fi-loading-indicator fi-control-loading-indicator',
+                "fi-size-{$size->value}",
+            ]);
+
+        return new HtmlString("<span {$attributes->toHtml()}></span>");
+    }
+}
+
+if (! function_exists('Filament\Support\get_control_loading_content_attributes')) {
+    /**
+     * Returns the attributes that hide a control's icon or image while its loading indicator shows.
+     * The default indicator hides them with CSS, so they need no Livewire directive of their own.
+     *
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     *
+     * @return array<string, bool | string>
+     */
+    function get_control_loading_content_attributes(string $target, string $delay): array
+    {
+        if (has_default_loading_indicator()) {
+            return [];
+        }
+
+        return [
+            "wire:loading.remove.delay.{$delay}" => true,
+            'wire:target' => $target,
+        ];
+    }
+}
+
+if (! function_exists('Filament\Support\has_default_loading_indicator')) {
+    /**
+     * Custom `LoadingIndicator` implementations, including subclasses of `DefaultLoadingIndicator`,
+     * keep receiving `wire:loading` attributes, since their markup cannot be drawn with CSS.
+     *
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function has_default_loading_indicator(): bool
+    {
+        return resolve_loading_indicator()::class === DefaultLoadingIndicator::class;
     }
 }
 
