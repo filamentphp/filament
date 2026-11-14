@@ -86,34 +86,95 @@ document.addEventListener(
 document.addEventListener('alpine:init', () => {
     window.Alpine.data(
         'filamentSchema',
-        ({ livewireId, schemaKey, isLoadingDeferred = false }) => ({
+        ({ livewireId, schemaKey, isLazyLoaded = false }) => ({
             intersectionObserver: null,
-            isLoadingDeferredSchema: false,
+            stopObservingSchemaRequest: null,
+            isLoadingSchema: false,
+            hasSchemaLoadingFailed: false,
+            isDestroyed: false,
 
             init() {
-                if (!isLoadingDeferred) {
+                if (!isLazyLoaded) {
                     return
                 }
 
                 this.intersectionObserver = new IntersectionObserver(
-                    async (entries) => {
+                    (entries) => {
                         if (
                             !entries[0]?.isIntersecting ||
-                            this.isLoadingDeferredSchema
+                            this.isLoadingSchema ||
+                            this.isDestroyed
                         ) {
                             return
                         }
 
-                        this.isLoadingDeferredSchema = true
+                        this.isLoadingSchema = true
+                        this.intersectionObserver.disconnect()
 
-                        try {
-                            await this.$wire.loadDeferredSchema(schemaKey)
-                            this.intersectionObserver?.disconnect()
-                        } catch {
-                            // Keep observing so leaving and re-entering the viewport retries the request.
-                        } finally {
-                            this.isLoadingDeferredSchema = false
-                        }
+                        // Livewire 3 does not reject failed call promises.
+                        this.stopObservingSchemaRequest = Livewire.hook(
+                            'request',
+                            ({ options, succeed, fail }) => {
+                                const { components } = JSON.parse(options.body)
+
+                                if (
+                                    !components.some(
+                                        (component) =>
+                                            JSON.parse(component.snapshot).memo
+                                                .id === livewireId &&
+                                            component.calls.some(
+                                                (call) =>
+                                                    call.method ===
+                                                        'loadLazySchema' &&
+                                                    call.params[0] ===
+                                                        schemaKey,
+                                            ),
+                                    )
+                                ) {
+                                    return
+                                }
+
+                                fail(({ status, preventDefault }) => {
+                                    if (
+                                        status !== 419 &&
+                                        components.every(
+                                            (component) =>
+                                                !Object.keys(component.updates)
+                                                    .length &&
+                                                component.calls.length &&
+                                                component.calls.every(
+                                                    (call) =>
+                                                        call.method ===
+                                                        'loadLazySchema',
+                                                ),
+                                        )
+                                    ) {
+                                        preventDefault()
+                                    }
+
+                                    if (this.isDestroyed) {
+                                        return
+                                    }
+
+                                    this.hasSchemaLoadingFailed = true
+                                    this.isLoadingSchema = false
+                                    this.stopObservingSchemaRequest?.()
+                                    this.stopObservingSchemaRequest = null
+                                })
+
+                                succeed(() => {
+                                    if (this.isDestroyed) {
+                                        return
+                                    }
+
+                                    this.isLoadingSchema = false
+                                    this.stopObservingSchemaRequest?.()
+                                    this.stopObservingSchemaRequest = null
+                                })
+                            },
+                        )
+
+                        this.$wire.loadLazySchema(schemaKey)
                     },
                 )
 
@@ -198,7 +259,10 @@ document.addEventListener('alpine:init', () => {
             },
 
             destroy() {
+                this.isDestroyed = true
                 this.intersectionObserver?.disconnect()
+                this.stopObservingSchemaRequest?.()
+                this.stopObservingSchemaRequest = null
             },
         }),
     )

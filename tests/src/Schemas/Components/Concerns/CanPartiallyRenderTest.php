@@ -18,7 +18,7 @@ it('can partially render specified fields and the current component after state 
 
     $productName = 'Summer linen shirt';
 
-    $page = visit('/partial-rendering-test');
+    $page = visit('/partial-rendering-browser-test');
 
     $productSku = $page->text('.product-sku');
 

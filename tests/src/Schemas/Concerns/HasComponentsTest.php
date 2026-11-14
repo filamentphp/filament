@@ -57,11 +57,17 @@ describe('component binding', function (): void {
         $schema = Schema::make(Livewire::make())
             ->components([
                 $input = Field::make($statePath = Str::random()),
+                Section::make()->key('details')->schema([
+                    $nestedInput = TextInput::make('name'),
+                ]),
             ]);
 
         expect($schema)
             ->getComponent($statePath)->toBe($input)
-            ->getComponent(fn (Component $component) => $component->getName() === $statePath)->toBe($input);
+            ->getComponent(fn (Component $component) => $component->getName() === $statePath)->toBe($input)
+            ->getComponent('details.name')->toBe($nestedInput)
+            ->getComponent('details.name', isAbsoluteKey: true)->toBe($nestedInput)
+            ->getComponent('details.name', skipComponentsChildContainersWhileSearching: [$input])->toBe($nestedInput);
     });
 });
 

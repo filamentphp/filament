@@ -12,9 +12,9 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 
-class BuilderSearchableTest extends Page
+class BuilderSearchableBrowserTest extends Page
 {
-    protected string $view = 'pages.builder-searchable-test';
+    protected string $view = 'pages.builder-searchable-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedSquares2x2;
 

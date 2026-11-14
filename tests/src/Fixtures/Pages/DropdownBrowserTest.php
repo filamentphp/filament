@@ -9,9 +9,9 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 
-class DropdownTest extends Page
+class DropdownBrowserTest extends Page
 {
-    protected string $view = 'pages.dropdown-test';
+    protected string $view = 'pages.dropdown-browser-test';
 
     public ?array $data = [];
 

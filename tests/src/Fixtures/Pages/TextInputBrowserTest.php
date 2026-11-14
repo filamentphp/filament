@@ -12,9 +12,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class TextInputTest extends Page
+class TextInputBrowserTest extends Page
 {
-    protected string $view = 'pages.text-input-test';
+    protected string $view = 'pages.text-input-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedPencilSquare;
 

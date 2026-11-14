@@ -17,11 +17,11 @@ describe('Package manager prerequisites', function (): void {
         $filesystem->ensureDirectoryExists($this->themeCommandDirectory . '/app/Providers/Filament');
         $filesystem->ensureDirectoryExists($this->themeCommandDirectory . '/resources');
         $filesystem->copy(
-            __DIR__ . '/Fixture/MakeThemeCommandTest/vite-config/standard.js',
+            __DIR__ . '/Fixtures/MakeThemeCommandTest/vite-config/standard.js',
             $this->themeCommandDirectory . '/vite.config.js',
         );
         $filesystem->copy(
-            __DIR__ . '/Fixture/MakeThemeCommandTest/panel-provider/standard.php',
+            __DIR__ . '/Fixtures/MakeThemeCommandTest/panel-provider/standard.php',
             $this->themeCommandDirectory . '/app/Providers/Filament/AdminPanelProvider.php',
         );
 

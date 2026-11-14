@@ -540,7 +540,7 @@ describe('browser interactions', function (): void {
     it('can select, replace, and clear a single `ToggleButtons` option with pointer and keyboard', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/toggle-buttons-test');
+        $page = visit('/toggle-buttons-browser-test');
         $page->assertNoSmoke();
 
         foreach (['field', 'grouped_field'] as $fieldName) {

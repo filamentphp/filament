@@ -1997,7 +1997,7 @@ describe('browser interactions', function (): void {
     it('can select, search, and clear options in select dropdowns in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $browser = visit('/select-test');
+        $browser = visit('/select-browser-test');
 
         $browser
             ->assertDontSee('One')
@@ -2045,7 +2045,7 @@ describe('browser interactions', function (): void {
             ->assertDontSee('Active')
             ->assertNoSmoke();
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
     });
@@ -2053,7 +2053,7 @@ describe('browser interactions', function (): void {
     it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertDontSee('Two')
             ->click('[data-testid="single-select"] .fi-select-input-btn')
             ->assertSee('One')
@@ -2065,7 +2065,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->inDarkMode()
             ->keys('[data-testid="single-select"] [role="combobox"]', 'Enter')
             ->assertNoAccessibilityIssues();
@@ -2074,7 +2074,7 @@ describe('browser interactions', function (): void {
     it('can create an option using `createOptionForm()` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertDontSee('New status')
             ->click('[data-testid="create-option-action-trigger"]')
             ->assertVisible('[data-testid="create-option-action-modal"]')
@@ -2095,7 +2095,7 @@ describe('browser interactions', function (): void {
     it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
 
         $page
             ->assertDontSee('Apple')
@@ -2132,7 +2132,7 @@ describe('browser interactions', function (): void {
     it('shows "no options" message when dynamic options returns empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-empty-options-select"] .fi-select-input-btn')
             ->assertSeeIn('[data-testid="dynamic-empty-options-select"] [role="status"]', 'No options available')
             ->assertNoSmoke();
@@ -2141,7 +2141,7 @@ describe('browser interactions', function (): void {
     it('shows options when dynamic options returns options', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-with-options-select"] .fi-select-input-btn')
             ->assertSee('Option 1')
             ->assertSee('Option 2')
@@ -2152,7 +2152,7 @@ describe('browser interactions', function (): void {
     it('shows "no options" message when dynamic options and search returns empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-options-and-search-empty-select"] .fi-select-input-btn')
             ->assertSeeIn('[data-testid="dynamic-options-and-search-empty-select"] [role="status"]', 'No options available')
             ->assertNoSmoke();
@@ -2161,7 +2161,7 @@ describe('browser interactions', function (): void {
     it('shows "no options" message when static options is empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="static-empty-options-select"] .fi-select-input-btn')
             ->assertSeeIn('[data-testid="static-empty-options-select"] [role="status"]', 'No options available')
             ->assertNoSmoke();
@@ -2170,7 +2170,7 @@ describe('browser interactions', function (): void {
     it('shows options when dynamic options returns non-empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-options-with-results-select"] .fi-select-input-btn')
             ->assertSee('Dynamic Option 1')
             ->assertSee('Dynamic Option 2')
@@ -2181,7 +2181,7 @@ describe('browser interactions', function (): void {
     it('restores initial options when clearing a search', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
 
         $page
             ->click('#dynamic-select')
@@ -2198,7 +2198,7 @@ describe('browser interactions', function (): void {
     it('keeps option navigation and keyboard removal on stable owners in a non-searchable `multiple()` select', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
         $owner = '[data-testid="nonsearchable-multiple-select"] [role="combobox"]';
         $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
 
@@ -2244,7 +2244,7 @@ describe('browser interactions', function (): void {
     it('keeps search editing, descriptions, and sequential focus on the searchable select owners', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
         $launcher = '[data-testid="searchable-select"] button[aria-haspopup="listbox"]';
         $search = '[data-testid="searchable-select"] input[role="combobox"]';
         $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
@@ -2293,7 +2293,7 @@ describe('browser interactions', function (): void {
     it('consumes select `Escape` before the containing action modal closes', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
         $launcher = '[data-testid="modal-select"] button[aria-haspopup="listbox"]';
         $search = '[data-testid="modal-select"] input[role="combobox"]';
 
@@ -2328,7 +2328,7 @@ describe('browser interactions', function (): void {
     it('only adds one remove button when selecting multiple options in sequence', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
             ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
             ->assertSee('First')
@@ -2350,7 +2350,7 @@ describe('browser interactions', function (): void {
     it('removes the clear button when selection is cleared', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
             ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
             ->assertSee('First')
@@ -2364,7 +2364,7 @@ describe('browser interactions', function (): void {
     it('does not show another native `Select` option for a missing value in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->select('[data-testid="native-dynamic-options-context-select"]', 'first')
             ->assertPresent('[data-testid="native-dynamic-options-value-select"] option[value="first_only"]')
             ->select('[data-testid="native-dynamic-options-value-select"]', 'first_only')

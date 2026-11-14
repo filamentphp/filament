@@ -8,9 +8,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class TextareaTest extends Page
+class TextareaBrowserTest extends Page
 {
-    protected string $view = 'pages.textarea-test';
+    protected string $view = 'pages.textarea-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 
