@@ -76,6 +76,13 @@ trait HasErrorNotifications
             $this->errorNotifications,
         );
 
+        $notifications[419] ??= [
+            'title' => null,
+            'body' => null,
+            'isHidden' => false,
+            'isDisabled' => true,
+        ];
+
         $notifications[''] ??= [
             'title' => __('filament-panels::error-notifications.title'),
             'body' => __('filament-panels::error-notifications.body'),
