@@ -67,6 +67,8 @@ trait InteractsWithTable
 
         $this->initialTableRecordsPerPage ??= $this->tableRecordsPerPage ?? 10;
 
+        $stateStore = $this->getTable()->getStateStore();
+
         $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
@@ -76,10 +78,9 @@ trait InteractsWithTable
 
         if (
             ($this->tableFilters === null) &&
-            $shouldPersistFiltersInSession &&
-            session()->has($filtersSessionKey)
+            $shouldPersistFiltersInSession
         ) {
-            $this->tableFilters = session()->get($filtersSessionKey) ?? [];
+            $this->tableFilters = $stateStore->get($filtersSessionKey);
         }
 
         // https://github.com/filamentphp/filament/pull/7999
@@ -94,7 +95,7 @@ trait InteractsWithTable
         }
 
         if ($shouldPersistFiltersInSession) {
-            session()->put(
+            $stateStore->put(
                 $filtersSessionKey,
                 $this->tableFilters,
             );
@@ -102,11 +103,11 @@ trait InteractsWithTable
 
         $shouldPersistGroupInSession = $this->getTable()->persistsGroupInSession();
         $groupingSessionKey = $this->getTableGroupingSessionKey();
-        $hasPersistedGroupInSession = $shouldPersistGroupInSession && session()->exists($groupingSessionKey);
+        $hasPersistedGroupInSession = $shouldPersistGroupInSession && $stateStore->has($groupingSessionKey);
 
         if (blank($this->tableGrouping)) {
             if ($hasPersistedGroupInSession) {
-                $sessionGrouping = session()->get($groupingSessionKey);
+                $sessionGrouping = $stateStore->get($groupingSessionKey);
                 $this->tableGrouping = is_string($sessionGrouping) ? $sessionGrouping : null;
             } elseif ($this->getTable()->isDefaultGroupSelectable()) {
                 $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:{$this->getTable()->getDefaultGroupDirection()}";
@@ -114,7 +115,7 @@ trait InteractsWithTable
         }
 
         if ($shouldPersistGroupInSession) {
-            session()->put(
+            $stateStore->put(
                 $groupingSessionKey,
                 $this->tableGrouping,
             );
@@ -126,15 +127,15 @@ trait InteractsWithTable
         if (
             blank($this->tableSearch) &&
             $shouldPersistSearchInSession &&
-            session()->has($searchSessionKey)
+            (($sessionSearch = $stateStore->get($searchSessionKey)) !== null)
         ) {
-            $this->tableSearch = session()->get($searchSessionKey);
+            $this->tableSearch = $sessionSearch;
         }
 
         $this->tableSearch = strval($this->tableSearch);
 
         if ($shouldPersistSearchInSession) {
-            session()->put(
+            $stateStore->put(
                 $searchSessionKey,
                 $this->tableSearch,
             );
@@ -146,9 +147,9 @@ trait InteractsWithTable
         if (
             (blank($this->tableColumnSearches) || ($this->tableColumnSearches === [])) &&
             $shouldPersistColumnSearchesInSession &&
-            session()->has($columnSearchesSessionKey)
+            (($sessionColumnSearches = $stateStore->get($columnSearchesSessionKey)) !== null)
         ) {
-            $this->tableColumnSearches = session()->get($columnSearchesSessionKey) ?? [];
+            $this->tableColumnSearches = $sessionColumnSearches;
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
@@ -159,7 +160,7 @@ trait InteractsWithTable
         $this->fillReservedTableColumnSearchKeys();
 
         if ($shouldPersistColumnSearchesInSession) {
-            session()->put(
+            $stateStore->put(
                 $columnSearchesSessionKey,
                 $this->tableColumnSearches,
             );
@@ -171,14 +172,13 @@ trait InteractsWithTable
         if (
             blank($this->tableSort) &&
             $shouldPersistSortInSession &&
-            session()->has($sortSessionKey)
+            (($sessionSort = $stateStore->get($sortSessionKey)) !== null)
         ) {
-            $sessionSort = session()->get($sortSessionKey);
             $this->tableSort = is_string($sessionSort) ? $sessionSort : null;
         }
 
         if ($shouldPersistSortInSession) {
-            session()->put(
+            $stateStore->put(
                 $sortSessionKey,
                 $this->tableSort,
             );

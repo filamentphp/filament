@@ -61,7 +61,7 @@ trait CanSortRecords
     public function updatedTableSort(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
-            session()->put(
+            $this->getTable()->getStateStore()->put(
                 $this->getTableSortSessionKey(),
                 $this->tableSort,
             );
@@ -77,7 +77,7 @@ trait CanSortRecords
     public function updatedTableSortDirection(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
-            session()->put(
+            $this->getTable()->getStateStore()->put(
                 $this->getTableSortSessionKey(),
                 $this->tableSort,
             );

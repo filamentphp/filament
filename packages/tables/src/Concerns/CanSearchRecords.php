@@ -27,7 +27,7 @@ trait CanSearchRecords
     public function updatedTableSearch(): void
     {
         if ($this->getTable()->persistsSearchInSession()) {
-            session()->put(
+            $this->getTable()->getStateStore()->put(
                 $this->getTableSearchSessionKey(),
                 $this->tableSearch,
             );
@@ -55,7 +55,7 @@ trait CanSearchRecords
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
-            session()->put(
+            $this->getTable()->getStateStore()->put(
                 $this->getTableColumnSearchesSessionKey(),
                 $this->tableColumnSearches,
             );
