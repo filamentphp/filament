@@ -102,20 +102,14 @@
     @if ($iconPosition === IconPosition::Before)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? IconSize::Small)
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag(
+                    $hasLoadingIndicator ? \Filament\Support\get_control_loading_content_attributes($loadingIndicatorTarget, $loadingDelay) : [],
+                )), size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{
-                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
-                    'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? IconSize::Small)
-            }}
+            {{ \Filament\Support\generate_control_loading_indicator_html($loadingIndicatorTarget, $loadingDelay, size: $iconSize ?? IconSize::Small) }}
         @endif
     @endif
 
@@ -156,8 +150,7 @@
                 {{
                     (new Filament\Support\View\ComponentAttributeBag([
                         'aria-hidden' => 'true',
-                        'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
-                        'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
+                        ...($deleteButtonHasLoadingIndicator ? \Filament\Support\get_control_loading_content_attributes($deleteButtonLoadingIndicatorTarget, $loadingDelay) : []),
                     ]))->class([
                         'fi-badge-delete-btn-icon',
                     ])
@@ -165,12 +158,7 @@
             ></span>
 
             @if ($deleteButtonHasLoadingIndicator)
-                {{
-                    \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                        'wire:loading.delay.' . $loadingDelay => '',
-                        'wire:target' => $deleteButtonLoadingIndicatorTarget,
-                    ])), size: IconSize::ExtraSmall)
-                }}
+                {{ \Filament\Support\generate_control_loading_indicator_html($deleteButtonLoadingIndicatorTarget, $loadingDelay, size: IconSize::ExtraSmall) }}
             @endif
 
             <span class="fi-sr-only">
@@ -180,20 +168,14 @@
     @elseif ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? IconSize::Small)
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag(
+                    $hasLoadingIndicator ? \Filament\Support\get_control_loading_content_attributes($loadingIndicatorTarget, $loadingDelay) : [],
+                )), size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{
-                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
-                    'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? IconSize::Small)
-            }}
+            {{ \Filament\Support\generate_control_loading_indicator_html($loadingIndicatorTarget, $loadingDelay, size: $iconSize ?? IconSize::Small) }}
         @endif
     @endif
 </{{ $tag }}>

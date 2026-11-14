@@ -112,19 +112,13 @@
     }}
 >
     {{
-        \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize)
+        \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag(
+            $hasLoadingIndicator ? \Filament\Support\get_control_loading_content_attributes($loadingIndicatorTarget, $loadingDelay) : [],
+        )), size: $iconSize)
     }}
 
     @if ($hasLoadingIndicator)
-        {{
-            \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ])), size: $iconSize)
-        }}
+        {{ \Filament\Support\generate_control_loading_indicator_html($loadingIndicatorTarget, $loadingDelay, size: $iconSize) }}
     @endif
 
     @if (filled($badge))

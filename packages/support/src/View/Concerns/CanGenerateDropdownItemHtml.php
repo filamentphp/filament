@@ -12,9 +12,10 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
+use function Filament\Support\generate_control_loading_indicator_html;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\generate_loading_indicator_html;
+use function Filament\Support\get_control_loading_content_attributes;
 
 trait CanGenerateDropdownItemHtml
 {
@@ -122,14 +123,10 @@ trait CanGenerateDropdownItemHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->color(IconComponent::class, $iconColor), size: $iconSize)?->toHtml() ?? '' : '' ?>
-            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ])), size: $iconSize)->toHtml() : '' ?>
+            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag(
+                $hasLoadingIndicator ? get_control_loading_content_attributes($loadingIndicatorTarget, $loadingDelay) : [],
+            ))->color(IconComponent::class, $iconColor), size: $iconSize)?->toHtml() ?? '' : '' ?>
+            <?= $hasLoadingIndicator ? generate_control_loading_indicator_html($loadingIndicatorTarget, $loadingDelay, size: $iconSize)->toHtml() : '' ?>
 
             <span class="fi-dropdown-list-item-label">
                 <?= e($label) ?>

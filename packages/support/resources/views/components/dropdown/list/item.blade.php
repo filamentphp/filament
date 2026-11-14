@@ -107,31 +107,25 @@
 >
     @if ($icon || $iconAlias)
         {{
-            \Filament\Support\generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->color(IconComponent::class, $iconColor), size: $iconSize)
+            \Filament\Support\generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag(
+                $hasLoadingIndicator ? \Filament\Support\get_control_loading_content_attributes($loadingIndicatorTarget, $loadingDelay) : [],
+            ))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
     @endif
 
     @if ($image)
         <div
-            class="fi-dropdown-list-item-image"
+            {{
+                (new FilamentComponentAttributeBag(
+                    $hasLoadingIndicator ? \Filament\Support\get_control_loading_content_attributes($loadingIndicatorTarget, $loadingDelay) : [],
+                ))->class(['fi-dropdown-list-item-image'])
+            }}
             style="background-image: url('{{ $image }}')"
-            @if ($hasLoadingIndicator)
-                wire:loading.remove.delay.{{ $loadingDelay }}
-                wire:target="{{ $loadingIndicatorTarget }}"
-            @endif
         ></div>
     @endif
 
     @if ($hasLoadingIndicator)
-        {{
-            \Filament\Support\generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ]))->color(IconComponent::class, $iconColor), size: $iconSize)
-        }}
+        {{ \Filament\Support\generate_control_loading_indicator_html($loadingIndicatorTarget, $loadingDelay, (new FilamentComponentAttributeBag)->color(IconComponent::class, $iconColor), size: $iconSize) }}
     @endif
 
     <span class="fi-dropdown-list-item-label">
