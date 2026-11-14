@@ -359,6 +359,30 @@ If your application has multiple panels (e.g. an admin panel and a user-facing p
 
 Filament supports [multi-factor authentication](../users/multi-factor-authentication) via TOTP apps and email codes, but it is not enabled by default. MFA is enforced within the Filament panel authentication flow — if your application has other authentication paths (such as API routes or non-Filament login pages), MFA will not be enforced on those paths unless you implement it separately.
 
+## Auditing your panels
+
+You may run the `filament:audit` command to report some common configuration risks in your panels:
+
+```bash
+php artisan filament:audit
+```
+
+The command currently reports:
+
+- Resources whose model has no policy, or whose policy is missing a `viewAny()`, `view()`, `create()`, `update()`, `delete()` or `deleteAny()` method, while [strict authorization](../panel-configuration#strict-authorization-mode) is disabled.
+- Resources that skip authorization.
+- Login, registration and password reset pages that use `InteractsWithSchemas` without the [`RestrictsFileUploadsToSchemaComponents`](#restricting-livewire-file-uploads-to-schema-components) trait.
+
+Each finding has a severity of `info` or `warning`. To output the findings as JSON, use the `--json` option. To return a failure exit code when a finding has at least a certain severity, for example in a CI pipeline, use the `--fail-on` option:
+
+```bash
+php artisan filament:audit --json --fail-on=warning
+```
+
+<Aside variant="warning">
+    The audit only checks the configuration it can inspect without running your application. It does not check custom actions, inline editable columns, custom pages, or URLs. A clean report does not mean that your application is secure.
+</Aside>
+
 ## Model attribute exposure
 
 Filament exposes all non-`$hidden` model attributes to JavaScript via Livewire's model binding. This is necessary for dynamic form functionality, and only attributes with corresponding form fields are actually editable — this is not a mass assignment vulnerability. However, if your model contains sensitive attributes that should not be visible in the browser (such as API keys or internal flags), you should either add them to the model's `$hidden` property or remove them using the `mutateFormDataBeforeFill()` method on your Edit or View page. See the [resources documentation](../resources/overview#protecting-model-attributes) for more details.

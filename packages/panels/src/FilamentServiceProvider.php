@@ -52,6 +52,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-panels')
             ->hasCommands([
+                Commands\AuditCommand::class,
                 Commands\CacheComponentsCommand::class,
                 Commands\ClearCachedComponentsCommand::class,
                 Commands\MakeClusterCommand::class,

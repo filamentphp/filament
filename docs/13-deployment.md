@@ -17,6 +17,10 @@ To authorize users to access a panel, you should follow the [guide in the users 
 > [!WARNING]
 > If you do not follow these steps and your user model does not implement the `FilamentUser` interface, no users will be able to sign in to your panel in production.
 
+## Auditing your panels before deploying
+
+You may run `php artisan filament:audit --fail-on=warning` in your CI pipeline to detect some common configuration risks, such as resources without policies, before you deploy. See the [security documentation](advanced/security#auditing-your-panels) for details.
+
 ## Improving Filament panel performance
 
 ### Optimizing Filament for production
