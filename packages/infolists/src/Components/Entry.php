@@ -10,21 +10,26 @@ use Filament\Schemas\Components\Concerns\CanOpenUrl;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Concerns\CanLazyLoadState;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Concerns\HasRelatedRecord;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
+use Filament\Support\State\LazyLoadedState;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\ComponentSlot;
+use Livewire\Attributes\Renderless;
 use LogicException;
 
 use function Filament\Support\generate_href_html;
 
 class Entry extends Component
 {
+    use CanLazyLoadState;
     use CanOpenUrl;
     use Concerns\HasExtraEntryWrapperAttributes;
     use Concerns\HasHelperText;
@@ -92,7 +97,56 @@ class Entry extends Component
 
     public function getState(): mixed
     {
+        if ((! $this->isRenderingLazyLoadedState) && $this->isStateLazyLoaded()) {
+            return null;
+        }
+
         return $this->getConstantState();
+    }
+
+    public function toHtml(): string
+    {
+        if ((! $this->isRenderingLazyLoadedState) && $this->isStateLazyLoaded()) {
+            return $this->getLazyLoadedStatePlaceholderHtml('callSchemaComponentMethod', [
+                'entry' => $this->getKey(),
+            ], arguments: [$this->getKey(), 'loadState']);
+        }
+
+        return parent::toHtml();
+    }
+
+    protected function wrapLazyLoadedStatePlaceholderHtml(string $html): string
+    {
+        return $this->wrapEmbeddedHtml($html);
+    }
+
+    /**
+     * @param  array<string, array{entry: string}>  $targets
+     * @return array<string, string>
+     */
+    #[Exposed]
+    #[Renderless]
+    public function loadState(array $targets): array
+    {
+        $components = [];
+
+        foreach ($targets as $identifier => $target) {
+            $entry = $this->getLivewire()->getSchemaComponent($target['entry']);
+
+            abort_unless(($entry instanceof Entry) && $entry->isStateLazyLoaded(), 403);
+
+            $schema = $entry->getContainer();
+
+            while ($schema !== null) {
+                abort_if($schema->isHidden(), 403);
+
+                $schema = $schema->getParentComponent()?->getContainer();
+            }
+
+            $components[$identifier] = $entry;
+        }
+
+        return app(LazyLoadedState::class)->render($components);
     }
 
     /**

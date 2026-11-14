@@ -204,6 +204,11 @@ trait HasChildComponents
     }
 
     /**
+     * @internal
+     */
+    public function prepareChildSchemasForLookup(): void {}
+
+    /**
      * @return array<Schema>
      */
     public function getChildSchemas(bool $withHidden = false): array

@@ -95,6 +95,91 @@ TextColumn::make('title')
 
 <AutoScreenshot name="tables/columns/placeholder" alt="Column with a placeholder for empty state" />
 
+### Loading column state lazily
+
+If calculating a column's state is expensive, you can use `lazyLoadedState()` to load it after the initial render, without delaying the rest of the table:
+
+```php
+use App\Services\ScoreService;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+
+TextColumn::make('score')
+    ->state(fn (Model $record): int => app(ScoreService::class)->forRecord($record))
+    ->lazyLoadedState()
+```
+
+In this example, `ScoreService` represents your application's expensive calculation. Filament displays a loading indicator until the state is ready. Loading starts when the cell enters the viewport. When the table rerenders, such as after filtering or changing pages, the lazy-loaded state loads again. Only rendered cells are loaded, so a paginated table loads values for the current page, not every record.
+
+Each ungrouped cell loads using a separate Livewire async action. [Grouped loaders](#grouping-lazy-loaded-column-state) use one async action per group. These actions run concurrently rather than queuing behind other actions on the same Livewire component. Livewire may still bundle messages across different components, including components with reactive or modelable children.
+
+Lazy-loaded state requests use Livewire's normal request lifecycle, including its interceptors and pending property updates. If the parent changes while a value is loading, Filament cancels the obsolete response and reloads any remaining placeholders using the latest state, waiting for the cell or its group to enter the viewport.
+
+> [!WARNING]
+> Treat lazy-loaded state loaders as read-only. Return the state to display instead of mutating the Livewire component or persisting UI state inside a loader. Concurrent async actions do not provide ordering guarantees for component mutations.
+
+Lazy-loaded state is resolved for rendering only. Other server-side callbacks see `null` when accessing the column's state outside its lazy render. Use record data instead of `$state` for visibility, lazy loading conditions, group names, keys, cell URLs, and cell actions.
+
+You can pass `false` to `lazyLoadedState()` to disable lazy loading, or a function to enable it conditionally:
+
+```php
+use App\Services\ScoreService;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+
+TextColumn::make('score')
+    ->state(fn (Model $record): int => app(ScoreService::class)->forRecord($record))
+    ->lazyLoadedState(fn (Model $record): bool => $record->is_active)
+```
+
+#### Grouping lazy-loaded column state
+
+To fetch multiple values in one request, create a named `LazyLoadedStateGroup` and attach it to each column using the `group` argument of `lazyLoadedState()`. The group's `state()` function runs once per group request and returns an array of raw states keyed by the `key` argument:
+
+```php
+use App\Services\ScoreService;
+use Filament\Support\State\LazyLoadedStateGroup;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+
+$group = LazyLoadedStateGroup::make('scores')
+    ->state(fn (array $records): array => app(ScoreService::class)->forRecords($records));
+
+TextColumn::make('score')
+    ->lazyLoadedState(
+        group: $group,
+        key: fn (Model $record): string => (string) $record->getKey(),
+    )
+```
+
+Here, your `ScoreService::forRecords()` method should return scores keyed by the record keys, matching the keys in `$records`. Without an explicit `key`, Filament uses the column name, so this example needs a record-specific key to distinguish cells in different rows.
+
+The group function can receive `$records` and `$components`, both arrays keyed by the lazy-loaded state keys. It also supports the normal [column utilities](#column-utility-injection), including `$record`, evaluated using the first column in the group request. Use `$records` when processing multiple records rather than assuming `$record` represents every cell.
+
+The first member to enter the viewport starts one request for all currently rendered members of its group, including members outside the viewport. Only rendered targets are included in the group request. Each target must have a unique key within its group, and the returned array must contain every requested key. Duplicate target keys and missing result keys are rejected. A `null` value is valid. Return raw values: Filament still applies the column's normal separator, default state, and formatting configuration. Individual columns' `state()` functions are not called for grouped values.
+
+#### Loading multiple columns for each row
+
+You can pass a function as the group name to create a separate group for each record. Filament evaluates this function using the originating column's utilities. Attach the same group to multiple columns and leave their keys as the default column names:
+
+```php
+use App\Services\MetricsService;
+use Filament\Support\State\LazyLoadedStateGroup;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+
+$group = LazyLoadedStateGroup::make(fn (Model $record): string => "metrics-{$record->getKey()}")
+    ->state(fn (Model $record): array => app(MetricsService::class)->forRecord($record));
+
+TextColumn::make('score')
+    ->lazyLoadedState(group: $group)
+
+TextColumn::make('rank')
+    ->lazyLoadedState(group: $group)
+```
+
+Your `MetricsService::forRecord()` method should return an array such as `['score' => 42, 'rank' => 3]`. The loader runs once for each row's group request, rather than once per column, and each row loads independently. Only the rendered columns in that row are requested.
+
 ### Displaying data from relationships
 
 You may use "dot notation" to access columns within relationships. The name of the relationship comes first, followed by a period, followed by the name of the column to display:
