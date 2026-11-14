@@ -403,51 +403,7 @@
 
                         @if ($areGroupingSettingsVisible)
                             <div
-                                x-data="{
-                                    grouping: $wire.$entangle('tableGrouping', true),
-                                    group: null,
-                                    direction: null,
-                                }"
-                                x-init="
-                                    if (grouping) {
-                                        ;[group, direction] = grouping.split(':')
-                                        direction ??= 'asc'
-                                    }
-
-                                    $watch('grouping', function () {
-                                        if (! grouping) {
-                                            group = null
-                                            direction = null
-
-                                            return
-                                        }
-
-                                        ;[group, direction] = grouping.split(':')
-                                        direction ??= 'asc'
-                                    })
-
-                                    $watch('direction', function () {
-                                        grouping = group ? `${group}:${direction}` : null
-                                    })
-
-                                    $watch('group', function (newGroup, oldGroup) {
-                                        if (! newGroup) {
-                                            direction = null
-                                            grouping = group ? `${group}:${direction}` : null
-
-                                            return
-                                        }
-
-                                        if (oldGroup) {
-                                            grouping = group ? `${group}:${direction}` : null
-
-                                            return
-                                        }
-
-                                        direction ??= 'asc'
-                                        grouping = group ? `${group}:${direction}` : null
-                                    })
-                                "
+                                x-data="filamentTableGrouping"
                                 class="fi-ta-grouping-settings"
                             >
                                 <x-filament::dropdown
@@ -837,11 +793,7 @@
                         }}
 
                         <span
-                            x-text="
-                                window.pluralize(@js(__('filament-tables::table.selection_indicator.selected_count')), getSelectedRecordsCount(), {
-                                    count: new Intl.NumberFormat(@js(str_replace('_', '-', app()->getLocale()))).format(getSelectedRecordsCount()),
-                                })
-                            "
+                            x-text="getSelectedRecordsCountLabel(@js(__('filament-tables::table.selection_indicator.selected_count')), @js(str_replace('_', '-', app()->getLocale())))"
                         ></span>
                     </div>
 
@@ -991,28 +943,9 @@
                                             @if ($isSelectionDisabled)
                                                 disabled
                                             @elseif ($maxSelectableRecords)
-                                                x-bind:disabled="
-                                                    const recordsOnPage = getRecordsOnPage()
-
-                                                    return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
-                                                "
+                                                x-bind:disabled="shouldDisableSelectRecordsOnPageCheckbox()"
                                             @endif
-                                            x-bind:checked="
-                                                const recordsOnPage = getRecordsOnPage()
-
-                                                if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                    $el.checked = true
-                                                    $el.indeterminate = false
-
-                                                    return 'checked'
-                                                }
-
-                                                $el.checked = false
-                                                $el.indeterminate =
-                                                    recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
-
-                                                return null
-                                            "
+                                            x-bind:checked="syncSelectRecordsOnPageCheckbox($el)"
                                             x-on:click="toggleSelectRecordsOnPage"
                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ Str::random() }}"
@@ -1024,48 +957,7 @@
 
                                     @if (count($sortableColumns))
                                         <div
-                                            x-data="{
-                                                sort: $wire.$entangle('tableSort', true),
-                                                column: null,
-                                                direction: null,
-                                            }"
-                                            x-init="
-                                                if (sort) {
-                                                    ;[column, direction] = sort.split(':')
-                                                    direction ??= 'asc'
-                                                }
-
-                                                $watch('sort', function () {
-                                                    if (! sort) {
-                                                        return
-                                                    }
-
-                                                    ;[column, direction] = sort.split(':')
-                                                    direction ??= 'asc'
-                                                })
-
-                                                $watch('direction', function () {
-                                                    sort = column ? `${column}:${direction}` : null
-                                                })
-
-                                                $watch('column', function (newColumn, oldColumn) {
-                                                    if (! newColumn) {
-                                                        direction = null
-                                                        sort = column ? `${column}:${direction}` : null
-
-                                                        return
-                                                    }
-
-                                                    if (oldColumn) {
-                                                        sort = column ? `${column}:${direction}` : null
-
-                                                        return
-                                                    }
-
-                                                    direction = 'asc'
-                                                    sort = column ? `${column}:${direction}` : null
-                                                })
-                                            "
+                                            x-data="filamentTableSort"
                                             class="fi-ta-sorting-settings"
                                         >
                                             <label>
@@ -1219,7 +1111,7 @@
                                                 aria-hidden="true"
                                             @endif
                                             @if ($isRecordGroupCollapsible)
-                                                x-on:click="if (! $event.target.closest('.fi-ta-group-checkbox')) toggleCollapseGroup(@js($recordGroupTitle))"
+                                                x-on:click="! $event.target.closest('.fi-ta-group-checkbox') && toggleCollapseGroup(@js($recordGroupTitle))"
                                                 @if (! $hasSummary)
                                                     x-bind:class="{ 'fi-collapsed': isGroupCollapsed(@js($recordGroupTitle)) }"
                                                 @endif
@@ -1237,31 +1129,12 @@
                                                     @if ($isSelectionDisabled)
                                                         disabled
                                                     @else
-                                                        x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
+                                                        x-on:click="toggleSelectGroupRecords($el)"
                                                         @if ($maxSelectableRecords)
-                                                            x-bind:disabled="
-                                                                const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                                return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
-                                                            "
+                                                            x-bind:disabled="shouldDisableSelectGroupRecordsCheckbox($el)"
                                                         @endif
                                                     @endif
-                                                    x-bind:checked="
-                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
-                                                            $el.checked = true
-                                                            $el.indeterminate = false
-
-                                                            return 'checked'
-                                                        }
-
-                                                        $el.checked = false
-                                                        $el.indeterminate =
-                                                            recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
-
-                                                        return null
-                                                    "
+                                                    x-bind:checked="syncSelectGroupRecordsCheckbox($el)"
                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                     wire:loading.attr="disabled"
                                                     wire:target="{{ $loadingTargetsWireTarget }}"
@@ -1584,48 +1457,7 @@
                                         >
                                             @if (count($sortableColumns))
                                                 <div
-                                                    x-data="{
-                                                        sort: $wire.$entangle('tableSort', true),
-                                                        column: null,
-                                                        direction: null,
-                                                    }"
-                                                    x-init="
-                                                        if (sort) {
-                                                            ;[column, direction] = sort.split(':')
-                                                            direction ??= 'asc'
-                                                        }
-
-                                                        $watch('sort', function () {
-                                                            if (! sort) {
-                                                                return
-                                                            }
-
-                                                            ;[column, direction] = sort.split(':')
-                                                            direction ??= 'asc'
-                                                        })
-
-                                                        $watch('direction', function () {
-                                                            sort = column ? `${column}:${direction}` : null
-                                                        })
-
-                                                        $watch('column', function (newColumn, oldColumn) {
-                                                            if (! newColumn) {
-                                                                direction = null
-                                                                sort = column ? `${column}:${direction}` : null
-
-                                                                return
-                                                            }
-
-                                                            if (oldColumn) {
-                                                                sort = column ? `${column}:${direction}` : null
-
-                                                                return
-                                                            }
-
-                                                            direction = 'asc'
-                                                            sort = column ? `${column}:${direction}` : null
-                                                        })
-                                                    "
+                                                    x-data="filamentTableSort"
                                                     class="fi-ta-table-stacked-sorting"
                                                 >
                                                     <label>
@@ -1690,28 +1522,9 @@
                                                     @if ($isSelectionDisabled)
                                                         disabled
                                                     @elseif ($maxSelectableRecords)
-                                                        x-bind:disabled="
-                                                            const recordsOnPage = getRecordsOnPage()
-
-                                                            return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
-                                                        "
+                                                        x-bind:disabled="shouldDisableSelectRecordsOnPageCheckbox()"
                                                     @endif
-                                                    x-bind:checked="
-                                                        const recordsOnPage = getRecordsOnPage()
-
-                                                        if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                            $el.checked = true
-                                                            $el.indeterminate = false
-
-                                                            return 'checked'
-                                                        }
-
-                                                        $el.checked = false
-                                                        $el.indeterminate =
-                                                            recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
-
-                                                        return null
-                                                    "
+                                                    x-bind:checked="syncSelectRecordsOnPageCheckbox($el)"
                                                     x-on:click="toggleSelectRecordsOnPage"
                                                     {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                     wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.stacked.{{ Str::random() }}"
@@ -1816,28 +1629,9 @@
                                                             @if ($isSelectionDisabled)
                                                                 disabled
                                                             @elseif ($maxSelectableRecords)
-                                                                x-bind:disabled="
-                                                                    const recordsOnPage = getRecordsOnPage()
-
-                                                                    return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
-                                                                "
+                                                                x-bind:disabled="shouldDisableSelectRecordsOnPageCheckbox()"
                                                             @endif
-                                                            x-bind:checked="
-                                                                const recordsOnPage = getRecordsOnPage()
-
-                                                                if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                                    $el.checked = true
-                                                                    $el.indeterminate = false
-
-                                                                    return 'checked'
-                                                                }
-
-                                                                $el.checked = false
-                                                                $el.indeterminate =
-                                                                    recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
-
-                                                                return null
-                                                            "
+                                                            x-bind:checked="syncSelectRecordsOnPageCheckbox($el)"
                                                             x-on:click="toggleSelectRecordsOnPage"
                                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ Str::random() }}"
@@ -2017,28 +1811,9 @@
                                                         @if ($isSelectionDisabled)
                                                             disabled
                                                         @elseif ($maxSelectableRecords)
-                                                            x-bind:disabled="
-                                                                const recordsOnPage = getRecordsOnPage()
-
-                                                                return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
-                                                            "
+                                                            x-bind:disabled="shouldDisableSelectRecordsOnPageCheckbox()"
                                                         @endif
-                                                        x-bind:checked="
-                                                            const recordsOnPage = getRecordsOnPage()
-
-                                                            if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                                $el.checked = true
-                                                                $el.indeterminate = false
-
-                                                                return 'checked'
-                                                            }
-
-                                                            $el.checked = false
-                                                            $el.indeterminate =
-                                                                recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
-
-                                                            return null
-                                                        "
+                                                        x-bind:checked="syncSelectRecordsOnPageCheckbox($el)"
                                                         x-on:click="toggleSelectRecordsOnPage"
                                                         {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                         wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ Str::random() }}"
@@ -2293,31 +2068,12 @@
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
                                                                     @else
-                                                                        x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
+                                                                        x-on:click="toggleSelectGroupRecords($el)"
                                                                         @if ($maxSelectableRecords)
-                                                                            x-bind:disabled="
-                                                                                const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                                                return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
-                                                                            "
+                                                                            x-bind:disabled="shouldDisableSelectGroupRecordsCheckbox($el)"
                                                                         @endif
                                                                     @endif
-                                                                    x-bind:checked="
-                                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
-                                                                            $el.checked = true
-                                                                            $el.indeterminate = false
-
-                                                                            return 'checked'
-                                                                        }
-
-                                                                        $el.checked = false
-                                                                        $el.indeterminate =
-                                                                            recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
-
-                                                                        return null
-                                                                    "
+                                                                    x-bind:checked="syncSelectGroupRecordsCheckbox($el)"
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ $loadingTargetsWireTarget }}"
@@ -2386,31 +2142,12 @@
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
                                                                     @else
-                                                                        x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
+                                                                        x-on:click="toggleSelectGroupRecords($el)"
                                                                         @if ($maxSelectableRecords)
-                                                                            x-bind:disabled="
-                                                                                const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                                                return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
-                                                                            "
+                                                                            x-bind:disabled="shouldDisableSelectGroupRecordsCheckbox($el)"
                                                                         @endif
                                                                     @endif
-                                                                    x-bind:checked="
-                                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
-                                                                            $el.checked = true
-                                                                            $el.indeterminate = false
-
-                                                                            return 'checked'
-                                                                        }
-
-                                                                        $el.checked = false
-                                                                        $el.indeterminate =
-                                                                            recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
-
-                                                                        return null
-                                                                    "
+                                                                    x-bind:checked="syncSelectGroupRecordsCheckbox($el)"
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ $loadingTargetsWireTarget }}"

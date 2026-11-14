@@ -283,6 +283,63 @@ export default function table({
             }
         },
 
+        shouldDisableSelectRecordsOnPageCheckbox() {
+            const recordsOnPage = this.getRecordsOnPage()
+
+            return (
+                recordsOnPage.length &&
+                !this.areRecordsToggleable(recordsOnPage)
+            )
+        },
+
+        syncSelectRecordsOnPageCheckbox(checkbox) {
+            return this.syncSelectRecordsCheckbox(
+                checkbox,
+                this.getRecordsOnPage(),
+            )
+        },
+
+        getGroupSelectableRecordKeys(checkbox) {
+            return JSON.parse(checkbox.dataset.groupSelectableRecordKeys)
+        },
+
+        toggleSelectGroupRecords(checkbox) {
+            this.toggleSelectRecords(
+                this.getGroupSelectableRecordKeys(checkbox),
+            )
+        },
+
+        shouldDisableSelectGroupRecordsCheckbox(checkbox) {
+            const recordsInGroup = this.getGroupSelectableRecordKeys(checkbox)
+
+            return (
+                recordsInGroup.length &&
+                !this.areRecordsToggleable(recordsInGroup)
+            )
+        },
+
+        syncSelectGroupRecordsCheckbox(checkbox) {
+            return this.syncSelectRecordsCheckbox(
+                checkbox,
+                this.getGroupSelectableRecordKeys(checkbox),
+            )
+        },
+
+        syncSelectRecordsCheckbox(checkbox, keys) {
+            if (keys.length && this.areRecordsSelected(keys)) {
+                checkbox.checked = true
+                checkbox.indeterminate = false
+
+                return 'checked'
+            }
+
+            checkbox.checked = false
+            checkbox.indeterminate =
+                keys.length && this.areRecordsPartiallySelected(keys)
+
+            return null
+        },
+
         getSelectedRecordsCount() {
             if (this.isTrackingDeselectedRecords) {
                 return (
@@ -293,6 +350,14 @@ export default function table({
             }
 
             return this.selectedRecords.size
+        },
+
+        getSelectedRecordsCountLabel(label, locale) {
+            const count = this.getSelectedRecordsCount()
+
+            return window.pluralize(label, count, {
+                count: new Intl.NumberFormat(locale).format(count),
+            })
         },
 
         getRecordsOnPage() {

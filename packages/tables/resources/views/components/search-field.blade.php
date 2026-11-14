@@ -46,7 +46,7 @@
                     'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
                     $wireModelAttribute => $wireModel,
                     'x-bind:id' => '$id(\'input\')',
-                    'x-on:keyup' => 'if ($event.key === \'Enter\') { $wire.$refresh() }',
+                    'x-on:keyup' => '$event.key === \'Enter\' && $wire.$refresh()',
                 ], escape: false)
             "
         />
