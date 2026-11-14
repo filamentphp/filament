@@ -57,7 +57,7 @@ return [
 
         'max_rows' => [
             'title' => 'Yüklenen Dosya Çok Büyük',
-            'body' => 'Aynı anda 1\'den fazla satır içeren dosyaları içe aktaramazsınız.|Aynı anda :count\'den fazla satır içeren dosyaları içe aktaramazsınız.',
+            'body' => 'Aynı anda 1\'den fazla satır içeren dosyaları içe aktaramazsınız.|Aynı anda :count satırdan fazlasını içeren dosyaları içe aktaramazsınız.',
         ],
 
         'started' => [
