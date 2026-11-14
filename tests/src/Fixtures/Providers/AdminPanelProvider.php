@@ -52,6 +52,8 @@ use Filament\Tests\Fixtures\Pages\JsComponentBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
 use Filament\Tests\Fixtures\Pages\JsWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueBrowserTest;
+use Filament\Tests\Fixtures\Pages\LazyLoadedRepeatableEntryBrowserTest;
+use Filament\Tests\Fixtures\Pages\LazyLoadedStateBrowserTest;
 use Filament\Tests\Fixtures\Pages\LazySchemaLoadingBrowserTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
@@ -186,6 +188,8 @@ class AdminPanelProvider extends PanelProvider
                 JsFieldFrameworkTest::class,
                 JsWidgetBrowserTest::class,
                 KeyValueBrowserTest::class,
+                LazyLoadedRepeatableEntryBrowserTest::class,
+                LazyLoadedStateBrowserTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
                 ModalBrowserTest::class,

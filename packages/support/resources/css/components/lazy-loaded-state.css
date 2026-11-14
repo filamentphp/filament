@@ -1,0 +1,16 @@
+.fi-lazy-loaded-state-loading,
+.fi-lazy-loaded-state-error {
+    @apply inline-flex items-center gap-x-1.5 align-top text-sm;
+
+    & > .fi-icon {
+        @apply shrink-0;
+    }
+}
+
+.fi-lazy-loaded-state-loading {
+    @apply text-gray-500 dark:text-gray-400;
+}
+
+.fi-lazy-loaded-state-error {
+    @apply text-danger-600 dark:text-danger-400;
+}

@@ -135,6 +135,10 @@ trait HasComponents
                 $componentNestedContainerKey = $nestedContainerKey;
             }
 
+            if (filled($nestedContainerKey)) {
+                $component->prepareChildSchemasForLookup();
+            }
+
             foreach ($component->getChildSchemas() as $childSchema) {
                 $childSchemaName = $childSchema->getKey(isAbsolute: false);
 
@@ -179,7 +183,7 @@ trait HasComponents
             $isAbsoluteKey = true;
         }
 
-        if ($skipComponentsChildContainersWhileSearching) {
+        if (is_string($findComponentUsing) || $skipComponentsChildContainersWhileSearching) {
             foreach ($this->getComponents($withActions, $withHidden) as $component) {
                 if ($findComponentUsing instanceof Closure) {
                     if ($findComponentUsing($component)) {
@@ -216,6 +220,8 @@ trait HasComponents
                 $componentInheritanceKey = $component->getInheritanceKey();
 
                 if (blank($componentInheritanceKey) || str_starts_with($findComponentUsing, "{$componentInheritanceKey}.")) {
+                    $component->prepareChildSchemasForLookup();
+
                     foreach ($component->getChildSchemas($withHidden) as $childSchema) {
                         if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentsChildContainersWhileSearching)) {
                             return $foundComponent;
@@ -227,11 +233,7 @@ trait HasComponents
             return null;
         }
 
-        if (! is_string($findComponentUsing)) {
-            return collect($this->getFlatComponents($withActions, $withHidden))->first($findComponentUsing);
-        }
-
-        return $this->getFlatComponents($withActions, $withHidden, withAbsoluteKeys: true)[$findComponentUsing] ?? null;
+        return collect($this->getFlatComponents($withActions, $withHidden))->first($findComponentUsing);
     }
 
     /**

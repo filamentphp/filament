@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanAggregateRelatedModels;
 use Filament\Support\Concerns\CanGrow;
+use Filament\Support\Concerns\CanLazyLoadState;
 use Filament\Support\Concerns\CanSpanColumns;
 use Filament\Support\Concerns\CanWrapHeader;
 use Filament\Support\Concerns\HasAlignment;
@@ -31,6 +32,7 @@ class Column extends ViewComponent
 {
     use CanAggregateRelatedModels;
     use CanGrow;
+    use CanLazyLoadState;
     use CanSpanColumns;
     use CanWrapHeader;
     use Concerns\BelongsToGroup;
@@ -53,7 +55,9 @@ class Column extends ViewComponent
     use Concerns\HasRowLoop;
     use Concerns\InteractsWithTableQuery;
     use HasAlignment;
-    use HasCellState;
+    use HasCellState {
+        getState as getBaseState;
+    }
     use HasExtraAttributes;
     use HasPlaceholder;
     use HasRelatedRecord;
@@ -91,6 +95,32 @@ class Column extends ViewComponent
     public static function getDefaultName(): ?string
     {
         return null;
+    }
+
+    public function getState(): mixed
+    {
+        if ((! $this->isRenderingLazyLoadedState) && $this->isStateLazyLoaded()) {
+            return null;
+        }
+
+        return $this->getBaseState();
+    }
+
+    public function toHtml(): string
+    {
+        if ((! $this->isRenderingLazyLoadedState) && $this->isStateLazyLoaded()) {
+            return $this->getLazyLoadedStatePlaceholderHtml('loadTableColumnStates', [
+                'column' => $this->getName(),
+                'record' => $this->getRecordKey(),
+            ]);
+        }
+
+        return parent::toHtml();
+    }
+
+    protected function wrapLazyLoadedStatePlaceholderHtml(string $html): string
+    {
+        return '<div class="fi-ta-state-placeholder">' . $html . '</div>';
     }
 
     public function getTable(): Table
