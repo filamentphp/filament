@@ -228,7 +228,7 @@
 
 <div
     @if (! $isLoaded)
-        wire:init="loadTable"
+        x-intersect.once="$wire.loadTable()"
     @endif
     x-data="filamentTable({
                 areGroupsCollapsedByDefault: @js($areGroupsCollapsedByDefault),

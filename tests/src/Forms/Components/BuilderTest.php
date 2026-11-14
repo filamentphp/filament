@@ -1804,7 +1804,7 @@ describe('browser interactions', function (): void {
         $mediaGroup = '[data-testid="builder"] [role="group"][aria-label="Media"]';
         $searchInput = '[data-testid="builder"] input[type="text"][aria-label][placeholder]';
 
-        $page = visit('/builder-searchable-test?grouped=1')
+        $page = visit('/builder-searchable-browser-test?grouped=1')
             ->assertPresent('[data-testid="builder"]');
 
         $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
@@ -1814,7 +1814,7 @@ describe('browser interactions', function (): void {
             ->assertVisible($mediaGroup)
             ->assertNoAccessibilityIssues();
 
-        visit('/builder-searchable-test?grouped=1')->inDarkMode()
+        visit('/builder-searchable-browser-test?grouped=1')->inDarkMode()
             ->click('[data-testid="add-block"][aria-expanded="false"]')
             ->assertVisible($contentGroup)
             ->assertNoAccessibilityIssues();
@@ -1845,7 +1845,7 @@ describe('browser interactions', function (): void {
     it('keeps blocks collapsed and preserves keyboard focus when reordering', function (string $renderMode): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
-        $url = '/builder-test?reordering=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
+        $url = '/builder-browser-test?reordering=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
         $page = visit($url);
         $firstParagraph = ':nth-match([data-testid="paragraph-text"], 1)';
         $secondParagraph = ':nth-match([data-testid="paragraph-text"], 2)';
@@ -1893,7 +1893,7 @@ describe('browser interactions', function (): void {
     it('provides accessible non-tabbable move actions for collapsed blocks', function (string $renderMode): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
-        $url = '/builder-test?reordering=1&screenReader=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
+        $url = '/builder-browser-test?reordering=1&screenReader=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
         $page = visit($url);
         $controls = '[data-testid="builder"] [data-reorder-direction]';
         $page->assertPresent('[data-testid="builder"]')
@@ -1921,7 +1921,7 @@ describe('browser interactions', function (): void {
         $firstParagraph = ':nth-match([data-testid="paragraph-text"], 1)';
         $secondParagraph = ':nth-match([data-testid="paragraph-text"], 2)';
         $heading = '[data-testid="heading-title"]';
-        $page = visit('/builder-test')
+        $page = visit('/builder-browser-test')
             ->assertPresent('[data-testid="builder"]')
             ->assertNotPresent($paragraph);
 
@@ -1972,7 +1972,7 @@ describe('browser interactions', function (): void {
         $addBlockAction = '[data-testid="add-block"]';
         $noSearchResultsMessage = '[data-testid="builder"] [role="status"]:not([aria-atomic="true"])';
         $searchInput = '[data-testid="builder"] input[type="text"][aria-label][placeholder]';
-        $page = visit('/builder-searchable-test');
+        $page = visit('/builder-searchable-browser-test');
 
         $page
             ->assertPresent('[data-testid="builder"]')
@@ -2027,7 +2027,7 @@ describe('browser interactions', function (): void {
 
         $searchInput = '[data-testid="debounced-builder"] input[type="text"][aria-label][placeholder]';
 
-        $page = visit('/builder-searchable-test')
+        $page = visit('/builder-searchable-browser-test')
             ->assertPresent('[data-testid="debounced-builder"]');
 
         $page->page()->locator('[data-testid="add-debounced-block"][aria-expanded="false"]')->click();
@@ -2051,7 +2051,7 @@ describe('browser interactions', function (): void {
         $modal = '[data-testid="builder-modal"]';
         $addBlockAction = '[data-testid="add-modal-block"]';
         $searchInput = '[data-testid="modal-builder"] .fi-fo-builder-block-picker-search-ctn input';
-        $page = visit('/builder-searchable-test');
+        $page = visit('/builder-searchable-browser-test');
 
         $page
             ->click('[data-testid="modal-builder-trigger"]')
@@ -2090,7 +2090,7 @@ describe('browser interactions', function (): void {
         $this->actingAs(User::factory()->create());
 
         $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
-        $page = visit('/builder-searchable-test');
+        $page = visit('/builder-searchable-browser-test');
 
         $page->assertPresent('[data-testid="builder"]');
 
@@ -2125,7 +2125,7 @@ describe('browser interactions', function (): void {
         $endPicker = '[data-testid="builder"] > .fi-fo-builder-block-picker';
         $betweenPicker = '[data-testid="builder"] .fi-fo-builder-add-between-items-ctn';
 
-        $page = visit('/builder-searchable-test')
+        $page = visit('/builder-searchable-browser-test')
             ->assertPresent('[data-testid="builder"]');
 
         $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
@@ -2166,7 +2166,7 @@ describe('browser interactions', function (): void {
         $this->actingAs(User::factory()->create());
 
         $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
-        $page = visit('/builder-searchable-test')
+        $page = visit('/builder-searchable-browser-test')
             ->click('[data-testid="update-blocks"]');
 
         $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
@@ -2193,7 +2193,7 @@ describe('browser interactions', function (): void {
         $this->actingAs(User::factory()->create());
 
         $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
-        $page = visit('/builder-searchable-test?empty=1&limited=1')
+        $page = visit('/builder-searchable-browser-test?empty=1&limited=1')
             ->assertPresent('[data-testid="builder"]')
             ->assertNotPresent($searchInput);
 
@@ -2230,7 +2230,7 @@ describe('browser interactions', function (): void {
 
         $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
         $option = '[data-testid="builder"] [data-block-label="video"]';
-        $page = visit('/builder-searchable-test');
+        $page = visit('/builder-searchable-browser-test');
 
         $page->assertPresent('[data-testid="builder"]');
 
@@ -2257,7 +2257,7 @@ describe('browser interactions', function (): void {
 
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/builder-searchable-test?notSearchable=' . (int) (! $isSearchable))
+        $page = visit('/builder-searchable-browser-test?notSearchable=' . (int) (! $isSearchable))
             ->assertPresent('[data-testid="builder"]');
 
         $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();

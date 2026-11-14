@@ -10,9 +10,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class BuilderTest extends Page
+class BuilderBrowserTest extends Page
 {
-    protected string $view = 'pages.builder-test';
+    protected string $view = 'pages.builder-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedSquares2x2;
 

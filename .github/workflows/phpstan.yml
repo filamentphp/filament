@@ -62,7 +62,8 @@ jobs:
             "PKSA-d5tc-s1qs-h781": {"on-audit": false},
             "PKSA-3r5d-mb8f-1qw9": {"on-audit": false},
             "PKSA-m5cs-t1y6-qpcs": {"on-audit": false},
-            "PKSA-mdq4-51ck-6kdq": {"on-audit": false}
+            "PKSA-mdq4-51ck-6kdq": {"on-audit": false},
+            "PKSA-yxbx-3c9s-cjt9": {"on-audit": false}
           }'
       - name: Install dependencies
         run: |

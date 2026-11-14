@@ -273,7 +273,7 @@ it('can overwrite all generated Vue files with `--force`', function (): void {
 });
 
 it('installs dependencies and configures Vite for a JavaScript field without duplicating setup', function (string $framework, string $extension, array $dependencies, ?string $plugin, ?string $typeScriptOption): void {
-    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixture/MakeThemeCommandTest/vite-config/standard.js'));
+    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixtures/MakeThemeCommandTest/vite-config/standard.js'));
     File::ensureDirectoryExists(base_path('node_modules/vite'));
     File::put(base_path('node_modules/vite/package.json'), '{"version":"8.3.0"}');
 
@@ -498,7 +498,7 @@ it('requires installed Vite before selecting renderer dependencies', function (b
 })->with([false, true]);
 
 it('uses a compiler compatible with the installed Vite and its supported Node versions', function (string $framework, string $version, array $dependencies): void {
-    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixture/MakeThemeCommandTest/vite-config/standard.js'));
+    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixtures/MakeThemeCommandTest/vite-config/standard.js'));
     File::ensureDirectoryExists(base_path('node_modules/vite'));
     File::put(base_path('node_modules/vite/package.json'), json_encode(['version' => $version]));
 
@@ -566,7 +566,7 @@ it('reuses framework plugin imports without confusing calls outside the plugin a
 ])->with([false, true]);
 
 it('returns failure when compiling the generated field fails', function (): void {
-    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixture/MakeThemeCommandTest/vite-config/standard.js'));
+    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixtures/MakeThemeCommandTest/vite-config/standard.js'));
     Process::fake(static fn (PendingProcess $process) => Process::result(exitCode: ($process->command === ['npm', 'run', 'build']) ? 1 : 0));
 
     $this->artisan('make:filament-form-field', ['name' => 'FailedBuildField', '--react' => true, '--no-interaction' => true])

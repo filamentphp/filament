@@ -111,7 +111,7 @@ it('rejects conflicting frameworks and TypeScript without a renderer', function 
 })->with([[['--react' => true, '--vue' => true]], [['--typescript' => true]]]);
 
 it('installs dependencies and configures Vite for a typed React component', function (): void {
-    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixture/MakeThemeCommandTest/vite-config/standard.js'));
+    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixtures/MakeThemeCommandTest/vite-config/standard.js'));
     $this->artisan('make:filament-schema-component', ['name' => 'SalesChart', '--react' => true, '--typescript' => true, '--pm' => 'yarn', '--no-interaction' => true])
         ->expectsConfirmation('Would you like to compile the component now?', 'yes')
         ->assertSuccessful();
@@ -260,7 +260,7 @@ it('requires installed Vite before selecting renderer dependencies', function (b
 })->with([false, true]);
 
 it('returns failure when compiling the generated component fails', function (): void {
-    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixture/MakeThemeCommandTest/vite-config/standard.js'));
+    File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixtures/MakeThemeCommandTest/vite-config/standard.js'));
     Process::fake(static fn (PendingProcess $process) => Process::result(exitCode: ($process->command === ['npm', 'run', 'build']) ? 1 : 0));
 
     $this->artisan('make:filament-schema-component', ['name' => 'FailedChart', '--react' => true, '--no-interaction' => true])

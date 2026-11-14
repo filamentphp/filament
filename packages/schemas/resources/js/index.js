@@ -86,12 +86,15 @@ document.addEventListener(
 document.addEventListener('alpine:init', () => {
     window.Alpine.data(
         'filamentSchema',
-        ({ livewireId, schemaKey, isLoadingDeferred = false }) => ({
+        ({ livewireId, schemaKey, isLazyLoaded = false }) => ({
             intersectionObserver: null,
-            isLoadingDeferredSchema: false,
+            stopInterceptingSchemaRequest: null,
+            isLoadingSchema: false,
+            hasSchemaLoadingFailed: false,
+            isDestroyed: false,
 
             init() {
-                if (!isLoadingDeferred) {
+                if (!isLazyLoaded) {
                     return
                 }
 
@@ -99,20 +102,72 @@ document.addEventListener('alpine:init', () => {
                     async (entries) => {
                         if (
                             !entries[0]?.isIntersecting ||
-                            this.isLoadingDeferredSchema
+                            this.isLoadingSchema ||
+                            this.isDestroyed
                         ) {
                             return
                         }
 
-                        this.isLoadingDeferredSchema = true
+                        this.isLoadingSchema = true
+                        this.intersectionObserver.disconnect()
+
+                        this.stopInterceptingSchemaRequest =
+                            Livewire.interceptRequest(
+                                ({ request, onError }) => {
+                                    const { components } = request.payload
+
+                                    if (
+                                        !components.some(
+                                            (component) =>
+                                                JSON.parse(component.snapshot)
+                                                    .memo.id === livewireId &&
+                                                component.calls.some(
+                                                    (call) =>
+                                                        call.method ===
+                                                            'loadLazySchema' &&
+                                                        call.params[0] ===
+                                                            schemaKey,
+                                                ),
+                                        )
+                                    ) {
+                                        return
+                                    }
+
+                                    onError(({ response, preventDefault }) => {
+                                        if (
+                                            response.status !== 419 &&
+                                            components.every(
+                                                (component) =>
+                                                    !Object.keys(
+                                                        component.updates,
+                                                    ).length &&
+                                                    component.calls.length &&
+                                                    component.calls.every(
+                                                        (call) =>
+                                                            call.method ===
+                                                            'loadLazySchema',
+                                                    ),
+                                            )
+                                        ) {
+                                            preventDefault()
+                                        }
+                                    })
+                                },
+                            )
 
                         try {
-                            await this.$wire.loadDeferredSchema(schemaKey)
-                            this.intersectionObserver?.disconnect()
+                            await this.$wire.loadLazySchema(schemaKey)
                         } catch {
-                            // Keep observing so leaving and re-entering the viewport retries the request.
+                            if (!this.isDestroyed) {
+                                this.hasSchemaLoadingFailed = true
+                            }
                         } finally {
-                            this.isLoadingDeferredSchema = false
+                            if (!this.isDestroyed) {
+                                this.isLoadingSchema = false
+                            }
+
+                            this.stopInterceptingSchemaRequest?.()
+                            this.stopInterceptingSchemaRequest = null
                         }
                     },
                 )
@@ -198,7 +253,10 @@ document.addEventListener('alpine:init', () => {
             },
 
             destroy() {
+                this.isDestroyed = true
                 this.intersectionObserver?.disconnect()
+                this.stopInterceptingSchemaRequest?.()
+                this.stopInterceptingSchemaRequest = null
             },
         }),
     )

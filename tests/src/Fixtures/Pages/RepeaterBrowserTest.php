@@ -10,9 +10,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class RepeaterTest extends Page
+class RepeaterBrowserTest extends Page
 {
-    protected string $view = 'pages.repeater-test';
+    protected string $view = 'pages.repeater-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedListBullet;
 

@@ -151,7 +151,7 @@ describe('`toEmbeddedHtml()` rendering', function (): void {
     });
 });
 
-describe('deferred rendering', function (): void {
+describe('lazy loading', function (): void {
     it('preserves `lazy()` as the blur binding alias without enabling lazy loading', function (): void {
         $schema = Schema::make()->lazy();
 
@@ -169,13 +169,13 @@ describe('deferred rendering', function (): void {
                 Text::make('Loaded content'),
             ])
             ->extraAttributes([
-                'data-testid' => 'deferred-schema',
+                'data-testid' => 'lazy-loaded-schema',
             ])
             ->{$method}();
 
         expect($schema->toEmbeddedHtml())
             ->toContain('fi-sc-loading')
-            ->toContain('data-testid="deferred-schema"')
+            ->toContain('data-testid="lazy-loaded-schema"')
             ->toContain('wire:partial="schema.form"')
             ->not->toContain('Loaded content');
     })->with(['lazyLoaded', 'deferLoading']);
@@ -217,14 +217,14 @@ describe('deferred rendering', function (): void {
             ->and($schema->isLoadingDeferred())->toBeTrue();
     });
 
-    it('requires deferred child schemas to have a unique key', function (): void {
+    it('requires lazy-loaded child schemas to have a unique key', function (): void {
         $group = Group::make()
             ->schema(
                 Schema::make()
                     ->components([
                         Text::make('Loaded content'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             );
 
         $schema = Schema::make(Livewire::make())
@@ -234,10 +234,10 @@ describe('deferred rendering', function (): void {
         $schema->getComponents();
 
         expect($group->getChildSchema()->toEmbeddedHtml(...))
-            ->toThrow(LogicException::class, 'A deferred schema must have a unique key.');
+            ->toThrow(LogicException::class, 'A lazy-loaded schema must have a unique key.');
     });
 
-    it('requires sibling deferred schemas to have unique keys', function (): void {
+    it('requires sibling lazy-loaded schemas to have unique keys', function (): void {
         $section = Section::make('Details')
             ->key('details')
             ->schema(
@@ -245,14 +245,14 @@ describe('deferred rendering', function (): void {
                     ->components([
                         Text::make('Content'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             )
             ->footer(
                 Schema::make()
                     ->components([
                         Text::make('Footer'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             );
 
         $schema = Schema::make(Livewire::make())
@@ -263,15 +263,15 @@ describe('deferred rendering', function (): void {
         $section->getChildSchema(Section::FOOTER_SCHEMA_KEY)->toEmbeddedHtml();
 
         expect($section->getChildSchema()->toEmbeddedHtml(...))
-            ->toThrow(LogicException::class, 'Multiple deferred schemas are using the key [form.details].');
+            ->toThrow(LogicException::class, 'Multiple lazy-loaded schemas are using the key [form.details].');
     });
 
-    it('requires reused deferred schemas to have unique keys', function (): void {
+    it('requires reused lazy-loaded schemas to have unique keys', function (): void {
         $childSchema = Schema::make()
             ->components([
                 Text::make('Content'),
             ])
-            ->deferLoading();
+            ->lazyLoaded();
 
         $firstGroup = Group::make()
             ->key('details')
@@ -291,10 +291,10 @@ describe('deferred rendering', function (): void {
         $firstGroup->getChildSchema()->toEmbeddedHtml();
 
         expect($secondGroup->getChildSchema()->toEmbeddedHtml(...))
-            ->toThrow(LogicException::class, 'Multiple deferred schemas are using the key [form.details].');
+            ->toThrow(LogicException::class, 'Multiple lazy-loaded schemas are using the key [form.details].');
     });
 
-    it('can use explicit keys for sibling deferred schemas', function (): void {
+    it('can use explicit keys for sibling lazy-loaded schemas', function (): void {
         $section = Section::make('Details')
             ->key('details')
             ->schema(
@@ -302,7 +302,7 @@ describe('deferred rendering', function (): void {
                     ->components([
                         Text::make('Content'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             )
             ->footer(
                 Schema::make()
@@ -310,7 +310,7 @@ describe('deferred rendering', function (): void {
                     ->components([
                         Text::make('Footer'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             );
 
         $schema = Schema::make(Livewire::make())

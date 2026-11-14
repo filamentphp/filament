@@ -57,8 +57,8 @@ describe('stacked on mobile', function (): void {
     });
 });
 
-describe('defer loading', function (): void {
-    it('defaults `isLoadingDeferred()` to `false`', function (): void {
+describe('lazy loading', function (): void {
+    it('defaults `isLazyLoaded()` and its deprecated alias to `false`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->isLoadingDeferred())->toBeFalse()
@@ -83,6 +83,41 @@ describe('defer loading', function (): void {
         };
 
         expect($table->isLoadingDeferred())->toBeTrue();
+    });
+
+    it('loads table records once when the table becomes visible', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create(['title' => 'Viewport table record']);
+
+        $page = visit('/table-render-hooks-browser-test?isTableLazyLoaded=1');
+        $page->page()->context()->addInitScript(<<<'JS'
+            window.tableLoadCalls = [];
+            document.addEventListener('livewire:init', () => {
+                Livewire.interceptRequest(({ request }) => {
+                    window.tableLoadCalls.push(...request.payload.components.flatMap(component => component.calls).filter(call => call.method === 'loadTable'));
+                });
+            });
+            JS);
+        $page->refresh()->assertVisible('[data-testid="lazy-table-section"] [aria-expanded="false"]')
+            ->assertDontSee('Viewport table record');
+
+        expect($page->script('window.tableLoadCalls'))->toBe([]);
+
+        $page->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+        $page->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record');
+
+        expect($page->script('window.tableLoadCalls'))->toHaveCount(1);
+
+        $page->inDarkMode()
+            ->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record')
+            ->assertNoAccessibilityIssues();
     });
 });
 
@@ -1198,11 +1233,11 @@ describe('rendering', function (): void {
         $contentBeforeData = null;
         $contentAfterData = null;
 
-        registerTableContentRenderHooks(DeferredLoadingTableTestComponent::class, $contentBeforeData, $contentAfterData);
+        registerTableContentRenderHooks(LazyLoadedTableTestComponent::class, $contentBeforeData, $contentAfterData);
 
         Post::factory()->create();
 
-        $component = livewire(DeferredLoadingTableTestComponent::class, ['loadingMethod' => $loadingMethod])
+        $component = livewire(LazyLoadedTableTestComponent::class, ['loadingMethod' => $loadingMethod])
             ->assertSuccessful();
 
         expect($contentBeforeData['hasPagination'])->toBeFalse()
@@ -1475,7 +1510,7 @@ class EmptyStateTableTestComponent extends TableTestComponent
     }
 }
 
-class DeferredLoadingTableTestComponent extends TableTestComponent
+class LazyLoadedTableTestComponent extends TableTestComponent
 {
     public string $loadingMethod = 'lazyLoaded';
 

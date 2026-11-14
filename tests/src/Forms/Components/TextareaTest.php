@@ -283,7 +283,7 @@ describe('rendering', function (): void {
 it('can render `Textarea` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/textarea-test');
+    $page = visit('/textarea-browser-test');
 
     $page
         ->assertNoSmoke()

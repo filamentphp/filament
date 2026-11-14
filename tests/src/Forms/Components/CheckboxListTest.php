@@ -927,7 +927,7 @@ describe('browser interactions', function (): void {
     it('can search a `CheckboxList` after disabling it without changing checked values', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/checkbox-list-test');
+        $page = visit('/checkbox-list-browser-test');
 
         $page
             ->assertVisible('[data-testid="checkbox-list-select-all"]')

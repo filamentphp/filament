@@ -587,7 +587,7 @@ describe('browser interactions', function (): void {
     it('can render and type in `TextInput` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/text-input-test', [
+        $page = visit('/text-input-browser-test', [
             'permissions' => ['clipboard-read', 'clipboard-write'],
         ])
             ->type('[data-testid="text-input"] input', 'John Doe');
@@ -605,7 +605,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/text-input-test')
+        visit('/text-input-browser-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
     });
@@ -613,7 +613,7 @@ describe('browser interactions', function (): void {
     it('updates dynamic `numeric()` and `integer()` attributes in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/text-input-test')
+        visit('/text-input-browser-test')
             ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
             ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
             ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
@@ -632,7 +632,7 @@ describe('browser interactions', function (): void {
             ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
             ->assertNoAccessibilityIssues();
 
-        visit('/text-input-test')
+        visit('/text-input-browser-test')
             ->inDarkMode()
             ->click('[data-testid="numeric-defaults-toggle"]')
             ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
@@ -650,7 +650,7 @@ describe('browser interactions', function (): void {
         $showPasswordAction = '[data-testid="show-password"]';
         $hidePasswordAction = '[data-testid="hide-password"]';
 
-        $page = visit('/text-input-test')
+        $page = visit('/text-input-browser-test')
             ->assertValue($input, 'secret-value');
 
         $page
@@ -706,7 +706,7 @@ describe('browser interactions', function (): void {
                 ->assertPresent($fieldShowPasswordAction . ':focus');
         }
 
-        visit('/text-input-test')
+        visit('/text-input-browser-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
     });
@@ -718,7 +718,7 @@ describe('browser interactions', function (): void {
         $showPasswordAction = '[data-testid="show-responsive-password"]:visible';
         $hidePasswordAction = '[data-testid="hide-responsive-password"]:visible';
 
-        $page = visit('/text-input-test')
+        $page = visit('/text-input-browser-test')
             ->resize($width, 812);
 
         $page
@@ -735,7 +735,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/text-input-test')
+        visit('/text-input-browser-test')
             ->inDarkMode()
             ->resize($width, 812)
             ->click($showPasswordAction)

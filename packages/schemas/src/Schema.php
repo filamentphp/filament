@@ -14,6 +14,7 @@ use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
@@ -21,6 +22,7 @@ use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component as LivewireComponent;
 use LogicException;
 
+use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
 
 class Schema extends ViewComponent implements HasEmbeddedView
@@ -190,8 +192,8 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
         $isLazyLoaded = $this->isLazyLoaded();
 
-        if ($isLazyLoaded && (! $this->isDeferredSchemaLoaded())) {
-            return $this->renderDeferredLoadingHtml();
+        if ($isLazyLoaded && (! $this->isLazySchemaLoaded())) {
+            return $this->renderLazyLoadingHtml();
         }
 
         $hasVisibleComponents = false;
@@ -266,30 +268,32 @@ class Schema extends ViewComponent implements HasEmbeddedView
     /**
      * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
      */
-    protected function isDeferredSchemaLoaded(): bool
+    protected function isLazySchemaLoaded(): bool
     {
         $livewire = $this->getLivewire();
 
-        if (! method_exists($livewire, 'isDeferredSchemaLoaded')) {
-            throw new LogicException('Deferred schema loading requires the Livewire component to use the [InteractsWithSchemas] trait.');
+        if (! method_exists($livewire, 'isLazySchemaLoaded')) {
+            throw new LogicException('Lazy schema loading requires the Livewire component to use the [InteractsWithSchemas] trait.');
         }
 
-        return $livewire->isDeferredSchemaLoaded($this);
+        return $livewire->isLazySchemaLoaded($this);
     }
 
     /**
      * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
      */
-    protected function renderDeferredLoadingHtml(): string
+    protected function renderLazyLoadingHtml(): string
     {
         $schemaKey = $this->getKey();
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'wire:partial' => "schema.{$schemaKey}",
-                'x-data' => 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($schemaKey) . ', isLoadingDeferred: true })',
+                'x-data' => 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($schemaKey) . ', isLazyLoaded: true })',
                 'role' => 'status',
+                'x-bind:role' => "hasSchemaLoadingFailed ? 'alert' : 'status'",
                 'aria-busy' => 'true',
+                'x-bind:aria-busy' => "hasSchemaLoadingFailed ? 'false' : 'true'",
             ], escape: false)
             ->class([
                 'fi-sc',
@@ -299,10 +303,17 @@ class Schema extends ViewComponent implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?= generate_loading_indicator_html(size: IconSize::Large)->toHtml() ?>
+            <span x-show="! hasSchemaLoadingFailed" class="fi-sc-loading-indicator">
+                <?= generate_loading_indicator_html(size: IconSize::Small)->toHtml() ?>
 
-            <span class="fi-sr-only">
-                <?= e(__('filament::components/loading-section.label')) ?>
+                <span>
+                    <?= e(__('filament::loading.label')) ?>
+                </span>
+            </span>
+
+            <span x-cloak x-show="hasSchemaLoadingFailed" class="fi-sc-loading-error">
+                <?= generate_icon_html(Heroicon::ExclamationCircle, size: IconSize::Small)->toHtml() ?>
+                <span><?= e(__('filament::loading.error')) ?></span>
             </span>
         </div>
 

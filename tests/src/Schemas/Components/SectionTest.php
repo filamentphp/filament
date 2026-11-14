@@ -970,7 +970,7 @@ it('does not duplicate content classes when a configured supplied `Schema` is cl
         ->toBe(1);
 });
 
-it('renders section content classes on deferred loading placeholders', function (): void {
+it('renders section content classes on lazy loading placeholders', function (): void {
     $extraAttributesEvaluationCount = 0;
     $childSchema = Schema::make()
         ->components([
@@ -981,7 +981,7 @@ it('renders section content classes on deferred loading placeholders', function 
 
             return ['class' => 'custom-content'];
         })
-        ->deferLoading();
+        ->lazyLoaded();
     $section = Section::make('Test')
         ->key('details')
         ->schema($childSchema)

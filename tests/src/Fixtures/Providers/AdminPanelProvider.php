@@ -17,31 +17,30 @@ use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageStaff;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Pages\Actions;
-use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
+use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsBrowserTest;
 use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
 use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusWizardBrowserTest;
-use Filament\Tests\Fixtures\Pages\BuilderSearchableTest;
-use Filament\Tests\Fixtures\Pages\BuilderTest;
+use Filament\Tests\Fixtures\Pages\BuilderBrowserTest;
+use Filament\Tests\Fixtures\Pages\BuilderSearchableBrowserTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
 use Filament\Tests\Fixtures\Pages\ChartWidgetBrowserTest;
-use Filament\Tests\Fixtures\Pages\CheckboxListTest;
-use Filament\Tests\Fixtures\Pages\CheckboxTest;
+use Filament\Tests\Fixtures\Pages\CheckboxBrowserTest;
+use Filament\Tests\Fixtures\Pages\CheckboxListBrowserTest;
 use Filament\Tests\Fixtures\Pages\CodeEditorBrowserTest;
-use Filament\Tests\Fixtures\Pages\ColorPickerTest;
+use Filament\Tests\Fixtures\Pages\ColorPickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnManagerBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnManagerReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
-use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
-use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
+use Filament\Tests\Fixtures\Pages\DateTimePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DissociateBulkActionBrowserTest;
-use Filament\Tests\Fixtures\Pages\DropdownTest;
-use Filament\Tests\Fixtures\Pages\FieldAccessibilityTest;
+use Filament\Tests\Fixtures\Pages\DropdownBrowserTest;
+use Filament\Tests\Fixtures\Pages\FieldAccessibilityBrowserTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
@@ -52,23 +51,24 @@ use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsComponentBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
 use Filament\Tests\Fixtures\Pages\JsWidgetBrowserTest;
-use Filament\Tests\Fixtures\Pages\KeyValueTest;
+use Filament\Tests\Fixtures\Pages\KeyValueBrowserTest;
+use Filament\Tests\Fixtures\Pages\LazySchemaLoadingBrowserTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\NotificationBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputSubmitOnCompletionBrowserTest;
-use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
-use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
-use Filament\Tests\Fixtures\Pages\RadioTest;
-use Filament\Tests\Fixtures\Pages\RepeaterTest;
+use Filament\Tests\Fixtures\Pages\PartialRenderingBrowserTest;
+use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
+use Filament\Tests\Fixtures\Pages\RadioBrowserTest;
+use Filament\Tests\Fixtures\Pages\RepeaterBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SchemaComponentScopeBrowserTest;
 use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
-use Filament\Tests\Fixtures\Pages\SelectTest;
+use Filament\Tests\Fixtures\Pages\SelectBrowserTest;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
 use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
@@ -76,12 +76,12 @@ use Filament\Tests\Fixtures\Pages\TableActionGroupsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\Fixtures\Pages\TableReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
-use Filament\Tests\Fixtures\Pages\TagsInputTest;
-use Filament\Tests\Fixtures\Pages\TextareaTest;
-use Filament\Tests\Fixtures\Pages\TextInputTest;
+use Filament\Tests\Fixtures\Pages\TagsInputBrowserTest;
+use Filament\Tests\Fixtures\Pages\TextareaBrowserTest;
+use Filament\Tests\Fixtures\Pages\TextInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\TimePickerBrowserTest;
-use Filament\Tests\Fixtures\Pages\ToggleButtonsTest;
-use Filament\Tests\Fixtures\Pages\ToggleTest;
+use Filament\Tests\Fixtures\Pages\ToggleBrowserTest;
+use Filament\Tests\Fixtures\Pages\ToggleButtonsBrowserTest;
 use Filament\Tests\Fixtures\Pages\UnsavedChangesAlertBrowserTest;
 use Filament\Tests\Fixtures\Pages\WizardBrowserTest;
 use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
@@ -150,31 +150,31 @@ class AdminPanelProvider extends PanelProvider
                 Actions::class,
                 SchemaComponentScopeBrowserTest::class,
                 ScopedActionsBrowserTest::class,
-                AfterStateUpdatedJsTest::class,
+                AfterStateUpdatedJsBrowserTest::class,
                 AuthorizableSettings::class,
                 AutofocusAfterCreateAnotherTabsModalBrowserTest::class,
                 AutofocusBasicBrowserTest::class,
                 AutofocusBrowserTest::class,
                 AutofocusSecondTabBrowserTest::class,
                 AutofocusWizardBrowserTest::class,
-                BuilderSearchableTest::class,
-                BuilderTest::class,
-                DropdownTest::class,
+                BuilderSearchableBrowserTest::class,
+                BuilderBrowserTest::class,
+                DropdownBrowserTest::class,
                 CalloutBrowserTest::class,
-                CheckboxListTest::class,
+                CheckboxListBrowserTest::class,
                 ChartWidgetBrowserTest::class,
                 CodeEditorBrowserTest::class,
                 ColumnManagerBrowserTest::class,
                 ColumnManagerReorderingBrowserTest::class,
                 ColumnsBrowserTest::class,
-                CheckboxTest::class,
-                ColorPickerTest::class,
+                CheckboxBrowserTest::class,
+                ColorPickerBrowserTest::class,
                 DatabaseNotificationsBrowserTest::class,
                 DatePickerBrowserTest::class,
-                DateTimePickerTest::class,
-                DeferredSchemaLoadingBrowserTest::class,
+                DateTimePickerBrowserTest::class,
+                LazySchemaLoadingBrowserTest::class,
                 DissociateBulkActionBrowserTest::class,
-                FieldAccessibilityTest::class,
+                FieldAccessibilityBrowserTest::class,
                 FileUploadBrowserTest::class,
                 FiltersModalBrowserTest::class,
                 FiltersResetActionBrowserTest::class,
@@ -185,21 +185,21 @@ class AdminPanelProvider extends PanelProvider
                 JsComponentBrowserTest::class,
                 JsFieldFrameworkTest::class,
                 JsWidgetBrowserTest::class,
-                KeyValueTest::class,
+                KeyValueBrowserTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
                 ModalBrowserTest::class,
                 NotificationBrowserTest::class,
                 OneTimeCodeInputBrowserTest::class,
                 OneTimeCodeInputSubmitOnCompletionBrowserTest::class,
-                PartialRenderingTest::class,
-                QueryBuilderTableTest::class,
-                RadioTest::class,
-                RepeaterTest::class,
+                PartialRenderingBrowserTest::class,
+                QueryBuilderTableBrowserTest::class,
+                RadioBrowserTest::class,
+                RepeaterBrowserTest::class,
                 RichEditorBrowserTest::class,
                 RichEditorMinimalControlsBrowserTest::class,
                 SectionBrowserTest::class,
-                SelectTest::class,
+                SelectBrowserTest::class,
                 Settings::class,
                 SliderBrowserTest::class,
                 StatsOverviewWidgetBrowserTest::class,
@@ -207,12 +207,12 @@ class AdminPanelProvider extends PanelProvider
                 TableRenderHooksBrowserTest::class,
                 TableReorderingBrowserTest::class,
                 TabsBrowserTest::class,
-                TagsInputTest::class,
-                TextareaTest::class,
-                TextInputTest::class,
+                TagsInputBrowserTest::class,
+                TextareaBrowserTest::class,
+                TextInputBrowserTest::class,
                 TimePickerBrowserTest::class,
-                ToggleButtonsTest::class,
-                ToggleTest::class,
+                ToggleButtonsBrowserTest::class,
+                ToggleBrowserTest::class,
                 UnsavedChangesAlertBrowserTest::class,
                 WizardBrowserTest::class,
                 UserManagement::class,

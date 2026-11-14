@@ -328,7 +328,7 @@ describe('browser interactions', function (): void {
     it('can add and remove tags in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/tags-input-test')
+        visit('/tags-input-browser-test')
             ->assertCount('[data-testid="separator-tags"] button[aria-label]', 2)
             ->assertPresent(':nth-match([data-testid="separator-tags"] button[aria-label], 1)[aria-label$=": alpha"]')
             ->assertPresent(':nth-match([data-testid="separator-tags"] button[aria-label], 2)[aria-label$=": 0"]')
@@ -353,7 +353,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/tags-input-test')
+        visit('/tags-input-browser-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
     });

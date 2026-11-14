@@ -397,7 +397,7 @@ it('can detect lazy badges through both getter names', function (string $method)
 })->with(['hasLazyLoadedBadges', 'hasDeferredBadges']);
 
 it('can return lazy tab badges through both endpoint names', function (string $method): void {
-    $component = livewire(TabsWithDeferredBadges::class)
+    $component = livewire(TabsWithLazyLoadedBadges::class)
         ->call('callSchemaComponentMethod', 'form.test-tabs', $method)
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1);
@@ -431,7 +431,7 @@ it('respects a `getLazyLoadedTabBadges()` override through both endpoint names',
         }
     });
 
-    $component = livewire(TabsWithDeferredBadges::class)
+    $component = livewire(TabsWithLazyLoadedBadges::class)
         ->call('callSchemaComponentMethod', 'form.test-tabs', $method)
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1)
@@ -684,17 +684,32 @@ it('can render `Tabs` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
-it('loads deferred badges in both tab renderers', function (bool $livewireTabs): void {
+it('loads lazy badges when the tab bar becomes visible in both tab renderers', function (bool $livewireTabs): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/tabs-browser-test?deferred=1&livewire=' . (int) $livewireTabs);
+    $page = visit('/tabs-browser-test?lazy-loaded-badges=1&dropdown=1&livewire=' . (int) $livewireTabs);
+    $page->page()->context()->addInitScript(<<<'JS'
+        window.tabBadgeCalls = [];
+        document.addEventListener('livewire:init', () => {
+            Livewire.interceptRequest(({ request }) => {
+                window.tabBadgeCalls.push(...request.payload.components.flatMap(component => component.calls).filter(call => call.method === 'callSchemaComponentMethod' && call.params[1] === 'getLazyLoadedTabBadges'));
+            });
+        });
+        JS);
+    $page->refresh()->assertVisible('[data-testid="enclosing-dropdown-trigger"]');
 
-    $page->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
+    expect($page->script('window.tabBadgeCalls'))->toBe([]);
+
+    $page->click('[data-testid="enclosing-dropdown-trigger"]')
+        ->assertSeeIn('[data-testid="lazy-loaded-tab"]', 'Available')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
+    expect($page->script('window.tabBadgeCalls'))->toHaveCount(1);
+
     $page->inDarkMode()
-        ->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
+        ->click('[data-testid="enclosing-dropdown-trigger"]')
+        ->assertSeeIn('[data-testid="lazy-loaded-tab"]', 'Available')
         ->assertNoAccessibilityIssues();
 })->with(['Alpine' => false, 'Livewire' => true]);
 
@@ -987,7 +1002,7 @@ it('binds named and general exposed method calls to the active `Tab`', function 
     $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
-class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
+class TabsWithLazyLoadedBadges extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
@@ -1009,7 +1024,7 @@ class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
                         Tab::make('Normal Tab')
                             ->badge(10)
                             ->schema([]),
-                        Tab::make('Deferred Tab')
+                        Tab::make('Lazy-loaded Tab')
                             ->badge(static fn (): int => 42)
                             ->lazyLoadedBadge()
                             ->schema([]),

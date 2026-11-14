@@ -125,7 +125,7 @@
                     {{ \Filament\Support\generate_loading_indicator_html() }}
 
                     <span class="fi-sr-only">
-                        {{ __('filament::components/loading-section.label') }}
+                        {{ __('filament::loading.label') }}
                     </span>
                 </div>
             @endif
