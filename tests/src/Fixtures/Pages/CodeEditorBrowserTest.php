@@ -20,8 +20,16 @@ class CodeEditorBrowserTest extends Page
 
     public ?array $data = [];
 
+    public ?string $language = null;
+
+    public bool $isDisabled = false;
+
+    public ?string $savedCode = null;
+
     public function mount(): void
     {
+        $this->language = request()->boolean('customLanguage') ? '/code-editor-language.js' : null;
+        $this->isDisabled = request()->boolean('disabled');
         $this->form->fill();
     }
 
@@ -30,13 +38,15 @@ class CodeEditorBrowserTest extends Page
         return $form
             ->schema([
                 CodeEditor::make('code')
-                    ->label('Test Code Editor'),
+                    ->label('Test Code Editor')
+                    ->language($this->language)
+                    ->disabled($this->isDisabled),
             ])
             ->statePath('data');
     }
 
     public function save(): void
     {
-        $this->form->getState();
+        $this->savedCode = $this->form->getState()['code'] ?? null;
     }
 }
