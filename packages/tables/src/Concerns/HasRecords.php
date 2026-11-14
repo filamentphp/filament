@@ -352,6 +352,7 @@ trait HasRecords
     public function flushCachedTableRecords(): void
     {
         $this->cachedTableRecords = null;
+        $this->cachedSelectableTableRecordKeys = [];
     }
 
     /**

@@ -381,6 +381,26 @@ public function table(Table $table): Table
 }
 ```
 
+To work out how many records can be selected across all pages, Filament has to load every filtered record and pass it to this callback. On large tables, use the `selectableRecordsQuery()` method instead. It adds the condition to the database query, so Filament can count the selectable records with a single `COUNT` query:
+
+```php
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            // ...
+        ])
+        ->selectableRecordsQuery(
+            fn (Builder $query): Builder => $query->where('status', Status::Enabled),
+        );
+}
+```
+
+The query also limits which records a bulk action receives. If you use both methods, a record must satisfy both to be selectable.
+
 ### Limiting the number of selectable records
 
 You may restrict how many records the user can select in total:
@@ -457,7 +477,7 @@ You can still loop through the `$records` collection as normal, but the collecti
 
 Chunking does not limit the total number of records processed. You can combine it with [`maxSelectableRecords()`](#limiting-the-number-of-selectable-records) to limit the selection size. Avoid collecting the entire lazy collection into memory, as this removes the memory benefit of chunking.
 
-For bounded selections, Filament loads the selected keys into memory before fetching the models in chunks. Sorting determines which records fall within the limit, but chunked traversal uses primary-key or pivot-key order. If you use `checkIfRecordIsSelectableUsing()`, Filament must also load models to evaluate that callback when calculating the initial selection total.
+For bounded selections, Filament loads the selected keys into memory before fetching the models in chunks. Sorting determines which records fall within the limit, but chunked traversal uses primary-key or pivot-key order. If you use `checkIfRecordIsSelectableUsing()`, Filament must also load models to evaluate that callback when calculating the initial selection total. Use [`selectableRecordsQuery()`](#disabling-bulk-actions-for-some-rows) to avoid this.
 
 You can also prevent Filament from fetching the Eloquent models in the first place, and instead just pass the IDs of the selected records to the `action()` function. This is useful if you are processing a large number of records, and you don't need to load them into memory:
 
