@@ -12,11 +12,11 @@ return [
 
             'add' => [
 
-                'label' => ':label\'e Ekle',
+                'label' => ':Label listesine ekle',
 
                 'modal' => [
 
-                    'heading' => ':label\'e Ekle',
+                    'heading' => ':Label listesine ekle',
 
                     'actions' => [
 
@@ -36,7 +36,7 @@ return [
 
                 'modal' => [
 
-                    'heading' => ':label\'e Ekle',
+                    'heading' => ':Label listesine ekle',
 
                     'actions' => [
 
@@ -396,7 +396,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => ':label\'e ekle',
+                'label' => ':Label listesine ekle',
             ],
 
             'add_between' => [
