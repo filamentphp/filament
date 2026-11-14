@@ -47,6 +47,7 @@ use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\get_query_orders;
 
 class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixes, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
@@ -1042,7 +1043,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $relationshipTitleAttribute = $this->getRelationshipTitleAttribute();
 
-        if (empty($relationshipQuery->getQuery()->orders)) {
+        if (blank(get_query_orders($relationshipQuery))) {
             $relationshipOrderByAttribute = $relationshipTitleAttribute;
 
             if (str_contains($relationshipOrderByAttribute, ' as ')) {
@@ -1156,7 +1157,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $relationshipTitleAttribute = $this->getRelationshipTitleAttribute();
 
-        if (empty($relationshipQuery->getQuery()->orders)) {
+        if (blank(get_query_orders($relationshipQuery))) {
             $relationshipOrderByAttribute = $relationshipTitleAttribute;
 
             if (str_contains($relationshipOrderByAttribute, ' as ')) {
@@ -1454,7 +1455,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $databaseConnection = $query->getConnection();
 
         $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
-        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection);
 
         $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchPattern): Builder {
             $isFirst = true;

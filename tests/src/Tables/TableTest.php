@@ -24,7 +24,9 @@ use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -529,6 +531,72 @@ describe('sorting', function (): void {
             ->call('applyTableColumnManager', $tableColumns)
             ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
     })->with(['asc', 'desc']);
+
+    it('uses `getOrders()` to preserve custom-driver key sorting without changing its native order representation', function (array $orders, string $defaultDirection, array $expectedOrders): void {
+        $databaseConnection = new Connection(null, config: ['driver' => 'custom']);
+        $baseQuery = new class($databaseConnection) extends QueryBuilder
+        {
+            public function orderBy($column, $direction = 'asc')
+            {
+                $this->orders[$column] = $direction === 'desc' ? -1 : 1;
+
+                return $this;
+            }
+        };
+
+        $query = new class($baseQuery) extends Builder
+        {
+            /**
+             * @return array<array{column: string, direction: string}>
+             */
+            public function getOrders(): array
+            {
+                $orders = [];
+
+                foreach ($this->getQuery()->orders ?? [] as $column => $direction) {
+                    $orders[] = ['column' => $column, 'direction' => $direction === -1 ? 'desc' : 'asc'];
+                }
+
+                return $orders;
+            }
+        };
+        $query->setModel(new Post);
+
+        foreach ($orders as $column => $direction) {
+            $query->orderBy($column, $direction === -1 ? 'desc' : 'asc');
+        }
+
+        $livewire = livewire(TableTestComponent::class)->instance();
+        $livewire->getTable()->query($query)->defaultSort(null, $defaultDirection);
+
+        expect($livewire->getFilteredSortedTableQuery()->getQuery()->orders)->toBe($expectedOrders);
+    })->with([
+        'unqualified descending key' => [['id' => -1], 'asc', ['id' => -1]],
+        'qualified descending key' => [['posts.id' => -1], 'asc', ['posts.id' => -1]],
+        'secondary descending key' => [['title' => 1, 'posts.id' => -1], 'asc', ['title' => 1, 'posts.id' => -1]],
+        'ascending key with descending default' => [['posts.id' => 1], 'desc', ['posts.id' => 1]],
+        'missing key' => [['title' => -1], 'asc', ['title' => -1, 'posts.id' => 1]],
+        'no orders' => [[], 'desc', ['posts.id' => -1]],
+    ]);
+
+    it('does not use `getOrders()` for a supported database driver', function (): void {
+        $firstPost = Post::factory()->create();
+        $secondPost = Post::factory()->create();
+
+        $query = new class(Post::query()->getQuery()) extends Builder
+        {
+            public function getOrders(): array
+            {
+                throw new LogicException('Supported database drivers must use their native order clauses.');
+            }
+        };
+        $query->setModel(new Post)->orderBy('id', 'desc');
+
+        $livewire = livewire(TableTestComponent::class)->instance();
+        $livewire->getTable()->query($query);
+
+        expect($livewire->getFilteredSortedTableQuery()->get()->modelKeys())->toBe([$secondPost->getKey(), $firstPost->getKey()]);
+    });
 });
 
 describe('pagination', function (): void {

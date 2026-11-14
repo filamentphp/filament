@@ -9,8 +9,12 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCursorPagination;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -225,6 +229,165 @@ describe('group summary rendering', function (): void {
     });
 });
 
+describe('custom database summaries', function (): void {
+    beforeEach(function (): void {
+        $databaseConnection = DB::connection();
+
+        config()->set('database.connections.native-summary', ['driver' => 'native-summary']);
+        DB::extend('native-summary', static function () use ($databaseConnection): Connection {
+            $connection = new class($databaseConnection->getPdo(), $databaseConnection->getDatabaseName(), $databaseConnection->getTablePrefix(), ['driver' => 'native-summary', 'name' => 'native-summary']) extends Connection
+            {
+                public function query()
+                {
+                    return new class($this, $this->getQueryGrammar(), $this->getPostProcessor()) extends Builder
+                    {
+                        public function from($table, $as = null)
+                        {
+                            if (! is_string($table)) {
+                                throw new LogicException('This driver does not support SQL subqueries.');
+                            }
+
+                            return parent::from($table, $as);
+                        }
+
+                        public function selectRaw($expression, array $bindings = [])
+                        {
+                            throw new LogicException('This driver does not support raw SQL selections.');
+                        }
+
+                        public function toRawSql()
+                        {
+                            throw new LogicException('This driver does not support compiling SQL.');
+                        }
+                    };
+                }
+            };
+            $connection->setQueryGrammar($databaseConnection->getQueryGrammar());
+            $connection->setPostProcessor($databaseConnection->getPostProcessor());
+
+            return $connection;
+        });
+    });
+
+    it('preserves filters, scopes, page boundaries and summary callbacks without SQL subqueries', function (): void {
+        foreach ([0, 2, 7, 11, 29, 53, 97] as $rating) {
+            Post::factory()->create(['rating' => $rating, 'is_published' => in_array($rating, [2, 11, 53])]);
+        }
+
+        Post::factory()->create(['rating' => 199])->delete();
+
+        $livewire = livewire(TestTableWithNativeSummaries::class)
+            ->set('tableRecordsPerPage', 5)
+            ->assertOk()
+            ->assertTableColumnSummarySet('rating', 'sum', 199)
+            ->assertTableColumnSummarySet('rating', 'average', 199 / 6)
+            ->assertTableColumnSummarySet('rating', 'count', 6)
+            ->assertTableColumnSummarySet('rating', 'range', [2, 97])
+            ->assertTableColumnSummarySet('rating', 'published', 66)
+            ->assertTableColumnSummarySet('rating', 'sum', 197, isCurrentPaginationPageOnly: true)
+            ->assertTableColumnSummarySet('rating', 'average', 197 / 5, isCurrentPaginationPageOnly: true)
+            ->assertTableColumnSummarySet('rating', 'count', 5, isCurrentPaginationPageOnly: true)
+            ->assertTableColumnSummarySet('rating', 'range', [7, 97], isCurrentPaginationPageOnly: true)
+            ->assertTableColumnSummarySet('rating', 'published', 64, isCurrentPaginationPageOnly: true)
+            ->call('gotoPage', 2)
+            ->assertTableColumnSummarySet('rating', 'sum', 2, isCurrentPaginationPageOnly: true)
+            ->assertTableColumnSummarySet('rating', 'count', 1, isCurrentPaginationPageOnly: true)
+            ->assertTableColumnSummarySet('rating', 'sum', 199);
+
+        $iconCounts = $livewire->instance()->getTable()->getColumn('is_published')->getSummarizer('icons')
+            ->query(Post::on('native-summary')->withoutGlobalScopes()->where('rating', 2)->orWhere('rating', 7))
+            ->getState();
+
+        expect(collect($iconCounts)->flatten()->all())->toBe([1, 1]);
+    });
+
+    it('preserves a selected and limited source before applying summary callbacks', function (): void {
+        foreach ([2, 7, 11, 29, 53, 97] as $rating) {
+            Post::factory()->create(['rating' => $rating, 'is_published' => in_array($rating, [2, 11, 53])]);
+        }
+
+        $column = livewire(TestTableWithNativeSummaries::class)->instance()->getTable()->getColumn('rating');
+        $query = Post::on('native-summary')->select(['title', 'rating'])->orderBy('rating', 'desc')->offset(1)->limit(3);
+
+        expect($column->getSummarizer('sum')->query($query)->getState())->toBe(93)
+            ->and($column->getSummarizer('published')->query($query)->getState())->toBe(64)
+            ->and($column->getSummarizer('range')->query($query)->getState())->toEqual([11, 53])
+            ->and($column->getSummarizer('sum')->using(static fn (Builder $query): mixed => $query->max('rating') - $query->min('rating'))->getState())->toBe(42);
+
+        expect($column->getSummarizer('sum')->using(null)->query(static fn (Builder $query): Builder => $query)->getState())->toBe(93);
+
+        $summarizer = $column->getSummarizer('sum')->using(null)
+            ->query(Post::on('native-summary')->where('is_published', true))
+            ->query(static fn (Builder $query): Builder => $query->clone()->where('rating', 11)->orWhere('rating', 29));
+
+        expect($summarizer->getState())->toBe(11);
+
+        expect($summarizer->query(Post::on('native-summary')->withoutGlobalScopes())->query(static fn (Builder $query): Builder => $query)->getState())->toBe(199);
+    });
+
+    it('summarizes empty source windows', function (int $offset, int $limit): void {
+        Post::factory()->create(['rating' => 13]);
+
+        $column = livewire(TestTableWithNativeSummaries::class)->instance()->getTable()->getColumn('rating');
+        $query = Post::on('native-summary')->withoutGlobalScopes()
+            ->where('rating', 13)->orWhere('rating', 17)
+            ->orderBy('id')->offset($offset)->limit($limit);
+
+        expect($column->getSummarizer('sum')->query($query)->getState())->toBe(0)
+            ->and($column->getSummarizer('average')->query($query)->getState())->toBeNull()
+            ->and($column->getSummarizer('count')->query($query)->getState())->toBe(0)
+            ->and($column->getSummarizer('range')->query($query)->getState())->toBe([null, null]);
+    })->with([[0, 0], [10, 5]]);
+
+    it('evaluates visibility for each native summary query', function (): void {
+        Post::factory()->create(['rating' => 13]);
+
+        $summarizer = livewire(TestTableWithNativeSummaries::class)->instance()->getTable()->getColumn('rating')->getSummarizer('sum')
+            ->visible(static fn (Illuminate\Database\Eloquent\Builder $query): bool => $query->count() > 0);
+
+        expect($summarizer->query(Post::on('native-summary')->where('rating', 13))->isVisible())->toBeTrue()
+            ->and($summarizer->query(Post::on('native-summary')->where('rating', 17))->isVisible())->toBeFalse();
+    });
+
+    it('rejects transformed source queries rather than returning misleading native summaries', function (): void {
+        $summarizer = livewire(TestTableWithNativeSummaries::class)->instance()->getTable()->getColumn('rating')->getSummarizer('sum');
+
+        foreach ([
+            Post::on('native-summary')->distinct(),
+            Post::on('native-summary')->groupBy('rating'),
+            Post::on('native-summary')->having('rating', '>', 0),
+            Post::on('native-summary')->union(Post::on('native-summary')),
+            Post::on('native-summary')->unionAll(Post::on('native-summary')),
+        ] as $query) {
+            expect(fn (): mixed => $summarizer->query($query)->getState())->toThrow(LogicException::class, 'Native database summaries do not support');
+        }
+    });
+
+    it('rejects joins only when source pagination cannot preserve joined rows', function (): void {
+        Post::factory()->create(['rating' => 13]);
+        User::factory()->count(2)->create();
+
+        $summarizer = livewire(TestTableWithNativeSummaries::class)->instance()->getTable()->getColumn('rating')->getSummarizer('sum');
+        $query = Post::on('native-summary')->crossJoin('users')->orderBy('posts.id');
+
+        expect($summarizer->query($query)->getState())->toBe(39)
+            ->and(fn (): mixed => $summarizer->query($query->clone()->limit(1))->getState())->toThrow(LogicException::class, 'joins')
+            ->and(fn (): mixed => $summarizer->query($query->clone()->offset(1))->getState())->toThrow(LogicException::class, 'joins');
+    });
+
+    it('renders summaries for ordinary and date groups without SQL grouping', function (string $group): void {
+        Post::factory()->create(['title' => 'First', 'rating' => 13, 'created_at' => '2026-01-01 09:00:00']);
+        Post::factory()->create(['title' => 'First', 'rating' => 17, 'created_at' => '2026-01-01 15:00:00']);
+        Post::factory()->create(['title' => 'Second', 'rating' => 41, 'created_at' => '2026-01-02 09:00:00']);
+
+        $livewire = livewire(TestTableWithNativeSummaries::class)->set('tableGrouping', $group)->assertOk();
+        $table = $livewire->instance()->getTable();
+        $query = $table->getGrouping()->scopeQuery($livewire->instance()->getAllTableSummaryQuery(), Post::query()->oldest('id')->first());
+
+        expect($table->getColumn('rating')->getSummarizer('sum')->query($query)->getState())->toBe(30);
+    })->with(['title', 'created_at']);
+});
+
 describe('responsive summary rendering', function (): void {
     it('renders summaries with unsupported responsive breakpoints', function (): void {
         Post::factory()->create();
@@ -241,6 +404,33 @@ describe('responsive summary rendering', function (): void {
             ->assertOk();
     });
 });
+
+class TestTableWithNativeSummaries extends PostsTable
+{
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::on('native-summary')->where('rating', '>', 0))
+            ->defaultSort('id', 'desc')
+            ->groups([
+                Tables\Grouping\Group::make('title'),
+                Tables\Grouping\Group::make('created_at')->date(),
+            ])
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\IconColumn::make('is_published')->boolean()->summarize(
+                    Tables\Columns\Summarizers\Count::make('icons')->icons(),
+                ),
+                Tables\Columns\TextColumn::make('rating')->summarize([
+                    Tables\Columns\Summarizers\Sum::make('sum'),
+                    Tables\Columns\Summarizers\Average::make('average'),
+                    Tables\Columns\Summarizers\Count::make('count'),
+                    Tables\Columns\Summarizers\Range::make('range'),
+                    Tables\Columns\Summarizers\Sum::make('published')->query(static fn (Builder $query): Builder => $query->where('is_published', true)),
+                ]),
+            ]);
+    }
+}
 
 class TestTableWithResponsiveSummaryFallbacks extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {

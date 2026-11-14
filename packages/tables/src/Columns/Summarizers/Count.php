@@ -43,7 +43,7 @@ class Count extends Summarizer
         $state = [];
 
         foreach ($query->clone()->distinct()->pluck($attribute) as $value) {
-            $column->record($this->getQuery()->getModel()->setKeyName($attribute)->setAttribute($attribute, $value));
+            $column->record((clone $this->getQuery()->getModel())->setKeyName($attribute)->setAttribute($attribute, $value));
             $column->clearCachedState();
             $columnState = $column->getState();
             $column->clearCachedState();
