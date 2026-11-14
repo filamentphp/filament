@@ -9,9 +9,9 @@ use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class AfterStateUpdatedJsTest extends Page
+class AfterStateUpdatedJsBrowserTest extends Page
 {
-    protected string $view = 'pages.after-state-updated-js-test';
+    protected string $view = 'pages.after-state-updated-js-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 

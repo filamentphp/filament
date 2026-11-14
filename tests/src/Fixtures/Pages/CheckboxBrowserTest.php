@@ -8,9 +8,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class CheckboxTest extends Page
+class CheckboxBrowserTest extends Page
 {
-    protected string $view = 'pages.checkbox-test';
+    protected string $view = 'pages.checkbox-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedCheckCircle;
 

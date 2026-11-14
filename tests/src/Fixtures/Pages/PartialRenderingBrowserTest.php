@@ -13,9 +13,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
 
-class PartialRenderingTest extends Page
+class PartialRenderingBrowserTest extends Page
 {
-    protected string $view = 'pages.partial-rendering-test';
+    protected string $view = 'pages.partial-rendering-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 

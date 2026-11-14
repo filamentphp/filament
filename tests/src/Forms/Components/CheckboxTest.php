@@ -206,7 +206,7 @@ it('can render with a custom `label()`', function (): void {
 it('can render `Checkbox` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/checkbox-test');
+    $page = visit('/checkbox-browser-test');
 
     $page->check('[data-testid="checkbox"]')
         ->assertChecked('[data-testid="checkbox"]')

@@ -249,7 +249,7 @@ describe('rendering', function (): void {
 it('can render `Radio` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/radio-test');
+    $page = visit('/radio-browser-test');
 
     $page
         ->assertNoSmoke()

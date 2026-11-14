@@ -9,9 +9,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
 
-class ToggleButtonsTest extends Page
+class ToggleButtonsBrowserTest extends Page
 {
-    protected string $view = 'pages.toggle-buttons-test';
+    protected string $view = 'pages.toggle-buttons-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
