@@ -151,7 +151,7 @@ describe('`toEmbeddedHtml()` rendering', function (): void {
     });
 });
 
-describe('deferred rendering', function (): void {
+describe('lazy loading', function (): void {
     it('preserves `lazy()` as the blur binding alias without enabling lazy loading', function (): void {
         $schema = Schema::make()->lazy();
 
@@ -169,13 +169,13 @@ describe('deferred rendering', function (): void {
                 Text::make('Loaded content'),
             ])
             ->extraAttributes([
-                'data-testid' => 'deferred-schema',
+                'data-testid' => 'lazy-loaded-schema',
             ])
             ->{$method}();
 
         expect($schema->toEmbeddedHtml())
             ->toContain('fi-sc-loading')
-            ->toContain('data-testid="deferred-schema"')
+            ->toContain('data-testid="lazy-loaded-schema"')
             ->toContain('wire:partial="schema.form"')
             ->not->toContain('Loaded content');
     })->with(['lazyLoaded', 'deferLoading']);
@@ -217,14 +217,14 @@ describe('deferred rendering', function (): void {
             ->and($schema->isLoadingDeferred())->toBeTrue();
     });
 
-    it('requires deferred child schemas to have a unique key', function (): void {
+    it('requires lazy-loaded child schemas to have a unique key', function (): void {
         $group = Group::make()
             ->schema(
                 Schema::make()
                     ->components([
                         Text::make('Loaded content'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             );
 
         $schema = Schema::make(Livewire::make())
@@ -245,14 +245,14 @@ describe('deferred rendering', function (): void {
                     ->components([
                         Text::make('Content'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             )
             ->footer(
                 Schema::make()
                     ->components([
                         Text::make('Footer'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             );
 
         $schema = Schema::make(Livewire::make())
@@ -271,7 +271,7 @@ describe('deferred rendering', function (): void {
             ->components([
                 Text::make('Content'),
             ])
-            ->deferLoading();
+            ->lazyLoaded();
 
         $firstGroup = Group::make()
             ->key('details')
@@ -302,7 +302,7 @@ describe('deferred rendering', function (): void {
                     ->components([
                         Text::make('Content'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             )
             ->footer(
                 Schema::make()
@@ -310,7 +310,7 @@ describe('deferred rendering', function (): void {
                     ->components([
                         Text::make('Footer'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             );
 
         $schema = Schema::make(Livewire::make())

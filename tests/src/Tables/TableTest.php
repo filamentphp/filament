@@ -57,8 +57,8 @@ describe('stacked on mobile', function (): void {
     });
 });
 
-describe('defer loading', function (): void {
-    it('defaults `isLoadingDeferred()` to `false`', function (): void {
+describe('lazy loading', function (): void {
+    it('defaults `isLazyLoaded()` and its deprecated alias to `false`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->isLoadingDeferred())->toBeFalse()
@@ -1233,11 +1233,11 @@ describe('rendering', function (): void {
         $contentBeforeData = null;
         $contentAfterData = null;
 
-        registerTableContentRenderHooks(DeferredLoadingTableTestComponent::class, $contentBeforeData, $contentAfterData);
+        registerTableContentRenderHooks(LazyLoadedTableTestComponent::class, $contentBeforeData, $contentAfterData);
 
         Post::factory()->create();
 
-        $component = livewire(DeferredLoadingTableTestComponent::class, ['loadingMethod' => $loadingMethod])
+        $component = livewire(LazyLoadedTableTestComponent::class, ['loadingMethod' => $loadingMethod])
             ->assertSuccessful();
 
         expect($contentBeforeData['hasPagination'])->toBeFalse()
@@ -1510,7 +1510,7 @@ class EmptyStateTableTestComponent extends TableTestComponent
     }
 }
 
-class DeferredLoadingTableTestComponent extends TableTestComponent
+class LazyLoadedTableTestComponent extends TableTestComponent
 {
     public string $loadingMethod = 'lazyLoaded';
 

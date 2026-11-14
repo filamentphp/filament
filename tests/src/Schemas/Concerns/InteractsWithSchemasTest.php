@@ -287,8 +287,8 @@ describe('upload validation', function (): void {
     });
 });
 
-it('can load nested deferred schemas independently', function (): void {
-    $livewire = livewire(TestComponentWithDeferredSchemas::class);
+it('can load nested lazy-loaded schemas independently', function (): void {
+    $livewire = livewire(TestComponentWithLazyLoadedSchemas::class);
 
     /** @var Schema $schema */
     $schema = $livewire->instance()->getSchema('form');
@@ -313,15 +313,15 @@ it('can load nested deferred schemas independently', function (): void {
     }
 });
 
-it('does not load deferred schemas beneath hidden components', function (): void {
-    $livewire = livewire(TestComponentWithDeferredSchemas::class)
+it('does not load lazy-loaded schemas beneath hidden components', function (): void {
+    $livewire = livewire(TestComponentWithLazyLoadedSchemas::class)
         ->call('loadLazySchema', 'form.hiddenDetails');
 
     expect($livewire->get('loadedLazySchemas'))->not->toHaveKey('form.hiddenDetails');
 });
 
-it('loads deferred schemas with no visible components', function (): void {
-    $livewire = livewire(TestComponentWithDeferredSchemas::class)
+it('loads lazy-loaded schemas with no visible components', function (): void {
+    $livewire = livewire(TestComponentWithLazyLoadedSchemas::class)
         ->call('loadLazySchema', 'form.emptyDetails');
 
     expect($livewire->get('loadedLazySchemas'))
@@ -330,8 +330,8 @@ it('loads deferred schemas with no visible components', function (): void {
         ->toContain('<div wire:partial="schema.form.emptyDetails" hidden></div>');
 });
 
-it('loads deferred schemas containing validation errors', function (): void {
-    $livewire = livewire(TestComponentWithDeferredSchemas::class)
+it('loads lazy-loaded schemas containing validation errors', function (): void {
+    $livewire = livewire(TestComponentWithLazyLoadedSchemas::class)
         ->call('save')
         ->assertHasFormErrors(['name' => ['required']]);
 
@@ -465,7 +465,7 @@ class RepeaterUploadValidationTestComponent extends Livewire
     }
 }
 
-class TestComponentWithDeferredSchemas extends Livewire
+class TestComponentWithLazyLoadedSchemas extends Livewire
 {
     public function form(Schema $form): Schema
     {
@@ -485,10 +485,10 @@ class TestComponentWithDeferredSchemas extends Livewire
                                             ->components([
                                                 TextInput::make('description'),
                                             ])
-                                            ->deferLoading(),
+                                            ->lazyLoaded(),
                                     ),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Section::make('Hidden details')
                     ->key('hiddenDetails')
@@ -498,7 +498,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                             ->components([
                                 TextInput::make('secret'),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Section::make('Empty details')
                     ->key('emptyDetails')
@@ -508,7 +508,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                                 TextInput::make('empty')
                                     ->hidden(),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Repeater::make('members')
                     ->schema(
@@ -516,7 +516,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                             ->components([
                                 TextInput::make('name'),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     )
                     ->default([
                         ['name' => 'Taylor'],
@@ -529,7 +529,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                                     ->components([
                                         TextInput::make('text'),
                                     ])
-                                    ->deferLoading(),
+                                    ->lazyLoaded(),
                             ),
                     ])
                     ->default([

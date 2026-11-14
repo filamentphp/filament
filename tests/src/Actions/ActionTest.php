@@ -1525,7 +1525,7 @@ describe('actions mounted from a URL query parameter', function (): void {
             ->assertActionNotMounted();
     });
 
-    it('supports opt-in standalone tables and mounts table parents before ordinary nested URL actions', function (bool $deferTableLoading): void {
+    it('supports opt-in standalone tables and mounts table parents before ordinary nested URL actions', function (bool $isTableLazyLoaded): void {
         $post = Post::factory()->create();
         Livewire::withQueryParams([
             'actionComponent' => 'posts',
@@ -1538,9 +1538,9 @@ describe('actions mounted from a URL query parameter', function (): void {
             ->call('mountDefaultActions')
             ->assertActionNotMounted();
 
-        $component = livewire(TableActionTestComponent::class, ['actionUrlIdentifier' => 'posts', 'deferTableLoading' => $deferTableLoading]);
+        $component = livewire(TableActionTestComponent::class, ['actionUrlIdentifier' => 'posts', 'isTableLazyLoaded' => $isTableLazyLoaded]);
 
-        if ($deferTableLoading) {
+        if ($isTableLazyLoaded) {
             $component->call('mountDefaultActions')
                 ->assertActionNotMounted()
                 ->call('loadTable');
@@ -2280,7 +2280,7 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
 
     public ?string $actionUrlIdentifier = null;
 
-    public bool $deferTableLoading = false;
+    public bool $isTableLazyLoaded = false;
 
     public function getDefaultActionUrlIdentifier(): ?string
     {
@@ -2294,7 +2294,7 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
 
     public function table(Table $table): Table
     {
-        return $table->query(Post::query())->deferLoading($this->deferTableLoading)->columns([
+        return $table->query(Post::query())->lazyLoaded($this->isTableLazyLoaded)->columns([
             TextColumn::make('title'),
         ])->recordActions([
             Action::make('view')->requiresConfirmation()->registerModalActions([

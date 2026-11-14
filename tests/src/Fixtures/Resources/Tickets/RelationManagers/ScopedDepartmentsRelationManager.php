@@ -13,7 +13,7 @@ class ScopedDepartmentsRelationManager extends DepartmentsRelationManager
     public string $actionUrlIdentifier = 'departments';
 
     #[Locked]
-    public bool $deferTableLoading = false;
+    public bool $isTableLazyLoaded = false;
 
     public function getDefaultActionUrlIdentifier(): ?string
     {
@@ -34,7 +34,7 @@ class ScopedDepartmentsRelationManager extends DepartmentsRelationManager
     {
         $table = parent::table($table)
             ->modifyQueryUsing(static fn (Builder $query): Builder => $query->where('name', '!=', 'Excluded department'))
-            ->deferLoading($this->deferTableLoading);
+            ->lazyLoaded($this->isTableLazyLoaded);
 
         $table->getAction('view')
             ->extraAttributes(['data-testid' => "{$this->actionUrlIdentifier}-view-trigger"])

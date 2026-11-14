@@ -16,9 +16,9 @@ use Filament\Support\Icons\Heroicon;
 use Livewire\Attributes\Url;
 use RuntimeException;
 
-class DeferredSchemaLoadingBrowserTest extends Page
+class LazySchemaLoadingBrowserTest extends Page
 {
-    protected string $view = 'pages.deferred-schema-loading-browser-test';
+    protected string $view = 'pages.lazy-schema-loading-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedArrowPath;
 
@@ -40,45 +40,45 @@ class DeferredSchemaLoadingBrowserTest extends Page
     {
         return $form
             ->components([
-                Section::make('Concealed deferred details')
-                    ->key('concealedDeferredDetails')
+                Section::make('Concealed lazy-loaded details')
+                    ->key('concealedLazyLoadedDetails')
                     ->collapsed()
                     ->extraAttributes([
-                        'data-testid' => 'concealed-deferred-section',
+                        'data-testid' => 'concealed-lazy-loaded-section',
                     ])
                     ->schema(
                         Schema::make()
                             ->components([
-                                TextInput::make('concealed_deferred_name')
+                                TextInput::make('concealed_lazy_loaded_name')
                                     ->label(fn (): string => $this->shouldFailLoading
                                         ? throw new RuntimeException('Simulated schema loading failure.')
-                                        : 'Concealed deferred name'),
+                                        : 'Concealed lazy-loaded name'),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
-                Text::make('Scroll to load the deferred schema.')
+                Text::make('Scroll to load the lazy-loaded schema.')
                     ->extraAttributes([
-                        'data-testid' => 'deferred-schema-spacer',
+                        'data-testid' => 'lazy-loaded-schema-spacer',
                         'style' => 'display: block; height: 100vh',
                     ]),
-                Section::make('Deferred details')
-                    ->key('deferredDetails')
+                Section::make('Lazy-loaded details')
+                    ->key('lazyLoadedDetails')
                     ->extraAttributes([
-                        'data-testid' => 'viewport-deferred-section',
+                        'data-testid' => 'viewport-lazy-loaded-section',
                     ])
                     ->schema(
                         Schema::make()
                             ->components([
-                                TextInput::make('deferred_name')
-                                    ->label('Deferred name')
+                                TextInput::make('lazy_loaded_name')
+                                    ->label('Lazy-loaded name')
                                     ->required(),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
-                Tabs::make('Deferred tabs')
-                    ->key('deferredTabs')
+                Tabs::make('Lazy-loaded tabs')
+                    ->key('lazyLoadedTabs')
                     ->extraAttributes([
-                        'data-testid' => 'deferred-tabs',
+                        'data-testid' => 'lazy-loaded-tabs',
                     ])
                     ->tabs([
                         Tab::make('Profile')
@@ -87,9 +87,9 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                 Schema::make()
                                     ->components([
                                         TextInput::make('profile_name')
-                                            ->label('Deferred profile name'),
+                                            ->label('Lazy-loaded profile name'),
                                     ])
-                                    ->deferLoading(),
+                                    ->lazyLoaded(),
                             ),
                         Tab::make('Preferences')
                             ->key('preferencesTab')
@@ -97,9 +97,9 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                 Schema::make()
                                     ->components([
                                         TextInput::make('timezone')
-                                            ->label('Deferred timezone'),
+                                            ->label('Lazy-loaded timezone'),
                                     ])
-                                    ->deferLoading(),
+                                    ->lazyLoaded(),
                             ),
                     ]),
                 Wizard::make([
@@ -109,9 +109,9 @@ class DeferredSchemaLoadingBrowserTest extends Page
                             Schema::make()
                                 ->components([
                                     TextInput::make('account_name')
-                                        ->label('Deferred account name'),
+                                        ->label('Lazy-loaded account name'),
                                 ])
-                                ->deferLoading(),
+                                ->lazyLoaded(),
                         ),
                     Step::make('Confirmation')
                         ->key('confirmationStep')
@@ -119,14 +119,14 @@ class DeferredSchemaLoadingBrowserTest extends Page
                             Schema::make()
                                 ->components([
                                     TextInput::make('confirmation_note')
-                                        ->label('Deferred confirmation note'),
+                                        ->label('Lazy-loaded confirmation note'),
                                 ])
-                                ->deferLoading(),
+                                ->lazyLoaded(),
                         ),
                 ])
-                    ->key('deferredWizard')
+                    ->key('lazyLoadedWizard')
                     ->extraAttributes([
-                        'data-testid' => 'deferred-wizard',
+                        'data-testid' => 'lazy-loaded-wizard',
                     ]),
             ])
             ->statePath('data');
