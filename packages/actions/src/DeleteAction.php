@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanUndoDeletion;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class DeleteAction extends Action
 {
     use CanCustomizeProcess;
+    use CanUndoDeletion;
 
     public static function getDefaultName(): ?string
     {
@@ -55,6 +57,10 @@ class DeleteAction extends Action
                 $this->failure();
 
                 return;
+            }
+
+            if (($record = $this->getRecord()) instanceof Model) {
+                $this->rememberUndoableDeletion($record);
             }
 
             $this->success();

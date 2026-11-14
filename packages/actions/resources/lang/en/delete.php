@@ -70,4 +70,18 @@ return [
 
     ],
 
+    'undo' => [
+
+        'label' => 'Undo',
+
+        'notifications' => [
+
+            'failed' => [
+                'title' => 'Undo is no longer available',
+            ],
+
+        ],
+
+    ],
+
 ];
