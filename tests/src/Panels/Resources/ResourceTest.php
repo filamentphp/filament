@@ -2,13 +2,19 @@
 
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\OrderInvoiceResource;
 use Filament\Tests\Fixtures\Resources\Shop\OrderResource;
 use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
+use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 uses(TestCase::class);
 
@@ -132,5 +138,61 @@ describe('URLs', function (): void {
             ->toEndWith('/posts');
         expect(Filament::getResourceUrl($post))
             ->toEndWith('/posts');
+    });
+});
+
+describe('authorization', function (): void {
+    it('denies an allowed authorization response if an overridden `can*()` method returns `false`', function (): void {
+        $resource = new class extends PostResource
+        {
+            public static function canCreate(): bool
+            {
+                return false;
+            }
+
+            public static function canEdit(Model $record): bool
+            {
+                return parent::canEdit($record) && $record->is_published;
+            }
+
+            public static function canView(Model $record): bool
+            {
+                return parent::canView($record) && $record->is_published;
+            }
+        };
+
+        $publishedPost = Post::factory()->create(['is_published' => true]);
+        $unpublishedPost = Post::factory()->create(['is_published' => false]);
+
+        expect($resource::getCreateAuthorizationResponse()->allowed())->toBeFalse();
+        expect(fn () => $resource::authorizeCreate())->toThrow(AuthorizationException::class);
+
+        expect($resource::getEditAuthorizationResponse($publishedPost)->allowed())->toBeTrue();
+        expect($resource::canEdit($publishedPost))->toBeTrue();
+        expect($resource::getEditAuthorizationResponse($unpublishedPost)->allowed())->toBeFalse();
+        expect($resource::canEdit($unpublishedPost))->toBeFalse();
+        expect(fn () => $resource::authorizeEdit($unpublishedPost))->toThrow(AuthorizationException::class);
+
+        expect($resource::getViewAuthorizationResponse($publishedPost)->allowed())->toBeTrue();
+        expect($resource::getViewAuthorizationResponse($unpublishedPost)->allowed())->toBeFalse();
+        expect(fn () => $resource::authorizeView($unpublishedPost))->toThrow(AuthorizationException::class);
+    });
+
+    it('does not allow a denied authorization response if an overridden `can*()` method returns `true`', function (): void {
+        app()->bind(TicketPolicy::class . '::update', fn (): Response => Response::denyAsNotFound());
+
+        $resource = new class extends TicketResource
+        {
+            public static function canEdit(Model $record): bool
+            {
+                return true;
+            }
+        };
+
+        expect($resource::getEditAuthorizationResponse(Ticket::factory()->create()))
+            ->denied()->toBeTrue()
+            ->status()->toBe(404);
+
+        app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
     });
 });
