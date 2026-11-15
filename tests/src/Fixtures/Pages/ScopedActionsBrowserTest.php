@@ -70,7 +70,7 @@ class ScopedActionsBrowserTest extends Page
                     Livewire::make(ScopedDepartmentsRelationManager::class, fn (): array => [
                         'ownerRecord' => Ticket::findOrFail($this->ticket),
                         'pageClass' => EditTicket::class,
-                        'deferTableLoading' => true,
+                        'isTableLazyLoaded' => true,
                     ])->key('departments')->lazyLoaded(),
                     Livewire::make(ScopedDepartmentsRelationManager::class, fn (): array => [
                         'ownerRecord' => Ticket::findOrFail($this->ticket),

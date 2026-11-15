@@ -9,9 +9,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class KeyValueTest extends Page
+class KeyValueBrowserTest extends Page
 {
-    protected string $view = 'pages.key-value-test';
+    protected string $view = 'pages.key-value-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedTableCells;
 

@@ -8,9 +8,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class ColorPickerTest extends Page
+class ColorPickerBrowserTest extends Page
 {
-    protected string $view = 'pages.color-picker-test';
+    protected string $view = 'pages.color-picker-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedSwatch;
 

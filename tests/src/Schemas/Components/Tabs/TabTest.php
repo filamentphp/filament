@@ -282,7 +282,7 @@ describe('icon position', function (): void {
     });
 });
 
-describe('deferred badge', function (): void {
+describe('lazy-loaded badges', function (): void {
     it('defaults `isBadgeLazyLoaded()` to `false`', function (): void {
         $tab = Tab::make('Test');
 

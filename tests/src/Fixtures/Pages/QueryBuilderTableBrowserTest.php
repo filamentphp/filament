@@ -14,7 +14,7 @@ use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 
-class QueryBuilderTableTest extends Page implements HasTable
+class QueryBuilderTableBrowserTest extends Page implements HasTable
 {
     use Tables\Concerns\InteractsWithTable;
 

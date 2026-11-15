@@ -8,9 +8,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class ToggleTest extends Page
+class ToggleBrowserTest extends Page
 {
-    protected string $view = 'pages.toggle-test';
+    protected string $view = 'pages.toggle-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedBolt;
 

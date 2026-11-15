@@ -11,9 +11,9 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class CheckboxListTest extends Page
+class CheckboxListBrowserTest extends Page
 {
-    protected string $view = 'pages.checkbox-list-test';
+    protected string $view = 'pages.checkbox-list-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedQueueList;
 

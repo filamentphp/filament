@@ -8,9 +8,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class TagsInputTest extends Page
+class TagsInputBrowserTest extends Page
 {
-    protected string $view = 'pages.tags-input-test';
+    protected string $view = 'pages.tags-input-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedTag;
 

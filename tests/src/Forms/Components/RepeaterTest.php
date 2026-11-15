@@ -2355,7 +2355,7 @@ describe('browser interactions', function (): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
 
-        $url = '/repeater-test?reordering=' . $view;
+        $url = '/repeater-browser-test?reordering=' . $view;
         $page = visit($url);
         $firstName = ':nth-match([data-testid="item-name"], 1)';
         $secondName = ':nth-match([data-testid="item-name"], 2)';
@@ -2439,7 +2439,7 @@ describe('browser interactions', function (): void {
     it('provides accessible non-tabbable move actions when visible buttons are disabled', function (string $view): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
-        $url = '/repeater-test?reordering=screen-reader-' . $view;
+        $url = '/repeater-browser-test?reordering=screen-reader-' . $view;
         $page = visit($url);
         $controls = '[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)';
         $page->assertCount($controls, 6)
@@ -2460,7 +2460,7 @@ describe('browser interactions', function (): void {
     it('omits fallback move controls when drag is unavailable', function (string $view): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
-        $url = '/repeater-test?reordering=screen-reader-' . $view;
+        $url = '/repeater-browser-test?reordering=screen-reader-' . $view;
         $page = visit($url);
         $page->assertNotPresent('[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)')
             ->assertNoSmoke();
@@ -2474,7 +2474,7 @@ describe('browser interactions', function (): void {
     it('announces confirmed moves and allows reordering after cancelling confirmation', function (): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
-        $url = '/repeater-test?reordering=modal';
+        $url = '/repeater-browser-test?reordering=modal';
         $page = visit($url);
         $firstDown = ':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)';
         $status = '[data-testid="repeater"] > [role="status"]';
@@ -2507,7 +2507,7 @@ describe('browser interactions', function (): void {
     it('leaves custom move handlers in control without locking later ordering', function (string $view): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
-        $url = '/repeater-test?reordering=' . $view;
+        $url = '/repeater-browser-test?reordering=' . $view;
         $page = visit($url);
         $page->assertPresent('[data-testid="repeater"]')
             ->assertNotPresent('[data-testid="custom-refreshed"]');
@@ -2539,7 +2539,7 @@ describe('browser interactions', function (): void {
 
         $firstName = ':nth-match([data-testid="item-name"], 1)';
         $secondName = ':nth-match([data-testid="item-name"], 2)';
-        $page = visit('/repeater-test');
+        $page = visit('/repeater-browser-test');
 
         $page->assertValue($firstName, 'Alpha')
             ->click('[data-testid="add-item"]')

@@ -23,7 +23,7 @@ class TabsBrowserTest extends Page
 
     public ?array $data = [];
 
-    public bool $deferredBadges = false;
+    public bool $hasLazyLoadedBadges = false;
 
     public bool $livewireTabs = false;
 
@@ -62,7 +62,7 @@ class TabsBrowserTest extends Page
         $this->hasDisabledProfileHeader = request()->boolean('disabled-profile');
         $this->hasNativeValidation = request()->boolean('native-validation');
         $this->showRepeater = request()->boolean('repeater');
-        $this->deferredBadges = request()->boolean('deferred');
+        $this->hasLazyLoadedBadges = request()->boolean('lazy-loaded-badges');
         $this->livewireTabs = request()->boolean('livewire');
         $this->form->fill();
     }
@@ -82,9 +82,9 @@ class TabsBrowserTest extends Page
                             ->id('profile-account')
                             ->extraAttributes(fn (): array => $this->hasDisabledProfileHeader ? ['disabled' => true] : [])
                             ->badge('Available')
-                            ->lazyLoadedBadge($this->deferredBadges)
+                            ->lazyLoadedBadge($this->hasLazyLoadedBadges)
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
-                            ->extraAttributes(['data-testid' => 'deferred-tab'], merge: true)
+                            ->extraAttributes(['data-testid' => 'lazy-loaded-tab'], merge: true)
                             ->schema([
                                 TextInput::make('username')
                                     ->label('Username')

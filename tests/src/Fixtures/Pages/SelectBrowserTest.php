@@ -11,9 +11,9 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class SelectTest extends Page
+class SelectBrowserTest extends Page
 {
-    protected string $view = 'pages.select-test';
+    protected string $view = 'pages.select-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedListBullet;
 

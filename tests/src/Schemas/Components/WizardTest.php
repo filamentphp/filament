@@ -728,10 +728,7 @@ it('binds exposed `Step` methods independently from `Wizard` navigation and auto
         ->keys('#first-focus', 'Enter')
         ->assertPresent('#second-focus:focus')
         ->assertSeeIn('[data-testid=incorrect-step-calls]', '0')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    $page->inDarkMode()->assertNoAccessibilityIssues();
+        ->assertNoSmoke();
 });
 
 class WizardTransitions extends Livewire

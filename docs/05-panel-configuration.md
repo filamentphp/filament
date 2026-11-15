@@ -444,7 +444,7 @@ public function panel(Panel $panel): Panel
 
 ## Configuring error notifications
 
-When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behavior using the `errorNotifications(false)` method:
+When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. By default, HTTP `419` responses use Livewire's built-in page expiry handling instead, prompting users to refresh the page. This includes expired sessions and [release token mismatches](deployment#expiring-outdated-pages-after-a-deployment). You can disable error notifications using the `errorNotifications(false)` method:
 
 ```php
 use Filament\Panel;
@@ -495,6 +495,9 @@ public function panel(Panel $panel): Panel
 ```
 
 You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification()` method. A hidden status code will still be caught by filament, but no notification will be shown.
+
+> [!WARNING]
+> Registering or hiding an error notification specifically for HTTP `419` responses replaces Livewire's refresh prompt. If you do this, ensure that users know they need to refresh an expired page, rather than retry the same action.
 
 Alternatively, you can use the `disabledErrorNotification()` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
 

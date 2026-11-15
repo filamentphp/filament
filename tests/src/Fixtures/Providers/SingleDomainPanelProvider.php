@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tests\Fixtures\Providers\Fixtures\Providers;
+namespace Filament\Tests\Fixtures\Providers;
 
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -23,7 +23,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class SingleDomainPanel extends PanelProvider
+class SingleDomainPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {

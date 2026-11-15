@@ -26,9 +26,9 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 
-class FieldAccessibilityTest extends Page
+class FieldAccessibilityBrowserTest extends Page
 {
-    protected string $view = 'pages.field-accessibility-test';
+    protected string $view = 'pages.field-accessibility-browser-test';
 
     protected static bool $shouldRegisterNavigation = false;
 

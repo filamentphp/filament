@@ -12,9 +12,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class DateTimePickerTest extends Page
+class DateTimePickerBrowserTest extends Page
 {
-    protected string $view = 'pages.date-time-picker-test';
+    protected string $view = 'pages.date-time-picker-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedClock;
 

@@ -8,9 +8,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class RadioTest extends Page
+class RadioBrowserTest extends Page
 {
-    protected string $view = 'pages.radio-test';
+    protected string $view = 'pages.radio-browser-test';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedRadio;
 

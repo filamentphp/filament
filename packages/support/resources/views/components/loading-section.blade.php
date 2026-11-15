@@ -20,6 +20,6 @@
     }}
 >
     <span class="fi-sr-only">
-        {{ $loadingLabel ?? __('filament::components/loading-section.label') }}
+        {{ $loadingLabel ?? __('filament::loading.label') }}
     </span>
 </div>
