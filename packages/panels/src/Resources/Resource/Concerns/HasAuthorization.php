@@ -5,7 +5,6 @@ namespace Filament\Resources\Resource\Concerns;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
-use ReflectionMethod;
 use UnitEnum;
 
 use function Filament\get_authorization_response;
@@ -25,11 +24,6 @@ trait HasAuthorization
     protected static bool $shouldCheckPolicyExistence = true;
 
     protected static bool $shouldSkipAuthorization = false;
-
-    /**
-     * @var array<string, array{0: ?Model, 1: Response}>
-     */
-    protected static array $authorizationMethodOverridesInProgress = [];
 
     public static function canAccess(): bool
     {
@@ -56,41 +50,6 @@ trait HasAuthorization
     public static function authorize(string | UnitEnum $action, ?Model $record = null): ?Response
     {
         return static::getAuthorizationResponse($action, $record)->authorize();
-    }
-
-    // Create, edit and view pages used to check `canCreate()`, `canEdit()`
-    // and `canView()`, so resources may override those instead of their
-    // `get*AuthorizationResponse()` counterparts. When an override exists,
-    // it can deny an allowed response.
-    protected static function getAuthorizationResponseUsingMethodOverride(string $method, string $action, ?Model $record = null): Response
-    {
-        $key = static::class . '::' . $method;
-
-        // The override may call the parent `can*()` method, which calls this
-        // method again. Reuse the response computed for the same record.
-        if (array_key_exists($key, static::$authorizationMethodOverridesInProgress)) {
-            [$inProgressRecord, $inProgressResponse] = static::$authorizationMethodOverridesInProgress[$key];
-
-            return ($inProgressRecord === $record) ? $inProgressResponse : static::getAuthorizationResponse($action, $record);
-        }
-
-        $response = static::getAuthorizationResponse($action, $record);
-
-        if ($response->denied()) {
-            return $response;
-        }
-
-        if ((new ReflectionMethod(static::class, $method))->getDeclaringClass()->getName() === self::class) {
-            return $response;
-        }
-
-        static::$authorizationMethodOverridesInProgress[$key] = [$record, $response];
-
-        try {
-            return static::{$method}(...array_filter([$record])) ? $response : Response::deny();
-        } finally {
-            unset(static::$authorizationMethodOverridesInProgress[$key]);
-        }
     }
 
     public static function checkPolicyExistence(bool $condition = true): void
@@ -124,12 +83,12 @@ trait HasAuthorization
 
     public static function getCreateAuthorizationResponse(): Response
     {
-        return static::getAuthorizationResponseUsingMethodOverride('canCreate', 'create');
+        return static::getAuthorizationResponse('create');
     }
 
     public static function getEditAuthorizationResponse(Model $record): Response
     {
-        return static::getAuthorizationResponseUsingMethodOverride('canEdit', 'update', $record);
+        return static::getAuthorizationResponse('update', $record);
     }
 
     public static function getDeleteAuthorizationResponse(Model $record): Response
@@ -174,7 +133,7 @@ trait HasAuthorization
 
     public static function getViewAuthorizationResponse(Model $record): Response
     {
-        return static::getAuthorizationResponseUsingMethodOverride('canView', 'view', $record);
+        return static::getAuthorizationResponse('view', $record);
     }
 
     public static function canViewAny(): bool

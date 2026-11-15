@@ -119,6 +119,27 @@ For individual components, use `preventFormulaInjection(false)` on an export col
 See [export formula injection](../actions/export#csv-formula-injection) and [import failure CSV formula injection](../actions/import#csv-formula-injection).
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Moving resource authorization overrides to response methods</span>
+
+Resource create, edit, and view pages no longer consult overrides of `canCreate()`, `canEdit()` or `canView()`. Move custom authorization into your model policies, or replace those resource overrides with `getCreateAuthorizationResponse()`, `getEditAuthorizationResponse()` and `getViewAuthorizationResponse()`, returning an `Illuminate\Auth\Access\Response` instead of a boolean. Check shared parent resource classes and traits as well.
+
+For example, replace a `canCreate()` override that returns `false` with:
+
+```php
+use Illuminate\Auth\Access\Response;
+
+public static function getCreateAuthorizationResponse(): Response
+{
+    return Response::deny();
+}
+```
+
+For record-specific checks, keep the `Model $record` parameter on the edit and view response methods. If you also check the parent implementation, call its matching `get*AuthorizationResponse()` method and preserve any denied response before applying your custom rules. Return `Response::deny()` to reject an otherwise allowed operation, or return the original response to allow it.
+
+Remove the corresponding `can*()` overrides so boolean checks, page access, and built-in resource actions use the same authorization responses. Existing policy denial messages and HTTP statuses are preserved. The upgrade script does not migrate these custom authorization rules; update them manually before upgrading to avoid allowing access that your old overrides denied.
+</Disclosure>
+
 ### Low-impact changes
 
 <Disclosure open x-show="packages.includes('tables')">
