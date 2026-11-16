@@ -46,6 +46,41 @@ CodeEditor::make('code')
 
 <AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor with syntax highlighting" />
 
+### Loading custom languages
+
+To use a language that is not built in, pass the URL of a JavaScript module to `language()`. Filament loads the module when the editor is initialized.
+
+For example, to highlight Nginx configuration, install its parser and a bundler in your application:
+
+```bash
+npm install --save-dev @codemirror/legacy-modes esbuild
+```
+
+Create `resources/js/code-editor-nginx.js`. The module must export a default function that returns a CodeMirror extension or array of extensions:
+
+```javascript
+import { nginx } from '@codemirror/legacy-modes/mode/nginx'
+
+export default ({ language: { StreamLanguage } }) => StreamLanguage.define(nginx)
+```
+
+Compile it as an ES module into your application's public directory:
+
+```bash
+npx esbuild resources/js/code-editor-nginx.js --bundle --format=esm --outfile=public/js/code-editor-nginx.js
+```
+
+You can now use the module's URL in your field:
+
+```php
+use Filament\Forms\Components\CodeEditor;
+
+CodeEditor::make('configuration')
+    ->language(asset('js/code-editor-nginx.js'))
+```
+
+The function receives the `language`, `state`, and `view` modules from Filament's bundled CodeMirror packages. Use these to construct extensions instead of bundling separate copies of CodeMirror, which can cause compatibility errors.
+
 ## Allowing lines to wrap
 
 By default, long lines in the code editor will create a horizontal scrollbar. If you would like to allow long lines to wrap instead, you may use the `wrap()` method:
