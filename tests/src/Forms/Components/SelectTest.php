@@ -1991,6 +1991,50 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->assertSeeHtml('Select an option...');
     });
+
+    it('renders static options inline in a `native(false)` select', function (): void {
+        livewire(RenderSelectWithStaticNonNativeOptions::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Electronics')
+            ->assertSeeHtml('Clothing');
+    });
+
+    it('does not evaluate or render dynamic options in a `native(false)` select with blank state', function (): void {
+        RenderSearchableSelectWithClosureOptions::$optionsEvaluations = 0;
+
+        livewire(RenderSearchableSelectWithClosureOptions::class)
+            ->assertSuccessful()
+            ->set('data.note', 'Updated')
+            ->assertDontSeeHtml('Electronics')
+            ->assertDontSeeHtml('Clothing');
+
+        expect(RenderSearchableSelectWithClosureOptions::$optionsEvaluations)->toBe(0);
+    });
+
+    it('still returns dynamic options from `getOptionsForJs()` when they are not rendered inline', function (): void {
+        livewire(RenderSearchableSelectWithClosureOptions::class)
+            ->assertFormComponentExists('category', function (Select $select): bool {
+                return $select->getOptionsForJs() === [
+                    ['label' => 'Electronics', 'value' => 'electronics', 'isDisabled' => false],
+                    ['label' => 'Clothing', 'value' => 'clothing', 'isDisabled' => false],
+                ];
+            });
+    });
+
+    it('renders the label of the selected dynamic option without rendering the other options', function (): void {
+        livewire(RenderSearchableSelectWithClosureOptionsAndState::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Clothing')
+            ->assertDontSeeHtml('Electronics');
+    });
+
+    it('renders the labels of the selected dynamic options in a `multiple()` select without rendering the other options', function (): void {
+        livewire(RenderMultipleSelectWithClosureOptionsAndState::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Clothing')
+            ->assertSeeHtml('Books')
+            ->assertDontSeeHtml('Electronics');
+    });
 });
 
 describe('browser interactions', function (): void {
@@ -2175,6 +2219,34 @@ describe('browser interactions', function (): void {
             ->assertSee('Dynamic Option 1')
             ->assertSee('Dynamic Option 2')
             ->assertMissing('[data-testid="dynamic-options-with-results-select"] .fi-select-input-message')
+            ->assertNoSmoke();
+    });
+
+    it('shows the selected label of a dynamic options select and loads its options when opened', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-browser-test')
+            ->assertSeeIn('[data-testid="dynamic-options-with-default-select"] .fi-select-input-btn', 'Preset Option 2')
+            ->assertDontSee('Preset Option 1')
+            ->click('[data-testid="dynamic-options-with-default-select"] .fi-select-input-btn')
+            ->assertSee('Preset Option 1')
+            ->click('Preset Option 1')
+            ->assertSeeIn('[data-testid="dynamic-options-with-default-select"] .fi-select-input-btn', 'Preset Option 1')
+            ->assertNoSmoke();
+    });
+
+    it('shows the selected labels of a dynamic options `multiple()` select and loads its options when opened', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-browser-test')
+            ->assertPresent('[data-testid="multiple-dynamic-options-with-default-select"] [aria-label="Remove Shelf Option 1"]')
+            ->assertPresent('[data-testid="multiple-dynamic-options-with-default-select"] [aria-label="Remove Shelf Option 3"]')
+            ->assertDontSee('Shelf Option 2')
+            ->click('[data-testid="multiple-dynamic-options-with-default-select"] .fi-select-input-btn')
+            ->assertSee('Shelf Option 2')
+            ->click('Shelf Option 2')
+            ->keys('[data-testid="multiple-dynamic-options-with-default-select"] .fi-select-input-btn', 'Escape')
+            ->assertPresent('[data-testid="multiple-dynamic-options-with-default-select"] [aria-label="Remove Shelf Option 2"]')
             ->assertNoSmoke();
     });
 
@@ -3802,6 +3874,65 @@ class RenderSelectWithNonNative extends Livewire
     {
         return $form->schema([
             Select::make('category')->options(['a' => 'A', 'b' => 'B'])->native(false),
+        ])->statePath('data');
+    }
+}
+
+class RenderSelectWithStaticNonNativeOptions extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Select::make('category')
+                ->options(['electronics' => 'Electronics', 'clothing' => 'Clothing'])
+                ->native(false),
+        ])->statePath('data');
+    }
+}
+
+class RenderSearchableSelectWithClosureOptions extends Livewire
+{
+    public static int $optionsEvaluations = 0;
+
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            TextInput::make('note'),
+            Select::make('category')
+                ->options(static function (): array {
+                    self::$optionsEvaluations++;
+
+                    return ['electronics' => 'Electronics', 'clothing' => 'Clothing'];
+                })
+                ->getSearchResultsUsing(static fn (string $search): array => [])
+                ->disableOptionWhen(static fn (string $value): bool => false)
+                ->searchable(),
+        ])->statePath('data');
+    }
+}
+
+class RenderSearchableSelectWithClosureOptionsAndState extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Select::make('category')
+                ->options(static fn (): array => ['electronics' => 'Electronics', 'clothing' => 'Clothing'])
+                ->default('clothing')
+                ->searchable(),
+        ])->statePath('data');
+    }
+}
+
+class RenderMultipleSelectWithClosureOptionsAndState extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Select::make('categories')
+                ->options(static fn (): array => ['electronics' => 'Electronics', 'clothing' => 'Clothing', 'books' => 'Books'])
+                ->default(['clothing', 'books'])
+                ->multiple(),
         ])->statePath('data');
     }
 }
