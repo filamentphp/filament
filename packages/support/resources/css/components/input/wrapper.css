@@ -42,7 +42,7 @@
     }
 
     & .fi-input-wrp-content-ctn,
-    &:not(:has(.fi-input-wrp-content-ctn)) > * {
+    & > :not(.fi-input-wrp-prefix, .fi-input-wrp-suffix) {
         @apply min-w-0 flex-1;
 
         &.fi-input-wrp-content-ctn-ps {
