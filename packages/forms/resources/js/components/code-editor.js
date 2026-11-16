@@ -1,4 +1,6 @@
-import { EditorState, Compartment } from '@codemirror/state'
+import * as CodeMirrorState from '@codemirror/state'
+import * as CodeMirrorView from '@codemirror/view'
+import * as CodeMirrorLanguage from '@codemirror/language'
 import { EditorView, basicSetup } from 'codemirror-v6'
 import { indentWithTab } from '@codemirror/commands'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -19,6 +21,8 @@ import { sql } from '@codemirror/lang-sql'
 import { xml } from '@codemirror/lang-xml'
 import { yaml } from '@codemirror/lang-yaml'
 
+const { EditorState, Compartment } = CodeMirrorState
+
 export default function codeEditorFormComponent({
     canWrap,
     isDisabled,
@@ -32,6 +36,7 @@ export default function codeEditorFormComponent({
 }) {
     return {
         editor: null,
+        languageCompartment: new Compartment(),
         themeCompartment: new Compartment(),
         accessibilityCompartment: new Compartment(),
         accessibilityObserver: null,
@@ -82,7 +87,7 @@ export default function codeEditorFormComponent({
                                 }
                             },
                         }),
-                        ...(languageExtension ? [languageExtension] : []),
+                        this.languageCompartment.of(languageExtension ?? []),
                         this.themeCompartment.of(this.getThemeExtensions()),
                     ],
                 }),
@@ -135,6 +140,10 @@ export default function codeEditorFormComponent({
                 attributes: true,
                 attributeFilter: ['class'],
             })
+
+            if (language && !languageExtension) {
+                this.loadLanguageExtension()
+            }
         },
 
         isDarkMode() {
@@ -166,7 +175,41 @@ export default function codeEditorFormComponent({
                 yaml,
             }
 
-            return extensions[language]?.() || null
+            return Object.prototype.hasOwnProperty.call(extensions, language)
+                ? extensions[language]()
+                : null
+        },
+
+        async loadLanguageExtension() {
+            const editor = this.editor
+
+            try {
+                const url = new URL(language, document.baseURI).href
+                const factory = (await import(url)).default
+
+                if (this.editor !== editor || !this.$el.isConnected) {
+                    return
+                }
+
+                const extension = await factory({
+                    state: CodeMirrorState,
+                    view: CodeMirrorView,
+                    language: CodeMirrorLanguage,
+                })
+
+                if (this.editor !== editor || !this.$el.isConnected) {
+                    return
+                }
+
+                editor.dispatch({
+                    effects: this.languageCompartment.reconfigure(extension),
+                })
+            } catch (error) {
+                console.error(
+                    `Failed to load code editor language from [${language}]:`,
+                    error,
+                )
+            }
         },
 
         destroy() {
