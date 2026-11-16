@@ -9,17 +9,16 @@
         @apply grid min-h-32 place-items-center text-gray-500 dark:text-gray-400;
     }
 
-    & .fi-sc-loading-indicator,
+    & .fi-sc-loading-indicator {
+        @apply grid w-full place-items-center;
+    }
+
     & .fi-sc-loading-error {
-        @apply inline-flex items-center gap-x-1.5 text-sm;
+        @apply text-danger-600 dark:text-danger-400 inline-flex items-center gap-x-1.5 text-sm;
 
         & > .fi-icon {
             @apply shrink-0;
         }
-    }
-
-    & .fi-sc-loading-error {
-        @apply text-danger-600 dark:text-danger-400;
     }
 
     &.fi-inline {

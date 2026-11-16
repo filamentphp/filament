@@ -622,6 +622,37 @@ public function table(Table $table): Table
 }
 ```
 
+### Customizing the initial loading placeholder
+
+You may replace the spinner and loading text shown before a lazy table's records have loaded using `loadingPlaceholder()`:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->lazyLoaded()
+        ->loadingPlaceholder(fn () => view('tables.loading-placeholder'));
+}
+```
+
+You may return a Blade view or an `Illuminate\Support\HtmlString` containing trusted HTML. Filament preserves the table shell and its accessible loading announcement. The custom content is decorative and hidden from assistive technologies, so it should not contain interactive controls.
+
+This placeholder is only shown during the initial lazy load. To show skeletons while already-loaded records are refreshed, use [`loadingSkeleton()`](#displaying-a-loading-skeleton) instead.
+
+To set the initial placeholder globally, call `Table::configureUsing()` in a service provider's `boot()` method:
+
+```php
+use Filament\Tables\Table;
+
+Table::configureUsing(function (Table $table): void {
+    $table->loadingPlaceholder(fn () => view('tables.loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual table to restore the default spinner and loading text.
+
 ## Displaying a loading skeleton
 
 You may display a skeleton over the current table records while pagination, sorting, filtering, or searching updates them using the `loadingSkeleton()` method:

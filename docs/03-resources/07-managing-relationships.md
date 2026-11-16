@@ -1312,6 +1312,10 @@ To disable this behavior, you may override the `$isLazyLoaded` property on the r
 protected static ?bool $isLazyLoaded = false;
 ```
 
+## Customizing the loading placeholder
+
+You may override `getLoadingPlaceholder()` on the relation manager to return a custom Blade view or trusted HTML, just as you can for [lazy widgets](../widgets/overview#customizing-the-loading-placeholder). Filament keeps the outer loading section and its accessible loading announcement.
+
 ## Opening relation manager actions from a URL
 
 Relation managers do not consume page action links by default. To explicitly target a relation manager, override `getDefaultActionUrlIdentifier()` to return a stable identifier:

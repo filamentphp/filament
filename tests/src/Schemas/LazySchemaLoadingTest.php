@@ -66,22 +66,38 @@ it('loads lazy-loaded sections, tabs, and wizard steps as they are revealed', fu
         ->assertNoAccessibilityIssues();
 });
 
-it('shows an accessible inline error when a lazy-loaded schema fails', function (): void {
+it('replaces custom loading content with the loaded schema', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/lazy-schema-loading-browser-test?shouldFailLoading=1');
+    $page = visit('/lazy-schema-loading-browser-test?hasCustomLoadingPlaceholder=1');
+
+    $page->assertPresent('[data-testid="custom-loading-placeholder"]')
+        ->assertNotPresent('#form\.concealedLazyLoadedDetails\.concealed_lazy_loaded_name')
+        ->click('[data-testid="concealed-lazy-loaded-section"] [aria-expanded]')
+        ->assertVisible('#form\.concealedLazyLoadedDetails\.concealed_lazy_loaded_name')
+        ->assertNotPresent('[data-testid="custom-loading-placeholder"]')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+});
+
+it('shows an accessible inline error when a lazy-loaded schema fails', function (bool $hasCustomLoadingPlaceholder): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/lazy-schema-loading-browser-test?shouldFailLoading=1&hasCustomLoadingPlaceholder=' . (int) $hasCustomLoadingPlaceholder);
 
     $page->page()->locator('[data-testid="concealed-lazy-loaded-section"] [aria-expanded]')->click();
     $page->assertVisible('[data-testid="concealed-lazy-loaded-section"] [role="alert"][aria-busy="false"]')
         ->assertNotPresent('#form\\.concealedLazyLoadedDetails\\.concealed_lazy_loaded_name')
+        ->assertMissing('[data-testid="custom-loading-placeholder"]')
         ->assertMissing('dialog[open]')
         ->assertNoAccessibilityIssues();
 
     $darkPage = $page->inDarkMode();
     $darkPage->page()->locator('[data-testid="concealed-lazy-loaded-section"] [aria-expanded]')->click();
     $darkPage->assertVisible('[data-testid="concealed-lazy-loaded-section"] [role="alert"][aria-busy="false"]')
+        ->assertMissing('[data-testid="custom-loading-placeholder"]')
         ->assertNoAccessibilityIssues();
-});
+})->with([false, true]);
 
 it('loads a lazy-loaded schema when it contains a validation error', function (): void {
     $this->actingAs(User::factory()->create());
