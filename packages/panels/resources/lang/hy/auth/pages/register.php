@@ -4,13 +4,13 @@ return [
 
     'title' => 'Գրանցվել',
 
-    'heading' => 'Գրանցել նոր հաշիվ',
+    'heading' => 'Գրանցում',
 
     'actions' => [
 
         'login' => [
             'before' => 'կամ',
-            'label' => 'մուտք գործեք Ձեր հաշվով',
+            'label' => 'մուտք գործել ձեր հաշիվ',
         ],
 
     ],
@@ -27,7 +27,7 @@ return [
 
         'password' => [
             'label' => 'Գաղտնաբառ',
-            'validation_attribute' => 'Գաղտնաբառ',
+            'validation_attribute' => 'գաղտնաբառ',
         ],
 
         'password_confirmation' => [
@@ -37,7 +37,7 @@ return [
         'actions' => [
 
             'register' => [
-                'label' => 'Գրանցել նոր հաշիվ',
+                'label' => 'Գրանցվել',
             ],
 
         ],
