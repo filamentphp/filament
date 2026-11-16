@@ -144,6 +144,30 @@ TableColumn::make('Name')
     ->width('200px')
 ```
 
+## Loading repeatable state lazily
+
+You can [lazy load the state](overview#loading-entry-state-lazily) of a `RepeatableEntry` itself, including nested repeatable entries and independently lazy-loaded children:
+
+```php
+use App\Services\DeliveryService;
+use App\Models\Customer;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
+
+RepeatableEntry::make('deliveries')
+    ->state(fn (Customer $record): array => app(DeliveryService::class)->forCustomer($record))
+    ->lazyLoadedState()
+    ->schema([
+        TextEntry::make('reference'),
+        TextEntry::make('tracking_status')
+            ->lazyLoadedState(),
+    ])
+```
+
+Here, `DeliveryService::forCustomer()` should return delivery data keyed by stable delivery identifiers, with a `reference` and `tracking_status` for each delivery. The parent loads first; its lazy children start loading after their placeholders render. Child actions work normally.
+
+When a later request needs a child, Filament runs the necessary lazy parent loaders again to reconstruct the child using current server-side data. Unrelated lazy parents remain deferred. Grouped parents use their group loader, with only the parent being reconstructed included in `$components` and `$records`. Keep these loaders read-only, and consider application-level caching if reconstructing the parent is expensive. Preserve stable item keys so an action cannot refer to a different item after reordering.
+
 ## Limiting item processing
 
 An unexpectedly large item collection can take a long time to build and render. You can opt in to a processing limit using `maxItemsForProcessing()`:

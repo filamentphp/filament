@@ -21,6 +21,7 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\LazyLoadedRepeatableEntryBrowserTest;
 use Filament\Tests\TestCase;
 use Generator;
 use Illuminate\Support\Collection;
@@ -653,6 +654,116 @@ it('can render `RepeatableEntry` within form schema', function (): void {
         ->assertSeeText('Tag One')
         ->assertSchemaComponentStateSet('tags.1.label', 'Tag Two', 'form')
         ->assertSeeText('Tag Two');
+});
+
+describe('lazy-loaded state', function (): void {
+    it('reconstructs only the requested lazy parents for nested entries and actions', function (bool $grouped): void {
+        $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class, ['grouped' => $grouped]);
+        LazyLoadedRepeatableEntryBrowserTest::$parentLoads = 0;
+        LazyLoadedRepeatableEntryBrowserTest::$packageLoads = 0;
+        LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads = 0;
+
+        $parentKey = 'infolist.deliveries.orders';
+        $packageKey = "{$parentKey}.17.packages";
+        $childKey = "{$packageKey}.box.reference";
+
+        $livewire->call('callSchemaComponentMethod', $parentKey, 'loadState', [[
+            'orders' => ['entry' => $parentKey],
+        ]])->assertReturned(static fn (array $html): bool => str_contains($html['orders'], 'Parcel 1048') && str_contains($html['orders'], $packageKey));
+
+        expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(1)
+            ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(0);
+
+        $livewire->call('callSchemaComponentMethod', $packageKey, 'loadState', [[
+            'packages' => ['entry' => $packageKey],
+        ]])->assertReturned(static fn (array $html): bool => str_contains($html['packages'], $childKey));
+
+        expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(2)
+            ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(1);
+
+        $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[
+            'reference' => ['entry' => $childKey],
+        ]])->assertReturned(static fn (array $html): bool => str_contains($html['reference'], 'Parcel 1048 / box v1'));
+
+        expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(3)
+            ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(2)
+            ->and(LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads)->toBe(0);
+
+        $livewire->mountAction(TestAction::make('selectParcel')->schemaComponent('deliveries.orders.39.packages.box.reference', 'infolist'))
+            ->assertActionMounted(TestAction::make('selectParcel')->schemaComponent('deliveries.orders.39.packages.box.reference', 'infolist'))
+            ->callMountedAction()
+            ->assertSet('selectedParcel', 'Parcel 1056');
+    })->with(['independent parent' => false, 'grouped parent' => true]);
+
+    it('loads lazy item schemas beneath nested lazy parents before resolving their entry state', function (bool $grouped): void {
+        $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class, ['grouped' => $grouped, 'lazyItemSchemas' => true]);
+        LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads = 0;
+
+        $livewire->call('callSchemaComponentMethod', 'infolist.deliveries.orders', 'loadState', [[
+            'orders' => ['entry' => 'infolist.deliveries.orders'],
+        ]])->assertReturned(static fn (array $html): bool => str_contains($html['orders'], 'schema.infolist.deliveries.orders.17'));
+
+        foreach (['infolist.deliveries.orders.17', 'infolist.deliveries.orders.17.packages.box'] as $schemaKey) {
+            $livewire->call('loadLazySchema', $schemaKey);
+
+            expect($livewire->get('loadedLazySchemas'))->toHaveKey($schemaKey, true);
+        }
+
+        $childKey = 'infolist.deliveries.orders.17.packages.box.reference';
+
+        $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[
+            'reference' => ['entry' => $childKey],
+        ]])->assertReturned(static fn (array $html): bool => str_contains($html['reference'], 'Parcel 1048 / box v1'));
+
+        expect(LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads)->toBe(0);
+    })->with(['independent parent' => false, 'grouped parent' => true]);
+
+    it('preserves grouped parent defaults when reconstructing descendants', function (bool $useDefaultOrders): void {
+        $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class, [
+            'useDefaultOrders' => $useDefaultOrders,
+            'useDefaultPackages' => ! $useDefaultOrders,
+        ]);
+        $parentKey = 'infolist.deliveries.orders';
+        $itemKey = $useDefaultOrders ? 'fallback' : '17';
+        $packageKey = "{$parentKey}.{$itemKey}.packages";
+        $childKey = "{$packageKey}.box.reference";
+        $expectedReference = $useDefaultOrders ? 'Fallback parcel / box v1' : 'Fallback box';
+
+        $livewire->call('callSchemaComponentMethod', $parentKey, 'loadState', [[
+            'orders' => ['entry' => $parentKey],
+        ]])->assertReturned(static fn (array $html): bool => str_contains($html['orders'], $packageKey));
+
+        $livewire->call('callSchemaComponentMethod', $packageKey, 'loadState', [[
+            'packages' => ['entry' => $packageKey],
+        ]])->assertReturned(static fn ($html): bool => is_array($html) && str_contains($html['packages'], $childKey));
+
+        $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[
+            'reference' => ['entry' => $childKey],
+        ]])->assertReturned(static fn ($html): bool => is_array($html) && str_contains($html['reference'], $expectedReference));
+    })->with(['null parent state' => true, 'empty nested parent state' => false]);
+
+    it('uses current parent state and visibility when resolving descendants', function (): void {
+        $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class);
+        $childKey = 'infolist.deliveries.orders.17.packages.box.reference';
+
+        $livewire->set('revision', 2)
+            ->call('callSchemaComponentMethod', $childKey, 'loadState', [[
+                'reference' => ['entry' => $childKey],
+            ]])->assertReturned(static fn (array $html): bool => str_contains($html['reference'], 'Parcel 1048 / box v2'));
+
+        $livewire->set('emptyOrders', true)
+            ->call('callSchemaComponentMethod', $childKey, 'loadState', [[]])
+            ->assertReturned(null);
+
+        $livewire->set('emptyOrders', false)->set('hideOrders', true);
+        LazyLoadedRepeatableEntryBrowserTest::$parentLoads = 0;
+        LazyLoadedRepeatableEntryBrowserTest::$packageLoads = 0;
+
+        $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[]])->assertReturned(null);
+
+        expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(0)
+            ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(0);
+    });
 });
 
 class RepeatableEntryWithProcessingLimit extends Component implements HasSchemas

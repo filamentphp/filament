@@ -133,6 +133,43 @@ it('waits for intersection while loading all rendered members of an explicit gro
         ->assertNoAccessibilityIssues();
 });
 
+it('includes deferred parent edits in native lazy requests without losing them', function (): void {
+    $page = visit('/lazy-loaded-state-browser-test');
+
+    $page->page()->context()->addInitScript(<<<'JS'
+        window.lazyLoadedStateUpdates = [];
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('request', ({ options }) => {
+                const request = JSON.parse(options.body);
+                for (const component of request.components) {
+                    window.lazyLoadedStateUpdates.push(component.updates);
+                }
+            });
+        });
+        document.addEventListener('livewire:initialized', () => {
+            const root = document.querySelector('[data-testid="lazy-loaded-state-note"]').closest('[wire\\:id]');
+            Livewire.find(root.getAttribute('wire:id')).$set('note', 'Edited note', false);
+        });
+        JS);
+    $page->refresh();
+
+    $page->assertSee('Individual Alpha v1')
+        ->assertSee('Individual Beta v1')
+        ->assertSee('Independent entry v1')
+        ->assertSee('Column Beta / 2')
+        ->assertSee('First Beta')
+        ->assertSee('Second Beta')
+        ->assertValue('Note', 'Edited note');
+
+    expect($page->script('window.lazyLoadedStateUpdates.slice(0, 7)'))->toBe(array_fill(0, 7, ['note' => 'Edited note']));
+
+    $page->click('Refresh state')
+        ->assertSee('Eager entry: Edited note')
+        ->assertSee('Individual Alpha v2')
+        ->assertValue('Note', 'Edited note')
+        ->assertNoSmoke();
+});
+
 it('keeps other groups responsive after a failure and discards responses for replaced cells', function (): void {
     $page = visit('/lazy-loaded-state-browser-test');
 
@@ -247,43 +284,6 @@ it('loads nested lazy parents and supports their child confirmation actions', fu
         ->assertVisible('[role="alertdialog"] button[type="submit"]')
         ->assertNoAccessibilityIssues();
 })->with(['eager item schemas' => false, 'lazy item schemas' => true]);
-
-it('includes deferred parent edits in native lazy requests without losing them', function (): void {
-    $page = visit('/lazy-loaded-state-browser-test');
-
-    $page->page()->context()->addInitScript(<<<'JS'
-        window.lazyLoadedStateUpdates = [];
-        document.addEventListener('livewire:init', () => {
-            Livewire.hook('request', ({ options }) => {
-                const request = JSON.parse(options.body);
-                for (const component of request.components) {
-                    window.lazyLoadedStateUpdates.push(component.updates);
-                }
-            });
-        });
-        document.addEventListener('livewire:initialized', () => {
-            const root = document.querySelector('[data-testid="lazy-loaded-state-note"]').closest('[wire\\:id]');
-            Livewire.find(root.getAttribute('wire:id')).$set('note', 'Edited note', false);
-        });
-        JS);
-    $page->refresh();
-
-    $page->assertSee('Individual Alpha v1')
-        ->assertSee('Individual Beta v1')
-        ->assertSee('Independent entry v1')
-        ->assertSee('Column Beta / 2')
-        ->assertSee('First Beta')
-        ->assertSee('Second Beta')
-        ->assertValue('Note', 'Edited note');
-
-    expect($page->script('window.lazyLoadedStateUpdates.slice(0, 7)'))->toBe(array_fill(0, 7, ['note' => 'Edited note']));
-
-    $page->click('Refresh state')
-        ->assertSee('Eager entry: Edited note')
-        ->assertSee('Individual Alpha v2')
-        ->assertValue('Note', 'Edited note')
-        ->assertNoSmoke();
-});
 
 it('keeps stale independent and grouped values deferred while their section is collapsed', function (): void {
     $page = visit('/lazy-loaded-state-browser-test?viewport=1');

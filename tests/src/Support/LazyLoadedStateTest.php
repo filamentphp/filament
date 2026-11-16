@@ -2,7 +2,6 @@
 
 namespace Filament\Tests\Support;
 
-use Filament\Actions\Testing\TestAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -13,7 +12,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
-use Filament\Tests\Fixtures\Pages\LazyLoadedRepeatableEntryBrowserTest;
 use Filament\Tests\Fixtures\Pages\LazyLoadedStateBrowserTest;
 use Filament\Tests\TestCase;
 use InvalidArgumentException;
@@ -55,23 +53,6 @@ it('defers state resolution and preserves formatting when loading columns and en
     expect($component->getState())->toBe(['alpha', 'beta']);
 })->with(['column' => [TextColumn::class], 'entry' => [TextEntry::class]]);
 
-it('uses a grouped null value instead of falling back to record state', function (string $type): void {
-    $component = $type::make('value')
-        ->default('Empty result')
-        ->lazyLoadedState(group: LazyLoadedStateGroup::make('null')->state(static fn (): array => ['value' => null]));
-
-    if ($component instanceof TextEntry) {
-        $component->container(Schema::make(Livewire::make())->constantState(['value' => 'Record fallback']));
-    } else {
-        $component->table(livewire(LazyLoadedStateBrowserTest::class)->instance()->getTable())
-            ->record(['__key' => 'example', 'value' => 'Record fallback']);
-    }
-
-    $html = app(LazyLoadedState::class)->render(['value' => $component]);
-
-    expect($html['value'])->toContain('Empty result')->not->toContain('Record fallback');
-})->with(['column' => [TextColumn::class], 'entry' => [TextEntry::class]]);
-
 it('loads a column or row with one keyed loader and no eager state callbacks', function (): void {
     $livewire = livewire(LazyLoadedStateBrowserTest::class)->assertSuccessful();
     LazyLoadedStateBrowserTest::$groupLoads = 0;
@@ -103,114 +84,6 @@ it('loads grouped entries with zero and null values through their normal formatt
     expect(LazyLoadedStateBrowserTest::$groupLoads)->toBe(1);
 });
 
-it('reconstructs only the requested lazy parents for nested entries and actions', function (bool $grouped): void {
-    $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class, ['grouped' => $grouped]);
-    LazyLoadedRepeatableEntryBrowserTest::$parentLoads = 0;
-    LazyLoadedRepeatableEntryBrowserTest::$packageLoads = 0;
-    LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads = 0;
-
-    $parentKey = 'infolist.deliveries.orders';
-    $packageKey = "{$parentKey}.17.packages";
-    $childKey = "{$packageKey}.box.reference";
-
-    $livewire->call('callSchemaComponentMethod', $parentKey, 'loadState', [[
-        'orders' => ['entry' => $parentKey],
-    ]])->assertReturned(static fn (array $html): bool => str_contains($html['orders'], 'Parcel 1048') && str_contains($html['orders'], $packageKey));
-
-    expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(1)
-        ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(0);
-
-    $livewire->call('callSchemaComponentMethod', $packageKey, 'loadState', [[
-        'packages' => ['entry' => $packageKey],
-    ]])->assertReturned(static fn (array $html): bool => str_contains($html['packages'], $childKey));
-
-    expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(2)
-        ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(1);
-
-    $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[
-        'reference' => ['entry' => $childKey],
-    ]])->assertReturned(static fn (array $html): bool => str_contains($html['reference'], 'Parcel 1048 / box v1'));
-
-    expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(3)
-        ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(2)
-        ->and(LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads)->toBe(0);
-
-    $livewire->mountAction(TestAction::make('selectParcel')->schemaComponent('deliveries.orders.39.packages.box.reference', 'infolist'))
-        ->assertActionMounted(TestAction::make('selectParcel')->schemaComponent('deliveries.orders.39.packages.box.reference', 'infolist'))
-        ->callMountedAction()
-        ->assertSet('selectedParcel', 'Parcel 1056');
-})->with(['independent parent' => false, 'grouped parent' => true]);
-
-it('loads lazy item schemas beneath nested lazy parents before resolving their entry state', function (bool $grouped): void {
-    $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class, ['grouped' => $grouped, 'lazyItemSchemas' => true]);
-    LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads = 0;
-
-    $livewire->call('callSchemaComponentMethod', 'infolist.deliveries.orders', 'loadState', [[
-        'orders' => ['entry' => 'infolist.deliveries.orders'],
-    ]])->assertReturned(static fn (array $html): bool => str_contains($html['orders'], 'schema.infolist.deliveries.orders.17'));
-
-    foreach (['infolist.deliveries.orders.17', 'infolist.deliveries.orders.17.packages.box'] as $schemaKey) {
-        $livewire->call('loadLazySchema', $schemaKey);
-
-        expect($livewire->get('loadedLazySchemas'))->toHaveKey($schemaKey, true);
-    }
-
-    $childKey = 'infolist.deliveries.orders.17.packages.box.reference';
-
-    $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[
-        'reference' => ['entry' => $childKey],
-    ]])->assertReturned(static fn (array $html): bool => str_contains($html['reference'], 'Parcel 1048 / box v1'));
-
-    expect(LazyLoadedRepeatableEntryBrowserTest::$unrelatedLoads)->toBe(0);
-})->with(['independent parent' => false, 'grouped parent' => true]);
-
-it('preserves grouped parent defaults when reconstructing descendants', function (bool $useDefaultOrders): void {
-    $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class, [
-        'useDefaultOrders' => $useDefaultOrders,
-        'useDefaultPackages' => ! $useDefaultOrders,
-    ]);
-    $parentKey = 'infolist.deliveries.orders';
-    $itemKey = $useDefaultOrders ? 'fallback' : '17';
-    $packageKey = "{$parentKey}.{$itemKey}.packages";
-    $childKey = "{$packageKey}.box.reference";
-    $expectedReference = $useDefaultOrders ? 'Fallback parcel / box v1' : 'Fallback box';
-
-    $livewire->call('callSchemaComponentMethod', $parentKey, 'loadState', [[
-        'orders' => ['entry' => $parentKey],
-    ]])->assertReturned(static fn (array $html): bool => str_contains($html['orders'], $packageKey));
-
-    $livewire->call('callSchemaComponentMethod', $packageKey, 'loadState', [[
-        'packages' => ['entry' => $packageKey],
-    ]])->assertReturned(static fn ($html): bool => is_array($html) && str_contains($html['packages'], $childKey));
-
-    $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[
-        'reference' => ['entry' => $childKey],
-    ]])->assertReturned(static fn ($html): bool => is_array($html) && str_contains($html['reference'], $expectedReference));
-})->with(['null parent state' => true, 'empty nested parent state' => false]);
-
-it('uses current parent state and visibility when resolving descendants', function (): void {
-    $livewire = livewire(LazyLoadedRepeatableEntryBrowserTest::class);
-    $childKey = 'infolist.deliveries.orders.17.packages.box.reference';
-
-    $livewire->set('revision', 2)
-        ->call('callSchemaComponentMethod', $childKey, 'loadState', [[
-            'reference' => ['entry' => $childKey],
-        ]])->assertReturned(static fn (array $html): bool => str_contains($html['reference'], 'Parcel 1048 / box v2'));
-
-    $livewire->set('emptyOrders', true)
-        ->call('callSchemaComponentMethod', $childKey, 'loadState', [[]])
-        ->assertReturned(null);
-
-    $livewire->set('emptyOrders', false)->set('hideOrders', true);
-    LazyLoadedRepeatableEntryBrowserTest::$parentLoads = 0;
-    LazyLoadedRepeatableEntryBrowserTest::$packageLoads = 0;
-
-    $livewire->call('callSchemaComponentMethod', $childKey, 'loadState', [[]])->assertReturned(null);
-
-    expect(LazyLoadedRepeatableEntryBrowserTest::$parentLoads)->toBe(0)
-        ->and(LazyLoadedRepeatableEntryBrowserTest::$packageLoads)->toBe(0);
-});
-
 it('resolves model groups from the current filtered page with the original row context', function (): void {
     $first = Post::factory()->create(['title' => 'First result']);
     $second = Post::factory()->create(['title' => 'Second result']);
@@ -231,6 +104,23 @@ it('resolves model groups from the current filtered page with the original row c
         ->call('loadTableColumnStates', ['third' => ['column' => 'title', 'record' => (string) $third->getKey()]])
         ->assertReturned(fn (array $html): bool => str_contains($html['third'], '1: Third result'));
 });
+
+it('uses a grouped null value instead of falling back to record state', function (string $type): void {
+    $component = $type::make('value')
+        ->default('Empty result')
+        ->lazyLoadedState(group: LazyLoadedStateGroup::make('null')->state(static fn (): array => ['value' => null]));
+
+    if ($component instanceof TextEntry) {
+        $component->container(Schema::make(Livewire::make())->constantState(['value' => 'Record fallback']));
+    } else {
+        $component->table(livewire(LazyLoadedStateBrowserTest::class)->instance()->getTable())
+            ->record(['__key' => 'example', 'value' => 'Record fallback']);
+    }
+
+    $html = app(LazyLoadedState::class)->render(['value' => $component]);
+
+    expect($html['value'])->toContain('Empty result')->not->toContain('Record fallback');
+})->with(['column' => [TextColumn::class], 'entry' => [TextEntry::class]]);
 
 it('rejects targets which are not configured for the requested lazy group', function (string $method, array $targets): void {
     $arguments = ($method === 'callSchemaComponentMethod')
