@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Վերականգնել Ձեր գաղտնաբառը',
+    'title' => 'Վերականգնել ձեր գաղտնաբառը',
 
-    'heading' => 'Վերականգնել Ձեր գաղտնաբառը',
+    'heading' => 'Վերականգնել ձեր գաղտնաբառը',
 
     'form' => [
 
@@ -14,7 +14,7 @@ return [
 
         'password' => [
             'label' => 'Գաղտնաբառ',
-            'validation_attribute' => 'Գաղտնաբառ',
+            'validation_attribute' => 'գաղտնաբառ',
         ],
 
         'password_confirmation' => [
@@ -24,7 +24,7 @@ return [
         'actions' => [
 
             'reset' => [
-                'label' => 'Գաղտնաբառի վերականգնում',
+                'label' => 'Վերականգնել գաղտնաբառը',
             ],
 
         ],
