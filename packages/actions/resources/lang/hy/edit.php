@@ -8,12 +8,12 @@ return [
 
         'modal' => [
 
-            'heading' => 'Խմբագրել :labelը',
+            'heading' => 'Խմբագրել :label',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'Պահպանել',
+                    'label' => 'Պահպանել փոփոխությունները',
                 ],
 
             ],

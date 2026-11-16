@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Անջատել ընտրվածը',
+        'label' => 'Անջատել ընտրվածները',
 
         'modal' => [
 
-            'heading' => 'Անջատել ընտրված :labelը',
+            'heading' => 'Անջատել ընտրված :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Անջատել ընտրվածը',
+                    'label' => 'Անջատել',
                 ],
 
             ],

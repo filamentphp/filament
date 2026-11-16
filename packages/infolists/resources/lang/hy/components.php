@@ -7,12 +7,17 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Ցույց տալ :count-ից ավելի քիչ',
-                'expand_list' => 'Ցույց տալ :count-ից ավելին',
+                'collapse_list' => 'Ցույց տալ :count-ով պակաս',
+                'expand_list' => 'Ցույց տալ ևս :count',
             ],
 
-            'more_list_items' => 'և :count-ից ավելին',
+            'more_list_items' => 'և ևս :count',
 
+        ],
+
+        'icon' => [
+            'true' => 'Այո',
+            'false' => 'Ոչ',
         ],
 
         'key_value' => [

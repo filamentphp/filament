@@ -312,6 +312,10 @@ return [
 
     ],
 
+    'js_field' => [
+        'failed_to_load' => 'Não foi possível carregar este campo. Recarregue a página para tentar novamente.',
+    ],
+
     'key_value' => [
 
         'actions' => [

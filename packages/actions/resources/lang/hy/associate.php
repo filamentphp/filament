@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Ասոցացնել',
+        'label' => 'Կապակցել',
 
         'modal' => [
 
-            'heading' => 'Ասոցացնել :label',
+            'heading' => 'Կապակցել :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Գրառումներ',
+                    'label' => 'Գրառում',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Ասոցացնել',
+                    'label' => 'Կապակցել',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Ասոցացնել և ասոցացնել մեկ այլ',
+                    'label' => 'Կապակցել և կապակցել ևս մեկը',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'Ասոցացվել է',
+                'title' => 'Կապակցվել է',
             ],
 
         ],
