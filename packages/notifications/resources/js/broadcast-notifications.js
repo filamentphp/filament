@@ -6,6 +6,30 @@ window.setUpFilamentBroadcastNotifications = ({
 }) => {
     let channel
     let isDestroyed = false
+    let isHandlingNotifications = false
+    let pendingNotifications = []
+
+    // Notifications are handled one at a time, so that a burst delivered
+    // together (for example, after a frozen tab resumes) is not bundled into
+    // a single Livewire request that exceeds `payload.max_calls`.
+    const handlePendingNotifications = async () => {
+        if (isHandlingNotifications) {
+            return
+        }
+
+        isHandlingNotifications = true
+
+        while (pendingNotifications.length && !isDestroyed) {
+            try {
+                await onNotification(pendingNotifications.shift())
+            } catch {
+                // Livewire reports failed requests itself, so carry on with the
+                // remaining notifications.
+            }
+        }
+
+        isHandlingNotifications = false
+    }
 
     const handleNotification = (notification) => {
         setTimeout(() => {
@@ -13,7 +37,9 @@ window.setUpFilamentBroadcastNotifications = ({
                 return
             }
 
-            onNotification(notification)
+            pendingNotifications.push(notification)
+
+            handlePendingNotifications()
         }, 500)
     }
 
@@ -30,6 +56,7 @@ window.setUpFilamentBroadcastNotifications = ({
 
     $wire.__instance.addCleanup(() => {
         isDestroyed = true
+        pendingNotifications = []
         window.removeEventListener('EchoLoaded', registerEchoListener)
         channel?.stopListening(event, handleNotification)
     })
