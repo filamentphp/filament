@@ -4,9 +4,8 @@ title: Getting started
 
 Once you have [installed Filament](introduction/installation#installing-the-panel-builder), you can start building your application.
 
-<Aside variant="info">
-    This guide is for the Filament panel builder. If you are looking to use the Filament UI components outside of a panel, visit the [Components](components) documentation.
-</Aside>
+> [!NOTE]
+> This guide is for the Filament panel builder. If you are looking to use the Filament UI components outside of a panel, visit the [Components](components) documentation.
 
 To start, visit `/admin` and sign in with a user account. You will be redirected to the default dashboard of the panel.
 

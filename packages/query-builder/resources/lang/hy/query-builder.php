@@ -14,8 +14,13 @@ return [
 
             'label' => 'Խմբեր',
 
+            'group' => [
+                'label' => 'Խումբ',
+            ],
+
             'block' => [
-                'label' => 'Տարանջատում (կամ)',
+                'label' => '«Կամ» պայման',
+                'picker_group' => 'Տրամաբանություն',
                 'or' => 'կամ',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(Կանոններ չկան)',
+
+    'max_rules_reached_tooltip' => 'Դուք հասել եք կանոնների առավելագույն քանակին՝ :count։',
 
     'item_separators' => [
         'and' => 'և',
@@ -84,8 +91,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը :date-ից հետո է',
-                    'inverse' => ':attribute :date-ից հետո չէ ',
+                    'direct' => ':attribute :date-ից հետո է',
+                    'inverse' => ':attribute :date-ից հետո չէ',
                 ],
 
             ],
@@ -99,7 +106,7 @@ return [
 
                 'summary' => [
                     'direct' => ':attribute :date-ից առաջ է',
-                    'inverse' => ':attribute :date-ից առաջ է',
+                    'inverse' => ':attribute :date-ից առաջ չէ',
                 ],
 
             ],
@@ -112,8 +119,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը :date է',
-                    'inverse' => ':attributeը :date չէ',
+                    'direct' => ':attribute :date է',
+                    'inverse' => ':attribute :date չէ',
                 ],
 
             ],
@@ -126,8 +133,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը :month է',
-                    'inverse' => ':attributeը :month չէ',
+                    'direct' => ':attribute :month է',
+                    'inverse' => ':attribute :month չէ',
                 ],
 
             ],
@@ -140,16 +147,60 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը :year է',
-                    'inverse' => ':attributeը :year չէ',
+                    'direct' => ':attribute :year է',
+                    'inverse' => ':attribute :year չէ',
                 ],
 
+            ],
+
+            'unit_labels' => [
+                'second' => 'Վայրկյաններ',
+                'minute' => 'Րոպեներ',
+                'hour' => 'Ժամեր',
+                'day' => 'Օրեր',
+                'week' => 'Շաբաթներ',
+                'month' => 'Ամիսներ',
+                'quarter' => 'Եռամսյակներ',
+                'year' => 'Տարիներ',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Վերջին տասնամյակ',
+                'past_5_years' => 'Վերջին 5 տարի',
+                'past_2_years' => 'Վերջին 2 տարի',
+                'past_year' => 'Վերջին տարի',
+                'past_6_months' => 'Վերջին 6 ամիս',
+                'past_quarter' => 'Վերջին եռամսյակ',
+                'past_month' => 'Վերջին ամիս',
+                'past_2_weeks' => 'Վերջին 2 շաբաթ',
+                'past_week' => 'Վերջին շաբաթ',
+                'past_hour' => 'Վերջին ժամ',
+                'past_minute' => 'Վերջին րոպե',
+                'this_decade' => 'Այս տասնամյակ',
+                'this_year' => 'Այս տարի',
+                'this_quarter' => 'Այս եռամսյակ',
+                'this_month' => 'Այս ամիս',
+                'today' => 'Այսօր',
+                'this_hour' => 'Այս ժամ',
+                'this_minute' => 'Այս րոպե',
+                'next_minute' => 'Հաջորդ րոպե',
+                'next_hour' => 'Հաջորդ ժամ',
+                'next_week' => 'Հաջորդ շաբաթ',
+                'next_2_weeks' => 'Հաջորդ 2 շաբաթ',
+                'next_month' => 'Հաջորդ ամիս',
+                'next_quarter' => 'Հաջորդ եռամսյակ',
+                'next_6_months' => 'Հաջորդ 6 ամիս',
+                'next_year' => 'Հաջորդ տարի',
+                'next_2_years' => 'Հաջորդ 2 տարի',
+                'next_5_years' => 'Հաջորդ 5 տարի',
+                'next_decade' => 'Հաջորդ տասնամյակ',
+                'custom' => 'Անհատական',
             ],
 
             'form' => [
 
                 'date' => [
-                    'label' => 'Օր',
+                    'label' => 'Ամսաթիվ',
                 ],
 
                 'month' => [
@@ -158,6 +209,40 @@ return [
 
                 'year' => [
                     'label' => 'Տարի',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Ամսաթվի տեսակ',
+
+                    'options' => [
+                        'absolute' => 'Որոշակի ամսաթիվ',
+                        'relative' => 'Սահող ժամանակահատված',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Ժամանակահատված',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Քանակ',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Ժամանակի միավոր',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Ժամանակ',
+
+                    'options' => [
+                        'past' => 'Անցյալ',
+                        'future' => 'Ապագա',
+                    ],
+
                 ],
 
             ],
@@ -174,8 +259,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը հավասար է :number',
-                    'inverse' => ':attributeը հավասար չէ :number',
+                    'direct' => ':attribute հավասար է :number',
+                    'inverse' => ':attribute հավասար չէ :number',
                 ],
 
             ],
@@ -184,12 +269,12 @@ return [
 
                 'label' => [
                     'direct' => 'Առավելագույնն է',
-                    'inverse' => 'Ավելին քան',
+                    'inverse' => 'Ավելի մեծ է, քան',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute առավելագույնն է :number',
-                    'inverse' => ':attribute ավելին քան :number',
+                    'inverse' => ':attribute ավելի մեծ է, քան :number',
                 ],
 
             ],
@@ -198,12 +283,12 @@ return [
 
                 'label' => [
                     'direct' => 'Նվազագույն է',
-                    'inverse' => 'Ավելի քիչ, քան',
+                    'inverse' => 'Ավելի փոքր է, քան',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute նվազագույն է :number',
-                    'inverse' => ':attribute ավելի քիչ, քան :number',
+                    'inverse' => ':attribute ավելի փոքր է, քան :number',
                 ],
 
             ],
@@ -227,7 +312,7 @@ return [
 
                 'sum' => [
                     'label' => 'Գումար',
-                    'summary' => 'Գումարը :attribute',
+                    'summary' => ':attribute-ի գումար',
                 ],
 
             ],
@@ -298,8 +383,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':relationshipը դատարկ է',
-                    'inverse' => ':relationshipը դատարկ չէ',
+                    'direct' => ':relationship դատարկ է',
+                    'inverse' => ':relationship դատարկ չէ',
                 ],
 
             ],
@@ -309,8 +394,8 @@ return [
                 'label' => [
 
                     'single' => [
-                        'direct' => 'Արդյոք',
-                        'inverse' => 'Ոչ',
+                        'direct' => 'Հավասար է',
+                        'inverse' => 'Հավասար չէ',
                     ],
 
                     'multiple' => [
@@ -323,8 +408,8 @@ return [
                 'summary' => [
 
                     'single' => [
-                        'direct' => ':relationshipը :values է',
-                        'inverse' => ':relationshipը :values չէ',
+                        'direct' => ':relationship :values է',
+                        'inverse' => ':relationship :values չէ',
                     ],
 
                     'multiple' => [
@@ -368,13 +453,13 @@ return [
             'is' => [
 
                 'label' => [
-                    'direct' => 'Արդյոք',
-                    'inverse' => 'Ոչ',
+                    'direct' => 'Հավասար է',
+                    'inverse' => 'Հավասար չէ',
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը :values է',
-                    'inverse' => ':attributeը :values չէ',
+                    'direct' => ':attribute :values է',
+                    'inverse' => ':attribute :values չէ',
                     'values_glue' => [
                         ', ',
                         'final' => ' կամ ',
@@ -407,8 +492,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը պարունակում է :text',
-                    'inverse' => ':attributeը չի պարունակում :text',
+                    'direct' => ':attribute պարունակում է :text',
+                    'inverse' => ':attribute չի պարունակում :text',
                 ],
 
             ],
@@ -421,8 +506,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը վերջանում է :text-ով',
-                    'inverse' => ':attributeը չի վերջանում :text-ով',
+                    'direct' => ':attribute վերջանում է :text-ով',
+                    'inverse' => ':attribute չի վերջանում :text-ով',
                 ],
 
             ],
@@ -435,8 +520,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attributeը հավասար է :text-ով',
-                    'inverse' => ':attributeը հավասար չէ :text-ով',
+                    'direct' => ':attribute հավասար է :text-ով',
+                    'inverse' => ':attribute հավասար չէ :text-ով',
                 ],
 
             ],
@@ -444,13 +529,13 @@ return [
             'starts_with' => [
 
                 'label' => [
-                    'direct' => 'Սկսում է',
-                    'inverse' => 'Չի սկսում',
+                    'direct' => 'Սկսվում է',
+                    'inverse' => 'Չի սկսվում',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute սկսում է :text-ով',
-                    'inverse' => ':attribute չի սկսում :text-ով',
+                    'direct' => ':attribute սկսվում է :text-ով',
+                    'inverse' => ':attribute չի սկսվում :text-ով',
                 ],
 
             ],
@@ -474,7 +559,7 @@ return [
         ],
 
         'add_rule_group' => [
-            'label' => 'Ավելացնել կանոնի խումբ',
+            'label' => 'Ավելացնել «կամ» խումբ',
         ],
 
     ],

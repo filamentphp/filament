@@ -79,7 +79,7 @@ class CreateRecord extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(static::getResource()::canCreate(), 403);
+        static::getResource()::authorizeCreate();
     }
 
     #[Unexposed]

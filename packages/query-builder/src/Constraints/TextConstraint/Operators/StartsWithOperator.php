@@ -69,29 +69,10 @@ class StartsWithOperator extends Operator
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
-        $isPostgres = $databaseConnection->getDriverName() === 'pgsql';
-
-        if ($isPostgres) {
-            $parts = explode('.', $qualifiedColumn);
-
-            if (count($parts) === 3) {
-                [$schema, $table, $column] = $parts;
-                $table = "{$schema}.{$table}";
-            } else {
-                [$table, $column] = $parts;
-            }
-
-            if (Str::lower($table) !== $table) {
-                $table = collect(explode('.', $table))
-                    ->map(fn (string $segment): string => "\"{$segment}\"")
-                    ->implode('.');
-            }
-
-            if (Str::lower($column) !== $column) {
-                $column = "\"{$column}\"";
-            }
-
-            $qualifiedColumn = new Expression("lower({$table}.{$column}::text)");
+        if ($databaseConnection->getDriverName() === 'pgsql') {
+            $jsonPath = str_contains($qualifiedColumn, '->') ? '->' . str($qualifiedColumn)->after('->') : '';
+            $qualifiedColumn = $query->getQuery()->getGrammar()->wrap((string) str($qualifiedColumn)->before('->'));
+            $qualifiedColumn = new Expression("lower({$qualifiedColumn}{$jsonPath}::text)");
             $text = Str::lower($text);
         }
 

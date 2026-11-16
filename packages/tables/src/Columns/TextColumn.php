@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\CanWrap;
@@ -301,7 +302,13 @@ class TextColumn extends Column implements HasEmbeddedView
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
-        if (blank($state instanceof Htmlable ? $state->toHtml() : $state)) {
+        $isEmpty = match (true) {
+            $state instanceof RichContentAttribute => $state->isEmpty(),
+            is_array($state) => collect($state)->every(static fn (mixed $stateItem): bool => ($stateItem instanceof RichContentAttribute) && $stateItem->isEmpty()),
+            default => blank($state instanceof Htmlable ? $state->toHtml() : $state),
+        };
+
+        if ($isEmpty) {
             $attributes = $attributes
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())

@@ -97,7 +97,7 @@ public function panel(Panel $panel): Panel
 
 ## Receiving database notifications
 
-Without any setup, new database notifications will only be received when the page is first loaded.
+Opening the database notifications modal fetches the latest notifications. Polling or websockets can keep the unread count updated while the modal is closed.
 
 ### Polling for new database notifications
 

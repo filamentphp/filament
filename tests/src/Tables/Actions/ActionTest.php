@@ -8,6 +8,7 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithGroupedRecordActions;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithToggleableRecordActions;
 use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
 use Filament\Tests\Fixtures\Models\Department;
@@ -579,6 +580,48 @@ describe('record actions column visibility', function (): void {
         livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => false])
             ->assertActionHidden(TestAction::make('test')->table($posts->first()))
             ->assertDontSeeHtml('fi-ta-actions-header-cell');
+    });
+
+    it('avoids redundant grouped authorization when resolving resource record URLs', function (bool $hasColumnsLayout): void {
+        $posts = Post::factory()->count(5)->create();
+
+        PostsTableWithGroupedRecordActions::$authorizationChecks = [];
+
+        livewire(PostsTableWithGroupedRecordActions::class, ['hasColumnsLayout' => $hasColumnsLayout])
+            ->assertSuccessful();
+
+        // Each record is authorized for its row URL and its rendered action group.
+        // Resolving an unused row action must not add further checks.
+        $expected = $posts->mapWithKeys(fn (Post $post): array => [$post->getKey() => 2])->all();
+
+        expect(PostsTableWithGroupedRecordActions::$authorizationChecks['edit'])->toEqual($expected);
+    })->with([false, true]);
+
+    it('does not reuse a modal row record for grouped actions on a linked row', function (bool $hasColumnsLayout): void {
+        $modalRecord = Post::factory()->create(['is_published' => true]);
+        $linkedRecord = Post::factory()->create(['is_published' => false]);
+        $table = livewire(PostsTableWithGroupedRecordActions::class, ['hasColumnsLayout' => $hasColumnsLayout])
+            ->instance()
+            ->getTable();
+
+        $table->recordUrl(static fn (Post $record): ?string => $record->is_published ? null : '/posts/' . $record->getKey());
+
+        foreach ($table->getFlatRecordActions() as $action) {
+            $action->url(null)->authorize(static fn (Post $record): bool => $record->is_published);
+        }
+
+        expect($table->getRecordAction($modalRecord))->toBe('edit')
+            ->and($table->getRecordUrl($linkedRecord))->toBe('/posts/' . $linkedRecord->getKey())
+            ->and($table->getRecordActions()[0]->getClone()->record($linkedRecord)->isHidden())->toBeTrue();
+    })->with([false, true]);
+
+    it('hides an action group after calling an action that hides every action in it', function (): void {
+        PostsTableWithGroupedRecordActions::$isPublished = false;
+
+        livewire(PostsTableWithGroupedRecordActions::class)
+            ->assertSee('Draft')
+            ->callAction(TestAction::make('discard')->table())
+            ->assertDontSee('Draft');
     });
 
     it('does not render the record actions column when every record in a large result set has no visible record action', function (): void {

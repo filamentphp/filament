@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => 'Disjunkce (NEBO)',
+                'picker_group' => 'Logika',
                 'or' => 'NEBO',
             ],
 

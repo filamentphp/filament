@@ -288,7 +288,7 @@ class Tabs extends Component implements HasEmbeddedView
         }
 
         $activeTab = $this->getActiveTab();
-        $hasDeferredBadges = $this->hasLazyLoadedBadges();
+        $hasLazyLoadedBadges = $this->hasLazyLoadedBadges();
         $id = $this->getId();
         $isContained = $this->isContained();
         $isScrollable = $this->isScrollable();
@@ -329,25 +329,26 @@ class Tabs extends Component implements HasEmbeddedView
 
         $navAttributes = $navAttributes->merge(['x-cloak' => true], escape: false);
 
-        $deferredBadgesXData = '';
+        $lazyLoadedBadgesXData = '';
 
-        if ($hasDeferredBadges) {
-            $deferredBadgesXData = '{
-                deferredBadges: {},
-                isLoadingDeferredBadges: true,
+        if ($hasLazyLoadedBadges) {
+            $lazyLoadedBadgesXData = '{
+                lazyLoadedBadges: {},
+                isLoadingBadges: true,
 
-                async init() {
+                async loadBadges() {
                     try {
                         const badges = await this.$getLazyLoadedTabBadges()
-                        this.deferredBadges = badges ?? {}
+                        this.lazyLoadedBadges = badges ?? {}
                     } finally {
-                        this.isLoadingDeferredBadges = false
+                        this.isLoadingBadges = false
                     }
                 },
             }';
 
             $navAttributes = $navAttributes->merge([
-                'x-data' => $deferredBadgesXData,
+                'x-data' => $lazyLoadedBadgesXData,
+                'x-intersect.once' => 'loadBadges()',
             ], escape: false);
         }
 
@@ -397,12 +398,12 @@ class Tabs extends Component implements HasEmbeddedView
                 >
 
                 <?php foreach ($tabs as $index => $tab) {
-                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
-                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                    $isTabBadgeLazyLoaded = $tab->isBadgeLazyLoaded();
+                    $tabBadge = $isTabBadgeLazyLoaded ? null : $tab->getBadge();
+                    $tabBadgeColor = $isTabBadgeLazyLoaded ? null : $tab->getBadgeColor($tabBadge);
+                    $tabBadgeIcon = $isTabBadgeLazyLoaded ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeLazyLoaded ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeLazyLoaded ? null : $tab->getBadgeTooltip($tabBadge);
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
@@ -454,8 +455,8 @@ class Tabs extends Component implements HasEmbeddedView
 
                         <?php if (filled($tabBadge)) { ?>
                             <?= $this->generateTabBadgeHtml($tabBadge, $tabBadgeColor, $tabBadgeIcon, $tabBadgeIconPosition, $tabBadgeTooltip) ?>
-                        <?php } elseif ($isTabBadgeDeferred) { ?>
-                            <?= $this->generateDeferredBadgePlaceholderHtml(Js::from($index)) ?>
+                        <?php } elseif ($isTabBadgeLazyLoaded) { ?>
+                            <?= $this->generateLazyLoadedBadgePlaceholderHtml(Js::from($index)) ?>
                         <?php } ?>
                     </button>
                 <?php } ?>
@@ -473,10 +474,10 @@ class Tabs extends Component implements HasEmbeddedView
                             class="fi-dropdown-trigger"
                         >
                             <?php foreach ($tabs as $index => $tab) {
-                                $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
-                                $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                                $isTabBadgeLazyLoaded = $tab->isBadgeLazyLoaded();
+                                $tabBadge = $isTabBadgeLazyLoaded ? null : $tab->getBadge();
+                                $tabBadgeColor = $isTabBadgeLazyLoaded ? null : $tab->getBadgeColor($tabBadge);
+                                $tabBadgeTooltip = $isTabBadgeLazyLoaded ? null : $tab->getBadgeTooltip($tabBadge);
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
                                 $triggerTabAttributes = (new FilamentComponentAttributeBag)
@@ -504,8 +505,8 @@ class Tabs extends Component implements HasEmbeddedView
                                     <span class="fi-tabs-item-label"><?= e($tabLabel) ?></span>
                                     <?php if (filled($tabBadge)) { ?>
                                         <?= $this->generateTabBadgeHtml($tabBadge, $tabBadgeColor, tooltip: $tabBadgeTooltip) ?>
-                                    <?php } elseif ($isTabBadgeDeferred) { ?>
-                                        <?= $this->generateDeferredBadgePlaceholderHtml(Js::from($index)) ?>
+                                    <?php } elseif ($isTabBadgeLazyLoaded) { ?>
+                                        <?= $this->generateLazyLoadedBadgePlaceholderHtml(Js::from($index)) ?>
                                     <?php } ?>
                                 </button>
                             <?php } ?>
@@ -547,10 +548,10 @@ class Tabs extends Component implements HasEmbeddedView
                         >
                             <div class="fi-dropdown-list">
                                 <?php foreach ($tabs as $index => $tab) {
-                                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
-                                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                                    $isTabBadgeLazyLoaded = $tab->isBadgeLazyLoaded();
+                                    $tabBadge = $isTabBadgeLazyLoaded ? null : $tab->getBadge();
+                                    $tabBadgeColor = $isTabBadgeLazyLoaded ? null : $tab->getBadgeColor($tabBadge);
+                                    $tabBadgeTooltip = $isTabBadgeLazyLoaded ? null : $tab->getBadgeTooltip($tabBadge);
                                     $tabIcon = $tab->getIcon();
                                     $tabKey = $tab->getKey(isAbsolute: false);
                                     $tabLabel = $tab->getLabel();
@@ -592,9 +593,9 @@ class Tabs extends Component implements HasEmbeddedView
                                             >
                                                 <?= e($tabBadge) ?>
                                             </span>
-                                        <?php } elseif ($isTabBadgeDeferred) { ?>
+                                        <?php } elseif ($isTabBadgeLazyLoaded) { ?>
                                             <span
-                                                x-show="isLoadingDeferredBadges"
+                                                x-show="isLoadingBadges"
                                                 x-cloak
                                                 class="fi-dropdown-list-item-badge-placeholder"
                                             >
@@ -603,15 +604,15 @@ class Tabs extends Component implements HasEmbeddedView
 
                                             <template
                                                 x-if="
-                                                    ! isLoadingDeferredBadges &&
-                                                        deferredBadges[<?= Js::from($index) ?>]?.badge != null
+                                                    ! isLoadingBadges &&
+                                                        lazyLoadedBadges[<?= Js::from($index) ?>]?.badge != null
                                                 "
                                             >
                                                 <span
-                                                    x-bind:class="'fi-badge ' + (deferredBadges[<?= Js::from($index) ?>]?.badgeColorClasses ?? '')"
-                                                    x-bind:style="deferredBadges[<?= Js::from($index) ?>]?.badgeColorStyles ?? ''"
+                                                    x-bind:class="'fi-badge ' + (lazyLoadedBadges[<?= Js::from($index) ?>]?.badgeColorClasses ?? '')"
+                                                    x-bind:style="lazyLoadedBadges[<?= Js::from($index) ?>]?.badgeColorStyles ?? ''"
                                                     x-init="
-                                                        let tooltip = deferredBadges[<?= Js::from($index) ?>]?.badgeTooltip
+                                                        let tooltip = lazyLoadedBadges[<?= Js::from($index) ?>]?.badgeTooltip
                                                         if (tooltip) {
                                                             window.tippy?.($el, {
                                                                 content: tooltip,
@@ -623,7 +624,7 @@ class Tabs extends Component implements HasEmbeddedView
                                                     <span class="fi-badge-label-ctn">
                                                         <span
                                                             class="fi-badge-label"
-                                                            x-text="deferredBadges[<?= Js::from($index) ?>]?.badge"
+                                                            x-text="lazyLoadedBadges[<?= Js::from($index) ?>]?.badge"
                                                         ></span>
                                                     </span>
                                                 </span>
@@ -652,7 +653,7 @@ class Tabs extends Component implements HasEmbeddedView
     protected function toEmbeddedHtmlForLivewireProperty(): string
     {
         $livewireProperty = $this->getLivewireProperty();
-        $hasDeferredBadges = $this->hasLazyLoadedBadges();
+        $hasLazyLoadedBadges = $this->hasLazyLoadedBadges();
         $id = $this->getId();
         $isContained = $this->isContained();
         $isVertical = $this->isVertical();
@@ -689,21 +690,22 @@ class Tabs extends Component implements HasEmbeddedView
                 'fi-vertical' => $isVertical,
             ]);
 
-        if ($hasDeferredBadges) {
+        if ($hasLazyLoadedBadges) {
             $navAttributes = $navAttributes->merge([
                 'x-data' => '{
-                    deferredBadges: {},
-                    isLoadingDeferredBadges: true,
+                    lazyLoadedBadges: {},
+                    isLoadingBadges: true,
 
-                    async init() {
+                    async loadBadges() {
                         try {
                             const badges = await this.$getLazyLoadedTabBadges()
-                            this.deferredBadges = badges ?? {}
+                            this.lazyLoadedBadges = badges ?? {}
                         } finally {
-                            this.isLoadingDeferredBadges = false
+                            this.isLoadingBadges = false
                         }
                     },
                 }',
+                'x-intersect.once' => 'loadBadges()',
             ], escape: false);
         }
 
@@ -751,12 +753,12 @@ class Tabs extends Component implements HasEmbeddedView
 
                 <?php foreach ($tabs as $tabKey => $tab) {
                     $tabKey = strval($tabKey);
-                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
-                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                    $isTabBadgeLazyLoaded = $tab->isBadgeLazyLoaded();
+                    $tabBadge = $isTabBadgeLazyLoaded ? null : $tab->getBadge();
+                    $tabBadgeColor = $isTabBadgeLazyLoaded ? null : $tab->getBadgeColor($tabBadge);
+                    $tabBadgeIcon = $isTabBadgeLazyLoaded ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeLazyLoaded ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeLazyLoaded ? null : $tab->getBadgeTooltip($tabBadge);
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
@@ -806,8 +808,8 @@ class Tabs extends Component implements HasEmbeddedView
 
                         <?php if (filled($tabBadge)) { ?>
                             <?= $this->generateTabBadgeHtml($tabBadge, $tabBadgeColor, $tabBadgeIcon, $tabBadgeIconPosition, $tabBadgeTooltip) ?>
-                        <?php } elseif ($isTabBadgeDeferred) { ?>
-                            <?= $this->generateDeferredBadgePlaceholderHtml(Js::from($tabKey)) ?>
+                        <?php } elseif ($isTabBadgeLazyLoaded) { ?>
+                            <?= $this->generateLazyLoadedBadgePlaceholderHtml(Js::from($tabKey)) ?>
                         <?php } ?>
                     </button>
                 <?php } ?>
@@ -872,11 +874,11 @@ class Tabs extends Component implements HasEmbeddedView
         <?php return ob_get_clean();
     }
 
-    protected function generateDeferredBadgePlaceholderHtml(Js $indexJs): string
+    protected function generateLazyLoadedBadgePlaceholderHtml(Js $indexJs): string
     {
         ob_start(); ?>
         <span
-            x-show="isLoadingDeferredBadges"
+            x-show="isLoadingBadges"
             x-cloak
             class="fi-tabs-item-badge-placeholder"
         >
@@ -885,18 +887,18 @@ class Tabs extends Component implements HasEmbeddedView
 
         <template
             x-if="
-                ! isLoadingDeferredBadges &&
-                    deferredBadges[<?= $indexJs ?>]?.badge != null
+                ! isLoadingBadges &&
+                    lazyLoadedBadges[<?= $indexJs ?>]?.badge != null
             "
         >
             <span
                 x-bind:class="
                     'fi-badge fi-size-sm ' +
-                        (deferredBadges[<?= $indexJs ?>]?.badgeColorClasses ?? '')
+                        (lazyLoadedBadges[<?= $indexJs ?>]?.badgeColorClasses ?? '')
                 "
-                x-bind:style="deferredBadges[<?= $indexJs ?>]?.badgeColorStyles ?? ''"
+                x-bind:style="lazyLoadedBadges[<?= $indexJs ?>]?.badgeColorStyles ?? ''"
                 x-init="
-                    let tooltip = deferredBadges[<?= $indexJs ?>]?.badgeTooltip
+                    let tooltip = lazyLoadedBadges[<?= $indexJs ?>]?.badgeTooltip
                     if (tooltip) {
                         window.tippy?.($el, {
                             content: tooltip,
@@ -907,30 +909,30 @@ class Tabs extends Component implements HasEmbeddedView
             >
                 <template
                     x-if="
-                        deferredBadges[<?= $indexJs ?>]?.badgeIconHtml &&
-                            deferredBadges[<?= $indexJs ?>]?.badgeIconPosition !== 'after'
+                        lazyLoadedBadges[<?= $indexJs ?>]?.badgeIconHtml &&
+                            lazyLoadedBadges[<?= $indexJs ?>]?.badgeIconPosition !== 'after'
                     "
                 >
                     <span
-                        x-html="deferredBadges[<?= $indexJs ?>].badgeIconHtml"
+                        x-html="lazyLoadedBadges[<?= $indexJs ?>].badgeIconHtml"
                     ></span>
                 </template>
 
                 <span class="fi-badge-label-ctn">
                     <span
                         class="fi-badge-label"
-                        x-text="deferredBadges[<?= $indexJs ?>]?.badge"
+                        x-text="lazyLoadedBadges[<?= $indexJs ?>]?.badge"
                     ></span>
                 </span>
 
                 <template
                     x-if="
-                        deferredBadges[<?= $indexJs ?>]?.badgeIconHtml &&
-                            deferredBadges[<?= $indexJs ?>]?.badgeIconPosition === 'after'
+                        lazyLoadedBadges[<?= $indexJs ?>]?.badgeIconHtml &&
+                            lazyLoadedBadges[<?= $indexJs ?>]?.badgeIconPosition === 'after'
                     "
                 >
                     <span
-                        x-html="deferredBadges[<?= $indexJs ?>].badgeIconHtml"
+                        x-html="lazyLoadedBadges[<?= $indexJs ?>].badgeIconHtml"
                     ></span>
                 </template>
             </span>

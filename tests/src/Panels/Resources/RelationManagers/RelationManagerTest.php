@@ -84,7 +84,7 @@ describe('rendering and authorization', function (): void {
             ->assertCanSeeTableRecords($ticket->departments);
     });
 
-    it('resolves record URLs and actions without leaking record context between records', function (bool $isTableLoadingDeferred, string $actionHierarchy): void {
+    it('resolves record URLs and actions without leaking record context between records', function (bool $isTableLazyLoaded, string $actionHierarchy): void {
         $ticket = Ticket::factory()->create();
         $departments = collect([
             Department::factory()->create(['name' => 'View URL']),
@@ -103,12 +103,12 @@ describe('rendering and authorization', function (): void {
             'areActionsGrouped' => $actionHierarchy === 'grouped',
             'areActionsNested' => $actionHierarchy === 'nested',
             'hasRecordDependentRootGroupTriggerView' => $actionHierarchy !== 'ungrouped',
-            'isTableLoadingDeferred' => $isTableLoadingDeferred,
+            'isTableLazyLoaded' => $isTableLazyLoaded,
         ])->assertSuccessful();
 
         expect(RecordUrlResolutionRelationManager::$initialActionRecordKeys)->toBe([null, null]);
 
-        if ($isTableLoadingDeferred) {
+        if ($isTableLazyLoaded) {
             $component
                 ->assertDontSeeHtml("href=\"/departments/{$departments[0]->getKey()}/view\"")
                 ->assertDontSeeHtml("href=\"/departments/{$departments[1]->getKey()}/edit\"")
@@ -169,7 +169,7 @@ describe('rendering and authorization', function (): void {
         $assertActionHierarchyIsUnbound($refreshedTable->getAction('edit'));
     })->with([
         'eager table loading' => false,
-        'deferred table loading' => true,
+        'lazy table loading' => true,
     ])->with([
         'ungrouped actions' => 'ungrouped',
         'grouped actions' => 'grouped',
@@ -852,7 +852,7 @@ describe('scoped default action URLs', function (): void {
             ->assertActionNotMounted();
     })->with(['departments', 'page']);
 
-    it('waits for a deferred table before consuming its URL action', function (): void {
+    it('waits for a lazy-loaded table before consuming its URL action', function (): void {
         $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
         Livewire::withQueryParams([
             'tableAction' => 'view',
@@ -864,7 +864,7 @@ describe('scoped default action URLs', function (): void {
         livewire(ScopedDepartmentsRelationManager::class, [
             'ownerRecord' => $ticket,
             'pageClass' => EditTicket::class,
-            'deferTableLoading' => true,
+            'isTableLazyLoaded' => true,
         ])
             ->call('mountDefaultActions')
             ->assertActionNotMounted()
@@ -1618,7 +1618,7 @@ class RecordUrlResolutionRelationManager extends RelationManager
 
     public bool $hasRecordDependentRootGroupTriggerView = false;
 
-    public bool $isTableLoadingDeferred = false;
+    public bool $isTableLazyLoaded = false;
 
     public bool $isNestedGroupHidden = false;
 
@@ -1664,7 +1664,7 @@ class RecordUrlResolutionRelationManager extends RelationManager
             ->when($this->hasCustomRecordAction, fn (Table $table): Table => $table->recordAction(null))
             ->defaultSort('departments.id')
             ->openRecordUrlInNewTab(static fn (Department $record): bool => $record->name === 'View URL')
-            ->deferLoading($this->isTableLoadingDeferred);
+            ->lazyLoaded($this->isTableLazyLoaded);
     }
 }
 

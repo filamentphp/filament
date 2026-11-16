@@ -49,7 +49,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }
-    use Concerns\CanBeLabeledFrom;
+    use Concerns\CanBeLabeledFromBreakpoint;
     use Concerns\CanBeOutlined;
     use Concerns\HasDropdown;
     use Concerns\HasGroupedIcon;
@@ -547,10 +547,11 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-ref="panel"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
+                role="menu"
                 <?= $panelAttributes->toHtml() ?>
             >
                 <?php foreach ($actionLists as $actions) { ?>
-                    <div class="fi-dropdown-list">
+                    <div class="fi-dropdown-list" role="group">
                         <?php foreach ($actions as $action) { ?>
                             <?= $action->toHtml() ?>
                         <?php } ?>
@@ -745,10 +746,18 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $this->actions,
         );
 
-        $this->flatActions = array_map(
-            fn (Action $action): Action => $action->getClone()->group($this),
-            $this->flatActions,
-        );
+        $this->flatActions = [];
+
+        foreach ($this->actions as $action) {
+            if ($action instanceof ActionGroup) {
+                $this->flatActions = [
+                    ...$this->flatActions,
+                    ...$action->getFlatActions(),
+                ];
+            } else {
+                $this->flatActions[$action->getName()] = $action;
+            }
+        }
     }
 
     /**

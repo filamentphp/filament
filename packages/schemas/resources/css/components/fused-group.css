@@ -326,7 +326,7 @@
     & .fi-input-wrp {
         @apply rounded-none shadow-none ring-0;
 
-        &:not(.fi-disabled):not(:has(.fi-ac-action:focus)) {
+        &:not(.fi-disabled):not(:has(.fi-input-wrp-actions :focus)) {
             @apply focus-within:ring-0;
 
             &.fi-invalid {

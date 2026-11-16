@@ -13,17 +13,17 @@ trait HasTenantMenu
     /**
      * @var ?array<Action>
      */
-    protected ?array $tenantMenuItems = null;
+    protected ?array $cachedTenantMenuItems = null;
 
     /**
      * @var array<int, Collection<string, Action>>
      */
-    protected array $tenantMenuItemGroupsAfterSwitcher = [];
+    protected array $cachedTenantMenuItemGroupsAfterSwitcher = [];
 
     /**
      * @var ?array<Model>
      */
-    protected ?array $switchableTenants = null;
+    protected ?array $cachedSwitchableTenants = null;
 
     #[Unexposed]
     public function bootHasTenantMenu(): void
@@ -51,7 +51,7 @@ trait HasTenantMenu
     {
         $this->getTenantMenuItems();
 
-        return $this->tenantMenuItemGroupsAfterSwitcher;
+        return $this->cachedTenantMenuItemGroupsAfterSwitcher;
     }
 
     #[Unexposed]
@@ -65,8 +65,8 @@ trait HasTenantMenu
      */
     protected function getTenantMenuItems(): array
     {
-        if (isset($this->tenantMenuItems)) {
-            return $this->tenantMenuItems;
+        if (isset($this->cachedTenantMenuItems)) {
+            return $this->cachedTenantMenuItems;
         }
 
         $panel = Filament::getCurrentPanel();
@@ -92,7 +92,7 @@ trait HasTenantMenu
         if ($panel?->hasMultipleTenantMenuItemGroups()) {
             $canSwitchTenants = $this->canSwitchTenants();
 
-            $this->tenantMenuItemGroupsAfterSwitcher = collect($groups)
+            $this->cachedTenantMenuItemGroupsAfterSwitcher = collect($groups)
                 ->map(fn (array $group): Collection => collect($group)
                     ->filter(fn (Action $action): bool => $action->isVisible() && ((! $canSwitchTenants) || ($action->getSort() >= 0)))
                     ->sortBy(fn (Action $action): int => $action->getSort()))
@@ -105,7 +105,7 @@ trait HasTenantMenu
             return [];
         }
 
-        return $this->tenantMenuItems = $items;
+        return $this->cachedTenantMenuItems = $items;
     }
 
     /**
@@ -113,17 +113,17 @@ trait HasTenantMenu
      */
     protected function getSwitchableTenants(): array
     {
-        if (isset($this->switchableTenants)) {
-            return $this->switchableTenants;
+        if (isset($this->cachedSwitchableTenants)) {
+            return $this->cachedSwitchableTenants;
         }
 
         if (! Filament::hasTenantSwitcher()) {
-            return $this->switchableTenants = [];
+            return $this->cachedSwitchableTenants = [];
         }
 
         $currentTenant = Filament::getTenant();
 
-        return $this->switchableTenants = array_filter(
+        return $this->cachedSwitchableTenants = array_filter(
             Filament::getUserTenants(Filament::auth()->user()),
             fn (Model $tenant): bool => ! $tenant->is($currentTenant),
         );

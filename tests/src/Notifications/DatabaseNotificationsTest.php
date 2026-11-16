@@ -97,6 +97,37 @@ describe('acts on matching database notification IDs', function (): void {
     });
 });
 
+describe('slide-over', function (): void {
+    it('renders the notifications only once the slide-over is opened', function (string $component): void {
+        Notification::make()->title('Export completed')->sendToDatabase($this->user);
+
+        livewire($component)
+            ->assertDontSee('Export completed')
+            ->assertSeeHtml('aria-busy="true"')
+            ->assertDontSee(__('filament-notifications::database.modal.empty.heading'))
+            ->set('isOpen', true)
+            ->assertSee('Export completed')
+            ->assertDontSeeHtml('aria-busy="true"')
+            ->set('isOpen', false)
+            ->assertDontSee('Export completed');
+    })->with('database notification components');
+
+    it('shows the empty state without opening the slide-over when there are no notifications', function (string $component): void {
+        livewire($component)
+            ->assertSee(__('filament-notifications::database.modal.empty.heading'))
+            ->assertDontSeeHtml('aria-busy="true"');
+    })->with('database notification components');
+
+    it('counts unread notifications while the slide-over is closed', function (string $component): void {
+        Notification::make()->title('First')->sendToDatabase($this->user);
+        Notification::make()->title('Second')->sendToDatabase($this->user);
+
+        $livewire = livewire($component)->assertDontSee('First');
+
+        expect($livewire->instance()->getUnreadNotificationsCount())->toBe(2);
+    })->with('database notification components');
+});
+
 describe('user isolation', function (): void {
     beforeEach(function (): void {
         Schema::create('database_notification_users', function (Blueprint $table): void {
@@ -145,6 +176,7 @@ describe('user isolation', function (): void {
         }
 
         $livewire = livewire($component)
+            ->set('isOpen', true)
             ->assertSee($this->ownedNotification->data['title'])
             ->assertDontSee($this->foreignNotification->data['title'])
             ->assertDontSee($this->sameModelUser->notifications()->first()->data['title'])
@@ -201,7 +233,7 @@ describe('user isolation', function (): void {
         }
 
         auth('notifications')->setUser($this->user);
-        $livewire = livewire($component);
+        $livewire = livewire($component)->set('isOpen', true);
         auth('notifications')->setUser($this->otherUser);
 
         $before = DatabaseNotification::query()->whereKeyNot($this->ownedNotification->getKey())->orderBy('id')->get()->toArray();
@@ -288,10 +320,12 @@ describe('browser interactions', function (): void {
             ->sendToDatabase($user);
         Notification::make()->title('Second')->sendToDatabase($user);
 
-        visit('/database-notifications-browser-test')
+        $page = visit('/database-notifications-browser-test')
+            ->assertNotPresent('[id="database-notifications"] .fi-no-notification')
             ->click('[data-testid="database-notifications-trigger"]')
             ->assertVisible('[id="database-notifications"] .fi-modal-window')
             ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
+            ->assertSee('Second')
             ->assertPresent('[id="database-notifications"] [autofocus]:focus')
             ->keys('[id="database-notifications"] .fi-modal-window', 'Tab')
             ->assertPresent('[id="database-notifications"] .fi-modal-header .fi-ac button:focus')
@@ -300,6 +334,18 @@ describe('browser interactions', function (): void {
 
         // No notification has been marked as read by simply opening the slide-over.
         expect($user->unreadNotifications()->count())->toBe(2);
+
+        $page->keys('[id="database-notifications"] .fi-modal-window', 'Escape')
+            ->assertMissing('[id="database-notifications"] [role="list"]');
+
+        Notification::make()->title('Arrived while closed')->sendToDatabase($user);
+
+        $page->click('[data-testid="database-notifications-trigger"]')
+            ->assertVisible('[id="database-notifications"] [role="list"]')
+            ->assertSee('Arrived while closed')
+            ->assertNoSmoke();
+
+        expect($user->unreadNotifications()->count())->toBe(3);
 
         visit('/database-notifications-browser-test')
             ->inDarkMode()

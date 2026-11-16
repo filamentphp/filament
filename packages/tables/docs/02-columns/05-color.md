@@ -53,6 +53,5 @@ ColorColumn::make('color')
 
 <AutoScreenshot name="tables/columns/color/wrap" alt="Color column with wrapping" />
 
-<Aside variant="tip">
-    The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
-</Aside>
+> [!TIP]
+> The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.

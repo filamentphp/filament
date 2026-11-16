@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Blok',
+            'position' => ':label, pozice :position z :count',
+            'moved' => ':label je nyní na pozici :position z :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -116,6 +122,8 @@ return [
 
     'checkbox_list' => [
 
+        'required_description' => 'Vyberte alespoň jednu možnost.',
+
         'actions' => [
 
             'deselect_all' => [
@@ -161,6 +169,8 @@ return [
     ],
 
     'file_upload' => [
+
+        'placeholder' => 'Žádné nahrané soubory',
 
         'actions' => [
 
@@ -302,6 +312,10 @@ return [
 
     ],
 
+    'js_field' => [
+        'failed_to_load' => 'Toto pole se nepodařilo načíst. Pro nový pokus obnovte stránku.',
+    ],
+
     'key_value' => [
 
         'actions' => [
@@ -312,6 +326,14 @@ return [
 
             'delete' => [
                 'label' => 'Smazat řádek',
+            ],
+
+            'move_down' => [
+                'label' => 'Posunout dolů',
+            ],
+
+            'move_up' => [
+                'label' => 'Posunout nahoru',
             ],
 
             'reorder' => [
@@ -342,6 +364,12 @@ return [
                 'label' => 'Hodnota',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Řádek',
+            'position' => ':label, pozice :position z :count',
+            'moved' => ':label je nyní na pozici :position z :count',
         ],
 
     ],
@@ -402,6 +430,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Položka',
+            'position' => ':label, pozice :position z :count',
+            'moved' => ':label je nyní na pozici :position z :count',
+        ],
 
         'columns' => [
 
@@ -829,6 +863,8 @@ return [
             'false' => 'Ne',
         ],
 
+        'error_message' => 'Možnosti se nepodařilo načíst. Zkuste to prosím znovu.',
+
         'loading_message' => 'Načítání...',
 
         'max_items_message' => 'Lze vybrat pouze 1 položku.|Lze vybrat pouze :count položky.|Lze vybrat pouze :count položek.',
@@ -838,6 +874,8 @@ return [
         'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
 
         'placeholder' => 'Zvolte některou z možností',
+
+        'required_description' => 'Vyberte možnost.',
 
         'searching_message' => 'Hledání...',
 
@@ -887,6 +925,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Vyberte alespoň jednu možnost.',
 
         'boolean' => [
             'true' => 'Ano',

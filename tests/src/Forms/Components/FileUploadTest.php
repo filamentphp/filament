@@ -3,9 +3,13 @@
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Models\UserWithJsonAccessor;
 use Filament\Tests\TestCase;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
@@ -327,6 +331,103 @@ describe('preventing existing file path tampering', function (): void {
 
         expect($user->refresh()->status)->toBe('uploads/original.jpg');
     });
+
+    it('validates nested original paths rather than dirty current values with `preventFilePathTampering()`', function (bool $usesLayout, string $file, bool $shouldPass): void {
+        $user = User::factory()->create(['json' => ['avatar' => 'uploads/original.jpg']]);
+        $user->json = ['avatar' => 'uploads/evil.jpg'];
+
+        $field = FileUpload::make($usesLayout ? 'avatar' : 'json.avatar')
+            ->fetchFileInformation(false)
+            ->preventFilePathTampering();
+
+        $schema = Schema::make(Livewire::make()->data(['json' => ['avatar' => [$file]]]))
+            ->model($user)
+            ->statePath('data')
+            ->components([
+                $usesLayout ? Group::make([$field])->statePath('json') : $field,
+            ]);
+
+        if ($shouldPass) {
+            expect(data_get($schema->validate(), 'data.json.avatar'))->toBe([$file]);
+
+            return;
+        }
+
+        expect(fn (): array => $schema->validate())
+            ->toThrow(function (ValidationException $exception): void {
+                expect($exception->errors())->toHaveKey('data.json.avatar');
+            });
+    })->with(['dotted name' => [false], 'layout' => [true]])
+        ->with(['original' => ['uploads/original.jpg', true], 'foreign' => ['uploads/evil.jpg', false]]);
+
+    it('requires callback approval for nested paths without original data using `preventFilePathTampering()`', function (bool $usesAccessor, ?bool $isAllowed): void {
+        $user = $usesAccessor ? new UserWithJsonAccessor : new User;
+        $user->setRawAttributes(['id' => 1], sync: true);
+        $user->exists = true;
+        $user->json = ['avatar' => 'uploads/evil.jpg'];
+
+        $schema = Schema::make(Livewire::make()->data(['json' => ['avatar' => ['uploads/evil.jpg']]]))
+            ->model($user)
+            ->statePath('data')
+            ->components([
+                FileUpload::make('json.avatar')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(
+                        allowFilePathUsing: $isAllowed === null ? null : static fn (string $file): bool => $isAllowed && ($file === 'uploads/evil.jpg'),
+                    ),
+            ]);
+
+        if ($isAllowed) {
+            expect(data_get($schema->validate(), 'data.json.avatar'))->toBe(['uploads/evil.jpg']);
+
+            return;
+        }
+
+        expect(fn (): array => $schema->validate())
+            ->toThrow(function (ValidationException $exception): void {
+                expect($exception->errors())->toHaveKey('data.json.avatar');
+            });
+    })->with(['array cast' => [false], 'accessor' => [true]])
+        ->with(['no callback' => [null], 'denied' => [false], 'approved' => [true]]);
+
+    it('authorizes nested paths against the relationship item record with `preventFilePathTampering()`', function (string $file, bool $shouldPass): void {
+        $user = User::factory()->create(['json' => ['avatar' => 'uploads/parent.jpg']]);
+        $post = Post::factory()->create(['author_id' => $user->getKey(), 'json' => ['avatar' => 'uploads/child.jpg']]);
+        Post::factory()->create(['author_id' => $user->getKey(), 'json' => ['avatar' => 'uploads/sibling.jpg']]);
+
+        $itemKey = 'record-' . $post->getKey();
+        $statePath = "data.posts.{$itemKey}.json.avatar";
+
+        $schema = Schema::make(Livewire::make()->data(['posts' => [$itemKey => ['json' => ['avatar' => [$file]]]]]))
+            ->model($user)
+            ->statePath('data')
+            ->components([
+                Repeater::make('posts')
+                    ->relationship()
+                    ->schema([
+                        Group::make([
+                            FileUpload::make('avatar')
+                                ->fetchFileInformation(false)
+                                ->preventFilePathTampering(),
+                        ])->statePath('json'),
+                    ]),
+            ]);
+
+        if ($shouldPass) {
+            expect(data_get($schema->validate(), $statePath))->toBe([$file]);
+
+            return;
+        }
+
+        expect(fn (): array => $schema->validate())
+            ->toThrow(function (ValidationException $exception) use ($statePath): void {
+                expect($exception->errors())->toHaveKey($statePath);
+            });
+    })->with([
+        'own record' => ['uploads/child.jpg', true],
+        'parent record' => ['uploads/parent.jpg', false],
+        'sibling record' => ['uploads/sibling.jpg', false],
+    ]);
 
     it('fails validation when a tampered path is mixed with originals in a multi-file value using `preventFilePathTampering()`', function (): void {
         $user = User::factory()->create(['json' => ['uploads/a.jpg', 'uploads/b.jpg']]);
@@ -926,11 +1027,18 @@ describe('configuration', function (): void {
         it('can set `confirmSvgEditing()`', function (): void {
             $upload = FileUpload::make('icon');
 
-            expect($upload->isSvgEditingConfirmed())->toBeFalse();
+            expect($upload->shouldConfirmSvgEditing())->toBeFalse()
+                ->and($upload->isSvgEditingConfirmed())->toBeFalse();
 
             $upload->confirmSvgEditing();
 
-            expect($upload->isSvgEditingConfirmed())->toBeTrue();
+            expect($upload->shouldConfirmSvgEditing())->toBeTrue()
+                ->and($upload->isSvgEditingConfirmed())->toBeTrue();
+
+            $upload->confirmSvgEditing(false);
+
+            expect($upload->shouldConfirmSvgEditing())->toBeFalse()
+                ->and($upload->isSvgEditingConfirmed())->toBeFalse();
         });
 
         it('can set `imageEditorViewportWidth()` and `imageEditorViewportHeight()`', function (): void {
@@ -1901,10 +2009,19 @@ describe('configuration', function (): void {
         });
 
         it('can set `confirmSvgEditing()` with a `Closure`', function (): void {
+            $shouldConfirm = true;
             $upload = FileUpload::make('icon')
-                ->confirmSvgEditing(static fn (): bool => true);
+                ->confirmSvgEditing(static function () use (&$shouldConfirm): bool {
+                    return $shouldConfirm;
+                });
 
-            expect($upload->isSvgEditingConfirmed())->toBeTrue();
+            expect($upload->shouldConfirmSvgEditing())->toBeTrue()
+                ->and($upload->isSvgEditingConfirmed())->toBeTrue();
+
+            $shouldConfirm = false;
+
+            expect($upload->shouldConfirmSvgEditing())->toBeFalse()
+                ->and($upload->isSvgEditingConfirmed())->toBeFalse();
         });
 
         it('can set `panelLayout()` with a `Closure`', function (): void {

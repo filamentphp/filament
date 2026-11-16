@@ -13,3 +13,12 @@
         }
     }
 }
+
+.fi-section
+    > .fi-section-header
+    > .fi-section-header-content
+    > .fi-section-header-after-ctn {
+    & .fi-sc-text:not(.fi-section-header-after-ctn .fi-dropdown-panel *) {
+        @apply leading-6;
+    }
+}

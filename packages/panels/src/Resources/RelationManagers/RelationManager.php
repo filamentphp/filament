@@ -37,7 +37,7 @@ use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Unexposed;
-use Filament\Support\Concerns\CanBeLazy;
+use Filament\Support\Concerns\CanBeLazyLoaded;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -55,7 +55,7 @@ use function Filament\authorize;
 class RelationManager extends Component implements HasActions, HasRenderHookScopes, HasSchemas, HasTable
 {
     use CanAuthorizeAccess;
-    use CanBeLazy;
+    use CanBeLazyLoaded;
     use InteractsWithActions;
     use InteractsWithRelationshipTable {
         InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
@@ -167,13 +167,13 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     #[Unexposed]
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
-        $isTabBadgeDeferred = static::isBadgeLazyLoaded($ownerRecord, $pageClass);
+        $isTabBadgeLazyLoaded = static::isBadgeLazyLoaded($ownerRecord, $pageClass);
 
         return Tab::make(static::getTitle($ownerRecord, $pageClass))
-            ->badge($isTabBadgeDeferred
+            ->badge($isTabBadgeLazyLoaded
                 ? static fn (): ?string => static::getBadge($ownerRecord, $pageClass)
                 : static::getBadge($ownerRecord, $pageClass))
-            ->lazyLoadedBadge($isTabBadgeDeferred)
+            ->lazyLoadedBadge($isTabBadgeLazyLoaded)
             ->badgeColor(static::getBadgeColor($ownerRecord, $pageClass))
             ->badgeTooltip(static::getBadgeTooltip($ownerRecord, $pageClass))
             ->icon(static::getIcon($ownerRecord, $pageClass))

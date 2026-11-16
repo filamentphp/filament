@@ -40,8 +40,25 @@ class ColumnsBrowserTest extends Page implements HasTable
     #[Url]
     public string $saveScenario = 'success';
 
+    #[Url]
+    public bool $imageTooltips = false;
+
     public function table(Table $table): Table
     {
+        if ($this->imageTooltips) {
+            return $table->query(Post::query())->columns([
+                Tables\Columns\ImageColumn::make('avatars')
+                    ->state(array_fill(0, 5, 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="#6366f1" /></svg>')))
+                    ->circular()
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText()
+                    ->tooltip('Visible colleague')
+                    ->limitedRemainingTextTooltip(static fn (array $state): string => 'More from ' . count($state) . ' colleagues: <b>Dan & Alex</b>')
+                    ->extraAttributes(['data-testid' => 'image-stack']),
+            ]);
+        }
+
         if ($this->editableColumns) {
             $columns = [
                 Tables\Columns\CheckboxColumn::make('is_published')->label('Published'),

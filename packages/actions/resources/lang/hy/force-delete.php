@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Սպառիչ ջնջում',
+        'label' => 'Ջնջել ընդմիշտ',
 
         'modal' => [
 
-            'heading' => 'Սպառիչ ջնջում :label',
+            'heading' => 'Ջնջել :label ընդմիշտ',
 
             'actions' => [
 
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Սպառիչ ջնջել ընտրածը',
+        'label' => 'Ջնջել ընտրվածները ընդմիշտ',
 
         'modal' => [
 
-            'heading' => 'Սպառիչ ջնջել ընտրած :label',
+            'heading' => 'Ջնջել ընտրված :label ընդմիշտ',
 
             'actions' => [
 
@@ -57,13 +57,13 @@ return [
             'deleted_partial' => [
                 'title' => 'Ջնջվեց :count-ը ընդհանուր :total-ից',
                 'missing_authorization_failure_message' => 'Դուք իրավունք չունեք ջնջելու :count-ը։',
-                'missing_processing_failure_message' => ':count-ը հնարավոր չէր ջնջել։',
+                'missing_processing_failure_message' => ':count-ը հնարավոր չեղավ ջնջել։',
             ],
 
             'deleted_none' => [
                 'title' => 'Չհաջողվեց ջնջել',
                 'missing_authorization_failure_message' => 'Դուք իրավունք չունեք ջնջելու :count-ը։',
-                'missing_processing_failure_message' => ':count-ը հնարավոր չէր ջնջել։',
+                'missing_processing_failure_message' => ':count-ը հնարավոր չեղավ ջնջել։',
             ],
 
         ],

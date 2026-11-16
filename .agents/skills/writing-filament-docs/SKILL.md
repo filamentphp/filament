@@ -29,6 +29,6 @@ Update documentation for developer-facing features and changes to supported usag
 
 - Use gerunds for headings ("Setting the type" not "Type settings", "Enabling search" not "Search").
 - Use backticks for code (`method()`, `ClassName`), and include `use` statements in examples.
-- Use `<Aside variant="tip|info|danger">...</Aside>` for asides.
+- Use Markdown alerts (`> [!NOTE]`, `> [!TIP]`, `> [!WARNING]`, or `> [!CAUTION]`) with each content line prefixed by `> `.
 
 For documentation screenshots, also load `capturing-filament-screenshots` from `.agents/skills/capturing-filament-screenshots/SKILL.md`.

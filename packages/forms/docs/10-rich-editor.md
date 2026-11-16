@@ -426,9 +426,8 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 
 If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you can use the [content renderer](#rendering-rich-content) to output HTML. The renderer automatically sanitizes the editor's content, but treats HTML returned by [registered custom blocks](#rendering-content-with-custom-blocks) as trusted application HTML. You are responsible for escaping or sanitizing user-supplied configuration values in both the block's output and its [preview](#rendering-a-preview-for-a-custom-block).
 
-<Aside variant="danger">
-    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
-</Aside>
+> [!CAUTION]
+> Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
 
 ## Uploading images to the editor
 
@@ -445,9 +444,8 @@ RichEditor::make('content')
 
 <UtilityInjection set="formFields">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="tip">
-    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) for more information.
-</Aside>
+> [!TIP]
+> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) for more information.
 
 ### Using private images in the editor
 
@@ -481,9 +479,8 @@ Filament parses the record's original content (via `$record->getOriginal()` for 
 
 The default file attachment provider performs no per-record scoping — any `data-id` that resolves to a file on the configured disk is accepted unless you enable `preventFileAttachmentPathTampering()` or use a dedicated disk containing only files that the current user may access. Setting `fileAttachmentsDirectory()` only changes where new attachments are stored; it does not restrict which existing paths can be submitted. If instead you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, it only generates URLs for `data-id` values in the record's own media collection. This prevents another record's media from being served, but it does not reject the submitted content during validation. Use `preventFileAttachmentPathTampering()` if you also need unapproved IDs to fail validation.
 
-<Aside variant="warning">
-    `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
-</Aside>
+> [!WARNING]
+> `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
 
 To apply this check to every `RichEditor` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
 
@@ -634,9 +631,8 @@ The `schema()` method on the action can define form fields that will be displaye
 
 Once a block is inserted into the editor, you may define a "preview" for it using the `toPreviewHtml()` method. This method should return a string of HTML that will be displayed in the editor when the block is inserted, allowing users to see what the block will look like before they save it. You can access the `$config` for the block in this method, which contains the data that was submitted in the modal when the block was inserted:
 
-<Aside variant="danger">
-    Filament treats HTML returned by `toPreviewHtml()` and the block's [`toHtml()` method](#rendering-content-with-custom-blocks) as trusted application HTML and does not sanitize it. Treat `$config` as untrusted user input, including when it comes from saved content. Escape plain text using Blade's `{{ }}` syntax or Laravel's `e()` helper, and validate user-supplied URLs before rendering them. If a configuration value intentionally contains HTML, [sanitize it](#security) before including it in either the preview or the final output.
-</Aside>
+> [!CAUTION]
+> Filament treats HTML returned by `toPreviewHtml()` and the block's [`toHtml()` method](#rendering-content-with-custom-blocks) as trusted application HTML and does not sanitize it. Treat `$config` as untrusted user input, including when it comes from saved content. Escape plain text using Blade's `{{ }}` syntax or Laravel's `e()` helper, and validate user-supplied URLs before rendering them. If a configuration value intentionally contains HTML, [sanitize it](#security) before including it in either the preview or the final output.
 
 ```php
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
@@ -711,9 +707,8 @@ This setting applies to all custom blocks with previews in the editor. Blocks wi
 
 When rendering the rich content, you can pass the array of custom blocks to the `RichContentRenderer` to ensure that the blocks are rendered correctly:
 
-<Aside variant="danger">
-    The renderer sanitizes the surrounding editor content, but preserves HTML returned by registered custom blocks without sanitization, just like [custom block previews](#rendering-a-preview-for-a-custom-block). Your block's `toHtml()` method must escape or sanitize user-supplied configuration values itself. Do not return user-supplied HTML directly from this method.
-</Aside>
+> [!CAUTION]
+> The renderer sanitizes the surrounding editor content, but preserves HTML returned by registered custom blocks without sanitization, just like [custom block previews](#rendering-a-preview-for-a-custom-block). Your block's `toHtml()` method must escape or sanitize user-supplied configuration values itself. Do not return user-supplied HTML directly from this method.
 
 ```php
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
@@ -1122,17 +1117,16 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
-<Aside variant="tip">
-    The string returned from the `url()` closure is rendered directly into the `href` attribute of an `<a>` tag, so if any part of the URL is built from user input you should make sure it cannot resolve to a scheme like `javascript:` or `data:` that the browser would execute. The simplest way to guarantee this is to wrap the return value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which only allows `http`/`https` and relative URLs:
-
-    ```php
-    use Illuminate\Support\Str;
-
-    ->url(fn (string $id, string $label): ?string => Str::sanitizeUrl(
-        route('users.show', $id),
-    ))
-    ```
-</Aside>
+> [!TIP]
+> The string returned from the `url()` closure is rendered directly into the `href` attribute of an `<a>` tag, so if any part of the URL is built from user input you should make sure it cannot resolve to a scheme like `javascript:` or `data:` that the browser would execute. The simplest way to guarantee this is to wrap the return value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which only allows `http`/`https` and relative URLs:
+>
+> ```php
+> use Illuminate\Support\Str;
+>
+> ->url(fn (string $id, string $label): ?string => Str::sanitizeUrl(
+>     route('users.show', $id),
+> ))
+> ```
 
 ## Registering rich content attributes
 
@@ -1741,8 +1735,7 @@ esbuild.build({
 })
 ```
 
-<Aside variant="info">
-    `window.FilamentRichEditor.tiptap` is assigned when the rich editor bundle loads, which happens before `getTipTapJsExtensions()` URLs are fetched. If you need to use the modules in a context where the rich editor has not yet loaded, bundle your own copies instead.
-
-    The esbuild plugin above reads the named exports from your locally-installed `@tiptap/core` and `@tiptap/pm` at build time, so keep those versions roughly in sync with the version bundled by Filament — otherwise a newer named export referenced in your extension may be `undefined` at runtime.
-</Aside>
+> [!NOTE]
+> `window.FilamentRichEditor.tiptap` is assigned when the rich editor bundle loads, which happens before `getTipTapJsExtensions()` URLs are fetched. If you need to use the modules in a context where the rich editor has not yet loaded, bundle your own copies instead.
+>
+> The esbuild plugin above reads the named exports from your locally-installed `@tiptap/core` and `@tiptap/pm` at build time, so keep those versions roughly in sync with the version bundled by Filament — otherwise a newer named export referenced in your extension may be `undefined` at runtime.

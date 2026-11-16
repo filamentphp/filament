@@ -11,7 +11,10 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use RuntimeException;
 
 use function Filament\Tests\livewire;
 
@@ -158,6 +161,23 @@ it('returns `null` for `getLimitedRemainingTextSize()` by default', function ():
     $entry = ImageEntry::make('image');
     expect($entry->getLimitedRemainingTextSize())->toBeNull();
 });
+
+it('can configure and clear `limitedRemainingTextTooltip()`', function (mixed $tooltip): void {
+    $entry = ImageEntry::make('image');
+
+    expect($entry->getLimitedRemainingTextTooltip())->toBeNull();
+
+    $entry->limitedRemainingTextTooltip($tooltip);
+
+    expect((string) $entry->getLimitedRemainingTextTooltip())->toBe('More colleagues');
+
+    $entry->limitedRemainingTextTooltip(null);
+
+    expect($entry->getLimitedRemainingTextTooltip())->toBeNull();
+})->with([
+    'text' => ['More colleagues'],
+    'HTML' => [new HtmlString('More colleagues')],
+]);
 
 it('can set `visibility()`', function (): void {
     $entry = ImageEntry::make('image')->visibility('private');
@@ -328,6 +348,17 @@ describe('Closure support', function (): void {
 });
 
 describe('rendering', function (): void {
+    it('only evaluates `limitedRemainingTextTooltip()` when the remaining count is visible', function (int $imageCount, bool $showRemainingCount): void {
+        $entry = ImageEntry::make('avatars')
+            ->container(Schema::make(Livewire::make()))
+            ->state(array_fill(0, $imageCount, 'https://example.com/avatar.jpg'))
+            ->limit(3)
+            ->limitedRemainingText($showRemainingCount)
+            ->limitedRemainingTextTooltip(static fn () => throw new RuntimeException('The hidden count tooltip must not be evaluated.'));
+
+        expect($entry->toHtml())->not->toContain('+2');
+    })->with([[3, true], [5, false]]);
+
     it('can render with `square()`', function (): void {
         livewire(RenderImageEntryWithSquare::class)->assertSuccessful();
     });
@@ -419,6 +450,24 @@ describe('rendering', function (): void {
     it('can render with `circular()` set via `Closure`', function (): void {
         livewire(RenderImageEntryWithClosureCircular::class)->assertSuccessful();
     });
+});
+
+it('shows a separate `limitedRemainingTextTooltip()` with trusted HTML', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/infolist-entries-browser-test?imageTooltips=1');
+
+    $page
+        ->assertCount('[data-testid="image-stack"] img', 3)
+        ->hover('[data-testid="image-stack"] img >> nth=0')
+        ->assertSeeIn('[role="tooltip"]', 'Visible colleague')
+        ->hover('[data-testid="image-stack"] :text-is("+2")')
+        ->assertSeeIn('[role="tooltip"]', 'More from 5 colleagues: Dan & Alex')
+        ->assertSeeIn('[role="tooltip"] b', 'Dan & Alex')
+        ->assertNoSmoke();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithImageEntry extends Component implements HasSchemas

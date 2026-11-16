@@ -28,9 +28,8 @@ Wizard::make([
 
 <AutoScreenshot name="schemas/layout/wizard/simple" alt="Wizard" />
 
-<Aside variant="tip">
-    We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../resources/creating-records#using-a-wizard) or an [action modal](../actions/modals#rendering-a-wizard-in-a-modal). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
-</Aside>
+> [!TIP]
+> We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../resources/creating-records#using-a-wizard) or an [action modal](../actions/modals#rendering-a-wizard-in-a-modal). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
 
 ## Rendering a submit button on the last step
 

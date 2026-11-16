@@ -38,6 +38,8 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
 
     public static ?string $authGuard = null;
 
+    public bool $isOpen = false;
+
     #[Exposed]
     #[On('databaseNotificationsSent')]
     public function refresh(): void {}

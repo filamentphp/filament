@@ -73,6 +73,10 @@ export default function tagsInputFormComponent({
             ['x-on:blur']: 'createTag()',
             ['x-model']: 'newTag',
             ['x-on:keydown'](event) {
+                if (event.isComposing || event.keyCode === 229) {
+                    return
+                }
+
                 if (['Enter', ...splitKeys].includes(event.key)) {
                     event.preventDefault()
                     event.stopPropagation()

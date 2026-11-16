@@ -53,6 +53,12 @@
         @apply h-auto! p-3!;
     }
 
+    &
+        .filepond--root[data-disabled]:has(.filepond--item)
+        .filepond--drop-label:has(> label:empty) {
+        @apply hidden;
+    }
+
     & .filepond--drop-label[style*='visibility: hidden'] {
         @apply min-h-0!;
     }

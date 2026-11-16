@@ -26,21 +26,19 @@ composer require filament/filament:"^4.0"
 php artisan filament:install --panels
 ```
 
-<Aside variant="warning">
-    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
-
-    ```bash
-    composer require filament/filament:"~4.0"
-
-    php artisan filament:install --panels
-    ```
-</Aside>
+> [!WARNING]
+> When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+>
+> ```bash
+> composer require filament/filament:"~4.0"
+>
+> php artisan filament:install --panels
+> ```
 
 This will create and register a new [Laravel service provider](https://laravel.com/docs/providers) called `app/Providers/Filament/AdminPanelProvider.php`.
 
-<Aside variant="tip">
-    If you get an error when accessing your panel, check that the service provider is registered in `bootstrap/providers.php`. If it's not registered, you'll need to [add it manually](https://laravel.com/docs/providers#registering-providers).
-</Aside>
+> [!TIP]
+> If you get an error when accessing your panel, check that the service provider is registered in `bootstrap/providers.php`. If it's not registered, you'll need to [add it manually](https://laravel.com/docs/providers#registering-providers).
 
 You can create a new user account using the following command:
 
@@ -72,20 +70,19 @@ composer require
 
 You can install additional packages later in your project without having to repeat these installation steps.
 
-<Aside variant="warning">
-    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
-
-    ```bash
-    composer require
-        filament/tables:"~4.0"
-        filament/schemas:"~4.0"
-        filament/forms:"~4.0"
-        filament/infolists:"~4.0"
-        filament/actions:"~4.0"
-        filament/notifications:"~4.0"
-        filament/widgets:"~4.0"
-    ```
-</Aside>
+> [!WARNING]
+> When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+>
+> ```bash
+> composer require
+>     filament/tables:"~4.0"
+>     filament/schemas:"~4.0"
+>     filament/forms:"~4.0"
+>     filament/infolists:"~4.0"
+>     filament/actions:"~4.0"
+>     filament/notifications:"~4.0"
+>     filament/widgets:"~4.0"
+> ```
 
 If you only want to use the set of [Blade UI components](../components), you'll need to require `filament/support` at this stage.
 
@@ -96,9 +93,8 @@ Get started with Filament components quickly by running a simple command. Note t
 
 To quickly set up Filament in a new Laravel project, run the following commands to install [Livewire](https://livewire.laravel.com), [Alpine.js](https://alpinejs.dev), and [Tailwind CSS](https://tailwindcss.com):
 
-<Aside variant="warning">
-    These commands will overwrite existing files in your application. Only run them in a new Laravel project!
-</Aside>
+> [!WARNING]
+> These commands will overwrite existing files in your application. Only run them in a new Laravel project!
 
 Run the following command to install the Filament frontend assets:
 
@@ -236,9 +232,8 @@ Add the following code to your new layout file:
 
 The important parts of this are the `@filamentStyles` in the `<head>` of the layout, and the `@filamentScripts` at the end of the `<body>`. Make sure to also include your app's compiled CSS and JavaScript files from Vite!
 
-<Aside variant="info">
-    The `@livewire('notifications')` line is required in the layout only if you have the [Notifications](../notifications) package installed and want to send flash notifications to users through Filament.
-</Aside>
+> [!NOTE]
+> The `@livewire('notifications')` line is required in the layout only if you have the [Notifications](../notifications) package installed and want to send flash notifications to users through Filament.
 
 </Tab>
 </Tabs>

@@ -162,9 +162,8 @@ function (Get $get) {
 }
 ```
 
-<Aside variant="tip">
-    Unless a form field is [reactive](../forms/overview#the-basics-of-reactivity), the schema will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
-</Aside>
+> [!TIP]
+> Unless a form field is [reactive](../forms/overview#the-basics-of-reactivity), the schema will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 
 By default, `Get` and `Set` avoid resolving fresh child schemas of the component being evaluated while searching for state, but can still search its cached descendants. This prevents recursive schema evaluation. If you need to include fresh child schemas, you can call `skipComponentsChildSchemasWhileSearching(false)` on the utility before using it. Do not disable this protection inside a child schema callback that would resolve itself again.
 
@@ -190,9 +189,8 @@ function (string $operation) {
 }
 ```
 
-<Aside variant="info">
-    You can manually set a schema's operation using the `$schema->operation()` method.
-</Aside>
+> [!NOTE]
+> You can manually set a schema's operation using the `$schema->operation()` method.
 
 ### Injecting the current Livewire component instance
 

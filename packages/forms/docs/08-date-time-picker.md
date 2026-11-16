@@ -99,9 +99,8 @@ DatePicker::make('date_of_birth')
 
 <AutoScreenshot name="forms/fields/date-time-picker/javascript" alt="JavaScript-based date time picker" />
 
-<Aside variant="info">
-    The JavaScript date picker does not allow direct date entry. Use the native date picker if users need to type dates.
-</Aside>
+> [!NOTE]
+> The JavaScript date picker does not allow direct date entry. Use the native date picker if users need to type dates.
 
 ### Customizing the display format
 

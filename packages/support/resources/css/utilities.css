@@ -507,7 +507,15 @@
     font-size: var(--text-sm);
     line-height: 1.5;
 
+    img:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        display: inline-block;
+    }
+
     img + img {
+        margin-top: 0;
+    }
+
+    p img:where(:not(.fi-not-prose, .fi-not-prose *)) {
         margin-top: 0;
     }
 

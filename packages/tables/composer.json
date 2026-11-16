@@ -1,6 +1,6 @@
 {
     "name": "filament/tables",
-    "description": "Easily add beautiful tables to any Livewire component.",
+    "description": "Build interactive tables with filtering, sorting, actions, and pagination for Livewire.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

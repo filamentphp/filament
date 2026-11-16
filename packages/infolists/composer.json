@@ -1,6 +1,6 @@
 {
     "name": "filament/infolists",
-    "description": "Easily add beautiful read-only infolists to any Livewire component.",
+    "description": "Display read-only information with reusable entries and layouts for Livewire.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

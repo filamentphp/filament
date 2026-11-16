@@ -54,12 +54,12 @@ trait InteractsWithSchemas
      * @var array<string, bool>
      */
     #[Locked]
-    public array $loadedDeferredSchemas = [];
+    public array $loadedLazySchemas = [];
 
     /**
      * @var array<string, Schema>
      */
-    protected array $renderedDeferredSchemas = [];
+    protected array $renderedLazySchemas = [];
 
     /**
      * @var array<string, ?Schema>
@@ -73,7 +73,7 @@ trait InteractsWithSchemas
     #[Unexposed]
     public function renderingInteractsWithSchemas(): void
     {
-        $this->renderedDeferredSchemas = [];
+        $this->renderedLazySchemas = [];
     }
 
     #[Unexposed]
@@ -142,9 +142,9 @@ trait InteractsWithSchemas
      * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
      */
     #[Exposed]
-    public function loadDeferredSchema(string $schemaKey): void
+    public function loadLazySchema(string $schemaKey): void
     {
-        if ($this->loadedDeferredSchemas[$schemaKey] ?? false) {
+        if ($this->loadedLazySchemas[$schemaKey] ?? false) {
             app(PartialsComponentHook::class)->skipPartialRender($this);
 
             return;
@@ -206,7 +206,7 @@ trait InteractsWithSchemas
             return;
         }
 
-        $this->loadedDeferredSchemas[$schemaKey] = true;
+        $this->loadedLazySchemas[$schemaKey] = true;
 
         app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
             "schema.{$schemaKey}" => function () use ($schema, $schemaKey): string {
@@ -225,21 +225,21 @@ trait InteractsWithSchemas
      * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
      */
     #[Unexposed]
-    public function isDeferredSchemaLoaded(Schema $schema): bool
+    public function isLazySchemaLoaded(Schema $schema): bool
     {
         $schemaKey = $schema->getKey();
 
         if (blank($schemaKey) || ($schemaKey === $schema->getParentComponent()?->getContainer()->getKey())) {
-            throw new LogicException('A deferred schema must have a unique key. Set a key on its parent component or on the schema itself.');
+            throw new LogicException('A lazy-loaded schema must have a unique key. Set a key on its parent component or on the schema itself.');
         }
 
-        if (isset($this->renderedDeferredSchemas[$schemaKey])) {
-            throw new LogicException("Multiple deferred schemas are using the key [{$schemaKey}]. Set a unique key on each deferred schema.");
+        if (isset($this->renderedLazySchemas[$schemaKey])) {
+            throw new LogicException("Multiple lazy-loaded schemas are using the key [{$schemaKey}]. Set a unique key on each lazy-loaded schema.");
         }
 
-        $this->renderedDeferredSchemas[$schemaKey] = $schema;
+        $this->renderedLazySchemas[$schemaKey] = $schema;
 
-        if ($this->loadedDeferredSchemas[$schemaKey] ?? false) {
+        if ($this->loadedLazySchemas[$schemaKey] ?? false) {
             return true;
         }
 
@@ -261,7 +261,7 @@ trait InteractsWithSchemas
                     continue;
                 }
 
-                $this->loadedDeferredSchemas[$schemaKey] = true;
+                $this->loadedLazySchemas[$schemaKey] = true;
 
                 return true;
             }

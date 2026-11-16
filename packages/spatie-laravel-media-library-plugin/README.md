@@ -49,7 +49,7 @@ SpatieMediaLibraryFileUpload::make('avatar')
 
 ### Configuring the storage disk and directory
 
-By default, files will be uploaded publicly to your storage disk defined in the [Filament configuration file](https://filamentphp.com/docs/forms/installation#publishing-configuration). You can also set the `FILESYSTEM_DISK` environment variable to change this. This is to ensure consistency between all Filament packages. Spatie's disk configuration will not be used, unless you [define a disk for a registered collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/defining-media-collections#content-using-a-specific-disk).
+By default, files will be uploaded to the storage disk defined in the [Filament configuration file](https://filamentphp.com/docs/forms/installation#publishing-configuration), which is `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this. This is to ensure consistency between all Filament packages. Spatie's disk configuration will not be used, unless you [define a disk for a registered collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/defining-media-collections#content-using-a-specific-disk).
 
 Alternatively, you can manually set the disk with the `disk()` method:
 
@@ -60,7 +60,14 @@ SpatieMediaLibraryFileUpload::make('attachment')
     ->disk('s3')
 ```
 
-The base file upload component also has configuration options for setting the `directory()` and `visibility()` of uploaded files. These are not used by the media library file upload component. Spatie's package has its own system for determining the directory of a newly-uploaded file, and it does not support uploading private files out of the box. One way to store files privately is to configure this in your S3 bucket settings, in which case you should also use `visibility('private')` to ensure that Filament generates temporary URLs for your files.
+The base file upload component's `directory()` option is not used by the media library file upload component. Spatie's package has its own system for determining the directory of a newly-uploaded file.
+
+The `visibility()` option controls how Filament generates preview URLs. By default, a disk named `public` uses public visibility, and other disks use private visibility. For private visibility, Filament attempts to generate temporary URLs if the disk supports them, falling back to permanent URLs if it cannot.
+
+If you have not explicitly set `disk()`, setting `visibility('private')` also changes a default or registered collection disk named `public` to `local`. Set `disk()` explicitly to keep using a particular disk.
+
+> [!WARNING]
+> Setting `visibility('private')` does not set the storage permissions of files uploaded through Media Library. Configure your disk or S3 bucket to prevent public access to private files.
 
 ### Reordering files
 
