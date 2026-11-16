@@ -13,6 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\State\LazyLoadedState;
 use Generator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,10 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     protected array | Closure | null $tableColumns = null;
 
+    protected bool $hasResolvedLazyLoadedState = false;
+
+    protected mixed $cachedLazyLoadedState = null;
+
     protected mixed $cachedItemsState = null;
 
     protected ?Generator $cachedItemsStateGenerator = null;
@@ -40,6 +45,62 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      * @var array<array-key, mixed> | null
      */
     protected ?array $cachedItemsStateGeneratorSnapshot = null;
+
+    public function state(mixed $state): static
+    {
+        $this->hasResolvedLazyLoadedState = false;
+        $this->cachedLazyLoadedState = null;
+
+        return parent::state($state);
+    }
+
+    public function getState(): mixed
+    {
+        if (! $this->isStateLazyLoaded()) {
+            return parent::getState();
+        }
+
+        if ($this->isRenderingLazyLoadedState && (! $this->hasResolvedLazyLoadedState)) {
+            $this->cachedLazyLoadedState = parent::getState();
+            $this->hasResolvedLazyLoadedState = true;
+        }
+
+        return $this->hasResolvedLazyLoadedState ? $this->cachedLazyLoadedState : null;
+    }
+
+    /**
+     * @internal
+     */
+    public function prepareChildSchemasForLookup(): void
+    {
+        if ($this->hasResolvedLazyLoadedState || $this->isRenderingLazyLoadedState || (! $this->isStateLazyLoaded())) {
+            return;
+        }
+
+        if ($this->isHidden()) {
+            return;
+        }
+
+        $schema = $this->getContainer();
+
+        while ($schema !== null) {
+            if ($schema->isHidden()) {
+                return;
+            }
+
+            $schema = $schema->getParentComponent()?->getContainer();
+        }
+
+        if ($this->getLazyLoadedStateGroup()) {
+            $state = app(LazyLoadedState::class)->getGroupState([$this->getKey() => $this])[$this->getLazyLoadedStateKey()];
+            $component = $this->getClone()->state(static fn (): mixed => $state);
+            $this->cachedLazyLoadedState = $component->getConstantState();
+        } else {
+            $this->cachedLazyLoadedState = $this->getConstantState();
+        }
+
+        $this->hasResolvedLazyLoadedState = true;
+    }
 
     /**
      * Configure table columns for display

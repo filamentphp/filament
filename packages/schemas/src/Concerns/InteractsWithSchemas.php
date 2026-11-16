@@ -178,6 +178,8 @@ trait InteractsWithSchemas
                     continue;
                 }
 
+                $component->prepareChildSchemasForLookup();
+
                 foreach ($component->getChildSchemas() as $childSchema) {
                     $childSchemaKey = $childSchema->getKey();
 

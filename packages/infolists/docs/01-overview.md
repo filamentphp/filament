@@ -758,6 +758,93 @@ TextEntry::make('name')
 
 <AutoScreenshot name="infolists/entries/after-content" alt="Infolist entry with extra content after content" />
 
+## Loading entry state lazily
+
+If calculating an entry's state is expensive, you can use `lazyLoadedState()` to load it after the initial render, without delaying the rest of the infolist:
+
+```php
+use App\Services\ScoreService;
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Database\Eloquent\Model;
+
+TextEntry::make('score')
+    ->state(fn (Model $record): int => app(ScoreService::class)->forRecord($record))
+    ->lazyLoadedState()
+```
+
+In this example, `ScoreService` represents your application's expensive calculation. Filament displays a loading indicator until the state is ready. Loading starts when the entry enters the viewport. Only rendered entries are loaded, and their state loads again when the infolist rerenders.
+
+Each ungrouped entry loads using a separate Livewire async action. [Grouped loaders](#grouping-lazy-loaded-entry-state) use one async action per group. These actions run concurrently rather than queuing behind other actions on the same Livewire component. Livewire may still bundle messages across different components, including components with reactive or modelable children.
+
+Lazy-loaded state requests use Livewire's normal request lifecycle, including its interceptors and pending property updates. If the parent changes while a value is loading, Filament cancels the obsolete response and reloads any remaining placeholders using the latest state, waiting for the entry or its group to enter the viewport.
+
+> [!WARNING]
+> Treat lazy-loaded state loaders as read-only. Return the state to display instead of mutating the Livewire component or persisting UI state inside a loader. Concurrent async actions do not provide ordering guarantees for component mutations.
+
+Lazy-loaded state is normally resolved for rendering only. Other server-side callbacks see `null` when accessing the entry's state outside its lazy render. A lazy-loaded `RepeatableEntry` also resolves its state when [reconstructing its children for a later child request or action](repeatable-entry#loading-repeatable-state-lazily). Use record data instead of `$state` for visibility, lazy loading conditions, group names, keys, and action callbacks. Label and wrapper callbacks also run while the entry is loading, so they must support a `null` state.
+
+You can pass `false` to `lazyLoadedState()` to disable lazy loading, or a function to enable it conditionally:
+
+```php
+use App\Services\ScoreService;
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Database\Eloquent\Model;
+
+TextEntry::make('score')
+    ->state(fn (Model $record): int => app(ScoreService::class)->forRecord($record))
+    ->lazyLoadedState(fn (Model $record): bool => $record->is_active)
+```
+
+### Grouping lazy-loaded entry state
+
+To fetch multiple values in one request, create a named `LazyLoadedStateGroup` and attach it to each entry using the `group` argument of `lazyLoadedState()`. The group's `state()` function runs once per group request and returns an array of raw states keyed by the entry names:
+
+```php
+use App\Services\MetricsService;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\State\LazyLoadedStateGroup;
+use Illuminate\Database\Eloquent\Model;
+
+$group = LazyLoadedStateGroup::make('metrics')
+    ->state(fn (Model $record): array => app(MetricsService::class)->forRecord($record));
+
+TextEntry::make('score')
+    ->lazyLoadedState(group: $group)
+
+TextEntry::make('rank')
+    ->lazyLoadedState(group: $group)
+```
+
+Your `MetricsService::forRecord()` method should return an array such as `['score' => 42, 'rank' => 3]`. Individual entries' `state()` functions are not called for grouped values. Return raw values: Filament still applies each entry's normal separator, default state, and formatting configuration.
+
+The group function can receive `$records` and `$components`, both arrays keyed by the lazy-loaded state keys. It also supports the normal [entry utilities](#entry-utility-injection), including `$record`, evaluated using the first entry in the group request.
+
+### Grouping entries across records
+
+By default, the lazy-loaded state key is the entry name. If your group contains entries with the same name for different records, pass a unique `key` to `lazyLoadedState()`:
+
+```php
+use App\Services\ScoreService;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\State\LazyLoadedStateGroup;
+use Illuminate\Database\Eloquent\Model;
+
+$group = LazyLoadedStateGroup::make('scores')
+    ->state(fn (array $records): array => app(ScoreService::class)->forRecords($records));
+
+TextEntry::make('score')
+    ->lazyLoadedState(
+        group: $group,
+        key: fn (Model $record): string => (string) $record->getKey(),
+    )
+```
+
+Here, your `ScoreService::forRecords()` method should return scores keyed by the record keys, matching the keys in `$records`. Use `$records` when processing multiple records rather than assuming the injected `$record` represents every entry.
+
+The first member to enter the viewport starts one request for all currently rendered members of its group, including members outside the viewport. Only rendered targets are included in the group request. Each target must have a unique key within its group, and the returned array must contain every requested key. Duplicate target keys and missing result keys are rejected. A `null` value is valid.
+
+Alternatively, to load several entries independently for each record, you can pass a function as the group name, such as `LazyLoadedStateGroup::make(fn (Model $record): string => "metrics-{$record->getKey()}")`. Filament evaluates the group name using the originating entry's utilities. Attach the same group to the entries for that record, keeping the entry names as their default keys, as in the [metrics example](#grouping-lazy-loaded-entry-state).
+
 ## Adding extra HTML attributes to an entry
 
 You can pass extra HTML attributes to the entry via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:

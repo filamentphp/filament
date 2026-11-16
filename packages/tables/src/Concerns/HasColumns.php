@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\State\LazyLoadedState;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
@@ -14,6 +15,74 @@ use ReflectionMethod;
 
 trait HasColumns
 {
+    /**
+     * @param  array<string, array{column: string, record: string}>  $targets
+     * @return array<string, string>
+     */
+    #[Exposed]
+    #[Renderless]
+    public function loadTableColumnStates(array $targets): array
+    {
+        $components = [];
+        $records = [];
+        $rowLoops = [];
+        $tableRecords = $this->getTableRecords();
+
+        view()->addLoop($tableRecords);
+
+        try {
+            foreach ($tableRecords as $record) {
+                view()->incrementLoopIndices();
+
+                $recordKey = $this->getTableRecordKey($record);
+                $records[$recordKey] = $record;
+                $rowLoops[$recordKey] = view()->getLastLoop();
+            }
+        } finally {
+            view()->popLoop();
+        }
+
+        foreach ($targets as $identifier => $target) {
+            $column = $this->getTable()->getColumn($target['column']);
+            $record = $records[$target['record']] ?? null;
+
+            abort_unless($column && $record, 404);
+
+            $column = (clone $column)
+                ->record($record)
+                ->recordKey($target['record'])
+                ->rowLoop($rowLoops[$target['record']]);
+
+            $component = $column;
+            $layouts = [];
+
+            while ($layout = $component->getLayout()) {
+                $layout = (clone $layout)
+                    ->record($record)
+                    ->recordKey($target['record'])
+                    ->rowLoop($rowLoops[$target['record']]);
+
+                $component->layout($layout);
+                $layouts[] = $layout;
+                $component = $layout;
+            }
+
+            foreach (array_reverse($layouts) as $layout) {
+                abort_if($layout->isHidden(), 403);
+            }
+
+            if ($this->getTable()->hasColumnsLayout()) {
+                $column->inline();
+            }
+
+            abort_unless((! $column->isHidden()) && (! $column->isToggledHidden()) && $column->isStateLazyLoaded(), 403);
+
+            $components[$identifier] = $column;
+        }
+
+        return app(LazyLoadedState::class)->render($components);
+    }
+
     #[Exposed]
     public function callTableColumnAction(string $name, string $recordKey): mixed
     {
