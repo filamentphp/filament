@@ -13,7 +13,7 @@ return [
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Գրառումներ',
+                    'label' => 'Գրառում',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Կցել և կցել մեկ այլ',
+                    'label' => 'Կցել և կցել ևս մեկը',
                 ],
 
             ],
