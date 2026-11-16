@@ -1091,7 +1091,7 @@ SelectColumn::make('purchase_currency')
     ])
 ```
 
-Anything else that depends on the updated record, such as other rows, [summaries](../summaries), or content outside the table, is not updated until the component next renders. Columns that are not visible in the table are skipped. The row loop is not available while a cell is partially rendered, so [`$rowLoop`](#injecting-the-row-loop) is `null` in the cell's functions. Partial rendering is not used when the table has a [content layout](../layout), and the whole component is rendered instead.
+Anything else that depends on the updated record, such as other rows or content outside the table, is not updated until the component next renders. Columns that are not visible in the table are skipped. If the table has [summaries](../summaries) or a [content layout](../layout), the whole component is rendered instead.
 
 ## Column utility injection
 

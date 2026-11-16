@@ -38,9 +38,23 @@ it('persists boolean changes through `updateTableColumnState()` and rejects vali
 })->with(['is_published', 'json.approved']);
 
 it('renders the configured cells instead of the whole table after `updateTableColumnState()`', function (string $saveScenario, array $expectedPartiallyRenderedColumns): void {
+    if ($saveScenario === 'partial-row-loop') {
+        Post::factory()->count(4)->create();
+    }
+
     $post = Post::factory()->create(['title' => 'Original title', 'rating' => 1]);
-    $component = livewire(ColumnsBrowserTest::class, ['editableColumns' => true, 'saveScenario' => $saveScenario])
-        ->call('updateTableColumnState', 'title', (string) $post->getKey(), 'mixedCase');
+
+    if ($saveScenario === 'partial-row-loop') {
+        Post::factory()->count(3)->create();
+    }
+
+    $component = livewire(ColumnsBrowserTest::class, ['editableColumns' => true, 'saveScenario' => $saveScenario]);
+
+    if ($saveScenario === 'partial-row-loop') {
+        $component->call('setPage', 2);
+    }
+
+    $component->call('updateTableColumnState', 'title', (string) $post->getKey(), 'mixedCase');
 
     $expectedPartialNames = array_map(
         fn (string $columnName): string => "table.record.{$post->getKey()}.column.{$columnName}",
@@ -54,6 +68,11 @@ it('renders the configured cells instead of the whole table after `updateTableCo
 
     $partials = $component->effects['partials'];
 
+    if ($saveScenario === 'partial-row-loop') {
+        expect($partials["table.record.{$post->getKey()}.column.position"])
+            ->toContain('data-row-index="1"', 'data-row-remaining="1"');
+    }
+
     // The full table renders the same cell HTML, so the partial can replace the cell in place.
     $component->call('$refresh');
 
@@ -63,6 +82,7 @@ it('renders the configured cells instead of the whole table after `updateTableCo
 })->with([
     '`partiallyRenderAfterStateUpdated()`' => ['partial', ['title']],
     '`partiallyRenderColumnsAfterStateUpdated()`' => ['partial-columns', ['title', 'rating']],
+    '`partiallyRenderColumnsAfterStateUpdated()` with `rowIndex()`' => ['partial-row-loop', ['title', 'position']],
 ]);
 
 it('renders the whole table after `updateTableColumnState()` by default', function (): void {
@@ -186,15 +206,20 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
 
         expect($post->fresh()->title)->toBe($expectedState);
+
+        if ($scenario === 'partial-summary') {
+            $page->assertSeeIn('[data-testid="rating-total"]', '2');
+        }
     })->with([
         'normalization' => ['normalize', 'MIXEDCASE'],
         'custom records' => ['custom-records', 'MIXEDCASE'],
+        'summary fallback' => ['partial-summary', 'MIXEDCASE'],
     ]);
 
-    it('updates partially rendered cells without rendering the rest of the table', function (): void {
+    it('updates partially rendered cells without rendering the rest of the table', function (string $scenario): void {
         $post = Post::factory()->create(['title' => 'Original title', 'rating' => 1]);
 
-        $page = visit('/columns-browser-test?editableColumns=1&saveScenario=partial-columns');
+        $page = visit('/columns-browser-test?editableColumns=1&saveScenario=' . $scenario);
 
         // Rendering the whole table would morph this cell and remove the attribute added in the browser.
         $page->script(<<<'JS'
@@ -206,11 +231,16 @@ describe('browser interactions', function (): void {
             ->fill($control, 'mixedCase')
             ->keys($control, 'Tab')
             ->assertValue($control, 'MIXEDCASE')
-            ->assertValue('[data-testid="editable-rating"] select', '2')
             ->assertAttributeMissing($control, 'aria-busy')
             ->assertPresent('[data-testid="unrendered-cell"]')
             ->assertNoSmoke();
 
         expect($post->fresh())->title->toBe('MIXEDCASE')->rating->toBe(2);
-    });
+
+        if ($scenario === 'partial-row-loop') {
+            $page->assertSeeIn('[data-testid="editable-position"]', '1');
+        } else {
+            $page->assertValue('[data-testid="editable-rating"] select', '2');
+        }
+    })->with(['partial-columns', 'partial-row-loop']);
 });

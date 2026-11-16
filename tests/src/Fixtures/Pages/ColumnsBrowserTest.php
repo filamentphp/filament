@@ -17,6 +17,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Livewire\Attributes\Url;
+use stdClass;
 
 class ColumnsBrowserTest extends Page implements HasTable
 {
@@ -90,13 +91,33 @@ class ColumnsBrowserTest extends Page implements HasTable
                     });
             }
 
-            if (in_array($this->saveScenario, ['partial', 'partial-columns'])) {
+            if (in_array($this->saveScenario, ['partial', 'partial-columns', 'partial-row-loop', 'partial-summary'])) {
                 $columns[2]
                     ->updateStateUsing(static function (Post $record, string $state): void {
                         $record->update(['title' => strtoupper($state), 'rating' => 2]);
                     })
-                    ->partiallyRenderAfterStateUpdated(fn (): bool => $this->saveScenario === 'partial')
-                    ->partiallyRenderColumnsAfterStateUpdated(($this->saveScenario === 'partial-columns') ? ['rating'] : []);
+                    ->partiallyRenderAfterStateUpdated()
+                    ->partiallyRenderColumnsAfterStateUpdated(match ($this->saveScenario) {
+                        'partial-columns' => ['rating'],
+                        'partial-row-loop' => ['position'],
+                        default => [],
+                    });
+            }
+
+            if ($this->saveScenario === 'partial-row-loop') {
+                $columns[] = Tables\Columns\TextColumn::make('position')
+                    ->rowIndex()
+                    ->extraAttributes(['data-testid' => 'editable-position'])
+                    ->extraCellAttributes(static fn (stdClass $rowLoop): array => [
+                        'data-row-index' => $rowLoop->index,
+                        'data-row-remaining' => $rowLoop->remaining,
+                    ]);
+
+                $table->paginated([3]);
+            }
+
+            if ($this->saveScenario === 'partial-summary') {
+                $columns[3]->summarize(Tables\Columns\Summarizers\Sum::make()->extraAttributes(['data-testid' => 'rating-total']));
             }
 
             if ($this->saveScenario === 'custom-records') {
