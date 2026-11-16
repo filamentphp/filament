@@ -23,6 +23,7 @@
 @import './components/input/radio.css' layer(components);
 @import './components/input/select.css' layer(components);
 @import './components/input/wrapper.css' layer(components);
+@import './components/lazy-loaded-state.css' layer(components);
 @import './components/link.css' layer(components);
 @import './components/loading-indicator.css' layer(components);
 @import './components/loading-section.css' layer(components);

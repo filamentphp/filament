@@ -7,6 +7,7 @@ import Tooltip from '@ryangjchandler/alpine-tooltip'
 import './tooltip.js'
 import dropdown from './components/dropdown.js'
 import formButton from './components/form-button.js'
+import lazyLoadedState from './components/lazy-loaded-state.js'
 import modal from './components/modal.js'
 import oneTimeCodeInput from './components/one-time-code.js'
 import './disabled-button.js'
@@ -25,6 +26,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Tooltip)
     window.Alpine.data('filamentDropdown', dropdown)
     window.Alpine.data('filamentFormButton', formButton)
+    window.Alpine.data('filamentLazyLoadedState', lazyLoadedState)
     window.Alpine.data('filamentModal', modal)
     window.Alpine.data('filamentOneTimeCodeInput', oneTimeCodeInput)
     window.Alpine.data('filamentCopyable', copyable)
