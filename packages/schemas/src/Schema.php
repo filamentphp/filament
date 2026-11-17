@@ -197,7 +197,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
         $isLazyLoaded = $this->isLazyLoaded();
 
         if ($isLazyLoaded && (! $this->isLazySchemaLoaded())) {
-            return $this->renderLazyLoadingHtml();
+            return $this->generateLazyLoadingHtml();
         }
 
         $hasVisibleComponents = false;
@@ -286,7 +286,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
     /**
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
-    protected function renderLazyLoadingHtml(): string
+    protected function generateLazyLoadingHtml(): string
     {
         $schemaKey = $this->getKey();
 

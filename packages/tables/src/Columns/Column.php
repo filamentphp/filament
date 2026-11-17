@@ -67,7 +67,7 @@ class Column extends ViewComponent
 
     protected string $viewIdentifier = 'column';
 
-    protected ?string $cachedCellAttributeHtml = null;
+    protected ?string $cachedCellAttributesHtml = null;
 
     final public function __construct(string $name)
     {
@@ -244,7 +244,7 @@ class Column extends ViewComponent
             <?php if ($isPartiallyRenderable) { ?>
                 wire:partial="<?= e($this->getTableCellPartialName()) ?>"
             <?php } ?>
-            <?= $this->getCachedCellAttributeHtml() ?>
+            <?= $this->getCachedCellAttributesHtml() ?>
         >
             <?= $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($this->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' ?>
             <<?= $wrapperTag ?>
@@ -284,7 +284,7 @@ class Column extends ViewComponent
     /**
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
-    public function getCellAttributeHtml(): string
+    public function getCellAttributesHtml(): string
     {
         $columnAlignment = $this->getAlignment();
         $columnVerticalAlignment = $this->getVerticalAlignment();
@@ -302,10 +302,10 @@ class Column extends ViewComponent
     /**
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
-    public function getCachedCellAttributeHtml(): string
+    public function getCachedCellAttributesHtml(): string
     {
-        if ($this->cachedCellAttributeHtml !== null) {
-            return $this->cachedCellAttributeHtml;
+        if ($this->cachedCellAttributesHtml !== null) {
+            return $this->cachedCellAttributesHtml;
         }
 
         if (
@@ -315,10 +315,20 @@ class Column extends ViewComponent
             || $this->hasDynamicHiddenFrom()
             || $this->hasDynamicVisibleFrom()
         ) {
-            return $this->getCellAttributeHtml();
+            return $this->getCellAttributesHtml();
         }
 
-        return $this->cachedCellAttributeHtml = $this->getCellAttributeHtml();
+        return $this->cachedCellAttributesHtml = $this->getCellAttributesHtml();
+    }
+
+    /**
+     * @deprecated Use `getCachedCellAttributesHtml()` instead.
+     *
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    public function getCachedCellAttributeHtml(): string
+    {
+        return $this->getCachedCellAttributesHtml();
     }
 
     /**
