@@ -172,7 +172,7 @@ After the applicable built-in authorization check, Livewire runs per-property hy
 
 ### Inline editable columns
 
-Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `disabled()` method with your own authorization logic. See the documentation for each [editable column type](../tables/columns/toggle) for more details.
+Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check model policies by default, even in strict authorization mode. Use `authorize()` with a policy ability or custom callback to restrict editing. Denied columns are disabled, and changes are rejected on the server. See [authorizing editable columns](../tables/columns/overview#authorizing-editable-columns) for examples and global configuration.
 
 ### Custom actions
 

@@ -23,6 +23,7 @@ use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
@@ -1021,6 +1022,77 @@ describe('attaching records', function (): void {
     });
 });
 
+describe('editable columns', function (): void {
+    afterEach(function (): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
+
+        app()->bind(DepartmentPolicy::class . '::update', fn (): bool => true);
+    });
+
+    it('does not automatically authorize relation manager editable columns, even in strict mode', function (bool $isAuthorizationStrict): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization($isAuthorizationStrict);
+
+        $ticket = Ticket::factory()
+            ->hasAttached(Department::factory(state: ['name' => 'Original']))
+            ->create();
+
+        $department = $ticket->departments->first();
+
+        app()->bind(DepartmentPolicy::class . '::update', fn (): bool => false);
+
+        livewire(DepartmentsRelationManagerWithEditableColumns::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->assertTableColumnEnabled('name', $department)
+            ->call('updateTableColumnState', 'name', (string) $department->getKey(), 'Changed');
+
+        expect($department->fresh()->name)->toBe('Changed');
+    })->with([false, true]);
+
+    it('can opt relation manager editable columns into authorization globally using `configureUsing()`', function (bool $isAuthorizationStrict): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization($isAuthorizationStrict);
+
+        $ticket = Ticket::factory()
+            ->hasAttached(Department::factory(state: ['name' => 'Original']))
+            ->create();
+
+        $department = $ticket->departments->first();
+
+        app()->bind(DepartmentPolicy::class . '::update', fn (): bool => false);
+
+        TextInputColumn::configureUsing(
+            fn (TextInputColumn $column) => $column->authorize(),
+            during: function () use ($ticket, $department): void {
+                livewire(DepartmentsRelationManagerWithEditableColumns::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+                    ->assertTableColumnDisabled('name', $department)
+                    ->assertTableColumnEnabled('name_always_authorized', $department)
+                    ->call('updateTableColumnState', 'name', (string) $department->getKey(), 'Changed')
+                    ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
+            },
+        );
+
+        expect($department->fresh()->name)->toBe('Original');
+    })->with([false, true]);
+
+    it('checks enabled and disabled column assertions against the correct duplicate relationship row', function (): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+
+        $ticket->departments()->attach($department, ['id' => 10, 'price' => 100]);
+        $ticket->departments()->attach($department, ['id' => 20, 'price' => 0]);
+
+        $livewire = livewire(DepartmentsRelationManagerWithEditableColumns::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'shouldAllowDuplicates' => true,
+        ]);
+
+        $records = $livewire->instance()->getTableRecords();
+
+        $livewire
+            ->assertTableColumnEnabled('name', $records->firstWhere('pivot.price', 100))
+            ->assertTableColumnDisabled('name', $records->firstWhere('pivot.price', 0));
+    });
+});
+
 describe('record access edge cases', function (): void {
     it('can access record for action after record no longer matches `TrashedFilter` in `BelongsToMany` relation manager', function (): void {
         $ticket = Ticket::factory()->create();
@@ -1555,6 +1627,24 @@ describe('combined tabs', function (): void {
             ->assertNoSmoke();
     });
 });
+
+class DepartmentsRelationManagerWithEditableColumns extends DepartmentsRelationManager
+{
+    public bool $shouldAllowDuplicates = false;
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->allowDuplicates($this->shouldAllowDuplicates)
+            ->columns([
+                TextInputColumn::make('name')
+                    ->disabled(fn ($record): bool => $this->shouldAllowDuplicates && ($record->pivot->price === 0)),
+                TextInputColumn::make('name_always_authorized')
+                    ->getStateUsing(fn ($record): ?string => $record->name)
+                    ->authorize(true),
+            ]);
+    }
+}
 
 class RecordUrlResolutionRelationManager extends RelationManager
 {

@@ -7,6 +7,7 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
@@ -957,6 +958,400 @@ describe('selectability and individual authorization', function (): void {
         expect(livewire(PostsTable::class)->instance()->getAllSelectableTableRecordsCount())->toBe(3);
     });
 });
+
+describe('selectable records query', function (): void {
+    beforeEach(function (): void {
+        $this->selectablePosts = Post::factory()->count(2)->create(['is_published' => true, 'rating' => 8]);
+        $this->lowRatedPost = Post::factory()->create(['is_published' => true, 'rating' => 2]);
+        $this->unpublishedPosts = Post::factory()->count(2)->create(['is_published' => false, 'rating' => 8]);
+        $this->publishedKeys = [...$this->selectablePosts->modelKeys(), $this->lowRatedPost->getKey()];
+    });
+
+    it('reports whether a selectable records query is set', function (): void {
+        expect(livewire(QuerySelectablePostsTable::class)->instance()->getTable()->hasSelectableRecordsQuery())->toBeTrue()
+            ->and(livewire(PostsTable::class)->instance()->getTable()->hasSelectableRecordsQuery())->toBeFalse();
+    });
+
+    it('returns the query untouched from `modifySelectableRecordsQuery()` when no selectable records query is set', function (): void {
+        $query = Post::query();
+
+        expect(livewire(PostsTable::class)->instance()->getTable()->modifySelectableRecordsQuery($query))->toBe($query);
+    });
+
+    it('falls back to the original query when the selectable records query callback returns nothing', function (): void {
+        $table = livewire(PostsTable::class)->instance()->getTable()
+            ->selectableRecordsQuery(static function (Builder $query): void {
+                $query->where('is_published', true);
+            });
+
+        expect($table->modifySelectableRecordsQuery(Post::query())->pluck('id')->all())
+            ->toEqualCanonicalizing($this->publishedKeys);
+    });
+
+    it('keeps disjunctive selectability within table and selection constraints', function (bool $selectsAll, string $action): void {
+        $excludedPost = $this->unpublishedPosts->last();
+        $ineligiblePost = Post::factory()->create(['is_published' => false, 'rating' => 1]);
+        $expectedKeys = $selectsAll
+            ? [$this->selectablePosts->last()->getKey(), $this->lowRatedPost->getKey(), $this->unpublishedPosts->first()->getKey()]
+            : [$this->selectablePosts->first()->getKey(), $this->unpublishedPosts->first()->getKey()];
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->modifyQueryUsing(
+                static fn (Builder $query): Builder => $query->whereKeyNot($excludedPost->getKey()),
+            ),
+            during: function () use ($selectsAll, $action, $excludedPost, $ineligiblePost, $expectedKeys): void {
+                $component = livewire(QuerySelectablePostsTable::class, ['shouldUseDisjunction' => true]);
+
+                if ($selectsAll) {
+                    $component
+                        ->set('isTrackingDeselectedTableRecords', true)
+                        ->set('deselectedTableRecords', [(string) $this->selectablePosts->first()->getKey()]);
+                }
+
+                $component->callTableBulkAction($action, $selectsAll ? [] : [
+                    $this->selectablePosts->first(),
+                    $this->unpublishedPosts->first(),
+                    $excludedPost,
+                    $ineligiblePost,
+                ]);
+
+                if ($action === 'customBulk') {
+                    $component->assertDispatched('customBulk-called', fn (string $name, array $parameters): bool => collect($parameters['records'])->map(intval(...))->sort()->values()->all() === collect($expectedKeys)->sort()->values()->all());
+
+                    return;
+                }
+
+                expect(Post::onlyTrashed()->pluck('id')->all())->toEqualCanonicalizing($expectedKeys);
+            },
+        );
+    })->with([false, true])->with(['customBulk', 'queryBulkDelete']);
+
+    it('counts selectable records in a grouped base query', function (): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->modifyQueryUsing(
+                static fn (Builder $query): Builder => $query->groupBy('posts.id'),
+            ),
+            during: function (): void {
+                $component = livewire(QuerySelectablePostsTable::class)->instance();
+
+                expect($component->getAllSelectableTableRecordsCount())->toBe(3)
+                    ->and($component->getAllSelectableTableRecordKeys())->toEqualCanonicalizing(array_map(strval(...), $this->publishedKeys));
+            },
+        );
+    });
+
+    it('does not treat a selectable records query as a selectability callback', function (): void {
+        $table = livewire(QuerySelectablePostsTable::class)->instance()->getTable();
+
+        expect($table->checksIfRecordIsSelectable())->toBeFalse()
+            ->and($table->isRecordSelectableUsingCallback($this->unpublishedPosts->first()))->toBeTrue();
+    });
+
+    it('only counts records matching the query in `getAllSelectableTableRecordsCount()`', function (bool $shouldSelectCurrentPageOnly, bool $shouldCheckSelectabilityUsingCallback): void {
+        $component = livewire(QuerySelectablePostsTable::class, [
+            'shouldSelectCurrentPageOnly' => $shouldSelectCurrentPageOnly,
+            'shouldCheckSelectabilityUsingCallback' => $shouldCheckSelectabilityUsingCallback,
+        ])->instance();
+
+        expect($component->getAllSelectableTableRecordsCount())->toBe($shouldCheckSelectabilityUsingCallback ? 2 : 3);
+    })->with([false, true])->with([false, true]);
+
+    it('counts selectable records without loading any models', function (): void {
+        $component = livewire(QuerySelectablePostsTable::class)->instance();
+
+        $retrievedCount = 0;
+        Post::retrieved(function () use (&$retrievedCount): void {
+            $retrievedCount++;
+        });
+
+        expect($component->getAllSelectableTableRecordsCount())->toBe(3)
+            ->and($retrievedCount)->toBe(0);
+    });
+
+    it('only includes records matching the query in `getAllSelectableTableRecordKeys()`', function (bool $shouldSelectCurrentPageOnly, bool $shouldCheckSelectabilityUsingCallback): void {
+        $keys = livewire(QuerySelectablePostsTable::class, [
+            'shouldSelectCurrentPageOnly' => $shouldSelectCurrentPageOnly,
+            'shouldCheckSelectabilityUsingCallback' => $shouldCheckSelectabilityUsingCallback,
+        ])->instance()->getAllSelectableTableRecordKeys();
+
+        $expectedKeys = $shouldCheckSelectabilityUsingCallback ? $this->selectablePosts->modelKeys() : $this->publishedKeys;
+
+        expect($keys)->toEqualCanonicalizing(array_map(strval(...), $expectedKeys));
+    })->with([false, true])->with([false, true]);
+
+    it('only includes records matching the query in `getGroupedSelectableTableRecordKeys()`', function (bool $shouldSelectCurrentPageOnly): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->groups([Group::make('rating')]),
+            during: function () use ($shouldSelectCurrentPageOnly): void {
+                $keys = livewire(QuerySelectablePostsTable::class, ['shouldSelectCurrentPageOnly' => $shouldSelectCurrentPageOnly])
+                    ->set('tableGrouping', 'rating:asc')
+                    ->instance()
+                    ->getGroupedSelectableTableRecordKeys('8');
+
+                expect($keys)->toEqualCanonicalizing(array_map(strval(...), $this->selectablePosts->modelKeys()));
+            },
+        );
+    })->with([false, true]);
+
+    it('evaluates the query per record in `isRecordSelectable()`', function (): void {
+        $table = livewire(QuerySelectablePostsTable::class)->instance()->getTable();
+
+        expect($table->isRecordSelectable($this->selectablePosts->first()))->toBeTrue()
+            ->and($table->isRecordSelectable($this->lowRatedPost))->toBeTrue()
+            ->and($table->isRecordSelectable($this->unpublishedPosts->first()))->toBeFalse();
+    });
+
+    it('can select eligible records exposed by `TrashedFilter`', function (): void {
+        $post = $this->selectablePosts->first();
+        $post->delete();
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->filters([TrashedFilter::make()])->deferFilters(false),
+            during: function () use ($post): void {
+                $component = livewire(QuerySelectablePostsTable::class)->filterTable('trashed', false)->instance();
+
+                expect($component->getTable()->isRecordSelectable($component->getTableRecords()->first()))->toBeTrue()
+                    ->and($component->getAllSelectableTableRecordKeys())->toBe([(string) $post->getKey()]);
+            },
+        );
+    });
+
+    it('does not apply the base query offset twice when checking visible records', function (bool $shouldUseGlobalScope): void {
+        $scope = static fn (Builder $query): Builder => $query->orderBy('id')->offset(1)->limit(4);
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->paginated(false)->modifyQueryUsing(
+                $shouldUseGlobalScope ? static fn (Builder $query): Builder => $query->withGlobalScope('bounded', $scope) : $scope,
+            ),
+            during: function (): void {
+                $component = livewire(QuerySelectablePostsTable::class)->instance();
+                $records = $component->getTableRecords();
+
+                expect($records->modelKeys())->toBe([
+                    $this->selectablePosts->last()->getKey(),
+                    $this->lowRatedPost->getKey(),
+                    ...$this->unpublishedPosts->modelKeys(),
+                ])
+                    ->and($records->map(fn (Post $record): bool => $component->getTable()->isRecordSelectable($record))->all())->toBe([true, true, false, false]);
+            },
+        );
+    })->with([false, true]);
+
+    it('requires records to satisfy both the query and the callback in `isRecordSelectable()`', function (): void {
+        $table = livewire(QuerySelectablePostsTable::class, ['shouldCheckSelectabilityUsingCallback' => true])->instance()->getTable();
+
+        expect($table->isRecordSelectable($this->selectablePosts->first()))->toBeTrue()
+            ->and($table->isRecordSelectable($this->lowRatedPost))->toBeFalse()
+            ->and($table->isRecordSelectable($this->unpublishedPosts->first()))->toBeFalse();
+    });
+
+    it('checks every record on the current page with a single query', function (): void {
+        $component = livewire(QuerySelectablePostsTable::class)->instance();
+        $component->flushCachedTableRecords();
+        $records = $component->getTableRecords();
+
+        DB::enableQueryLog();
+        DB::flushQueryLog();
+
+        $results = $records->map(fn (Post $record): bool => $component->getTable()->isRecordSelectable($record))->all();
+
+        expect(count(DB::getQueryLog()))->toBe(1)
+            ->and(array_values(array_filter($results)))->toHaveCount(3);
+
+        DB::disableQueryLog();
+    });
+
+    it('caches query selectability until the table records are flushed', function (): void {
+        $component = livewire(QuerySelectablePostsTable::class)->instance();
+        $post = $this->selectablePosts->first();
+
+        expect($component->isTableRecordSelectableUsingQuery($post))->toBeTrue();
+
+        $post->update(['is_published' => false]);
+
+        expect($component->isTableRecordSelectableUsingQuery($post))->toBeTrue();
+
+        $component->flushCachedTableRecords();
+
+        expect($component->isTableRecordSelectableUsingQuery($post))->toBeFalse();
+    });
+
+    it('returns `true` from `isTableRecordSelectableUsingQuery()` when no selectable records query is set', function (): void {
+        expect(livewire(PostsTable::class)->instance()->isTableRecordSelectableUsingQuery($this->unpublishedPosts->first()))->toBeTrue();
+    });
+
+    it('does not receive records excluded by the query when using select all', function (bool $shouldSelectCurrentPageOnly, bool $shouldCheckSelectabilityUsingCallback): void {
+        $expectedKeys = $shouldCheckSelectabilityUsingCallback ? $this->selectablePosts->modelKeys() : $this->publishedKeys;
+
+        livewire(QuerySelectablePostsTable::class, [
+            'shouldSelectCurrentPageOnly' => $shouldSelectCurrentPageOnly,
+            'shouldCheckSelectabilityUsingCallback' => $shouldCheckSelectabilityUsingCallback,
+        ])
+            ->set('isTrackingDeselectedTableRecords', true)
+            ->set('deselectedTableRecords', [])
+            ->callTableBulkAction('customBulk', [])
+            ->assertDispatched('customBulk-called', fn (string $name, array $parameters): bool => collect($parameters['records'])->map(intval(...))->sort()->values()->all() === collect($expectedKeys)->sort()->values()->all());
+    })->with([false, true])->with([false, true]);
+
+    it('does not receive records excluded by the query when selecting specific records', function (): void {
+        $expectedKeys = $this->selectablePosts->modelKeys();
+
+        livewire(QuerySelectablePostsTable::class)
+            ->callTableBulkAction('customBulk', [...$this->selectablePosts, $this->unpublishedPosts->first()])
+            ->assertDispatched('customBulk-called', fn (string $name, array $parameters): bool => collect($parameters['records'])->map(intval(...))->sort()->values()->all() === collect($expectedKeys)->sort()->values()->all());
+    });
+
+    it('does not delete records excluded by the query with a query-based action', function (bool $selectsAll): void {
+        $component = livewire(QuerySelectablePostsTable::class);
+
+        if ($selectsAll) {
+            $component
+                ->set('isTrackingDeselectedTableRecords', true)
+                ->set('deselectedTableRecords', []);
+        }
+
+        $component->callTableBulkAction('queryBulkDelete', $selectsAll ? [] : [...$this->selectablePosts, ...$this->unpublishedPosts]);
+
+        foreach ($this->selectablePosts as $post) {
+            assertSoftDeleted($post);
+        }
+
+        foreach ($this->unpublishedPosts as $post) {
+            $this->assertDatabaseHas('posts', [
+                'id' => $post->getKey(),
+                'deleted_at' => null,
+            ]);
+        }
+    })->with([false, true]);
+
+    it('respects the query together with `maxSelectableRecords()`', function (): void {
+        $expectedKeys = [$this->selectablePosts->last()->getKey(), $this->lowRatedPost->getKey()];
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->maxSelectableRecords(2)->defaultSort('id', 'desc'),
+            during: static fn () => livewire(QuerySelectablePostsTable::class)
+                ->set('isTrackingDeselectedTableRecords', true)
+                ->callTableBulkAction('customBulk', [])
+                ->assertDispatched('customBulk-called', fn (string $name, array $parameters): bool => collect($parameters['records'])->map(intval(...))->sort()->values()->all() === collect($expectedKeys)->sort()->values()->all()),
+        );
+    });
+
+    it('counts records matching the query across every page', function (): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->paginationPageOptions([1])->defaultSort('id'),
+            during: function (): void {
+                $component = livewire(QuerySelectablePostsTable::class)->instance();
+
+                expect($component->getTableRecords())->toHaveCount(1)
+                    ->and($component->getAllSelectableTableRecordsCount())->toBe(3)
+                    ->and($component->getAllSelectableTableRecordKeys())->toEqualCanonicalizing(array_map(strval(...), $this->publishedKeys));
+            },
+        );
+    });
+
+    it('only counts the current page when selecting the current page only', function (): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->paginationPageOptions([4])->defaultSort('id'),
+            during: function (): void {
+                $component = livewire(QuerySelectablePostsTable::class, ['shouldSelectCurrentPageOnly' => true])->instance();
+
+                expect($component->getTableRecords())->toHaveCount(4)
+                    ->and($component->getAllSelectableTableRecordsCount())->toBe(3)
+                    ->and($component->getAllSelectableTableRecordKeys())->toEqualCanonicalizing(array_map(strval(...), $this->publishedKeys));
+            },
+        );
+    });
+
+    it('checks records outside of the current page with `isTableRecordSelectableUsingQuery()`', function (): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->paginationPageOptions([1])->defaultSort('id'),
+            during: function (): void {
+                $component = livewire(QuerySelectablePostsTable::class)->instance();
+                $component->getTableRecords();
+
+                expect($component->isTableRecordSelectableUsingQuery($this->lowRatedPost))->toBeTrue()
+                    ->and($component->isTableRecordSelectableUsingQuery($this->unpublishedPosts->first()))->toBeFalse()
+                    ->and($component->isTableRecordSelectableUsingQuery($this->unpublishedPosts->last()))->toBeFalse()
+                    ->and($component->getTable()->isRecordSelectable($this->selectablePosts->last()))->toBeTrue();
+            },
+        );
+    });
+
+    it('combines the query with table filters when counting and selecting all', function (): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->filters([
+                    Filter::make('highRated')->query(static fn (Builder $query): Builder => $query->where('rating', '>=', 5)),
+                ])
+                ->deferFilters(false),
+            during: function (): void {
+                $component = livewire(QuerySelectablePostsTable::class)->filterTable('highRated');
+
+                expect($component->instance()->getAllSelectableTableRecordsCount())->toBe(2);
+
+                $expectedKeys = $this->selectablePosts->modelKeys();
+
+                $component
+                    ->set('isTrackingDeselectedTableRecords', true)
+                    ->set('deselectedTableRecords', [])
+                    ->callTableBulkAction('customBulk', [])
+                    ->assertDispatched('customBulk-called', fn (string $name, array $parameters): bool => collect($parameters['records'])->map(intval(...))->sort()->values()->all() === collect($expectedKeys)->sort()->values()->all());
+            },
+        );
+    });
+
+    it('applies the query to pivot rows with `allowDuplicates()`', function (string $action): void {
+        $ticket = Ticket::factory()->create();
+        Department::factory()->count(5)->create();
+        $department = Department::factory()->create();
+
+        foreach ([3, 5, 7] as $quantity) {
+            $ticket->departments()->attach($department, ['quantity' => $quantity]);
+        }
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->modifyQueryUsing(static fn (Builder $query): Builder => $query->select('departments.*'))
+                ->selectableRecordsQuery(
+                    static fn (Builder $query): Builder => $query->where('department_ticket.quantity', '!=', 5),
+                ),
+            during: static function () use ($ticket, $action): void {
+                $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true]);
+
+                expect($component->instance()->getAllSelectableTableRecordsCount())->toBe(2)
+                    ->and($component->instance()->getAllSelectableTableRecordKeys())->toHaveCount(2)
+                    ->and($component->instance()->getTableRecords()->map(fn (Department $record): bool => $component->instance()->getTable()->isRecordSelectable($record))->all())->toBe([true, false, true]);
+
+                BulkAction::configureUsing(
+                    static fn (BulkAction $bulkAction) => $bulkAction->chunkSelectedRecords($action === 'chunked' ? 1 : null),
+                    during: static fn () => $component
+                        ->set('isTrackingDeselectedTableRecords', true)
+                        ->callTableBulkAction($action === 'chunked' ? 'customBulk' : $action, [])
+                        ->assertDispatched('customBulk-called', quantities: [3, 7]),
+                );
+            },
+        );
+    })->with(['customBulk', 'queryBulk', 'chunked']);
+});
+
+class QuerySelectablePostsTable extends SelectablePostsTable
+{
+    public bool $shouldCheckSelectabilityUsingCallback = false;
+
+    public bool $shouldSelectCurrentPageOnly = false;
+
+    public bool $shouldUseDisjunction = false;
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->checkIfRecordIsSelectableUsing($this->shouldCheckSelectabilityUsingCallback ? static fn (Post $record): bool => $record->rating >= 5 : null)
+            ->selectableRecordsQuery(fn (Builder $query): Builder => $query
+                ->where('is_published', true)
+                ->when($this->shouldUseDisjunction, static fn (Builder $query): Builder => $query->orWhere('rating', '>=', 5)))
+            ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly);
+    }
+}
 
 class StringKeyBulkSelectionDepartment extends Department
 {

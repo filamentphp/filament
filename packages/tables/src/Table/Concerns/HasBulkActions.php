@@ -7,11 +7,14 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Enums\RecordCheckboxPosition;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasBulkActions
 {
     protected ?Closure $checkIfRecordIsSelectableUsing = null;
+
+    protected ?Closure $modifySelectableRecordsQueryUsing = null;
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
 
@@ -46,6 +49,13 @@ trait HasBulkActions
         return $this;
     }
 
+    public function selectableRecordsQuery(?Closure $callback): static
+    {
+        $this->modifySelectableRecordsQueryUsing = $callback;
+
+        return $this;
+    }
+
     public function selectCurrentPageOnly(bool | Closure $condition = true): static
     {
         $this->selectsCurrentPageOnly = $condition;
@@ -64,6 +74,18 @@ trait HasBulkActions
      * @param  Model | array<string, mixed>  $record
      */
     public function isRecordSelectable(Model | array $record): bool
+    {
+        if (($record instanceof Model) && $this->hasSelectableRecordsQuery() && (! $this->getLivewire()->isTableRecordSelectableUsingQuery($record))) {
+            return false;
+        }
+
+        return $this->isRecordSelectableUsingCallback($record);
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function isRecordSelectableUsingCallback(Model | array $record): bool
     {
         return (bool) ($this->evaluate(
             $this->checkIfRecordIsSelectableUsing,
@@ -117,6 +139,24 @@ trait HasBulkActions
     public function checksIfRecordIsSelectable(): bool
     {
         return $this->checkIfRecordIsSelectableUsing !== null;
+    }
+
+    public function hasSelectableRecordsQuery(): bool
+    {
+        return $this->modifySelectableRecordsQueryUsing !== null;
+    }
+
+    public function modifySelectableRecordsQuery(Builder $query): Builder
+    {
+        if (! $this->hasSelectableRecordsQuery()) {
+            return $query;
+        }
+
+        return $query->where(function (Builder $query): void {
+            $this->evaluate($this->modifySelectableRecordsQueryUsing, [
+                'query' => $query,
+            ]);
+        });
     }
 
     public function recordCheckboxPosition(RecordCheckboxPosition | Closure | null $position = null): static

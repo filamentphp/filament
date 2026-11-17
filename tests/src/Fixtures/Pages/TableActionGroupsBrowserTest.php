@@ -44,6 +44,11 @@ class TableActionGroupsBrowserTest extends Page implements HasTable
                 ])->label('More actions')->extraDropdownAttributes(fn (Post $record): array => ['data-testid' => "more-{$record->id}"]),
             ])
             ->toolbarActions([
+                Action::make('refreshRecords')
+                    ->extraAttributes(['data-testid' => 'refresh-records'])
+                    ->action(function (): void {
+                        Post::query()->update(['title' => 'Refreshed record']);
+                    }),
                 BulkActionGroup::make([
                     BulkAction::make('count')->extraAttributes(['data-testid' => 'count-item'])->action(function (Collection $records): void {
                         $this->lastAction = "Selected {$records->count()}";

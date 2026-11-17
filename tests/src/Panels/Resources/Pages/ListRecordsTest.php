@@ -12,6 +12,8 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
@@ -282,6 +284,46 @@ it('does not render tickets page if the policy `viewAny()` returns a denied resp
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
+describe('editable column authorization', function (): void {
+    afterEach(function (): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
+
+        app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
+    });
+
+    it('does not automatically authorize resource editable columns, even in strict mode', function (bool $isAuthorizationStrict): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization($isAuthorizationStrict);
+
+        $ticket = Ticket::factory()->create();
+
+        app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
+
+        livewire(ListTicketsWithEditableColumns::class)
+            ->assertTableColumnEnabled('is_open', $ticket)
+            ->call('updateTableColumnState', 'is_open', (string) $ticket->getKey(), true)
+            ->assertReturned(true);
+    })->with([false, true]);
+
+    it('can opt resource editable columns into authorization globally using `configureUsing()`', function (bool $isAuthorizationStrict): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization($isAuthorizationStrict);
+
+        $ticket = Ticket::factory()->create();
+
+        app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
+
+        ToggleColumn::configureUsing(
+            fn (ToggleColumn $column) => $column->authorize(),
+            during: function () use ($ticket): void {
+                livewire(ListTicketsWithEditableColumns::class)
+                    ->assertTableColumnDisabled('is_open', $ticket)
+                    ->assertTableColumnEnabled('is_open_always_authorized', $ticket)
+                    ->call('updateTableColumnState', 'is_open', (string) $ticket->getKey(), true)
+                    ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
+            },
+        );
+    })->with([false, true]);
+});
+
 it('re-authorizes resource access on Livewire updates after the initial mount', function (): void {
     Ticket::factory(10)
         ->create();
@@ -406,3 +448,20 @@ it('cannot access record for action after record no longer matches tab without `
         ->mountTableAction(DeleteAction::class, $post)
         ->assertActionNotMounted(TestAction::make(DeleteAction::class)->table());
 });
+
+class ListTicketsWithEditableColumns extends ListTickets
+{
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                ToggleColumn::make('is_open')
+                    ->getStateUsing(fn (): bool => false)
+                    ->updateStateUsing(fn (): bool => true),
+                ToggleColumn::make('is_open_always_authorized')
+                    ->getStateUsing(fn (): bool => false)
+                    ->updateStateUsing(fn (): bool => true)
+                    ->authorize(true),
+            ]);
+    }
+}
