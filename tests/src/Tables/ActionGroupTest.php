@@ -87,6 +87,40 @@ it('scopes row and bulk `ActionGroup` menu attributes and keyboard interactions'
         ->assertMissing($bulkTrigger)
         ->assertNoSmoke();
 
+    // Hold the next request at the browser's network boundary until the menu has been opened.
+    $page->script(<<<'JS'
+        (() => {
+            const originalFetch = window.fetch
+
+            window.fetch = (...parameters) => {
+                window.fetch = originalFetch
+
+                return new Promise(resolve => {
+                    window.releaseTableRefresh = () => resolve(originalFetch(...parameters))
+                })
+            }
+        })()
+        JS);
+
+    $page
+        ->click('[data-testid="refresh-records"]')
+        ->assertAttribute('[data-testid="refresh-records"]', 'aria-disabled', 'true')
+        ->assertAttributeMissing($firstTrigger, 'aria-disabled')
+        ->keys($firstTrigger, 'Enter')
+        ->assertAttribute($firstTrigger, 'aria-expanded', 'true')
+        ->assertPresent($firstItem . ':focus')
+        ->assertAttribute('[data-testid="refresh-records"]', 'aria-disabled', 'true');
+
+    $page->script('window.releaseTableRefresh(); delete window.releaseTableRefresh');
+
+    $page
+        ->assertSee('Refreshed record')
+        ->keys($firstItem, 'Escape')
+        ->keys($firstTrigger, 'Enter')
+        ->keys($firstItem, 'Enter')
+        ->assertSeeIn('[data-testid="last-action"]', 'Refreshed record')
+        ->assertPresent($firstTrigger . ':focus');
+
     $page->inDarkMode()
         ->keys($firstTrigger, 'Enter')
         ->assertPresent($firstItem . ':focus')

@@ -2,6 +2,18 @@
     /* `align-middle` keeps the button's placement in inline flow independent of its internal baseline, which shifts when the loading indicator is the first grid item. */
     @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 align-middle text-sm font-medium transition duration-75 outline-none;
 
+    &:not(.fi-loading)
+        > .fi-loading-indicator:not(.fi-btn-processing-indicator, .fi-loading) {
+        @apply hidden!;
+    }
+
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    &
+        > .fi-loading-indicator:not(.fi-btn-processing-indicator).fi-loading
+        + .fi-icon:not(.fi-loading-indicator) {
+        @apply hidden!;
+    }
+
     &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
         @apply focus-visible:ring-2;
@@ -18,6 +30,10 @@
         &:not([x-tooltip]) {
             @apply pointer-events-none;
         }
+    }
+
+    &.fi-processing:enabled {
+        @apply cursor-wait opacity-70;
     }
 
     & > .fi-icon {
@@ -196,10 +212,6 @@
 
         &:not(:nth-last-child(1 of .fi-btn)) {
             @apply me-px;
-        }
-
-        &.fi-processing:enabled {
-            @apply cursor-wait opacity-70;
         }
 
         &:not(.fi-outlined) {

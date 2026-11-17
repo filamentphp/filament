@@ -1,6 +1,17 @@
 .fi-dropdown-list-item {
     @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-sm whitespace-nowrap transition-colors duration-75 outline-none select-none;
 
+    &:not(.fi-loading) > .fi-loading-indicator:not(.fi-loading) {
+        @apply hidden!;
+    }
+
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    &.fi-loading > .fi-dropdown-list-item-image,
+    & > .fi-loading-indicator.fi-loading + .fi-icon:not(.fi-loading-indicator),
+    & > .fi-loading-indicator.fi-loading ~ .fi-dropdown-list-item-image {
+        @apply hidden!;
+    }
+
     &:not(.fi-disabled):not([disabled]) {
         @apply hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
