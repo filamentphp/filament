@@ -5,12 +5,15 @@ namespace Filament\QueryBuilder\Constraints\DateConstraint\Operators;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\Concerns\CanQueryDateRanges;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
 
 class IsYearOperator extends Operator
 {
+    use CanQueryDateRanges;
+
     public function getName(): string
     {
         return 'isYear';
@@ -60,7 +63,12 @@ class IsYearOperator extends Operator
             return $query;
         }
 
-        return $query->whereYear($qualifiedColumn, $this->isInverse() ? '!=' : '=', $year);
+        // A range needs a four-digit year at each end; any other year (which matches nothing) keeps `whereYear()`.
+        if (($year < 1) || ($year > 9998)) {
+            return $query->whereYear($qualifiedColumn, $this->isInverse() ? '!=' : '=', $year);
+        }
+
+        return $this->whereBetweenDates($query, $qualifiedColumn, sprintf('%04d-01-01', $year), sprintf('%04d-01-01', $year + 1), isInverse: (bool) $this->isInverse());
     }
 
     protected function getYearSetting(): ?int

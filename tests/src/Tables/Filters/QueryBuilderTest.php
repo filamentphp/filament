@@ -678,6 +678,35 @@ describe('`DateConstraint` operators', function () use ($applyQueryBuilderFilter
             ->assertCanSeeTableRecords($targetPosts)
             ->assertCanNotSeeTableRecords($otherPosts);
     });
+
+    it('matches whole days at the boundaries without wrapping the column in a date function', function (string $operatorClass, array $settings, bool $isInverse, array $expectedPosts): void {
+        $posts = collect([
+            'lastSecondOfPreviousYear' => '2023-12-31 23:59:59',
+            'midnight' => '2024-03-15 00:00:00',
+            'lastSecondOfDay' => '2024-03-15 23:59:59',
+            'midnightOfNextDay' => '2024-03-16 00:00:00',
+            'midnightOfNextYear' => '2025-01-01 00:00:00',
+        ])->map(static fn (string $createdAt): Post => Post::factory()->create(['created_at' => $createdAt]));
+
+        $query = $operatorClass::make()
+            ->constraint(DateConstraint::make('created_at'))
+            ->settings($settings)
+            ->inverse($isInverse)
+            ->apply(Post::query(), 'posts.created_at');
+
+        // A column wrapped in a function, such as `date()` or `extract()`, can't use an index on it.
+        expect($query->toSql())->not->toMatch('/(strftime|date|year|extract|cast)\s*\(|::date/i')
+            ->and($query->pluck('id')->sort()->values()->all())->toBe($posts->only($expectedPosts)->pluck('id')->sort()->values()->all());
+    })->with([
+        '`isAfter`' => [IsAfterOperator::class, ['date' => '2024-03-15'], false, ['midnight', 'lastSecondOfDay', 'midnightOfNextDay', 'midnightOfNextYear']],
+        'inverse `isAfter`' => [IsAfterOperator::class, ['date' => '2024-03-15'], true, ['lastSecondOfPreviousYear']],
+        '`isBefore`' => [IsBeforeOperator::class, ['date' => '2024-03-15'], false, ['lastSecondOfPreviousYear', 'midnight', 'lastSecondOfDay']],
+        'inverse `isBefore`' => [IsBeforeOperator::class, ['date' => '2024-03-15'], true, ['midnightOfNextDay', 'midnightOfNextYear']],
+        '`isDate`' => [IsDateOperator::class, ['date' => '2024-03-15'], false, ['midnight', 'lastSecondOfDay']],
+        'inverse `isDate`' => [IsDateOperator::class, ['date' => '2024-03-15'], true, ['lastSecondOfPreviousYear', 'midnightOfNextDay', 'midnightOfNextYear']],
+        '`isYear`' => [IsYearOperator::class, ['year' => 2024], false, ['midnight', 'lastSecondOfDay', 'midnightOfNextDay']],
+        'inverse `isYear`' => [IsYearOperator::class, ['year' => 2024], true, ['lastSecondOfPreviousYear', 'midnightOfNextYear']],
+    ]);
 });
 
 describe('`SelectConstraint` operators', function () use ($applyQueryBuilderFilter): void {
