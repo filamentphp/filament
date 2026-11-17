@@ -12,9 +12,11 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -40,7 +42,9 @@ trait HasFilters
 
     protected ?Closure $modifyFiltersTriggerActionUsing = null;
 
-    protected bool | Closure | null $persistsFiltersInSession = false;
+    protected bool | Closure | null $shouldPersistFilters = false;
+
+    protected TablePersistenceStore | Closure | null $filtersPersistenceStore = null;
 
     protected bool | Closure $shouldDeselectAllRecordsWhenFiltered = true;
 
@@ -175,7 +179,14 @@ trait HasFilters
 
     public function persistFiltersInSession(bool | Closure $condition = true): static
     {
-        $this->persistsFiltersInSession = $condition;
+        return $this->persistFiltersInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+    }
+
+    public function persistFiltersInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
+    {
+        $this->shouldPersistFilters = $condition;
+        $this->filtersPersistenceStore = $persistenceStore;
+        unset($this->persistenceStoreCache['filters']);
 
         return $this;
     }
@@ -399,7 +410,17 @@ trait HasFilters
 
     public function persistsFiltersInSession(): bool
     {
-        return (bool) $this->evaluate($this->persistsFiltersInSession);
+        return $this->shouldPersistFilters() && ($this->getFiltersPersistenceStore() instanceof SessionTablePersistenceStore);
+    }
+
+    public function shouldPersistFilters(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistFilters);
+    }
+
+    public function getFiltersPersistenceStore(): TablePersistenceStore
+    {
+        return $this->resolvePersistenceStore('filters', $this->filtersPersistenceStore);
     }
 
     public function shouldDeselectAllRecordsWhenFiltered(): bool

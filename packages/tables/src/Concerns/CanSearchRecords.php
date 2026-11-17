@@ -26,9 +26,9 @@ trait CanSearchRecords
     #[Unexposed]
     public function updatedTableSearch(): void
     {
-        if ($this->getTable()->persistsSearchInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTableSearchSessionKey(),
+        if ($this->getTable()->shouldPersistSearch()) {
+            $this->getTable()->getSearchPersistenceStore()->put(
+                $this->getTableSearchPersistenceKey(),
                 $this->tableSearch,
             );
         }
@@ -54,9 +54,9 @@ trait CanSearchRecords
             }
         }
 
-        if ($this->getTable()->persistsColumnSearchesInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTableColumnSearchesSessionKey(),
+        if ($this->getTable()->shouldPersistColumnSearches()) {
+            $this->getTable()->getColumnSearchesPersistenceStore()->put(
+                $this->getTableColumnSearchesPersistenceKey(),
                 $this->tableColumnSearches,
             );
         }
@@ -373,9 +373,21 @@ trait CanSearchRecords
     }
 
     #[Unexposed]
+    public function getTableSearchPersistenceKey(): string
+    {
+        return $this->getTableSearchSessionKey();
+    }
+
+    #[Unexposed]
     public function getTableSearchSessionKey(): string
     {
         return $this->getTableSessionKey('search', isTenantScoped: true);
+    }
+
+    #[Unexposed]
+    public function getTableColumnSearchesPersistenceKey(): string
+    {
+        return $this->getTableColumnSearchesSessionKey();
     }
 
     #[Unexposed]

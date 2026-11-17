@@ -67,10 +67,8 @@ trait InteractsWithTable
 
         $this->initialTableRecordsPerPage ??= $this->tableRecordsPerPage ?? 10;
 
-        $stateStore = $this->getTable()->getStateStore();
-
-        $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
-        $filtersSessionKey = $this->getTableFiltersSessionKey();
+        $shouldPersistFilters = $this->getTable()->shouldPersistFilters();
+        $filtersPersistenceKey = $this->getTableFiltersPersistenceKey();
 
         if (! count($this->tableFilters ?? [])) {
             $this->tableFilters = null;
@@ -78,9 +76,9 @@ trait InteractsWithTable
 
         if (
             ($this->tableFilters === null) &&
-            $shouldPersistFiltersInSession
+            $shouldPersistFilters
         ) {
-            $this->tableFilters = $stateStore->get($filtersSessionKey);
+            $this->tableFilters = $this->getTable()->getFiltersPersistenceStore()->get($filtersPersistenceKey);
         }
 
         // https://github.com/filamentphp/filament/pull/7999
@@ -94,62 +92,62 @@ trait InteractsWithTable
             $this->tableFilters = $this->tableDeferredFilters;
         }
 
-        if ($shouldPersistFiltersInSession) {
-            $stateStore->put(
-                $filtersSessionKey,
+        if ($shouldPersistFilters) {
+            $this->getTable()->getFiltersPersistenceStore()->put(
+                $filtersPersistenceKey,
                 $this->tableFilters,
             );
         }
 
-        $shouldPersistGroupInSession = $this->getTable()->persistsGroupInSession();
-        $groupingSessionKey = $this->getTableGroupingSessionKey();
-        $hasPersistedGroupInSession = $shouldPersistGroupInSession && $stateStore->has($groupingSessionKey);
+        $shouldPersistGroup = $this->getTable()->shouldPersistGroup();
+        $groupingPersistenceKey = $this->getTableGroupingPersistenceKey();
+        $hasPersistedGroup = $shouldPersistGroup && $this->getTable()->getGroupPersistenceStore()->exists($groupingPersistenceKey);
 
         if (blank($this->tableGrouping)) {
-            if ($hasPersistedGroupInSession) {
-                $sessionGrouping = $stateStore->get($groupingSessionKey);
-                $this->tableGrouping = is_string($sessionGrouping) ? $sessionGrouping : null;
+            if ($hasPersistedGroup) {
+                $persistedGrouping = $this->getTable()->getGroupPersistenceStore()->get($groupingPersistenceKey);
+                $this->tableGrouping = is_string($persistedGrouping) ? $persistedGrouping : null;
             } elseif ($this->getTable()->isDefaultGroupSelectable()) {
                 $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:{$this->getTable()->getDefaultGroupDirection()}";
             }
         }
 
-        if ($shouldPersistGroupInSession) {
-            $stateStore->put(
-                $groupingSessionKey,
+        if ($shouldPersistGroup) {
+            $this->getTable()->getGroupPersistenceStore()->put(
+                $groupingPersistenceKey,
                 $this->tableGrouping,
             );
         }
 
-        $shouldPersistSearchInSession = $this->getTable()->persistsSearchInSession();
-        $searchSessionKey = $this->getTableSearchSessionKey();
+        $shouldPersistSearch = $this->getTable()->shouldPersistSearch();
+        $searchPersistenceKey = $this->getTableSearchPersistenceKey();
 
         if (
             blank($this->tableSearch) &&
-            $shouldPersistSearchInSession &&
-            (($sessionSearch = $stateStore->get($searchSessionKey)) !== null)
+            $shouldPersistSearch &&
+            (($persistedSearch = $this->getTable()->getSearchPersistenceStore()->get($searchPersistenceKey)) !== null)
         ) {
-            $this->tableSearch = $sessionSearch;
+            $this->tableSearch = $persistedSearch;
         }
 
         $this->tableSearch = strval($this->tableSearch);
 
-        if ($shouldPersistSearchInSession) {
-            $stateStore->put(
-                $searchSessionKey,
+        if ($shouldPersistSearch) {
+            $this->getTable()->getSearchPersistenceStore()->put(
+                $searchPersistenceKey,
                 $this->tableSearch,
             );
         }
 
-        $shouldPersistColumnSearchesInSession = $this->getTable()->persistsColumnSearchesInSession();
-        $columnSearchesSessionKey = $this->getTableColumnSearchesSessionKey();
+        $shouldPersistColumnSearches = $this->getTable()->shouldPersistColumnSearches();
+        $columnSearchesPersistenceKey = $this->getTableColumnSearchesPersistenceKey();
 
         if (
             (blank($this->tableColumnSearches) || ($this->tableColumnSearches === [])) &&
-            $shouldPersistColumnSearchesInSession &&
-            (($sessionColumnSearches = $stateStore->get($columnSearchesSessionKey)) !== null)
+            $shouldPersistColumnSearches &&
+            (($persistedColumnSearches = $this->getTable()->getColumnSearchesPersistenceStore()->get($columnSearchesPersistenceKey)) !== null)
         ) {
-            $this->tableColumnSearches = $sessionColumnSearches;
+            $this->tableColumnSearches = $persistedColumnSearches;
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
@@ -159,27 +157,27 @@ trait InteractsWithTable
         // Seed individually searchable columns named after a JavaScript array property (e.g. `length`), so `$tableColumnSearches` serializes to a JSON object instead of an array and `wire:model` reads the search value rather than the array property.
         $this->fillReservedTableColumnSearchKeys();
 
-        if ($shouldPersistColumnSearchesInSession) {
-            $stateStore->put(
-                $columnSearchesSessionKey,
+        if ($shouldPersistColumnSearches) {
+            $this->getTable()->getColumnSearchesPersistenceStore()->put(
+                $columnSearchesPersistenceKey,
                 $this->tableColumnSearches,
             );
         }
 
-        $shouldPersistSortInSession = $this->getTable()->persistsSortInSession();
-        $sortSessionKey = $this->getTableSortSessionKey();
+        $shouldPersistSort = $this->getTable()->shouldPersistSort();
+        $sortPersistenceKey = $this->getTableSortPersistenceKey();
 
         if (
             blank($this->tableSort) &&
-            $shouldPersistSortInSession &&
-            (($sessionSort = $stateStore->get($sortSessionKey)) !== null)
+            $shouldPersistSort &&
+            (($persistedSort = $this->getTable()->getSortPersistenceStore()->get($sortPersistenceKey)) !== null)
         ) {
-            $this->tableSort = is_string($sessionSort) ? $sessionSort : null;
+            $this->tableSort = is_string($persistedSort) ? $persistedSort : null;
         }
 
-        if ($shouldPersistSortInSession) {
-            $stateStore->put(
-                $sortSessionKey,
+        if ($shouldPersistSort) {
+            $this->getTable()->getSortPersistenceStore()->put(
+                $sortPersistenceKey,
                 $this->tableSort,
             );
         }
@@ -276,6 +274,12 @@ trait InteractsWithTable
 
     #[Unexposed]
     public function getTableSessionKey(string $key, bool $isTenantScoped = false): string
+    {
+        return $this->getTablePersistenceKey($key, $isTenantScoped);
+    }
+
+    #[Unexposed]
+    public function getTablePersistenceKey(string $key, bool $isTenantScoped = false): string
     {
         $namespace = $this::class;
 

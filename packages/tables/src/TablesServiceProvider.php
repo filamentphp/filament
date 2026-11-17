@@ -5,8 +5,6 @@ namespace Filament\Tables;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Tables\Contracts\TableStateStore;
-use Filament\Tables\State\SessionTableStateStore;
 use Filament\Tables\Testing\TestsActions;
 use Filament\Tables\Testing\TestsBulkActions;
 use Filament\Tables\Testing\TestsColumns;
@@ -31,11 +29,6 @@ class TablesServiceProvider extends PackageServiceProvider
             ])
             ->hasTranslations()
             ->hasViews();
-    }
-
-    public function packageRegistered(): void
-    {
-        $this->app->bind(TableStateStore::class, SessionTableStateStore::class);
     }
 
     public function packageBooted(): void

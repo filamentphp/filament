@@ -4,6 +4,8 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Contracts\TablePersistenceStore;
+use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -14,7 +16,9 @@ trait CanSortRecords
 
     protected string | Closure | null $defaultSortDirection = null;
 
-    protected bool | Closure | null $persistsSortInSession = false;
+    protected bool | Closure | null $shouldPersistSort = false;
+
+    protected TablePersistenceStore | Closure | null $sortPersistenceStore = null;
 
     protected string | Htmlable | Closure | null $defaultSortOptionLabel = null;
 
@@ -30,7 +34,14 @@ trait CanSortRecords
 
     public function persistSortInSession(bool | Closure $condition = true): static
     {
-        $this->persistsSortInSession = $condition;
+        return $this->persistSortInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+    }
+
+    public function persistSortInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
+    {
+        $this->shouldPersistSort = $condition;
+        $this->sortPersistenceStore = $persistenceStore;
+        unset($this->persistenceStoreCache['sort']);
 
         return $this;
     }
@@ -123,7 +134,17 @@ trait CanSortRecords
 
     public function persistsSortInSession(): bool
     {
-        return (bool) $this->evaluate($this->persistsSortInSession);
+        return $this->shouldPersistSort() && ($this->getSortPersistenceStore() instanceof SessionTablePersistenceStore);
+    }
+
+    public function shouldPersistSort(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistSort);
+    }
+
+    public function getSortPersistenceStore(): TablePersistenceStore
+    {
+        return $this->resolvePersistenceStore('sort', $this->sortPersistenceStore);
     }
 
     public function getDefaultSortOptionLabel(): string | Htmlable | null

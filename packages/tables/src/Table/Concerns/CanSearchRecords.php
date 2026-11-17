@@ -3,7 +3,9 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Filters\Indicator;
+use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -23,9 +25,13 @@ trait CanSearchRecords
      */
     protected array $extraSearchableColumns = [];
 
-    protected bool | Closure | null $persistsSearchInSession = false;
+    protected bool | Closure | null $shouldPersistSearch = false;
 
-    protected bool | Closure | null $persistsColumnSearchesInSession = false;
+    protected bool | Closure | null $shouldPersistColumnSearches = false;
+
+    protected TablePersistenceStore | Closure | null $searchPersistenceStore = null;
+
+    protected TablePersistenceStore | Closure | null $columnSearchesPersistenceStore = null;
 
     protected string | Closure | null $searchPlaceholder = null;
 
@@ -39,14 +45,28 @@ trait CanSearchRecords
 
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
-        $this->persistsSearchInSession = $condition;
+        return $this->persistSearchInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+    }
+
+    public function persistSearchInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
+    {
+        $this->shouldPersistSearch = $condition;
+        $this->searchPersistenceStore = $persistenceStore;
+        unset($this->persistenceStoreCache['search']);
 
         return $this;
     }
 
     public function persistColumnSearchesInSession(bool | Closure $condition = true): static
     {
-        $this->persistsColumnSearchesInSession = $condition;
+        return $this->persistColumnSearchesInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+    }
+
+    public function persistColumnSearchesInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
+    {
+        $this->shouldPersistColumnSearches = $condition;
+        $this->columnSearchesPersistenceStore = $persistenceStore;
+        unset($this->persistenceStoreCache['columnSearches']);
 
         return $this;
     }
@@ -116,12 +136,32 @@ trait CanSearchRecords
 
     public function persistsSearchInSession(): bool
     {
-        return (bool) $this->evaluate($this->persistsSearchInSession);
+        return $this->shouldPersistSearch() && ($this->getSearchPersistenceStore() instanceof SessionTablePersistenceStore);
+    }
+
+    public function shouldPersistSearch(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistSearch);
+    }
+
+    public function getSearchPersistenceStore(): TablePersistenceStore
+    {
+        return $this->resolvePersistenceStore('search', $this->searchPersistenceStore);
     }
 
     public function persistsColumnSearchesInSession(): bool
     {
-        return (bool) $this->evaluate($this->persistsColumnSearchesInSession);
+        return $this->shouldPersistColumnSearches() && ($this->getColumnSearchesPersistenceStore() instanceof SessionTablePersistenceStore);
+    }
+
+    public function shouldPersistColumnSearches(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistColumnSearches);
+    }
+
+    public function getColumnSearchesPersistenceStore(): TablePersistenceStore
+    {
+        return $this->resolvePersistenceStore('columnSearches', $this->columnSearchesPersistenceStore);
     }
 
     public function searchPlaceholder(string | Closure | null $searchPlaceholder): static

@@ -7,8 +7,10 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Enums\ColumnManagerLayout;
 use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Filament\Tables\View\TablesIconAlias;
 
 trait HasColumnManager
@@ -36,7 +38,9 @@ trait HasColumnManager
 
     protected ?Closure $modifyColumnManagerApplyActionUsing = null;
 
-    protected bool | Closure $persistsColumnsInSession = true;
+    protected bool | Closure $shouldPersistColumns = true;
+
+    protected TablePersistenceStore | Closure | null $columnsPersistenceStore = null;
 
     public function columnManager(bool | Closure | null $condition = true): static
     {
@@ -89,7 +93,14 @@ trait HasColumnManager
 
     public function persistColumnsInSession(bool | Closure $condition = true): static
     {
-        $this->persistsColumnsInSession = $condition;
+        return $this->persistColumnsInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+    }
+
+    public function persistColumnsInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
+    {
+        $this->shouldPersistColumns = $condition;
+        $this->columnsPersistenceStore = $persistenceStore;
+        unset($this->persistenceStoreCache['columns']);
 
         return $this;
     }
@@ -115,7 +126,17 @@ trait HasColumnManager
 
     public function persistsColumnsInSession(): bool
     {
-        return (bool) $this->evaluate($this->persistsColumnsInSession);
+        return $this->shouldPersistColumns() && ($this->getColumnsPersistenceStore() instanceof SessionTablePersistenceStore);
+    }
+
+    public function shouldPersistColumns(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistColumns);
+    }
+
+    public function getColumnsPersistenceStore(): TablePersistenceStore
+    {
+        return $this->resolvePersistenceStore('columns', $this->columnsPersistenceStore);
     }
 
     public function getColumnManagerResetActionPosition(): ColumnManagerResetActionPosition

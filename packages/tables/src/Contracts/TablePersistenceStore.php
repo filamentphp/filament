@@ -2,12 +2,12 @@
 
 namespace Filament\Tables\Contracts;
 
-interface TableStateStore
+interface TablePersistenceStore
 {
     /**
      * Determine whether a value has been stored for the key, even if that value is `null`.
      */
-    public function has(string $key): bool;
+    public function exists(string $key): bool;
 
     public function get(string $key, mixed $default = null): mixed;
 

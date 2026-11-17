@@ -735,65 +735,136 @@ In existing applications that use tenancy, persisted searches will start fresh f
 
 ### Storing the persisted table state somewhere other than the session
 
-By default, persisted table state is stored in the user's session. To store it somewhere else, such as the database or the cache, create a class that implements the `Filament\Tables\Contracts\TableStateStore` interface:
+You can use a custom persistence store to save table preferences outside the session, for example in a database or cache. Set the default store with `persistenceStore()`, then choose which features use it:
 
 ```php
-use Filament\Tables\Contracts\TableStateStore;
-use Illuminate\Support\Facades\Cache;
-
-class CacheTableStateStore implements TableStateStore
-{
-    public function has(string $key): bool
-    {
-        return Cache::has($this->getCacheKey($key));
-    }
-
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return Cache::get($this->getCacheKey($key), $default);
-    }
-
-    public function put(string $key, mixed $value): void
-    {
-        Cache::forever($this->getCacheKey($key), $value);
-    }
-
-    public function forget(string $key): void
-    {
-        Cache::forget($this->getCacheKey($key));
-    }
-
-    protected function getCacheKey(string $key): string
-    {
-        return 'users.' . auth()->id() . ".{$key}";
-    }
-}
-```
-
-The `has()` method should return `true` when a value has been stored for the key, even if that value is `null`.
-
-Then pass an instance of the store to the `persistStateUsing()` method:
-
-```php
+use App\Tables\CacheTablePersistenceStore;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return $table
-        ->persistInSession()
-        ->persistStateUsing(new CacheTableStateStore);
+        ->persistenceStore(app(CacheTablePersistenceStore::class))
+        ->persistSearchInStore()
+        ->persistFiltersInStore()
+        ->persistSortInSession();
 }
 ```
 
-The store only decides where the state is saved. You still choose which parts of the state are persisted with `persistInSession()` and the other `persist*InSession()` methods.
-
-To use a store for every table in your app, bind it to the `TableStateStore` interface in the `register()` method of a service provider:
+The available methods are `persistSearchInStore()`, `persistColumnSearchesInStore()`, `persistFiltersInStore()`, `persistSortInStore()`, `persistGroupInStore()`, `persistColumnsInStore()`, and `persistRecordsPerPageInStore()`. To enable every feature in the configured store, use `persistInStore()`:
 
 ```php
-use Filament\Tables\Contracts\TableStateStore;
-
-$this->app->bind(TableStateStore::class, CacheTableStateStore::class);
+$table
+    ->persistenceStore(app(CacheTablePersistenceStore::class))
+    ->persistInStore()
+    ->persistColumnsInStore(false);
 ```
+
+Setting `persistenceStore()` alone does not enable persistence or move existing session preferences. Columns and records per page continue to use the session by default until you opt them into the store. Methods ending in `InSession()` always select session storage, regardless of the configured default store.
+
+#### Overriding the store for a feature
+
+You can pass a different store to an individual feature, or to `persistInStore()`, using the `persistenceStore` argument:
+
+```php
+use App\Tables\AnotherTablePersistenceStore;
+
+$table->persistFiltersInStore(
+    persistenceStore: app(AnotherTablePersistenceStore::class),
+);
+```
+
+Without an override, a feature uses the table's `persistenceStore()`. If no store is configured, it uses the session store. Passing `null`, or returning `null` from a store closure, restores that fallback. Store closures support the table's usual utility injections and are resolved once per table configuration; changing the configuration invalidates the resolved stores.
+
+The last persistence method called for a feature determines whether and where it is persisted. For example, `persistSearchInStore()->persistSearchInSession()` persists search only in the session. Passing `false` to either method disables search persistence without deleting previously saved preferences. Conditions also accept closures.
+
+To configure defaults across your application, use `Table::configureUsing()` in a service provider's `boot()` method. Individual tables can override those defaults:
+
+```php
+use App\Tables\CacheTablePersistenceStore;
+use Filament\Tables\Table;
+
+Table::configureUsing(function (Table $table): void {
+    $table
+        ->persistenceStore(app(CacheTablePersistenceStore::class))
+        ->persistSearchInStore();
+});
+```
+
+#### Implementing a persistence store
+
+Implement the `Filament\Tables\Contracts\TablePersistenceStore` interface. The `exists()` method must distinguish a missing key from a stored `null`; `get()` must return its default only for a missing key. This allows users to clear a default group without it being restored on their next visit.
+
+For example, this cache-backed store wraps values in an array so that Laravel's cache can distinguish stored `null` from a missing entry:
+
+```php
+namespace App\Tables;
+
+use Filament\Tables\Contracts\TablePersistenceStore;
+use Filament\Tables\Persistence\SessionTablePersistenceStore;
+use Illuminate\Support\Facades\Cache;
+
+class CacheTablePersistenceStore implements TablePersistenceStore
+{
+    public function exists(string $key): bool
+    {
+        if (auth()->guest()) {
+            return app(SessionTablePersistenceStore::class)->exists($key);
+        }
+
+        return Cache::has($this->getCacheKey($key));
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        if (auth()->guest()) {
+            return app(SessionTablePersistenceStore::class)->get($key, $default);
+        }
+
+        $entry = Cache::get($this->getCacheKey($key));
+
+        return ($entry === null) ? $default : $entry['value'];
+    }
+
+    public function put(string $key, mixed $value): void
+    {
+        if (auth()->guest()) {
+            app(SessionTablePersistenceStore::class)->put($key, $value);
+
+            return;
+        }
+
+        Cache::forever($this->getCacheKey($key), ['value' => $value]);
+    }
+
+    public function forget(string $key): void
+    {
+        if (auth()->guest()) {
+            app(SessionTablePersistenceStore::class)->forget($key);
+
+            return;
+        }
+
+        Cache::forget($this->getCacheKey($key));
+    }
+
+    protected function getCacheKey(string $key): string
+    {
+        $user = auth()->user();
+
+        return 'filament.table-preferences.' . hash('sha256', json_encode([
+            config('auth.defaults.guard'),
+            $user::class,
+            (string) $user->getAuthIdentifier(),
+            $key,
+        ], JSON_THROW_ON_ERROR));
+    }
+}
+```
+
+This example scopes cache entries to the current authentication guard, user class, and user identifier, and falls back to the session for guests. Your store is responsible for isolating preferences between users. Filament supplies the same table keys as session persistence, including the existing tenant scoping described above; it does not automatically tenant-scope every feature or provide authorization for a custom store. Cache entries may be evicted, so use a durable store if preferences must survive cache clearing.
+
+Each feature has one effective store. If you need to write to several backends, implement that behavior in a custom store and define which backend supplies reads and how partial failures are handled.
 
 ## Styling table rows
 

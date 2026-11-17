@@ -60,9 +60,9 @@ trait CanSortRecords
     #[Unexposed]
     public function updatedTableSort(): void
     {
-        if ($this->getTable()->persistsSortInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTableSortSessionKey(),
+        if ($this->getTable()->shouldPersistSort()) {
+            $this->getTable()->getSortPersistenceStore()->put(
+                $this->getTableSortPersistenceKey(),
                 $this->tableSort,
             );
         }
@@ -76,9 +76,9 @@ trait CanSortRecords
     #[Unexposed]
     public function updatedTableSortDirection(): void
     {
-        if ($this->getTable()->persistsSortInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTableSortSessionKey(),
+        if ($this->getTable()->shouldPersistSort()) {
+            $this->getTable()->getSortPersistenceStore()->put(
+                $this->getTableSortPersistenceKey(),
                 $this->tableSort,
             );
         }
@@ -190,6 +190,12 @@ trait CanSortRecords
     protected function getDefaultTableSortDirection(): ?string
     {
         return null;
+    }
+
+    #[Unexposed]
+    public function getTableSortPersistenceKey(): string
+    {
+        return $this->getTableSortSessionKey();
     }
 
     #[Unexposed]

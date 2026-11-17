@@ -29,9 +29,9 @@ trait CanPaginateRecords
             $this->tableRecordsPerPage = $this->getTableRecordsPerPage();
         }
 
-        if ($this->getTable()->persistsRecordsPerPageInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTablePerPageSessionKey(),
+        if ($this->getTable()->shouldPersistRecordsPerPage()) {
+            $this->getTable()->getRecordsPerPagePersistenceStore()->put(
+                $this->getTableRecordsPerPagePersistenceKey(),
                 $this->getTableRecordsPerPage(),
             );
         }
@@ -97,8 +97,8 @@ trait CanPaginateRecords
     public function getDefaultTableRecordsPerPageSelectOption(): int | string
     {
         $defaultOption = $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption();
-        $option = $this->getTable()->persistsRecordsPerPageInSession()
-            ? $this->getTable()->getStateStore()->get($this->getTablePerPageSessionKey(), $defaultOption)
+        $option = $this->getTable()->shouldPersistRecordsPerPage()
+            ? $this->getTable()->getRecordsPerPagePersistenceStore()->get($this->getTableRecordsPerPagePersistenceKey(), $defaultOption)
             : $defaultOption;
 
         $pageOptions = $this->getTable()->getPaginationPageOptions();
@@ -114,8 +114,8 @@ trait CanPaginateRecords
             return $option;
         }
 
-        if ($this->getTable()->persistsRecordsPerPageInSession()) {
-            $this->getTable()->getStateStore()->forget($this->getTablePerPageSessionKey());
+        if ($this->getTable()->shouldPersistRecordsPerPage()) {
+            $this->getTable()->getRecordsPerPagePersistenceStore()->forget($this->getTableRecordsPerPagePersistenceKey());
         }
 
         return $pageOptions[0];
@@ -125,6 +125,12 @@ trait CanPaginateRecords
     public function getTablePaginationPageName(): string
     {
         return $this->getIdentifiedTableQueryStringPropertyNameFor('page');
+    }
+
+    #[Unexposed]
+    public function getTableRecordsPerPagePersistenceKey(): string
+    {
+        return $this->getTablePerPageSessionKey();
     }
 
     #[Unexposed]

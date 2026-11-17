@@ -64,9 +64,9 @@ trait HasFilters
 
     protected function handleTableFilterUpdates(): void
     {
-        if ($this->getTable()->persistsFiltersInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTableFiltersSessionKey(),
+        if ($this->getTable()->shouldPersistFilters()) {
+            $this->getTable()->getFiltersPersistenceStore()->put(
+                $this->getTableFiltersPersistenceKey(),
                 $this->tableFilters,
             );
         }
@@ -238,6 +238,12 @@ trait HasFilters
         }
 
         return $name::getDefaultName();
+    }
+
+    #[Unexposed]
+    public function getTableFiltersPersistenceKey(): string
+    {
+        return $this->getTableFiltersSessionKey();
     }
 
     #[Unexposed]

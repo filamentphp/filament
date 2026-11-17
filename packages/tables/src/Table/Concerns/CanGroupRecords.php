@@ -6,7 +6,9 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Grouping\Group;
+use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Support\Str;
 
@@ -28,7 +30,9 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupsOnly = false;
 
-    protected bool | Closure | null $persistsGroupInSession = false;
+    protected bool | Closure | null $shouldPersistGroup = false;
+
+    protected TablePersistenceStore | Closure | null $groupPersistenceStore = null;
 
     protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
 
@@ -112,7 +116,14 @@ trait CanGroupRecords
 
     public function persistGroupInSession(bool | Closure $condition = true): static
     {
-        $this->persistsGroupInSession = $condition;
+        return $this->persistGroupInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+    }
+
+    public function persistGroupInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
+    {
+        $this->shouldPersistGroup = $condition;
+        $this->groupPersistenceStore = $persistenceStore;
+        unset($this->persistenceStoreCache['group']);
 
         return $this;
     }
@@ -234,6 +245,16 @@ trait CanGroupRecords
 
     public function persistsGroupInSession(): bool
     {
-        return (bool) $this->evaluate($this->persistsGroupInSession);
+        return $this->shouldPersistGroup() && ($this->getGroupPersistenceStore() instanceof SessionTablePersistenceStore);
+    }
+
+    public function shouldPersistGroup(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistGroup);
+    }
+
+    public function getGroupPersistenceStore(): TablePersistenceStore
+    {
+        return $this->resolvePersistenceStore('group', $this->groupPersistenceStore);
     }
 }

@@ -40,7 +40,7 @@ trait HasColumnManager
         }
 
         if (blank($this->tableColumns)) {
-            $this->setTableColumns($this->loadTableColumnsFromSession());
+            $this->setTableColumns($this->loadTableColumnsFromPersistenceStore());
         }
 
         $this->applyTableColumnManager();
@@ -89,8 +89,8 @@ trait HasColumnManager
         if (
             $this->hasReorderableTableColumns() &&
             (
-                $this->getTable()->persistsColumnsInSession()
-                    ? $this->getTable()->getStateStore()->get($this->getHasReorderedTableColumnsSessionKey())
+                $this->getTable()->shouldPersistColumns()
+                    ? $this->getTable()->getColumnsPersistenceStore()->get($this->getHasReorderedTableColumnsPersistenceKey())
                     : ($wasReordered || $this->hasReorderedTableColumns())
             )
         ) {
@@ -169,9 +169,21 @@ trait HasColumnManager
     }
 
     #[Unexposed]
+    public function getTableColumnsPersistenceKey(): string
+    {
+        return $this->getTableColumnsSessionKey();
+    }
+
+    #[Unexposed]
     public function getTableColumnsSessionKey(): string
     {
         return $this->getTableSessionKey('columns');
+    }
+
+    #[Unexposed]
+    public function getHasReorderedTableColumnsPersistenceKey(): string
+    {
+        return $this->getHasReorderedTableColumnsSessionKey();
     }
 
     #[Unexposed]
@@ -189,17 +201,36 @@ trait HasColumnManager
             return $this->getDefaultTableColumnState();
         }
 
-        return $this->getTable()->getStateStore()->get(
-            $this->getTableColumnsSessionKey(),
+        return $this->getTable()->getColumnsPersistenceStore()->get(
+            $this->getTableColumnsPersistenceKey(),
+            $this->getDefaultTableColumnState(),
+        );
+    }
+
+    /**
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
+     */
+    protected function loadTableColumnsFromPersistenceStore(): array
+    {
+        if (! $this->getTable()->shouldPersistColumns()) {
+            return $this->getDefaultTableColumnState();
+        }
+
+        if ($this->getTable()->persistsColumnsInSession()) {
+            return $this->loadTableColumnsFromSession();
+        }
+
+        return $this->getTable()->getColumnsPersistenceStore()->get(
+            $this->getTableColumnsPersistenceKey(),
             $this->getDefaultTableColumnState(),
         );
     }
 
     protected function persistTableColumns(): void
     {
-        if ($this->getTable()->persistsColumnsInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTableColumnsSessionKey(),
+        if ($this->getTable()->shouldPersistColumns()) {
+            $this->getTable()->getColumnsPersistenceStore()->put(
+                $this->getTableColumnsPersistenceKey(),
                 $this->tableColumns
             );
         }
@@ -207,12 +238,12 @@ trait HasColumnManager
 
     protected function persistHasReorderedTableColumns(bool $wasReordered = false): void
     {
-        if (! $this->getTable()->persistsColumnsInSession()) {
+        if (! $this->getTable()->shouldPersistColumns()) {
             return;
         }
 
-        $this->getTable()->getStateStore()->put(
-            $this->getHasReorderedTableColumnsSessionKey(),
+        $this->getTable()->getColumnsPersistenceStore()->put(
+            $this->getHasReorderedTableColumnsPersistenceKey(),
             $wasReordered || $this->hasReorderedTableColumns()
         );
     }

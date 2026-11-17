@@ -34,9 +34,9 @@ trait CanGroupRecords
     #[Unexposed]
     public function updatedTableGrouping(): void
     {
-        if ($this->getTable()->persistsGroupInSession()) {
-            $this->getTable()->getStateStore()->put(
-                $this->getTableGroupingSessionKey(),
+        if ($this->getTable()->shouldPersistGroup()) {
+            $this->getTable()->getGroupPersistenceStore()->put(
+                $this->getTableGroupingPersistenceKey(),
                 $this->tableGrouping,
             );
         }
@@ -84,6 +84,12 @@ trait CanGroupRecords
         $group->orderQuery($query, $this->getTableGroupingDirection() ?? $this->getTable()->getDefaultGroupDirection());
 
         return $query;
+    }
+
+    #[Unexposed]
+    public function getTableGroupingPersistenceKey(): string
+    {
+        return $this->getTableGroupingSessionKey();
     }
 
     #[Unexposed]

@@ -1,12 +1,12 @@
 <?php
 
-namespace Filament\Tables\State;
+namespace Filament\Tables\Persistence;
 
-use Filament\Tables\Contracts\TableStateStore;
+use Filament\Tables\Contracts\TablePersistenceStore;
 
-class SessionTableStateStore implements TableStateStore
+class SessionTablePersistenceStore implements TablePersistenceStore
 {
-    public function has(string $key): bool
+    public function exists(string $key): bool
     {
         return session()->exists($key);
     }
