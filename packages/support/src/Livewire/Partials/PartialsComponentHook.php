@@ -128,6 +128,7 @@ class PartialsComponentHook extends ComponentHook
                 $finish = trigger('render', $this->component, $view, []);
 
                 $revertSharingComponentWithViews = Utils::shareWithViews('__livewire', $this->component);
+                $revertSharingLegacyComponentWithViews = Utils::shareWithViews('_instance', $this->component);
 
                 $viewContext = app(ViewContext::class);
 
@@ -136,6 +137,7 @@ class PartialsComponentHook extends ComponentHook
                 });
 
                 $revertSharingComponentWithViews();
+                $revertSharingLegacyComponentWithViews();
 
                 if (! str_contains($html, "wire:partial=\"{$partialName}\"")) {
                     $html = Utils::insertAttributesIntoHtmlRoot($html, [

@@ -1147,6 +1147,37 @@ TextColumn::make('slug')
 
 By default, calling `extraHeaderAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
+## Rendering only the updated cells of editable columns
+
+By default, when a user updates an [editable column](#introduction), the whole Livewire component re-renders, and the browser updates the entire table. On large tables, you may use the `partiallyRenderAfterStateUpdated()` method to re-render only the cell that was updated:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('purchase_price')
+    ->partiallyRenderAfterStateUpdated()
+```
+
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `partiallyRenderAfterStateUpdated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+If saving the column also changes other columns of the same record, you may pass their names to `partiallyRenderColumnsAfterStateUpdated()`. The updated cell is always re-rendered too:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('purchase_price')
+    ->partiallyRenderColumnsAfterStateUpdated(['purchase_currency'])
+
+SelectColumn::make('purchase_currency')
+    ->options([
+        'EUR' => 'EUR',
+        'USD' => 'USD',
+    ])
+```
+
+Anything else that depends on the updated record, such as other rows or content outside the table, is not updated until the component next renders. Columns that are not visible in the table are skipped. If the table has [summaries](../summaries) or a [content layout](../layout), the whole component is rendered instead.
+
 ## Column utility injection
 
 The vast majority of methods used to configure columns accept functions as parameters instead of hardcoded values:
