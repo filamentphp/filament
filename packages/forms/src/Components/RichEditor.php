@@ -1730,9 +1730,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $wrapperAttributes = $this->getExtraAttributeBag()
             ->merge(['x-cloak' => true], escape: false)
             ->style(array_filter([
-                filled($minHeight) ? "--min-height: {$minHeight}" : null,
-                filled($maxHeight) ? "--max-height: {$maxHeight}" : null,
-                filled($stickyOffset) ? "--rich-editor-sticky-offset: {$stickyOffset}" : null,
+                filled($minHeight) ? ('--min-height: ' . e($minHeight)) : null,
+                filled($maxHeight) ? ('--max-height: ' . e($maxHeight)) : null,
+                filled($stickyOffset) ? ('--rich-editor-sticky-offset: ' . e($stickyOffset)) : null,
             ]))
             ->class(['fi-fo-rich-editor']);
 

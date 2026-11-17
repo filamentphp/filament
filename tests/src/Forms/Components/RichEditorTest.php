@@ -1202,6 +1202,29 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('escapes `minHeight()`, `maxHeight()`, and `stickyOffset()` in styles', function (): void {
+        $minHeight = '8rem" data-audit-injected="<min>&value';
+        $maxHeight = '12rem" data-audit-injected="<max>&value';
+        $stickyOffset = '2rem" data-audit-injected="<offset>&value';
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->minHeight($minHeight)
+                    ->maxHeight($maxHeight)
+                    ->stickyOffset($stickyOffset),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+        $document = new DOMDocument;
+        $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new DOMXPath($document);
+
+        expect($xpath->query('//*[@data-audit-injected]')->length)->toBe(0)
+            ->and($xpath->query('//*[@style]')->item(0)->getAttribute('style'))
+            ->toBe("--min-height: {$minHeight}; --max-height: {$maxHeight}; --rich-editor-sticky-offset: {$stickyOffset};");
+    });
+
     it('can render with custom `toolbarButtons()`', function (): void {
         livewire(RenderRichEditorWithToolbarButtons::class)
             ->assertSuccessful();
