@@ -25,17 +25,22 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
     #[Url]
     public bool $hasCustomLoadingPlaceholder = false;
 
+    #[Url]
+    public bool $isSearchOnBlur = false;
+
     public function table(Table $table): Table
     {
         return $table
             ->query(Post::query())
+            ->searchOnBlur(fn (): bool => $this->isSearchOnBlur)
             ->lazyLoaded(fn (): bool => $this->isTableLazyLoaded)
             ->loadingPlaceholder(fn () => $this->hasCustomLoadingPlaceholder
                 ? view('loading-placeholder', ['label' => 'Preparing table records'])
                 : null)
             ->loadingSkeleton()
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable(fn (): bool => $this->isSearchOnBlur),
                 Tables\Columns\CheckboxColumn::make('published_checkbox')
                     ->state(static fn (Post $record): bool => $record->is_published),
                 Tables\Columns\ToggleColumn::make('published_toggle')

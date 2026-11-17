@@ -1,11 +1,15 @@
 <?php
 
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
 use Filament\Support\View\Concerns\CanGenerateButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
 use Filament\Support\View\Concerns\CanGenerateIconButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateLinkHtml;
+use Filament\Support\View\Concerns\CanGeneratePaginationHtml;
+use Filament\Support\View\SupportIconAlias;
 use Filament\Tests\TestCase;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -351,4 +355,31 @@ it('preserves explicit modal window focus attributes', function (): void {
     preg_match('/<(?:div|form)(?=[^>]*\bfi-modal-window\b)(?![^>]*\bfi-modal-window-ctn\b)[^>]*>/', $html, $modalWindowMatches);
 
     expect($modalWindowMatches[0])->toContain('tabindex="-1"');
+});
+
+it('uses only direction-specific pagination icon aliases in native rendering', function (): void {
+    $generator = new class
+    {
+        use CanGeneratePaginationHtml;
+    };
+    $paginator = new LengthAwarePaginator(range(11, 20), 30, 10, 2);
+
+    FilamentIcon::register([
+        SupportIconAlias::PAGINATION_PREVIOUS_BUTTON => new HtmlString('<svg data-icon="previous-ltr"></svg>'),
+        SupportIconAlias::PAGINATION_NEXT_BUTTON => new HtmlString('<svg data-icon="next-ltr"></svg>'),
+    ]);
+
+    expect($generator->generatePaginationHtml($paginator, 'pagination-test'))
+        ->toContain('data-icon="previous-ltr"', 'data-icon="next-ltr"')
+        ->and($generator->generatePaginationHtml($paginator, 'pagination-test', isRtl: true))
+        ->not->toContain('data-icon="previous-ltr"', 'data-icon="next-ltr"');
+
+    FilamentIcon::register([
+        SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL => new HtmlString('<svg data-icon="previous-rtl"></svg>'),
+        SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL => new HtmlString('<svg data-icon="next-rtl"></svg>'),
+    ]);
+
+    expect($generator->generatePaginationHtml($paginator, 'pagination-test', isRtl: true))
+        ->toContain('data-icon="previous-rtl"', 'data-icon="next-rtl"')
+        ->not->toContain('data-icon="previous-ltr"', 'data-icon="next-ltr"');
 });

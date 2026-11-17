@@ -583,7 +583,7 @@ describe('record actions column visibility', function (): void {
             ->assertSuccessful();
 
         // Each record is authorized for its row URL and its rendered action group.
-        // Resolving an unused row action must not add further checks.
+        // Resolving an unused record action must not add further checks.
         $expected = $posts->mapWithKeys(fn (Post $post): array => [$post->getKey() => 2])->all();
 
         expect(PostsTableWithGroupedRecordActions::$authorizationChecks['edit'])->toEqual($expected);

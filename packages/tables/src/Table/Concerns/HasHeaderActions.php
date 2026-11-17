@@ -101,4 +101,17 @@ trait HasHeaderActions
     {
         return $this->headerActions;
     }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @return array<Action | ActionGroup>
+     */
+    protected function getRenderHeaderActions(): array
+    {
+        return array_filter(
+            $this->getHeaderActions(),
+            static fn (Action | ActionGroup $action): bool => $action->isVisible(),
+        );
+    }
 }

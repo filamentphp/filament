@@ -89,7 +89,7 @@
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
             @if ($canClickPrefixAffix)
-                x-on:click="if (! $event.target.closest('.fi-input-wrp-actions')) $dispatch('focus-input')"
+                x-on:click="! $event.target.closest('.fi-input-wrp-actions') && $dispatch('focus-input')"
             @endif
             @class([
                 'fi-input-wrp-prefix',
@@ -132,7 +132,7 @@
     @if ($hasSuffix)
         <div
             @if ($canClickSuffixAffix)
-                x-on:click="if (! $event.target.closest('.fi-input-wrp-actions')) $dispatch('focus-input')"
+                x-on:click="! $event.target.closest('.fi-input-wrp-actions') && $dispatch('focus-input')"
             @endif
             @class([
                 'fi-input-wrp-suffix',

@@ -1,5 +1,9 @@
 @php
     use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\Concerns\CanGenerateButtonHtml;
+    use Filament\Support\View\Concerns\CanGenerateModalHtml;
+    use Illuminate\Support\HtmlString;
+    use Illuminate\View\ComponentSlot;
 @endphp
 
 <x-filament-panels::page>
@@ -128,6 +132,38 @@
             </section>
         @endforeach
     </x-filament::modal>
+
+    @php
+        $nativeModalGenerator = new class
+        {
+            use CanGenerateButtonHtml;
+            use CanGenerateModalHtml;
+        };
+
+        $longNativeModalContent = new HtmlString(implode('', array_map(
+            static fn (int $section): string => '<section><h3>Agreement section ' . $section . '</h3><p>Review the service scope, response times, renewal terms, and account responsibilities before accepting this agreement.</p></section>',
+            range(1, 18),
+        )));
+    @endphp
+
+    @foreach (['sticky', 'slide-over'] as $nativeModalType)
+        {!!
+            $nativeModalGenerator->generateModalHtml(
+                slot: $longNativeModalContent,
+                closeButton: false,
+                extraModalWindowAttributeBag: new ComponentAttributeBag(['data-testid' => "long-native-{$nativeModalType}-modal"]),
+                heading: 'Reviewing an annual service agreement',
+                id: "standalone-browser-test-long-native-{$nativeModalType}-modal",
+                slideOver: $nativeModalType === 'slide-over',
+                stickyHeader: $nativeModalType === 'sticky',
+                trigger: new ComponentSlot($nativeModalGenerator->generateButtonHtml(
+                    attributes: new ComponentAttributeBag(['data-testid' => "long-native-{$nativeModalType}-trigger"]),
+                    label: "Open long native {$nativeModalType} modal",
+                )),
+                livewireId: $this->getId(),
+            )
+        !!}
+    @endforeach
 
     <x-filament::modal
         id="standalone-browser-test-no-focus-restore-modal"

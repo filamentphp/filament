@@ -286,6 +286,8 @@ describe('browser interactions', function (): void {
     })->with([
         'sticky modal' => ['sticky'],
         'slide-over' => ['slide-over'],
+        'native sticky modal' => ['native-sticky'],
+        'native slide-over' => ['native-slide-over'],
     ])->with(['PageDown', 'ArrowDown', 'Space']);
 
     it('does not restore focus to the trigger after closing a standalone modal using `:restores-focus="false"`', function (): void {
