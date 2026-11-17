@@ -330,6 +330,7 @@ Create `resources/js/fields/location-picker.jsx`. The component edits a latitude
 
 ```jsx
 import React from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 
 function LocationPicker(props) {
@@ -360,7 +361,12 @@ export default function mountLocationPicker({ host, props: initialProps }) {
     const root = createRoot(host)
     const update = (props) => root.render(<LocationPicker {...props} />)
 
-    update(initialProps)
+    try {
+        flushSync(() => update(initialProps))
+    } catch (error) {
+        root.unmount()
+        throw error
+    }
 
     return { update, destroy: () => root.unmount() }
 }
@@ -705,7 +711,26 @@ interface Methods {
 
 Return `update(props)` and `destroy()` from your mount function, or return a promise for that object. Server changes update the renderer and cancel a pending debounce when the incoming value differs from the pending edit. Removal cancels pending commits and calls `destroy()`. A renderer that finishes initializing after removal is immediately destroyed.
 
+Filament awaits your mount function before revealing the renderer. Ensure your initial UI exists at that handoff. The React example flushes the initial render before returning; later updates retain their normal asynchronous scheduling. Filament does not wait for all effects, asynchronous descendants, data fetching, or Suspense to finish: a rendered fallback counts as initial UI. You own resources created before returning lifecycle methods, including cleanup if initialization fails.
+
 Clean up subscriptions, event listeners, and framework roots in `destroy()`, including when the host is already detached. Stop DOM work synchronously even if cleanup returns a promise. Changes to the renderer URL or state binding configuration remount the renderer with current state; changes to `rendererConfiguration()` and input settings such as `isInvalid`, `isRequired`, `isDisabled`, and `isReadOnly` update it in place. Keep persistent data in the field value, not only in component-local state.
+
+#### Customizing loading placeholders
+
+`JsField` and custom fields using `HasJsRenderer` display a server-rendered loading placeholder while Async Alpine downloads, the renderer module imports, and the mount function completes. Customize it with `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance containing trusted HTML:
+
+```php
+use App\Filament\Forms\Components\LocationPicker;
+
+LocationPicker::make('location')
+    ->loadingPlaceholder(fn () => view('forms.location-picker-loading'))
+```
+
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Use [`configureUsing()`](overview#global-settings) to set a placeholder globally for your field class. Call `loadingPlaceholder(null)` on an instance to restore the default placeholder.
+
+Keep placeholder HTML decorative and noninteractive. Filament renders it outside the Livewire-ignored `host`, hides it from assistive technologies, and supplies an accessible loading status. Pending renderer content remains measurable but inert and hidden from assistive technologies until mounting completes. Successful mounting removes the loading UI; renderer import, mount, or update failures show the [accessible error](#handling-renderer-errors) instead. If the Async Alpine download fails, the placeholder remains visible.
 
 #### Understanding the boundary with Blade and Alpine
 

@@ -7,6 +7,8 @@ use Filament\Support\RawJs;
 use Filament\Widgets\Concerns\HasJsRenderer;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\Widget;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 
 class JsWidget extends Widget
@@ -21,8 +23,17 @@ class JsWidget extends Widget
 
     public int $total = 19;
 
+    public function getLoadingPlaceholder(): View | Htmlable | null
+    {
+        return $this->framework === 'pending' ? view('loading-placeholder', ['label' => 'Preparing revenue overview']) : null;
+    }
+
     public function getRenderer(): string | RawJs
     {
+        if ($this->framework === 'pending') {
+            return '/pending-js-renderer.js';
+        }
+
         if ($this->framework === 'inline') {
             return RawJs::make(<<<'JS'
                 ({ host, props, utilities }) => {

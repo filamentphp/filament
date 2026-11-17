@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+    @include('renderer-readiness')
+
     {{ $this->filtersForm }}
 
     <x-filament::button wire:click="$toggle('showWidget')">

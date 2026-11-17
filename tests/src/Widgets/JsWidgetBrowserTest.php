@@ -6,10 +6,13 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class)->group('serial');
 
 beforeEach(function (): void {
+    Route::get('/pending-js-renderer.js', static fn () => response(file_get_contents(__DIR__ . '/../../resources/js/pending-js-renderer.js'), headers: ['Content-Type' => 'text/javascript']));
+
     $directory = dirname(__DIR__, 3) . '/build/js-renderer-starters';
     foreach (File::allFiles($directory) as $file) {
         $id = substr(str_replace('\\', '/', $file->getRelativePathname()), 0, -3);
@@ -25,6 +28,7 @@ it('updates generated renderers from dashboard filters without replacing their h
     $browser = visit('/js-widget-browser-test?framework=' . $framework);
 
     $browser->assertSeeIn('.fi-wi-js', 'All time: 19');
+    $browser->assertScript('window.rendererReadiness.length === 1 && window.rendererReadiness.every(Boolean)', true);
     $browser->script('window.widgetHost = document.querySelector(".fi-wi-js [x-ref=host]")');
     $browser->fill('Period', 'September')
         ->assertSeeIn('.fi-wi-js', 'September: 19')
@@ -41,6 +45,22 @@ it('updates generated renderers from dashboard filters without replacing their h
         $browser->assertNoAccessibilityIssues();
     }
 })->with(['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts']);
+
+it('keeps custom widget placeholders until asynchronous mounting completes', function (): void {
+    $page = visit('/js-widget-browser-test?framework=pending');
+    $page->assertScript('typeof window.releaseRendererImport', 'function')
+        ->assertVisible('[data-testid=custom-loading-placeholder]');
+    $page->script('window.releaseRendererImport()');
+    $page->assertScript('typeof window.releaseRendererMount', 'function')
+        ->assertVisible('[data-testid=custom-loading-placeholder]')
+        ->assertPresent('[inert][aria-hidden=true]')
+        ->assertNoAccessibilityIssues();
+    $page->script('window.releaseRendererMount()');
+    $page->assertSeeIn('.fi-wi-js', 'All time: 19')
+        ->assertMissing('[data-testid=custom-loading-placeholder]')
+        ->assertNotPresent('.fi-wi-js [inert]')
+        ->assertNoSmoke();
+});
 
 it('calls the widget through `$wire` and disposes the renderer on removal', function (): void {
     visit('/js-widget-browser-test?framework=inline')

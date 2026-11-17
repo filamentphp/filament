@@ -15,3 +15,11 @@
         @apply pointer-events-none opacity-0;
     }
 }
+
+.fi-async-component-error {
+    @apply text-danger-600 dark:text-danger-400 flex min-h-9 items-center justify-center gap-x-1.5 text-center text-sm;
+
+    & > .fi-icon {
+        @apply shrink-0;
+    }
+}
