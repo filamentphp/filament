@@ -81,6 +81,24 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
         })
     },
 
+    handleOpenEvent(event, modalId) {
+        if (event.detail.id === modalId && !this.isOpen) {
+            this.open()
+        }
+    },
+
+    handleCloseEvent(event, modalId) {
+        if (event.detail.id === modalId && this.isOpen) {
+            this.close()
+        }
+    },
+
+    handleCloseQuietlyEvent(event, modalId) {
+        if (event.detail.id === modalId && this.isOpen) {
+            this.closeQuietly()
+        }
+    },
+
     setUpTextSelectionClosePrevention() {
         // Ensure that the click element is not triggered from a user selecting text inside an input.
         // https://github.com/filamentphp/filament/pull/18022

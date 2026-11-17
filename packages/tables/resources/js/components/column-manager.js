@@ -225,6 +225,15 @@ export default function filamentTableColumnManager({ columns, isLive }) {
             return element.textContent
         },
 
+        getColumnKey(column) {
+            return JSON.stringify([column.type, column.name])
+        },
+
+        syncGroupCheckboxIndeterminate(checkbox, groupName) {
+            checkbox.indeterminate =
+                this.groupedColumns[groupName]?.indeterminate || false
+        },
+
         getColumnPosition(column, groupName = null) {
             return (
                 this.getVisibleColumns(groupName).findIndex(
