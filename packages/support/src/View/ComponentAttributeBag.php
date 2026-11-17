@@ -229,6 +229,10 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
     {
         if ($escape) {
             foreach ($attributeDefaults as $key => $value) {
+                if ($value instanceof AppendableAttributeValue) {
+                    continue;
+                }
+
                 if ($this->shouldEscapeAttributeValue($escape, $value)) {
                     $attributeDefaults[$key] = e($value);
                 }

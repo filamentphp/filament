@@ -95,8 +95,8 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
                     'tabindex' => filled($maxHeight) ? '0' : null,
                 ], escape: false)
                 ->style(array_filter([
-                    filled($minHeight) ? "--min-height: {$minHeight}" : null,
-                    filled($maxHeight) ? "--max-height: {$maxHeight}" : null,
+                    filled($minHeight) ? ('--min-height: ' . e($minHeight)) : null,
+                    filled($maxHeight) ? ('--max-height: ' . e($maxHeight)) : null,
                 ]))
                 ->class(['fi-fo-markdown-editor', 'fi-disabled', 'fi-prose']);
 
