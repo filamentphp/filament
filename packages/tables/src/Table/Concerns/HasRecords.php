@@ -651,6 +651,10 @@ trait HasRecords
         $livewire = $this->getLivewire();
         $viewFactory = app('view');
         $records = $this->getRecords();
+        $isReordering = $this->isReordering();
+        $group = $this->getGrouping();
+        $isGroupsOnly = $this->isGroupsOnly() && $group;
+        $isGroupCollapsible = $group?->isCollapsible() ?? false;
 
         ob_start(); ?>
         <?php if (count($records)) { ?>
@@ -682,30 +686,30 @@ trait HasRecords
                     $recordUrl = $this->getRecordUrl($record);
                     $recordAction = $recordUrl ? null : $this->getRecordAction($record);
                     $openRecordUrlInNewTab = $this->shouldOpenRecordUrlInNewTab($record);
-                    $recordGroupKey = $this->getGrouping()?->getStringKey($record);
-                    $recordGroupTitle = $this->getGrouping()?->getTitle($record, $recordGroupKey);
+                    $recordGroupKey = $group?->getStringKey($record);
+                    $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
                     $recordIsSelectable = $this->isRenderSelectionEnabled() && $this->isRecordSelectable($record);
 
                     $recordActions = $this->getRenderRecordActions($record, $recordKey);
                     ?>
 
                     <?php if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle) { ?>
-                        <?php if ((! $this->isReordering()) && filled($previousRecordGroupTitle) && $this->hasRenderSummary()) {
-                            $groupColumn = $this->getGrouping()->getColumn();
-                            $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
-                            $groupSummaryKey = $livewire->getId() . '.table.groups.' . md5(json_encode([$this->getGrouping()->getId(), $previousRecordGroupKey])) . '.summary';
+                        <?php if ((! $isReordering) && filled($previousRecordGroupTitle) && $this->hasRenderSummary()) {
+                            $groupColumn = $group->getColumn();
+                            $groupScopedAllTableSummaryQuery = $group->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
+                            $groupSummaryKey = $livewire->getId() . '.table.groups.' . md5(json_encode([$group->getId(), $previousRecordGroupKey])) . '.summary';
                             $this->setRenderKey($groupSummaryKey);
                             ?>
 
                             <?= $this->generateSummaryRowHtml(
                                 columns: $this->getVisibleColumns(),
-                                heading: $this->isRenderGroupsOnly() ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $this->getPluralModelLabel()]),
+                                heading: $isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $this->getPluralModelLabel()]),
                                 query: $groupScopedAllTableSummaryQuery,
                                 selectedState: $this->getRenderGroupedSummarySelectedState()[$previousRecordGroupKey] ?? [],
                                 actions: $this->hasRenderRecordActions(),
                                 actionsPosition: $this->getRecordActionsPosition(),
                                 groupColumn: $groupColumn,
-                                groupsOnly: $this->isRenderGroupsOnly(),
+                                groupsOnly: $isGroupsOnly,
                                 selectionEnabled: $this->isRenderSelectionEnabled(),
                                 recordCheckboxPosition: $this->getRecordCheckboxPosition(),
                                 attributes: new ComponentAttributeBag(['wire:key' => $groupSummaryKey]),
@@ -729,6 +733,9 @@ trait HasRecords
                         $recordGroupKey,
                         $openRecordUrlInNewTab,
                         $loop,
+                        $isReordering,
+                        $isGroupsOnly,
+                        $isGroupCollapsible,
                     ); ?>
 
                     <?php
@@ -738,22 +745,22 @@ trait HasRecords
                     $previousRecordGroupTitle = $recordGroupTitle;
                 } $loop = $viewFactory->getLastLoop(); ?>
 
-                <?php if ((! $this->isReordering()) && filled($previousRecordGroupTitle) && $this->hasRenderSummary() && $livewire->shouldRenderTrailingGroupedTableSummary($previousRecord)) {
-                    $groupColumn = $this->getGrouping()->getColumn();
-                    $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
-                    $groupSummaryKey = $livewire->getId() . '.table.groups.' . md5(json_encode([$this->getGrouping()->getId(), $previousRecordGroupKey])) . '.summary';
+                <?php if ((! $isReordering) && filled($previousRecordGroupTitle) && $this->hasRenderSummary() && $livewire->shouldRenderTrailingGroupedTableSummary($previousRecord)) {
+                    $groupColumn = $group->getColumn();
+                    $groupScopedAllTableSummaryQuery = $group->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
+                    $groupSummaryKey = $livewire->getId() . '.table.groups.' . md5(json_encode([$group->getId(), $previousRecordGroupKey])) . '.summary';
                     $this->setRenderKey($groupSummaryKey);
                     ?>
 
                     <?= $this->generateSummaryRowHtml(
                         columns: $this->getVisibleColumns(),
-                        heading: $this->isRenderGroupsOnly() ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $this->getPluralModelLabel()]),
+                        heading: $isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $this->getPluralModelLabel()]),
                         query: $groupScopedAllTableSummaryQuery,
                         selectedState: $this->getRenderGroupedSummarySelectedState()[$previousRecordGroupKey] ?? [],
                         actions: $this->hasRenderRecordActions(),
                         actionsPosition: $this->getRecordActionsPosition(),
                         groupColumn: $groupColumn,
-                        groupsOnly: $this->isRenderGroupsOnly(),
+                        groupsOnly: $isGroupsOnly,
                         selectionEnabled: $this->isRenderSelectionEnabled(),
                         recordCheckboxPosition: $this->getRecordCheckboxPosition(),
                         attributes: new ComponentAttributeBag(['wire:key' => $groupSummaryKey]),
@@ -761,8 +768,8 @@ trait HasRecords
                 <?php } ?>
                 <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                <?php if ((! $this->isReordering()) && $this->hasRenderSummary()) {
-                    $groupColumn = $this->getGrouping()?->getColumn();
+                <?php if ((! $isReordering) && $this->hasRenderSummary()) {
+                    $groupColumn = $group?->getColumn();
                     ?>
 
                     <?= $this->generateSummaryHtml(
@@ -773,7 +780,7 @@ trait HasRecords
                         actionsPosition: $this->getRecordActionsPosition(),
                         allTableSummary: $this->hasAllTableSummary(),
                         groupColumn: $groupColumn,
-                        groupsOnly: $this->isRenderGroupsOnly(),
+                        groupsOnly: $isGroupsOnly,
                         pageSummary: $this->hasPageSummary(),
                         recordCheckboxPosition: $this->getRecordCheckboxPosition(),
                         selectionEnabled: $this->isRenderSelectionEnabled(),
@@ -803,18 +810,21 @@ trait HasRecords
         ?string $recordGroupKey,
         bool $openRecordUrlInNewTab,
         \stdClass $loop,
+        bool $isReordering,
+        bool $isGroupsOnly,
+        bool $isGroupCollapsible,
     ): string {
         $viewFactory = app('view');
 
         ob_start(); ?>
-        <?php if (! $this->isRenderGroupsOnly()) { ?>
+        <?php if (! $isGroupsOnly) { ?>
             <tr
                 <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey) . ''); ?>
                 wire:key="<?= e($this->getLivewire()->getId()); ?>.table.records.<?= e($recordKey); ?>"
-                <?= e($this->isReordering() ? 'x-sortable-handle' : null); ?>
-                <?= $this->isReordering() ? 'x-sortable-item="' . e($recordKey) . '"' : null; ?>
+                <?= e($isReordering ? 'x-sortable-handle' : null); ?>
+                <?= $isReordering ? 'x-sortable-item="' . e($recordKey) . '"' : null; ?>
                 x-bind:class="{
-                    <?= e($this->getGrouping()?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . Js::from($recordGroupTitle) . '),' : ''); ?>
+                    <?= e($isGroupCollapsible ? '\'fi-collapsed\': isGroupCollapsed(' . Js::from($recordGroupTitle) . '),' : ''); ?>
                     'fi-selected': <?= Js::from($recordIsSelectable)->toHtml() ?> && isRecordSelected(<?= Js::from($recordKey)->toHtml() ?>),
                 }"
                 class="<?= Arr::toCssClasses([
@@ -825,7 +835,7 @@ trait HasRecords
                 ]); ?>"
             >
                 <?= $this->generateMorphMarkerHtml(); ?>
-                <?php if ($this->isReordering()) { ?>
+                <?php if ($isReordering) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordReorderControlsHtml($record, $recordKey, $loop); ?>
                     </td>
@@ -833,7 +843,7 @@ trait HasRecords
                 <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?= $this->generateMorphMarkerHtml(); ?>
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeCells && (! $this->isReordering())) { ?>
+                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
@@ -841,7 +851,7 @@ trait HasRecords
                 <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?= $this->generateMorphMarkerHtml(); ?>
-                <?php if ($this->isRenderSelectionEnabled() && ($this->getRecordCheckboxPosition() === RecordCheckboxPosition::BeforeCells) && (! $this->isReordering())) { ?>
+                <?php if ($this->isRenderSelectionEnabled() && ($this->getRecordCheckboxPosition() === RecordCheckboxPosition::BeforeCells) && (! $isReordering)) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
                     >
@@ -853,7 +863,7 @@ trait HasRecords
                 <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?= $this->generateMorphMarkerHtml(); ?>
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeColumns && (! $this->isReordering())) { ?>
+                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
@@ -863,12 +873,12 @@ trait HasRecords
                 <?= $this->generateMorphMarkerHtml(); ?>
                 <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $column) {
                     $loop = $viewFactory->getLastLoop(); ?>
-                    <?= $this->generateRecordCellHtml($column, $record, $loop, $recordKey, $recordUrl, $recordAction, $openRecordUrlInNewTab); ?>
+                    <?= $this->generateRecordCellHtml($column, $record, $loop, $recordKey, $recordUrl, $recordAction, $openRecordUrlInNewTab, $isReordering); ?>
                 <?php } $loop = $viewFactory->getLastLoop(); ?>
                 <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?= $this->generateMorphMarkerHtml(); ?>
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterColumns && (! $this->isReordering())) { ?>
+                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
@@ -876,7 +886,7 @@ trait HasRecords
                 <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?= $this->generateMorphMarkerHtml(); ?>
-                <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::AfterCells && (! $this->isReordering())) { ?>
+                <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::AfterCells && (! $isReordering)) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
                     >
@@ -887,7 +897,7 @@ trait HasRecords
                 <?php } ?>
                 <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterCells && (! $this->isReordering())) { ?>
+                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
