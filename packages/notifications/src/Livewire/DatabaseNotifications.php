@@ -57,6 +57,16 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->delete();
     }
 
+    /** @param array<string> $ids */
+    #[Exposed]
+    #[On('notificationsClosed')]
+    public function removeNotifications(array $ids): void
+    {
+        foreach ($ids as $id) {
+            $this->removeNotification($id);
+        }
+    }
+
     #[Exposed]
     #[On('markedNotificationAsRead')]
     public function markNotificationAsRead(string $id): void

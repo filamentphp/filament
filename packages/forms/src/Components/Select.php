@@ -1971,7 +1971,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         <?php } ?>
                     </select>
                 <?php } else { ?>
-                    <?php $options = $this->getOptions(); ?>
+                    <?php
+                    // Dynamic options are fetched with `getOptionsForJs()` each time the dropdown opens, so they are not rendered inline.
+                    $options = $hasDynamicOptions ? null : $this->getOptions();
+                    ?>
                     <?php
                     $accessibilityAttributes = [
                         ...$this->getAccessibilityAttributes(),
@@ -2027,7 +2030,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     maxItemsMessage: <?= Js::from($this->getMaxItemsMessage()) ?>,
                                     noOptionsMessage: <?= Js::from($this->getNoOptionsMessage()) ?>,
                                     noSearchResultsMessage: <?= Js::from($this->getNoSearchResultsMessage()) ?>,
-                                    options: <?= Js::from($this->transformOptionsForJs($options)) ?>,
+                                    options: <?= Js::from($this->transformOptionsForJs($options ?? [])) ?>,
                                     optionsLimit: <?= Js::from($this->getOptionsLimit()) ?>,
                                     placeholder: <?= Js::from($this->getPlaceholder()) ?>,
                                     position: <?= Js::from($this->getPosition()) ?>,

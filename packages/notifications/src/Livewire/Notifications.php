@@ -106,6 +106,16 @@ class Notifications extends Component
         $this->notifications->forget($id);
     }
 
+    /** @param array<string> $ids */
+    #[Exposed]
+    #[On('notificationsClosed')]
+    public function removeNotifications(array $ids): void
+    {
+        foreach ($ids as $id) {
+            $this->removeNotification($id);
+        }
+    }
+
     /**
      * @param  array<string, mixed>  $notification
      */
@@ -117,6 +127,17 @@ class Notifications extends Component
         }
 
         $this->pushNotification(Notification::fromArray($notification));
+    }
+
+    /**
+     * @param  array<array<string, mixed>>  $notifications
+     */
+    #[Exposed]
+    public function handleBroadcastNotifications(array $notifications): void
+    {
+        foreach ($notifications as $notification) {
+            $this->handleBroadcastNotification($notification);
+        }
     }
 
     protected function pushNotification(Notification $notification): void

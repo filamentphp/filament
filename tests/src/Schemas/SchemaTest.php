@@ -10,6 +10,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\HtmlString;
 
 uses(TestCase::class);
 
@@ -179,6 +180,24 @@ describe('lazy loading', function (): void {
             ->toContain('wire:partial="schema.form"')
             ->not->toContain('Loaded content');
     });
+
+    it('renders custom loading content without rendering the lazy schema and can reset it', function (string $contentType): void {
+        $schema = Schema::make(Livewire::make())
+            ->key('form')
+            ->components([Text::make('Loaded content')])
+            ->lazyLoaded()
+            ->loadingPlaceholder(loadingPlaceholder: static fn (Schema $schema) => $contentType === 'view'
+                ? view('loading-placeholder', ['label' => $schema->getKey() . ' <loading>'])
+                : new HtmlString('<div data-testid="custom-loading-placeholder">' . e($schema->getKey() . ' <loading>') . '</div>'));
+
+        expect($schema->toEmbeddedHtml())
+            ->toContain('data-testid="custom-loading-placeholder"', 'form &lt;loading&gt;', 'role="status"', 'aria-busy="true"')
+            ->not->toContain('Loaded content');
+
+        expect($schema->loadingPlaceholder(null)->livewire(Livewire::make())->toEmbeddedHtml())
+            ->not->toContain('data-testid="custom-loading-placeholder"')
+            ->toContain(e(__('filament::loading.label')));
+    })->with(['view', 'html']);
 
     it('can conditionally use lazy loading', function (): void {
         $schema = Schema::make(Livewire::make())

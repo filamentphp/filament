@@ -150,6 +150,27 @@ class SelectBrowserTest extends Page
                     ->noOptionsMessage('No options available')
                     ->extraAttributes(['data-testid' => 'dynamic-options-with-results-select']),
 
+                Select::make('dynamic_options_with_default')
+                    ->label('Dynamic Options With Default')
+                    ->options(fn (): array => [
+                        'preset1' => 'Preset Option 1',
+                        'preset2' => 'Preset Option 2',
+                    ])
+                    ->default('preset2')
+                    ->searchable()
+                    ->extraAttributes(['data-testid' => 'dynamic-options-with-default-select']),
+
+                Select::make('multiple_dynamic_options_with_default')
+                    ->label('Multiple Dynamic Options With Default')
+                    ->options(fn (): array => [
+                        'shelf1' => 'Shelf Option 1',
+                        'shelf2' => 'Shelf Option 2',
+                        'shelf3' => 'Shelf Option 3',
+                    ])
+                    ->default(['shelf1', 'shelf3'])
+                    ->multiple()
+                    ->extraAttributes(['data-testid' => 'multiple-dynamic-options-with-default-select']),
+
                 Select::make('clearable_with_placeholder')
                     ->label('Clearable With Placeholder')
                     ->placeholder('Select an option...')
