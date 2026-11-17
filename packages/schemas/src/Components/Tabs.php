@@ -650,6 +650,9 @@ class Tabs extends Component implements HasEmbeddedView
         <?php return ob_get_clean();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toEmbeddedHtmlForLivewireProperty(): string
     {
         $livewireProperty = $this->getLivewireProperty();
@@ -829,6 +832,8 @@ class Tabs extends Component implements HasEmbeddedView
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  string | array<string> | null  $color
      */
     protected function generateTabBadgeHtml(
@@ -874,6 +879,9 @@ class Tabs extends Component implements HasEmbeddedView
         <?php return ob_get_clean();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function generateLazyLoadedBadgePlaceholderHtml(Js $indexJs): string
     {
         ob_start(); ?>

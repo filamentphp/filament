@@ -188,4 +188,28 @@ trait HasColumns
     {
         return $this->hasColumnsLayout;
     }
+
+    /**
+     * @return array<string, true>
+     */
+    public function getPartiallyRenderableColumnNames(): array
+    {
+        if ($this->getContent() || $this->hasColumnsLayout()) {
+            return [];
+        }
+
+        $columnNames = [];
+
+        foreach ($this->getVisibleColumns() as $column) {
+            if (! method_exists($column, 'getPartiallyRenderableColumnNamesAfterStateUpdated')) {
+                continue;
+            }
+
+            foreach ($column->getPartiallyRenderableColumnNamesAfterStateUpdated() as $columnName) {
+                $columnNames[$columnName] = true;
+            }
+        }
+
+        return $columnNames;
+    }
 }

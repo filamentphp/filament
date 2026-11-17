@@ -177,7 +177,7 @@ class Component extends ViewComponent
     }
 
     /**
-     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
     public function toSchemaHtml(?bool $isVisible = null): string
     {
@@ -279,7 +279,7 @@ class Component extends ViewComponent
     }
 
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
     protected function renderWrapperBladeComponent(string $component, ComponentSlot $slot, ComponentAttributeBag $attributes): string
     {

@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsBrowserTest;
+use Filament\Tests\Fixtures\Pages\AsyncComponentBrowserTest;
 use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
 use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
@@ -143,6 +144,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 Actions::class,
+                AsyncComponentBrowserTest::class,
                 SchemaComponentScopeBrowserTest::class,
                 ScopedActionsBrowserTest::class,
                 AfterStateUpdatedJsBrowserTest::class,

@@ -20,7 +20,7 @@ use function Filament\Support\generate_loading_indicator_html;
 trait CanGenerateButtonHtml
 {
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      *
      * @param  string | array<string> | null  $badgeColor,
      * @param  string | array<string> | null  $color,

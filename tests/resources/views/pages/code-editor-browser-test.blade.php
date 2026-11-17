@@ -3,6 +3,9 @@
         {{ $this->form }}
 
         <x-filament::button type="submit">Save</x-filament::button>
+        <x-filament::button wire:click="$toggle('isDisabled')">
+            Toggle disabled
+        </x-filament::button>
     </form>
 
     <pre data-testid="saved-code">{{ $savedCode }}</pre>

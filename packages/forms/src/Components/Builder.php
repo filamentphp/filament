@@ -1440,6 +1440,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<Block>  $blocks
      * @param  array<string, ?int> | int | null  $columns
      */
@@ -1961,7 +1963,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 ) ?>
             <?php } ?>
 
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <?= $this->generateReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -2001,8 +2003,12 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         ];
     }
 
-    /** @param array<Schema> $items */
-    protected function getReorderingDescriptionHtml(array $items): string
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @param  array<Schema>  $items
+     */
+    protected function generateReorderingDescriptionHtml(array $items): string
     {
         $html = '';
         $position = 0;

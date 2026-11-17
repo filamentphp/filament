@@ -109,6 +109,8 @@ export default function chart({ cachedData, options, type }) {
                     250,
                 )
                 window.addEventListener('resize', this.dprChangeHandler)
+
+                this.$dispatch('async-component-ready')
             })
         },
 

@@ -214,6 +214,9 @@ class TextColumn extends Column implements HasEmbeddedView
             && ! $this->hasExtraAttributes();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toOptimizedHtml(mixed $state, ?Model $relatedRecord = null): string
     {
         $formattedState = e($this->formatState($state, $relatedRecord));

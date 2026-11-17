@@ -1,4 +1,11 @@
 .fi-fo-color-picker {
+    &
+        .fi-async-component-loading
+        > .fi-loading-placeholder-content
+        > .fi-loading-placeholder {
+        @apply justify-self-start ps-3 pe-8 leading-6;
+    }
+
     & .fi-input-wrp-content {
         @apply flex;
     }
