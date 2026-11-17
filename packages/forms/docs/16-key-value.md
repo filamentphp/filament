@@ -181,6 +181,35 @@ KeyValue::make('meta')
 
 <AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" />
 
+## Customizing the loading placeholder
+
+The key-value field displays a loading placeholder while its JavaScript is loaded and initialized. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->loadingPlaceholder(fn () => view('forms.key-value-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+This placeholder is separate from the [key](#adding-key-field-placeholders) and [value](#adding-value-field-placeholders) placeholders shown in empty row inputs.
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all key-value fields, use [`KeyValue::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::configureUsing(function (KeyValue $keyValue): void {
+    $keyValue->loadingPlaceholder(fn () => view('forms.key-value-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual key-value field to restore the default loading placeholder.
+
 ## Customizing the key-value action objects
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/overview). The following methods are available to customize the actions:
