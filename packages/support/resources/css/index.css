@@ -25,6 +25,7 @@
 @import './components/input/wrapper.css' layer(components);
 @import './components/link.css' layer(components);
 @import './components/loading-indicator.css' layer(components);
+@import './components/loading-placeholder.css' layer(components);
 @import './components/loading-section.css' layer(components);
 @import './components/modal.css' layer(components);
 @import './components/pagination.css' layer(components);

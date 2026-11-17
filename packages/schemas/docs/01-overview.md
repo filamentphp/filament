@@ -290,6 +290,43 @@ Repeater::make('members')
 
 You may also pass a boolean or function to `lazyLoaded()` to control it conditionally.
 
+### Customizing the loading placeholder
+
+You may replace the spinner and loading text with a custom Blade view, such as a skeleton, using `loadingPlaceholder()`:
+
+```php
+use Filament\Schemas\Schema;
+
+Schema::make()
+    ->components([
+        // ...
+    ])
+    ->lazyLoaded()
+    ->loadingPlaceholder(fn () => view('schemas.loading-placeholder'));
+```
+
+You may also pass an `HtmlString` for trusted HTML:
+
+```php
+use Illuminate\Support\HtmlString;
+
+$schema->loadingPlaceholder(new HtmlString('<div class="customer-details-skeleton"></div>'));
+```
+
+Filament keeps the loading region and its accessible loading announcement, and replaces the placeholder with an error message if loading fails. Your placeholder is decorative and hidden from assistive technologies, so it should not contain interactive controls. Do not render the schema's components inside the placeholder, as this would perform the work that lazy loading is intended to postpone.
+
+To customize the placeholder globally, call `Schema::configureUsing()` in a service provider's `boot()` method:
+
+```php
+use Filament\Schemas\Schema;
+
+Schema::configureUsing(function (Schema $schema): void {
+    $schema->loadingPlaceholder(fn () => view('schemas.loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual schema to restore the default spinner and loading text.
+
 ## Setting the root heading level
 
 By default, headings in a schema start at level two, since schemas are usually rendered below a page's level-one heading. If you render a schema elsewhere in the document hierarchy, you can change its root heading level using the `rootHeadingLevel()` method:

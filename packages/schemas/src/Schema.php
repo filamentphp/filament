@@ -12,6 +12,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\HasLoadingPlaceholder;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
@@ -23,7 +24,6 @@ use Livewire\Component as LivewireComponent;
 use LogicException;
 
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\generate_loading_indicator_html;
 
 class Schema extends ViewComponent implements HasEmbeddedView
 {
@@ -51,6 +51,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
     use HasAlignment;
     use HasDefaultDataFormattingSettings;
     use HasExtraAttributes;
+    use HasLoadingPlaceholder;
 
     protected string $evaluationIdentifier = 'schema';
 
@@ -303,13 +304,13 @@ class Schema extends ViewComponent implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <span x-show="! hasSchemaLoadingFailed" class="fi-sc-loading-indicator">
-                <?= generate_loading_indicator_html(size: IconSize::Small)->toHtml() ?>
+            <div x-show="! hasSchemaLoadingFailed" class="fi-sc-loading-indicator">
+                <span class="fi-sr-only"><?= e(__('filament::loading.label')) ?></span>
 
-                <span>
-                    <?= e(__('filament::loading.label')) ?>
-                </span>
-            </span>
+                <div aria-hidden="true" class="fi-loading-placeholder-content">
+                    <?= e($this->getLoadingPlaceholder() ?? view('filament::components.loading-placeholder')) ?>
+                </div>
+            </div>
 
             <span x-cloak x-show="hasSchemaLoadingFailed" class="fi-sc-loading-error">
                 <?= generate_icon_html(Heroicon::ExclamationCircle, size: IconSize::Small)->toHtml() ?>
