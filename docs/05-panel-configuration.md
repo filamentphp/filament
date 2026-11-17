@@ -446,6 +446,8 @@ public function panel(Panel $panel): Panel
 
 In strict authorization mode, [inline editable columns](tables/columns/toggle#authorization) in resource and relation manager tables also check the resource's `update()` policy before they allow a record to be edited.
 
+This also applies to existing editable columns when strict mode is enabled. A denied policy disables the column, and a missing policy or `update()` method throws an exception. You can override the default check with the column's `authorize()` method, or opt out using `authorize(true)`. The column's `disabled()` condition still applies.
+
 ## Configuring error notifications
 
 When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behavior using the `errorNotifications(false)` method:

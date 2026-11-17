@@ -207,18 +207,18 @@ it('shows the correct columns', function () {
 });
 ```
 
-### Testing that an editable column can be updated
+### Testing whether a column is enabled or disabled
 
-To ensure that a particular user can or cannot update an [editable column](../tables/columns/toggle#authorization) for a record, you can use the `assertTableColumnStateCanBeUpdated()` and `assertTableColumnStateCanNotBeUpdated()` methods. A column cannot be updated when it is hidden, disabled, or fails its authorization check:
+To ensure a column is enabled or disabled for a record, you can use the `assertTableColumnEnabled()` and `assertTableColumnDisabled()` methods. These check the column's disabled state, including any [editable column authorization](../tables/columns/toggle#authorization). They do not check visibility, validation, or whether an update is saved:
 
 ```php
 use function Pest\Livewire\livewire;
 
-it('only allows editors to publish posts', function () {
+it('disables publishing posts for non-editors', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnStateCanNotBeUpdated('is_published', record: $post);
+        ->assertTableColumnDisabled('is_published', record: $post);
 });
 ```
 

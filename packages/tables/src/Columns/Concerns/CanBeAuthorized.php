@@ -5,7 +5,6 @@ namespace Filament\Tables\Columns\Concerns;
 use BackedEnum;
 use Closure;
 use Illuminate\Auth\Access\Response;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 
 trait CanBeAuthorized
@@ -38,7 +37,7 @@ trait CanBeAuthorized
         if (is_string($this->authorization)) {
             $record = $this->getRecord();
 
-            return Gate::inspect($this->authorization, ($record instanceof Model) ? [$record] : []);
+            return Gate::inspect($this->authorization, ($record !== null) ? [$record] : []);
         }
 
         $response = $this->evaluate($this->authorization);

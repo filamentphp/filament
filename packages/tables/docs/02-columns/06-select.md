@@ -473,9 +473,26 @@ SelectColumn::make('status')
     ->authorize('updateStatus')
 ```
 
-<UtilityInjection set="tableColumns">As well as allowing a static ability name, the `authorize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+You may also pass a function that returns a boolean or an `Illuminate\Auth\Access\Response`, rather than an ability name:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+use Illuminate\Support\Facades\Gate;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->authorize(fn ($record): bool => Gate::allows('updateStatus', $record))
+```
+
+<UtilityInjection set="tableColumns">The function passed to `authorize()` can inject various utilities as parameters.</UtilityInjection>
 
 In a panel with [strict authorization](../../panel-configuration#strict-authorization-mode) enabled, select columns in resource and relation manager tables check the resource's `update()` policy by default, unless you call `authorize()` yourself.
+
+To opt out of this default policy check, use `authorize(true)`. This does not override `disabled()`. Use `authorize(null)` to restore the default authorization behavior.
 
 You can also use `disabled()` with your authorization logic, for example `disabled(fn ($record) => $record->user_id !== auth()->id())`. Filament checks this condition on the server before saving.
 

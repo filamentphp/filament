@@ -33,13 +33,13 @@ it('does not check the resource `update()` policy for editable columns when auth
     app()->bind(TicketPolicy::class . '::update', fn (): bool | Response => $policyResult);
 
     livewire(ListTicketsWithEditableColumns::class)
-        ->assertTableColumnStateCanBeUpdated('is_open', $ticket);
+        ->assertTableColumnEnabled('is_open', $ticket);
 })->with([
     'false' => [false],
     'denied response' => [Response::deny()],
 ]);
 
-it('checks the resource `update()` policy for editable columns when authorization is strict', function (bool | Response $policyResult, bool $canUpdate): void {
+it('checks the resource `update()` policy for editable columns when authorization is strict', function (bool | Response $policyResult, bool $isEnabled): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
     $ticket = Ticket::factory()->create();
@@ -47,7 +47,7 @@ it('checks the resource `update()` policy for editable columns when authorizatio
     app()->bind(TicketPolicy::class . '::update', fn (): bool | Response => $policyResult);
 
     livewire(ListTicketsWithEditableColumns::class)
-        ->{$canUpdate ? 'assertTableColumnStateCanBeUpdated' : 'assertTableColumnStateCanNotBeUpdated'}('is_open', $ticket);
+        ->{$isEnabled ? 'assertTableColumnEnabled' : 'assertTableColumnDisabled'}('is_open', $ticket);
 })->with([
     'true' => [true, true],
     'allowed response' => [Response::allow(), true],
@@ -75,8 +75,8 @@ it('prefers `authorize()` over the resource `update()` policy in strict mode', f
     app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
 
     livewire(ListTicketsWithEditableColumns::class)
-        ->assertTableColumnStateCanNotBeUpdated('is_open', $ticket)
-        ->assertTableColumnStateCanBeUpdated('is_open_always_authorized', $ticket);
+        ->assertTableColumnDisabled('is_open', $ticket)
+        ->assertTableColumnEnabled('is_open_always_authorized', $ticket);
 });
 
 it('does not check the related resource `update()` policy for relation manager editable columns when authorization is not strict', function (): void {
@@ -87,10 +87,10 @@ it('does not check the related resource `update()` policy for relation manager e
     app()->bind(DepartmentPolicy::class . '::update', fn (): bool => false);
 
     livewire(DepartmentsRelationManagerWithEditableColumns::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
-        ->assertTableColumnStateCanBeUpdated('name', $ticket->departments->first());
+        ->assertTableColumnEnabled('name', $ticket->departments->first());
 });
 
-it('checks the related `update()` policy for relation manager editable columns when authorization is strict', function (bool | Response $policyResult, bool $canUpdate): void {
+it('checks the related `update()` policy for relation manager editable columns when authorization is strict', function (bool | Response $policyResult, bool $isEnabled): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
     $ticket = Ticket::factory()
@@ -100,7 +100,7 @@ it('checks the related `update()` policy for relation manager editable columns w
     app()->bind(DepartmentPolicy::class . '::update', fn (): bool | Response => $policyResult);
 
     livewire(DepartmentsRelationManagerWithEditableColumns::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
-        ->{$canUpdate ? 'assertTableColumnStateCanBeUpdated' : 'assertTableColumnStateCanNotBeUpdated'}('name', $ticket->departments->first());
+        ->{$isEnabled ? 'assertTableColumnEnabled' : 'assertTableColumnDisabled'}('name', $ticket->departments->first());
 })->with([
     'true' => [true, true],
     'allowed response' => [Response::allow(), true],
@@ -155,8 +155,28 @@ it('prefers `authorize()` over the related `update()` policy for relation manage
     app()->bind(DepartmentPolicy::class . '::update', fn (): bool => false);
 
     livewire(DepartmentsRelationManagerWithEditableColumns::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
-        ->assertTableColumnStateCanNotBeUpdated('name', $department)
-        ->assertTableColumnStateCanBeUpdated('name_always_authorized', $department);
+        ->assertTableColumnDisabled('name', $department)
+        ->assertTableColumnEnabled('name_always_authorized', $department);
+});
+
+it('checks enabled and disabled column assertions against the correct duplicate relationship row', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+
+    $ticket->departments()->attach($department, ['id' => 10, 'price' => 100]);
+    $ticket->departments()->attach($department, ['id' => 20, 'price' => 0]);
+
+    $livewire = livewire(DepartmentsRelationManagerWithEditableColumns::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+        'shouldAllowDuplicates' => true,
+    ]);
+
+    $records = $livewire->instance()->getTableRecords();
+
+    $livewire
+        ->assertTableColumnEnabled('name', $records->firstWhere('pivot.price', 100))
+        ->assertTableColumnDisabled('name', $records->firstWhere('pivot.price', 0));
 });
 
 it('returns no default column authorization response from resource tables when authorization is not strict', function (): void {
@@ -236,23 +256,23 @@ it('keeps the denial message from the resource `update()` policy in strict mode'
 });
 
 it('throws an exception for editable columns in strict mode when the resource has no policy', function (): void {
-    $message = TicketMessage::factory()->create();
+    $ticketMessage = TicketMessage::factory()->create();
 
     $livewire = livewire(ListTicketMessages::class)->instance();
 
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
-    $column = ToggleColumn::make('is_open')->record($message);
+    $column = ToggleColumn::make('is_open')->record($ticketMessage);
 
     $livewire->getDefaultTableColumnAuthorizationResponse($column);
 })->throws(LogicException::class);
 
 it('does not throw an exception for editable columns without a policy when authorization is not strict', function (): void {
-    $message = TicketMessage::factory()->create();
+    $ticketMessage = TicketMessage::factory()->create();
 
     $livewire = livewire(ListTicketMessages::class)->instance();
 
-    $column = ToggleColumn::make('is_open')->record($message);
+    $column = ToggleColumn::make('is_open')->record($ticketMessage);
 
     expect($livewire->getDefaultTableColumnAuthorizationResponse($column))->toBeNull();
 });
@@ -286,10 +306,10 @@ it('returns no default column authorization response from relation managers with
         ->and($column->isDisabled())->toBeFalse();
 });
 
-it('does not expose the default column authorization response method to the frontend', function (string $component, bool $isRelationManager): void {
+it('does not expose the default column authorization response method to the frontend', function (string $livewireClass, bool $isRelationManager): void {
     $ticket = Ticket::factory()->create();
 
-    livewire($component, $isRelationManager ? ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class] : [])
+    livewire($livewireClass, $isRelationManager ? ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class] : [])
         ->call('getDefaultTableColumnAuthorizationResponse')
         ->assertForbidden();
 })->with([
@@ -316,11 +336,15 @@ class ListTicketsWithEditableColumns extends ListTickets
 
 class DepartmentsRelationManagerWithEditableColumns extends DepartmentsRelationManager
 {
+    public bool $shouldAllowDuplicates = false;
+
     public function table(Table $table): Table
     {
         return parent::table($table)
+            ->allowDuplicates($this->shouldAllowDuplicates)
             ->columns([
-                TextInputColumn::make('name'),
+                TextInputColumn::make('name')
+                    ->disabled(fn ($record): bool => $this->shouldAllowDuplicates && ($record->pivot->price === 0)),
                 TextInputColumn::make('name_always_authorized')
                     ->getStateUsing(fn ($record): ?string => $record->name)
                     ->authorize(true),

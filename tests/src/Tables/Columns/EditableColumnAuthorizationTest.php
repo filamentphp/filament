@@ -30,53 +30,72 @@ beforeEach(function (): void {
     Gate::define('denyPost', fn (User $user, Post $post): Response => Response::deny('Nope.'));
 });
 
-it('allows updating editable columns without `authorize()`', function (string $column): void {
+it('allows updating editable columns without `authorize()`', function (string $columnName): void {
     $post = Post::factory()->create(['is_published' => false]);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'none'])
-        ->assertTableColumnStateCanBeUpdated($column, $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'none'])
+        ->assertTableColumnEnabled($columnName, $post);
 })->with(['is_published_toggle', 'is_published_checkbox', 'title', 'rating']);
 
 it('does not apply a default policy check outside of resources', function (): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'none'])
-        ->assertTableColumnStateCanBeUpdated('is_published_toggle', $post)
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'none'])
+        ->assertTableColumnEnabled('is_published_toggle', $post)
         ->call('updateTableColumnState', 'is_published_toggle', (string) $post->getKey(), false);
 
     expect($post->fresh()->is_published)->toBeFalse();
 });
 
-it('denies the default `update` ability when no policy or gate is defined', function (string $column): void {
+it('denies the default `update` ability when no policy or gate is defined', function (string $columnName): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'default'])
-        ->assertTableColumnStateCanNotBeUpdated($column, $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'default'])
+        ->assertTableColumnDisabled($columnName, $post);
 })->with(['is_published_toggle', 'is_published_checkbox', 'title', 'rating']);
 
-it('checks a custom gate ability against the record', function (string $column): void {
+it('checks a custom gate ability against the record', function (string $columnName): void {
     $published = Post::factory()->create(['is_published' => true]);
     $draft = Post::factory()->create(['is_published' => false]);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'ability'])
-        ->assertTableColumnStateCanBeUpdated($column, $published)
-        ->assertTableColumnStateCanNotBeUpdated($column, $draft);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'ability'])
+        ->assertTableColumnEnabled($columnName, $published)
+        ->assertTableColumnDisabled($columnName, $draft);
 })->with(['is_published_toggle', 'is_published_checkbox', 'title', 'rating']);
+
+it('checks a custom gate ability against an array record', function (string $columnClass): void {
+    Gate::define('updateArrayRecord', fn (User $user, array $record): bool => $record['is_published']);
+
+    $column = $columnClass::make('title')->authorize('updateArrayRecord');
+
+    $column->record(['title' => 'Published', 'is_published' => true]);
+
+    expect($column->isDisabled())->toBeFalse();
+
+    $column->record(['title' => 'Draft', 'is_published' => false]);
+
+    expect($column->isDisabled())->toBeTrue();
+})->with([
+    Tables\Columns\ToggleColumn::class,
+    Tables\Columns\CheckboxColumn::class,
+    Tables\Columns\TextInputColumn::class,
+    Tables\Columns\SelectColumn::class,
+]);
 
 it('accepts a backed enum as the ability', function (): void {
     $published = Post::factory()->create(['is_published' => true]);
     $draft = Post::factory()->create(['is_published' => false]);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'enum'])
-        ->assertTableColumnStateCanBeUpdated('title', $published)
-        ->assertTableColumnStateCanNotBeUpdated('title', $draft);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'enum'])
+        ->assertTableColumnEnabled('title', $published)
+        ->assertTableColumnDisabled('title', $draft);
 });
 
-it('accepts a static boolean', function (string $authorization, bool $canUpdate): void {
+it('accepts a static boolean', function (string $authorizationMode, bool $isEnabled): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => $authorization])
-        ->{$canUpdate ? 'assertTableColumnStateCanBeUpdated' : 'assertTableColumnStateCanNotBeUpdated'}('title', $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => $authorizationMode])
+        ->{$isEnabled ? 'assertTableColumnEnabled' : 'assertTableColumnDisabled'}('title', $post);
 })->with([
     'true' => ['true', true],
     'false' => ['false', false],
@@ -86,16 +105,16 @@ it('accepts a closure returning a boolean with the record injected', function ()
     $published = Post::factory()->create(['is_published' => true]);
     $draft = Post::factory()->create(['is_published' => false]);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'closure-bool'])
-        ->assertTableColumnStateCanBeUpdated('title', $published)
-        ->assertTableColumnStateCanNotBeUpdated('title', $draft);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'closure-bool'])
+        ->assertTableColumnEnabled('title', $published)
+        ->assertTableColumnDisabled('title', $draft);
 });
 
-it('accepts a closure returning a response', function (string $authorization, bool $canUpdate): void {
+it('accepts a closure returning a response', function (string $authorizationMode, bool $isEnabled): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => $authorization])
-        ->{$canUpdate ? 'assertTableColumnStateCanBeUpdated' : 'assertTableColumnStateCanNotBeUpdated'}('title', $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => $authorizationMode])
+        ->{$isEnabled ? 'assertTableColumnEnabled' : 'assertTableColumnDisabled'}('title', $post);
 })->with([
     'allowed' => ['closure-allow', true],
     'denied' => ['closure-deny', false],
@@ -104,7 +123,7 @@ it('accepts a closure returning a response', function (string $authorization, bo
 it('exposes the authorization response from the column', function (): void {
     $post = Post::factory()->create();
 
-    $column = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'gate-deny'])
+    $column = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'gate-deny'])
         ->instance()
         ->getTable()
         ->getColumn('title')
@@ -119,7 +138,7 @@ it('exposes the authorization response from the column', function (): void {
 });
 
 it('is not disabled by authorization when there is no record', function (): void {
-    $column = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'false'])
+    $column = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'false'])
         ->instance()
         ->getTable()
         ->getColumn('title');
@@ -130,19 +149,19 @@ it('is not disabled by authorization when there is no record', function (): void
 it('is still disabled by `disabled()` when authorized', function (): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'true', 'areColumnsDisabled' => true])
-        ->assertTableColumnStateCanNotBeUpdated('title', $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'true', 'shouldDisableColumns' => true])
+        ->assertTableColumnDisabled('title', $post);
 });
 
-it('rejects state updates on the server when unauthorized', function (string $column, mixed $state, string $attribute): void {
+it('rejects state updates on the server when unauthorized', function (string $columnName, mixed $state, string $attributeName): void {
     $draft = Post::factory()->create(['is_published' => false, 'title' => 'Original', 'rating' => 1]);
-    $original = $draft->getAttribute($attribute);
+    $originalState = $draft->getAttribute($attributeName);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'ability'])
-        ->call('updateTableColumnState', $column, (string) $draft->getKey(), $state)
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'ability'])
+        ->call('updateTableColumnState', $columnName, (string) $draft->getKey(), $state)
         ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
 
-    expect($draft->fresh()->getAttribute($attribute))->toBe($original);
+    expect($draft->fresh()->getAttribute($attributeName))->toBe($originalState);
 })->with([
     'toggle' => ['is_published_toggle', true, 'is_published'],
     'checkbox' => ['is_published_checkbox', true, 'is_published'],
@@ -153,7 +172,7 @@ it('rejects state updates on the server when unauthorized', function (string $co
 it('saves state updates on the server when authorized', function (): void {
     $published = Post::factory()->create(['is_published' => true, 'title' => 'Original']);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'ability'])
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'ability'])
         ->call('updateTableColumnState', 'title', (string) $published->getKey(), 'Changed');
 
     expect($published->fresh()->title)->toBe('Changed');
@@ -163,7 +182,7 @@ it('uses the default authorization response provided by the Livewire component',
     $post = Post::factory()->create();
 
     livewire(TestTableWithDefaultColumnAuthorization::class)
-        ->assertTableColumnStateCanNotBeUpdated('title', $post)
+        ->assertTableColumnDisabled('title', $post)
         ->call('updateTableColumnState', 'title', (string) $post->getKey(), 'Changed')
         ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
 
@@ -174,43 +193,43 @@ it('prefers `authorize()` over the default authorization response from the Livew
     $post = Post::factory()->create();
 
     livewire(TestTableWithDefaultColumnAuthorization::class)
-        ->assertTableColumnStateCanBeUpdated('title_overridden', $post);
+        ->assertTableColumnEnabled('title_overridden', $post);
 });
 
-it('can not update hidden or non-editable columns', function (string $column): void {
+it('checks only the disabled state of hidden and non-editable columns', function (string $columnName, bool $isDisabled): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'none'])
-        ->assertTableColumnStateCanNotBeUpdated($column, $post);
-})->with(['hidden_title', 'text']);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['shouldDisableColumns' => $isDisabled])
+        ->{$isDisabled ? 'assertTableColumnDisabled' : 'assertTableColumnEnabled'}($columnName, $post);
+})->with(['hidden_title', 'text'])->with([false, true]);
 
-it('fails `assertTableColumnStateCanBeUpdated()` when unauthorized', function (): void {
+it('fails `assertTableColumnEnabled()` when unauthorized', function (): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'false'])
-        ->assertTableColumnStateCanBeUpdated('title', $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'false'])
+        ->assertTableColumnEnabled('title', $post);
 })->throws(AssertionFailedError::class);
 
-it('fails `assertTableColumnStateCanNotBeUpdated()` when authorized', function (): void {
+it('fails `assertTableColumnDisabled()` when authorized', function (): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'true'])
-        ->assertTableColumnStateCanNotBeUpdated('title', $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'true'])
+        ->assertTableColumnDisabled('title', $post);
 })->throws(AssertionFailedError::class);
 
-it('accepts a record key in the editable column assertions', function (): void {
+it('accepts a record key in the enabled and disabled column assertions', function (): void {
     $published = Post::factory()->create(['is_published' => true]);
     $draft = Post::factory()->create(['is_published' => false]);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'ability'])
-        ->assertTableColumnStateCanBeUpdated('title', $published->getKey())
-        ->assertTableColumnStateCanNotBeUpdated('title', (string) $draft->getKey());
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'ability'])
+        ->assertTableColumnEnabled('title', $published->getKey())
+        ->assertTableColumnDisabled('title', (string) $draft->getKey());
 });
 
 it('does not provide a default authorization response for tables outside of resources', function (): void {
     $post = Post::factory()->create();
 
-    $livewire = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'none'])->instance();
+    $livewire = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'none'])->instance();
 
     $column = $livewire->getTable()->getColumn('title')->record($post);
 
@@ -219,7 +238,7 @@ it('does not provide a default authorization response for tables outside of reso
 });
 
 it('does not expose the default column authorization response method to the frontend', function (): void {
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'none'])
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'none'])
         ->call('getDefaultTableColumnAuthorizationResponse')
         ->assertForbidden();
 });
@@ -230,15 +249,15 @@ it('denies the default `update` ability when the gate denies it', function (): v
     $published = Post::factory()->create(['is_published' => true]);
     $draft = Post::factory()->create(['is_published' => false]);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'default'])
-        ->assertTableColumnStateCanBeUpdated('title', $published)
-        ->assertTableColumnStateCanNotBeUpdated('title', $draft);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'default'])
+        ->assertTableColumnEnabled('title', $published)
+        ->assertTableColumnDisabled('title', $draft);
 });
 
 it('keeps the denial message from a closure response', function (): void {
     $post = Post::factory()->create();
 
-    $column = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'closure-deny-message'])
+    $column = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'closure-deny-message'])
         ->instance()
         ->getTable()
         ->getColumn('title')
@@ -248,13 +267,13 @@ it('keeps the denial message from a closure response', function (): void {
         ->and($column->isDisabled())->toBeTrue();
 });
 
-it('saves state updates on the server for each editable column type when authorized', function (string $column, mixed $state, string $attribute, mixed $expected): void {
+it('saves state updates on the server for each editable column type when authorized', function (string $columnName, mixed $state, string $attributeName, mixed $expectedState): void {
     $published = Post::factory()->create(['is_published' => true, 'title' => 'Original', 'rating' => 1]);
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'true'])
-        ->call('updateTableColumnState', $column, (string) $published->getKey(), $state);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'true'])
+        ->call('updateTableColumnState', $columnName, (string) $published->getKey(), $state);
 
-    expect($published->fresh()->getAttribute($attribute))->toEqual($expected);
+    expect($published->fresh()->getAttribute($attributeName))->toEqual($expectedState);
 })->with([
     'toggle' => ['is_published_toggle', false, 'is_published', false],
     'checkbox' => ['is_published_checkbox', false, 'is_published', false],
@@ -262,36 +281,36 @@ it('saves state updates on the server for each editable column type when authori
     'select' => ['rating', '2', 'rating', 2],
 ]);
 
-it('resets to the default authorization when `authorize(null)` is used', function (string $column): void {
+it('resets to the default authorization when `authorize(null)` is used', function (string $columnName): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'reset'])
-        ->assertTableColumnStateCanBeUpdated($column, $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'reset'])
+        ->assertTableColumnEnabled($columnName, $post);
 })->with(['is_published_toggle', 'is_published_checkbox', 'title', 'rating']);
 
-it('casts non-boolean closure results', function (string $authorization, bool $canUpdate): void {
+it('casts non-boolean closure results', function (string $authorizationMode, bool $isEnabled): void {
     $post = Post::factory()->create();
 
-    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => $authorization])
-        ->{$canUpdate ? 'assertTableColumnStateCanBeUpdated' : 'assertTableColumnStateCanNotBeUpdated'}('title', $post);
+    livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => $authorizationMode])
+        ->{$isEnabled ? 'assertTableColumnEnabled' : 'assertTableColumnDisabled'}('title', $post);
 })->with([
     'null' => ['closure-null', false],
     'truthy' => ['closure-truthy', true],
 ]);
 
-it('applies the default authorization response from the Livewire component to each editable column type', function (string $column): void {
+it('applies the default authorization response from the Livewire component to each editable column type', function (string $columnName): void {
     $post = Post::factory()->create();
 
     livewire(TestTableWithDefaultColumnAuthorization::class)
-        ->assertTableColumnStateCanNotBeUpdated($column, $post);
+        ->assertTableColumnDisabled($columnName, $post);
 })->with(['title', 'is_published_toggle', 'is_published_checkbox', 'rating']);
 
-it('is disabled by authorization for each editable column type', function (string $column): void {
+it('is disabled by authorization for each editable column type', function (string $columnName): void {
     $post = Post::factory()->create();
 
-    $instance = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorization' => 'false'])->instance();
+    $livewire = livewire(TestTableWithAuthorizedEditableColumns::class, ['authorizationMode' => 'false'])->instance();
 
-    $column = $instance->getTable()->getColumn($column)->record($post);
+    $column = $livewire->getTable()->getColumn($columnName)->record($post);
 
     expect($column->isAuthorized())->toBeFalse()
         ->and($column->isDisabled())->toBeTrue();
@@ -308,9 +327,9 @@ class TestTableWithAuthorizedEditableColumns extends Component implements HasAct
     use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
 
-    public string $authorization = 'none';
+    public string $authorizationMode = 'none';
 
-    public bool $areColumnsDisabled = false;
+    public bool $shouldDisableColumns = false;
 
     public function table(Table $table): Table
     {
@@ -325,16 +344,16 @@ class TestTableWithAuthorizedEditableColumns extends Component implements HasAct
                     ->updateStateUsing(fn (Post $record, mixed $state) => $record->update(['is_published' => (bool) $state]))),
                 $this->configureColumn(Tables\Columns\TextInputColumn::make('title')),
                 $this->configureColumn(Tables\Columns\SelectColumn::make('rating')->options([1 => 'Low', 2 => 'High'])),
-                Tables\Columns\TextInputColumn::make('hidden_title')->hidden(),
-                Tables\Columns\TextColumn::make('text'),
+                Tables\Columns\TextInputColumn::make('hidden_title')->hidden()->disabled($this->shouldDisableColumns),
+                Tables\Columns\TextColumn::make('text')->disabled($this->shouldDisableColumns),
             ]);
     }
 
     protected function configureColumn(Column $column): Column
     {
-        $column->disabled($this->areColumnsDisabled);
+        $column->disabled($this->shouldDisableColumns);
 
-        return match ($this->authorization) {
+        return match ($this->authorizationMode) {
             'none' => $column,
             'default' => $column->authorize(),
             'ability' => $column->authorize('updatePublishedPost'),

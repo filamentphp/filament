@@ -667,7 +667,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `reorder()` is used to control [reordering records in a table](../tables/overview#reordering-records).
 
 <Aside variant="warning">
-    By default, Filament allows an operation when its model policy or policy method is missing, unless a Gate before callback denies it. Define the required policy methods, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. `viewAny()` controls resource access, not which records appear in its table: add query restrictions for records the user must not see. Custom actions and inline editable columns need their own authorization, even in strict mode. See the [security overview](../advanced/security#authorization) for these boundaries.
+    By default, Filament allows an operation when its model policy or policy method is missing, unless a Gate before callback denies it. Define the required policy methods, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. `viewAny()` controls resource access, not which records appear in its table: add query restrictions for records the user must not see. Custom actions still need their own authorization in strict mode. Inline editable columns in resource and relation manager tables check the record's `update()` policy by default in strict mode; other tables need an explicit authorization check. See the [security overview](../advanced/security#authorization) for these boundaries.
 </Aside>
 
 <Aside variant="info">
