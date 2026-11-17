@@ -6,12 +6,14 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\HasLoadingPlaceholder;
 use Filament\Tables\Contracts\HasTable;
 
 class Table extends ViewComponent implements HasEmbeddedView
 {
     use HasDefaultDataFormattingSettings;
     use HasExtraAttributes;
+    use HasLoadingPlaceholder;
     use Table\Concerns\BelongsToLivewire;
     use Table\Concerns\CanBeLazyLoaded;
     use Table\Concerns\CanBeRendered;

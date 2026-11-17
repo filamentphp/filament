@@ -36,7 +36,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\QueryBuilderItem;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
-use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
+use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Features\SupportTesting\Testable;
@@ -4830,7 +4830,7 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
 
         $this->actingAs(User::factory()->create());
 
-        visit('/query-builder-table-test')
+        visit('/query-builder-table-browser-test')
             ->click('button[title="Filter"]')
             ->click('text=Add rule')
             ->click('.fi-dropdown-list-item >> text=Title')
@@ -4876,7 +4876,7 @@ describe('properties', function () use ($applyQueryBuilderFilter): void {
         $contentMatch = Post::factory()->create(['title' => 'Other news', 'content' => 'Autumn highlights']);
         $nonMatch = Post::factory()->create(['title' => 'Other news', 'content' => 'Ordinary update']);
 
-        livewire(QueryBuilderTableTest::class, ['grouped' => true])
+        livewire(QueryBuilderTableBrowserTest::class, ['grouped' => true])
             ->tap($applyQueryBuilderFilter([
                 ['type' => 'or', 'data' => ['groups' => [
                     ['rules' => [['type' => 'title', 'data' => ['operator' => 'contains', 'settings' => ['text' => 'Autumn']]]]],
@@ -4991,7 +4991,7 @@ it('groups the OR block using its translated heading only when attributes are gr
     }
 
     $label ??= 'Logic';
-    $livewire = livewire(QueryBuilderTableTest::class, ['grouped' => $hasGroups]);
+    $livewire = livewire(QueryBuilderTableBrowserTest::class, ['grouped' => $hasGroups]);
     $filter = $livewire->instance()->getTable()->getFilter('query_builder');
     $builder = $filter->getForm()->getComponent(static fn ($component): bool => $component instanceof RuleBuilder);
 
@@ -5025,7 +5025,7 @@ it('preserves constraint picker groups inside nested OR conditions', function ()
     $detailsGroup = '[role="group"][aria-label="Details"]:visible';
     $logicGroup = '[role="group"][aria-label="Logic"]:visible';
 
-    $page = visit('/query-builder-table-test?grouped=1');
+    $page = visit('/query-builder-table-browser-test?grouped=1');
 
     $page->click('button[title="Filter"]');
     $page->page()->locator($addRule)->click();

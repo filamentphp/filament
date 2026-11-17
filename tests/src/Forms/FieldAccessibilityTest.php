@@ -624,7 +624,7 @@ describe('browser interactions', function (): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/field-accessibility-test', ['reducedMotion' => 'reduce'])->inLightMode();
+        $page = visit('/field-accessibility-browser-test', ['reducedMotion' => 'reduce'])->inLightMode();
         $page->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text')
             ->assertAttribute('[data-testid="delivery"]', 'aria-describedby', 'form.delivery-helper-text')
             ->assertAttribute('[data-testid="interests"]', 'aria-describedby', 'form.interests-helper-text form.interests-required')
@@ -741,7 +741,7 @@ describe('browser interactions', function (): void {
             ->assertCount('[data-testid="additional-form"] [data-validation-error]', 0)
             ->assertNoSmoke();
 
-        visit('/field-accessibility-test', ['reducedMotion' => 'reduce'])->inDarkMode()
+        visit('/field-accessibility-browser-test', ['reducedMotion' => 'reduce'])->inDarkMode()
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="save"]')
             ->assertAttribute('[data-testid="name"]', 'aria-invalid', 'true')

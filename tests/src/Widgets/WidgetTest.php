@@ -15,6 +15,8 @@ use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
@@ -89,6 +91,29 @@ it('returns placeholder data from `getPlaceholderData()`', function (): void {
             'columnSpan' => 1,
             'columnStart' => [],
         ]);
+});
+
+it('renders custom loading content through the existing `placeholder()` hook', function (): void {
+    $widget = new class extends Widget
+    {
+        protected int | string | array $columnSpan = 2;
+
+        protected ?string $placeholderHeight = '12rem';
+
+        public function getLoadingPlaceholder(): View | Htmlable | null
+        {
+            return view('loading-placeholder', ['label' => 'Widget <loading>']);
+        }
+
+        public function placeholder(): View
+        {
+            return parent::placeholder()->with('loadingLabel', 'Please wait');
+        }
+    };
+
+    expect($widget->placeholder()->render())
+        ->toContain('data-testid="custom-loading-placeholder"', 'Widget &lt;loading&gt;', 'Please wait', 'height: 12rem', 'role="status"', 'aria-busy="true"')
+        ->and($widget->getPlaceholderData()['columnSpan'])->toBe(2);
 });
 
 it('returns `[\'lazy\' => true]` from `getDefaultProperties()` when `$isLazy` is `true`', function (): void {

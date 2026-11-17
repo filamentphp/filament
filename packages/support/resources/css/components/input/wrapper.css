@@ -42,7 +42,7 @@
     }
 
     & .fi-input-wrp-content-ctn,
-    &:not(:has(.fi-input-wrp-content-ctn)) > * {
+    & > :not(.fi-input-wrp-prefix, .fi-input-wrp-suffix) {
         @apply min-w-0 flex-1;
 
         &.fi-input-wrp-content-ctn-ps {
@@ -87,6 +87,25 @@
             &:has(.fi-icon.fi-size-lg) {
                 @apply -m-0.5;
             }
+        }
+    }
+
+    &:not(.fi-loading) > .fi-input-wrp-prefix > .fi-loading-indicator {
+        @apply hidden!;
+    }
+
+    &.fi-loading {
+        & > .fi-input-wrp-prefix {
+            @apply flex;
+        }
+
+        & > .fi-input-wrp-prefix > .fi-icon:not(.fi-loading-indicator),
+        & > .fi-input-wrp-suffix > .fi-icon {
+            @apply hidden!;
+        }
+
+        & > .fi-input-wrp-content-ctn.fi-input-wrp-content-ctn-ps {
+            @apply ps-0;
         }
     }
 

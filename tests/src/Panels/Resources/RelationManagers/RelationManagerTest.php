@@ -23,6 +23,7 @@ use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
@@ -84,7 +85,7 @@ describe('rendering and authorization', function (): void {
             ->assertCanSeeTableRecords($ticket->departments);
     });
 
-    it('resolves record URLs and actions without leaking record context between records', function (bool $isTableLoadingDeferred, string $actionHierarchy): void {
+    it('resolves record URLs and actions without leaking record context between records', function (bool $isTableLazyLoaded, string $actionHierarchy): void {
         $ticket = Ticket::factory()->create();
         $departments = collect([
             Department::factory()->create(['name' => 'View URL']),
@@ -103,12 +104,12 @@ describe('rendering and authorization', function (): void {
             'areActionsGrouped' => $actionHierarchy === 'grouped',
             'areActionsNested' => $actionHierarchy === 'nested',
             'hasRecordDependentRootGroupTriggerView' => $actionHierarchy !== 'ungrouped',
-            'isTableLoadingDeferred' => $isTableLoadingDeferred,
+            'isTableLazyLoaded' => $isTableLazyLoaded,
         ])->assertSuccessful();
 
         expect(RecordUrlResolutionRelationManager::$initialActionRecordKeys)->toBe([null, null]);
 
-        if ($isTableLoadingDeferred) {
+        if ($isTableLazyLoaded) {
             $component
                 ->assertDontSeeHtml("href=\"/departments/{$departments[0]->getKey()}/view\"")
                 ->assertDontSeeHtml("href=\"/departments/{$departments[1]->getKey()}/edit\"")
@@ -169,7 +170,7 @@ describe('rendering and authorization', function (): void {
         $assertActionHierarchyIsUnbound($refreshedTable->getAction('edit'));
     })->with([
         'eager table loading' => false,
-        'deferred table loading' => true,
+        'lazy table loading' => true,
     ])->with([
         'ungrouped actions' => 'ungrouped',
         'grouped actions' => 'grouped',
@@ -852,7 +853,7 @@ describe('scoped default action URLs', function (): void {
             ->assertActionNotMounted();
     })->with(['departments', 'page']);
 
-    it('waits for a deferred table before consuming its URL action', function (): void {
+    it('waits for a lazy-loaded table before consuming its URL action', function (): void {
         $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
         Livewire::withQueryParams([
             'tableAction' => 'view',
@@ -864,7 +865,7 @@ describe('scoped default action URLs', function (): void {
         livewire(ScopedDepartmentsRelationManager::class, [
             'ownerRecord' => $ticket,
             'pageClass' => EditTicket::class,
-            'deferTableLoading' => true,
+            'isTableLazyLoaded' => true,
         ])
             ->call('mountDefaultActions')
             ->assertActionNotMounted()
@@ -1018,6 +1019,77 @@ describe('attaching records', function (): void {
 
         // Verify total count is now 2
         expect($ticket->departments()->count())->toBe(2);
+    });
+});
+
+describe('editable columns', function (): void {
+    afterEach(function (): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
+
+        app()->bind(DepartmentPolicy::class . '::update', fn (): bool => true);
+    });
+
+    it('does not automatically authorize relation manager editable columns, even in strict mode', function (bool $isAuthorizationStrict): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization($isAuthorizationStrict);
+
+        $ticket = Ticket::factory()
+            ->hasAttached(Department::factory(state: ['name' => 'Original']))
+            ->create();
+
+        $department = $ticket->departments->first();
+
+        app()->bind(DepartmentPolicy::class . '::update', fn (): bool => false);
+
+        livewire(DepartmentsRelationManagerWithEditableColumns::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->assertTableColumnEnabled('name', $department)
+            ->call('updateTableColumnState', 'name', (string) $department->getKey(), 'Changed');
+
+        expect($department->fresh()->name)->toBe('Changed');
+    })->with([false, true]);
+
+    it('can opt relation manager editable columns into authorization globally using `configureUsing()`', function (bool $isAuthorizationStrict): void {
+        Filament::getCurrentOrDefaultPanel()->strictAuthorization($isAuthorizationStrict);
+
+        $ticket = Ticket::factory()
+            ->hasAttached(Department::factory(state: ['name' => 'Original']))
+            ->create();
+
+        $department = $ticket->departments->first();
+
+        app()->bind(DepartmentPolicy::class . '::update', fn (): bool => false);
+
+        TextInputColumn::configureUsing(
+            fn (TextInputColumn $column) => $column->authorize(),
+            during: function () use ($ticket, $department): void {
+                livewire(DepartmentsRelationManagerWithEditableColumns::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+                    ->assertTableColumnDisabled('name', $department)
+                    ->assertTableColumnEnabled('name_always_authorized', $department)
+                    ->call('updateTableColumnState', 'name', (string) $department->getKey(), 'Changed')
+                    ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
+            },
+        );
+
+        expect($department->fresh()->name)->toBe('Original');
+    })->with([false, true]);
+
+    it('checks enabled and disabled column assertions against the correct duplicate relationship row', function (): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+
+        $ticket->departments()->attach($department, ['id' => 10, 'price' => 100]);
+        $ticket->departments()->attach($department, ['id' => 20, 'price' => 0]);
+
+        $livewire = livewire(DepartmentsRelationManagerWithEditableColumns::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'shouldAllowDuplicates' => true,
+        ]);
+
+        $records = $livewire->instance()->getTableRecords();
+
+        $livewire
+            ->assertTableColumnEnabled('name', $records->firstWhere('pivot.price', 100))
+            ->assertTableColumnDisabled('name', $records->firstWhere('pivot.price', 0));
     });
 });
 
@@ -1603,6 +1675,24 @@ describe('combined tabs', function (): void {
     });
 });
 
+class DepartmentsRelationManagerWithEditableColumns extends DepartmentsRelationManager
+{
+    public bool $shouldAllowDuplicates = false;
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->allowDuplicates($this->shouldAllowDuplicates)
+            ->columns([
+                TextInputColumn::make('name')
+                    ->disabled(fn ($record): bool => $this->shouldAllowDuplicates && ($record->pivot->price === 0)),
+                TextInputColumn::make('name_always_authorized')
+                    ->getStateUsing(fn ($record): ?string => $record->name)
+                    ->authorize(true),
+            ]);
+    }
+}
+
 class RecordUrlResolutionRelationManager extends RelationManager
 {
     /** @var array<int | string | null> */
@@ -1618,7 +1708,7 @@ class RecordUrlResolutionRelationManager extends RelationManager
 
     public bool $hasRecordDependentRootGroupTriggerView = false;
 
-    public bool $isTableLoadingDeferred = false;
+    public bool $isTableLazyLoaded = false;
 
     public bool $isNestedGroupHidden = false;
 
@@ -1664,7 +1754,7 @@ class RecordUrlResolutionRelationManager extends RelationManager
             ->when($this->hasCustomRecordAction, fn (Table $table): Table => $table->recordAction(null))
             ->defaultSort('departments.id')
             ->openRecordUrlInNewTab(static fn (Department $record): bool => $record->name === 'View URL')
-            ->deferLoading($this->isTableLoadingDeferred);
+            ->lazyLoaded($this->isTableLazyLoaded);
     }
 }
 

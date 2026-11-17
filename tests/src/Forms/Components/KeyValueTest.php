@@ -494,7 +494,7 @@ describe('browser interactions', function (): void {
     it('supports row actions and configured controls in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/key-value-test');
+        $page = visit('/key-value-browser-test');
 
         $page->assertPresent('[data-testid="basic-key-value"] button:has-text("Add row")')
             ->assertCount('[data-testid="basic-key-value"] tbody tr', 1)
@@ -532,7 +532,7 @@ describe('browser interactions', function (): void {
         $moveUp = $field . ' [data-reorder-direction="up"]';
         $moveDown = $field . ' [data-reorder-direction="down"]';
         $handles = $field . ' button[aria-label="Reorder row"]';
-        $page = visit('/key-value-test');
+        $page = visit('/key-value-browser-test');
 
         $page->assertCount($handles, 3)
             ->assertDisabled(':nth-match(' . $moveUp . ', 1)')

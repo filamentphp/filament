@@ -7,7 +7,6 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\View\ComponentAttributeBag;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag as BaseComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 
@@ -97,12 +96,8 @@ trait CanGenerateInputHtml
         $hasLoadingIndicator = filled($wireTarget);
         $loadingIndicatorTarget = $hasLoadingIndicator ? html_entity_decode($wireTarget, ENT_QUOTES) : null;
         $loadingDelay = ($prefixIcon || $prefixIconAlias || $suffixIcon || $suffixIconAlias || $hasLoadingIndicator) ? config('filament.livewire_loading_delay', 'default') : null;
-        $iconAttributes = (new ComponentAttributeBag)->merge([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ], escape: false);
-        $prefixIconHtml = ($prefixIcon || $prefixIconAlias) ? generate_icon_html($prefixIcon, $prefixIconAlias, $iconAttributes->color(IconComponent::class, $prefixIconColor)) : null;
-        $suffixIconHtml = ($suffixIcon || $suffixIconAlias) ? generate_icon_html($suffixIcon, $suffixIconAlias, $iconAttributes->color(IconComponent::class, $suffixIconColor)) : null;
+        $prefixIconHtml = ($prefixIcon || $prefixIconAlias) ? generate_icon_html($prefixIcon, $prefixIconAlias, (new ComponentAttributeBag)->color(IconComponent::class, $prefixIconColor)) : null;
+        $suffixIconHtml = ($suffixIcon || $suffixIconAlias) ? generate_icon_html($suffixIcon, $suffixIconAlias, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor)) : null;
         $hasPrefix = count($prefixActions) || ($prefixIconHtml !== null) || filled($prefix);
         $hasSuffix = count($suffixActions) || ($suffixIconHtml !== null) || filled($suffix);
 
@@ -111,12 +106,14 @@ trait CanGenerateInputHtml
             <?php if ($hasAlpineDisabledClasses || $hasAlpineValidClasses) { ?>
                 x-bind:class="{ <?= e($hasAlpineDisabledClasses ? "'fi-disabled': {$alpineDisabled}," : '') ?> <?= e($hasAlpineValidClasses ? "'fi-invalid': ! ({$alpineValid})," : '') ?> }"
             <?php } ?>
-            <?= $attributes->except(['wire:target', 'tabindex'])->class(['fi-input-wrp', 'fi-disabled' => (! $hasAlpineDisabledClasses) && $disabled, 'fi-invalid' => (! $hasAlpineValidClasses) && (! $valid)]) ?>
+            <?= $attributes->except(['wire:target', 'tabindex'])->merge([
+                'wire:loading.class.delay.' . $loadingDelay => $hasLoadingIndicator ? $attributes->prepends('fi-loading') : null,
+                'wire:target' => $loadingIndicatorTarget,
+            ], escape: false)->class(['fi-input-wrp', 'fi-disabled' => (! $hasAlpineDisabledClasses) && $disabled, 'fi-invalid' => (! $hasAlpineValidClasses) && (! $valid)]) ?>
         >
             <?= $this->renderMorphMarkerHtml() ?>
             <?php if ($hasPrefix || $hasLoadingIndicator) { ?>
                 <div
-                    <?php if (! $hasPrefix) { ?> wire:loading.delay.<?= e($loadingDelay) ?>.flex wire:target="<?= e($loadingIndicatorTarget) ?>" wire:key="<?= e(Str::random()) ?>" <?php } ?>
                     <?php if (($prefixIconHtml !== null) || filled($prefix)) { ?> x-on:click="! $event.target.closest('.fi-input-wrp-actions') && $dispatch('focus-input')" <?php } ?>
                     <?= (new ComponentAttributeBag)->class(['fi-input-wrp-prefix', 'fi-input-wrp-prefix-has-content' => $hasPrefix, 'fi-inline' => $inlinePrefix, 'fi-input-wrp-prefix-has-label' => filled($prefix)]) ?>
                 >
@@ -132,7 +129,7 @@ trait CanGenerateInputHtml
                     <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
                     <?= $this->renderMorphMarkerHtml() ?>
                     <?php if ($hasLoadingIndicator) {
-                        echo e(generate_loading_indicator_html((new ComponentAttributeBag(['wire:loading.delay.' . $loadingDelay => $hasPrefix, 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null]))->color(IconComponent::class, 'gray')));
+                        echo e(generate_loading_indicator_html((new ComponentAttributeBag)->color(IconComponent::class, 'gray')));
                     } ?>
                     <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
                     <?php if (filled($prefix)) { ?><span class="fi-input-wrp-label"><?= e($prefix) ?></span><?php } ?>
@@ -140,10 +137,6 @@ trait CanGenerateInputHtml
             <?php } ?>
             <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
             <div
-                <?php if ($hasLoadingIndicator && (! $hasPrefix)) { ?>
-                    <?php if ($inlinePrefix) { ?> wire:loading.delay.<?= e($loadingDelay) ?>.class.remove="fi-input-wrp-content-ctn-ps" <?php } ?>
-                    wire:target="<?= e($loadingIndicatorTarget) ?>"
-                <?php } ?>
                 <?= (new ComponentAttributeBag)->class(['fi-input-wrp-content-ctn', 'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix]) ?>
             ><?= e($slot) ?></div>
             <?php if ($hasSuffix) { ?>

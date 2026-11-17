@@ -72,6 +72,8 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 
+    $hasSeparateLoadingIndicatorTarget = $hasLoadingIndicator && $attributes->has('wire:target') && blank($attributes->get('wire:target'));
+
     $hasTooltip = filled($tooltip);
 
     $loadingDelay = ($icon || $hasLoadingIndicator)
@@ -107,6 +109,7 @@
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
                 'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.class.delay.' . $loadingDelay => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->when(
@@ -125,22 +128,17 @@
     }}
 >
     @if ($iconPosition === IconPosition::Before)
-        @if ($icon || $iconAlias)
+        @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize)
+                \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.class.delay.' . $loadingDelay => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+                    'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+                ]), size: $iconSize)
             }}
         @endif
 
-        @if ($hasLoadingIndicator)
-            {{
-                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
-                    'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize)
-            }}
+        @if ($icon || $iconAlias)
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize) }}
         @endif
     @endif
 
@@ -151,22 +149,17 @@
     @endif
 
     @if ($iconPosition === IconPosition::After)
-        @if ($icon || $iconAlias)
+        @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize)
+                \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.class.delay.' . $loadingDelay => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+                    'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+                ]), size: $iconSize)
             }}
         @endif
 
-        @if ($hasLoadingIndicator)
-            {{
-                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
-                    'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize)
-            }}
+        @if ($icon || $iconAlias)
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize) }}
         @endif
     @endif
 

@@ -4,10 +4,14 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Անցնել բովանդակությանը',
+    ],
+
     'actions' => [
 
         'billing' => [
-            'label' => 'Բաժանորդագրության կառավարում',
+            'label' => 'Կառավարել բաժանորդագրությունը',
         ],
 
         'logout' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Բացել ծանուցումները',
+            'label_with_unread_count' => '{1} Ծանուցումներ, :count չկարդացված ծանուցում|[2,*] Ծանուցումներ, :count չկարդացված ծանուցում',
         ],
 
         'open_user_menu' => [
@@ -25,19 +30,21 @@ return [
         'sidebar' => [
 
             'collapse' => [
-                'label' => 'Նվազագույնի հասցնել կողային տողը',
+                'label' => 'Ծալել կողային վահանակը',
             ],
 
             'expand' => [
-                'label' => 'Ընդլայնել կողային տողը',
+                'label' => 'Ընդարձակել կողային վահանակը',
             ],
 
         ],
 
         'theme_switcher' => [
 
+            'label' => 'Թեմա',
+
             'dark' => [
-                'label' => 'Միացնել մութ թեման',
+                'label' => 'Միացնել մուգ թեման',
             ],
 
             'light' => [
@@ -51,13 +58,29 @@ return [
         ],
 
     ],
+    'navigation' => [
+        'label' => 'Կողային նավիգացիա',
+    ],
+
+    'topbar' => [
+        'label' => 'Վերին վահանակ',
+    ],
 
     'avatar' => [
-        'alt' => 'Անձնանշան :name',
+        'alt' => ':name-ի անձնանշանը',
     ],
 
     'logo' => [
-        'alt' => ':name լոգո',
+        'alt' => ':name լոգոտիպ',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Կազմակերպության որոնում',
+            'placeholder' => 'Որոնում',
+        ],
+
     ],
 
 ];

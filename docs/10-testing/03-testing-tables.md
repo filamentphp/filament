@@ -206,6 +206,21 @@ it('shows the correct columns', function () {
 });
 ```
 
+### Testing whether a column is enabled or disabled
+
+To ensure a column is enabled or disabled for a record, you can use the `assertTableColumnEnabled()` and `assertTableColumnDisabled()` methods. These check the column's disabled state, including any [editable column authorization](../tables/columns/toggle#authorization). They do not check visibility, validation, or whether an update is saved:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('disables publishing posts for non-editors', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnDisabled('is_published', record: $post);
+});
+```
+
 ### Testing the description of a column
 
 To ensure a column has the correct description above or below you can use the `assertTableColumnHasDescription()` and `assertTableColumnDoesNotHaveDescription()` methods:

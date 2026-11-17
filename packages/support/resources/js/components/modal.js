@@ -81,20 +81,20 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
         })
     },
 
-    handleOpenEvent(event) {
-        if (event.detail.id === id && !this.isOpen) {
+    handleOpenEvent(event, modalId) {
+        if (event.detail.id === modalId && !this.isOpen) {
             this.open()
         }
     },
 
-    handleCloseEvent(event) {
-        if (event.detail.id === id && this.isOpen) {
+    handleCloseEvent(event, modalId) {
+        if (event.detail.id === modalId && this.isOpen) {
             this.close()
         }
     },
 
-    handleCloseQuietlyEvent(event) {
-        if (event.detail.id === id && this.isOpen) {
+    handleCloseQuietlyEvent(event, modalId) {
+        if (event.detail.id === modalId && this.isOpen) {
             this.closeQuietly()
         }
     },

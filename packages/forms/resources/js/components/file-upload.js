@@ -620,6 +620,8 @@ export default function fileUploadFormComponent({
             this.pond.on('removefile', () => (this.error = null))
 
             this.isInitializing = false
+
+            this.$dispatch('async-component-ready')
         },
 
         dispatchFormEvent(name, detail = {}) {
@@ -1128,6 +1130,9 @@ export default function fileUploadFormComponent({
 
             if (this.pond) {
                 this.pond.destroy()
+                // `pond.destroy()` only restores the original input after a timeout,
+                // too late for the page snapshot Livewire stores for the back button.
+                FilePond.destroy(this.pond.element)
                 this.pond = null
             }
         },

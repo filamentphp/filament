@@ -115,7 +115,7 @@
 
 @if ($trigger)
     @if ((! $id) && (! $trigger->attributes->get('disabled')))
-        {!! '<div x-data="' . e('filamentModalTrigger({ openEventName: ' . Js::from($openEventName) . ' })') . '">' !!}
+        {!! '<div x-data="filamentModalTrigger">' !!}
     @else
         {!! '<div>' !!}
     @endif
@@ -126,7 +126,7 @@
             @if ($id)
                 x-on:click="$dispatch(@js($openEventName), { id: @js($id) })"
             @else
-                x-on:click="openModalFromTrigger($el)"
+                x-on:click="openModalFromTrigger($el, @js($openEventName))"
             @endif
         @endif
         {{ $trigger->attributes->except(['disabled'])->class(['fi-modal-trigger']) }}
@@ -162,9 +162,9 @@
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
-        x-on:{{ $closeEventName }}.window="handleCloseEvent($event)"
-        x-on:{{ $closeQuietlyEventName }}.window="handleCloseQuietlyEvent($event)"
-        x-on:{{ $openEventName }}.window="handleOpenEvent($event)"
+        x-on:{{ $closeEventName }}.window="handleCloseEvent($event, @js($id))"
+        x-on:{{ $closeQuietlyEventName }}.window="handleCloseQuietlyEvent($event, @js($id))"
+        x-on:{{ $openEventName }}.window="handleOpenEvent($event, @js($id))"
     @else
         x-on:{{ $closeEventName }}.stop="isOpen && close()"
         x-on:{{ $closeQuietlyEventName }}.stop="isOpen && closeQuietly()"

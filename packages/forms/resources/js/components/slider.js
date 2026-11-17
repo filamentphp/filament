@@ -104,6 +104,8 @@ export default function sliderFormComponent({
             this.$watch('state', () => {
                 this.slider.set(Alpine.raw(this.state))
             })
+
+            this.$dispatch('async-component-ready')
         },
 
         destroy() {

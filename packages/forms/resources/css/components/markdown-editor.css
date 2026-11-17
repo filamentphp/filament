@@ -21,7 +21,7 @@
     --markdown-editor-color-gray-bg: #e4e4e7;
 
     &:not(.fi-disabled) {
-        @apply max-w-full overflow-hidden font-mono text-sm text-gray-950 dark:text-white;
+        @apply max-w-full overflow-hidden text-sm text-gray-950 dark:text-white;
     }
 
     &.fi-disabled {
@@ -212,7 +212,7 @@
     }
 
     & .EasyMDEContainer .CodeMirror {
-        @apply border-none bg-transparent px-3 py-1.5 text-inherit;
+        @apply border-none bg-transparent px-3 py-1.5 font-mono text-inherit;
     }
 
     & .EasyMDEContainer .CodeMirror-scroll {

@@ -60,6 +60,8 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 
+    $hasSeparateLoadingIndicatorTarget = $hasLoadingIndicator && $attributes->has('wire:target') && blank($attributes->get('wire:target'));
+
     $hasTooltip = $hasTooltip = filled($tooltip);
 
     $loadingDelay = config('filament.livewire_loading_delay', 'default');
@@ -92,6 +94,7 @@
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
                 'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.class.delay.' . $loadingDelay => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->merge([
@@ -111,21 +114,16 @@
             ->color(IconButtonComponent::class, $color)
     }}
 >
-    {{
-        \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize)
-    }}
-
     @if ($hasLoadingIndicator)
         {{
-            \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ])), size: $iconSize)
+            \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                'wire:loading.class.delay.' . $loadingDelay => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+                'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+            ]), size: $iconSize)
         }}
     @endif
+
+    {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize) }}
 
     @if (filled($badge))
         <div class="fi-icon-btn-badge-ctn">

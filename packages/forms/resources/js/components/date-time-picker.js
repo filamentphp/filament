@@ -291,6 +291,8 @@ export default function dateTimePickerFormComponent({
 
                 this.setDisplayText()
             })
+
+            this.$dispatch('async-component-ready')
         },
 
         checkTimeInputValidity(event) {

@@ -1,6 +1,15 @@
 .fi-badge {
     @apply inline-flex min-w-[theme(spacing.6)] items-center justify-center gap-x-1 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-600/10 ring-inset dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
 
+    &:not(.fi-loading) > .fi-loading-indicator:not(.fi-loading) {
+        @apply hidden!;
+    }
+
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    & > .fi-loading-indicator.fi-loading + .fi-icon:not(.fi-loading-indicator) {
+        @apply hidden!;
+    }
+
     &:not(.fi-wrapped) {
         @apply truncate;
     }
@@ -60,6 +69,15 @@
 
     & .fi-badge-delete-btn {
         @apply -my-1 -ms-1 -me-2 flex items-center justify-center p-1 transition duration-75 outline-none;
+
+        &:not(.fi-loading) > .fi-loading-indicator:not(.fi-loading) {
+            @apply hidden!;
+        }
+
+        &.fi-loading > .fi-badge-delete-btn-icon,
+        & > .fi-loading-indicator.fi-loading + .fi-badge-delete-btn-icon {
+            @apply hidden!;
+        }
 
         &.fi-disabled {
             @apply cursor-default opacity-70;

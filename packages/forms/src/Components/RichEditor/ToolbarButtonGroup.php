@@ -122,7 +122,7 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
 
         $effectJs = $this->buildTriggerEffect($resolvedButtons, $defaultContent);
         $activeExpression = $this->buildGroupActiveExpression($resolvedButtons);
-        $buttonsHtml = $this->buildButtonsHtml($resolvedButtons);
+        $buttonsHtml = $this->generateButtonsHtml($resolvedButtons);
 
         $triggerAttributes = $this->getExtraAttributeBag()
             ->merge([
@@ -185,9 +185,11 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<RichEditorTool>  $resolvedButtons
      */
-    protected function buildButtonsHtml(array $resolvedButtons): string
+    protected function generateButtonsHtml(array $resolvedButtons): string
     {
         $isTextual = $this->hasTextualButtons();
         $html = '';

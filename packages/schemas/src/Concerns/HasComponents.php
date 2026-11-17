@@ -171,8 +171,11 @@ trait HasComponents
      */
     public function getComponent(string | Closure $findComponentUsing, bool $withActions = true, bool $withHidden = false, bool $isAbsoluteKey = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null
     {
-        if (is_string($findComponentUsing) && (! $isAbsoluteKey) && filled($key = $this->getKey())) {
-            $findComponentUsing = "{$key}.$findComponentUsing";
+        if (is_string($findComponentUsing)) {
+            if ((! $isAbsoluteKey) && filled($key = $this->getKey())) {
+                $findComponentUsing = "{$key}.$findComponentUsing";
+            }
+
             $isAbsoluteKey = true;
         }
 

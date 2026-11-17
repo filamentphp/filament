@@ -125,6 +125,13 @@
     & .fi-ta-header-cell-sort-btn {
         @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 flex w-full cursor-pointer appearance-none items-center justify-start gap-x-1 rounded-md border-0 bg-transparent p-0 text-start outline-none focus-visible:ring-2;
 
+        & > .fi-loading-indicator:not(.fi-loading),
+        &
+            > .fi-loading-indicator.fi-loading
+            + .fi-icon:not(.fi-loading-indicator) {
+            @apply hidden!;
+        }
+
         &.fi-disabled {
             @apply cursor-default opacity-70;
         }

@@ -172,7 +172,7 @@ After the applicable built-in authorization check, Livewire runs per-property hy
 
 ### Inline editable columns
 
-Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `disabled()` method with your own authorization logic. See the documentation for each [editable column type](../tables/columns/toggle) for more details.
+Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check model policies by default, even in strict authorization mode. Use `authorize()` with a policy ability or custom callback to restrict editing. Denied columns are disabled, and changes are rejected on the server. See [authorizing editable columns](../tables/columns/overview#authorizing-editable-columns) for examples and global configuration.
 
 ### Custom actions
 
@@ -234,6 +234,10 @@ The `RichEditor` applies the same principle to the CSS it generates from stored 
 The `icon()` method expects either a Blade icon name (like `heroicon-o-user`) or an image URL (any string containing `/`). Icon name strings are resolved via Blade's icon system, and URL strings are escaped before rendering into `src` attributes. However, passing an invalid icon name from user input will cause a rendering error, so you should still validate icon values against a known allowlist if they are user-controlled.
 
 Methods like `extraAttributes()`, `extraInputAttributes()`, `extraCellAttributes()`, and other `extra*Attributes()` methods render their values into HTML without escaping. This is by design, as these methods are often used to pass Alpine.js directives and Livewire attributes that must not be escaped. However, if you pass user-controlled data as attribute names or values, an attacker could break out of the HTML attribute and inject arbitrary markup, leading to XSS. Always ensure that any dynamic values passed to these methods are validated or sourced from trusted data.
+
+Class names and CSS styles passed to Filament configuration methods are also trusted configuration. Do not assume that Filament automatically escapes or sanitizes them. Validate user-controlled values against an allowlist of classes or supported CSS values before passing them to these methods. HTML escaping alone does not prevent a CSS value from injecting additional declarations or loading external resources.
+
+When working directly with `Filament\Support\View\ComponentAttributeBag`, its `class()` and `style()` methods do not HTML-escape their arguments, unlike Laravel's attribute bag. You are responsible for HTML-escaping any untrusted values you include in class names or style declarations, in addition to validating their contents. Escape the dynamic values before passing them to the bag; do not rely on rendering the bag with `{{ $attributes }}` to escape them.
 
 As a general rule: whenever you pass user-controlled data into a Filament configuration method, treat it with the same caution you would when rendering it directly in a Blade template.
 

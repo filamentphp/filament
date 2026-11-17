@@ -583,6 +583,28 @@ describe('rendering', function (): void {
             ->and($html)->toContain('tabindex="0"');
     });
 
+    it('escapes `minHeight()` and `maxHeight()` in disabled content styles', function (): void {
+        $minHeight = '8rem" data-audit-injected="<min>&value';
+        $maxHeight = '12rem" data-audit-injected="<max>&value';
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight($minHeight)
+                    ->maxHeight($maxHeight),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+        $document = new DOMDocument;
+        $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new DOMXPath($document);
+
+        expect($xpath->query('//*[@data-audit-injected]')->length)->toBe(0)
+            ->and($xpath->query('//*[@style]')->item(0)->getAttribute('style'))
+            ->toBe("--min-height: {$minHeight}; --max-height: {$maxHeight};");
+    });
+
     it('injects the implicit `$state` into CommonMark configuration for disabled content', function (): void {
         $html = Schema::make(Livewire::make())
             ->statePath('data')

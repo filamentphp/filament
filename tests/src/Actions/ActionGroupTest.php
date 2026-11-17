@@ -509,6 +509,32 @@ describe('serialization', function (): void {
 });
 
 describe('rendering', function (): void {
+    it('does not disable dropdown triggers during requests unless explicitly configured', function (string $view, ?string $breakpoint): void {
+        $group = ActionGroup::make([Action::make('edit')])
+            ->triggerView($view)
+            ->labeledFrom($breakpoint);
+
+        expect($group->toTriggerHtml())
+            ->not->toContain('wire:loading.attr', 'wire:loading.class');
+
+        $group->extraAttributes([
+            'aria-disabled' => 'true',
+            'wire:loading.attr' => 'data-busy',
+            'wire:loading.class' => 'custom-busy',
+            'wire:target' => 'refreshRecords',
+        ]);
+
+        expect($group->toTriggerHtml())
+            ->toContain('aria-disabled="true"', 'wire:loading.attr="data-busy"', 'wire:loading.class="custom-busy"', 'wire:target="refreshRecords"');
+    })->with([
+        'badge' => [ActionGroup::BADGE_VIEW, null],
+        'button' => [ActionGroup::BUTTON_VIEW, null],
+        'responsive button' => [ActionGroup::BUTTON_VIEW, 'md'],
+        'dropdown item' => [ActionGroup::GROUPED_VIEW, null],
+        'icon button' => [ActionGroup::ICON_BUTTON_VIEW, null],
+        'link' => [ActionGroup::LINK_VIEW, null],
+    ]);
+
     it('renders an `ActionGroup` with a dropdown trigger', function (): void {
         $group = ActionGroup::make([
             Action::make('first')->label('First'),

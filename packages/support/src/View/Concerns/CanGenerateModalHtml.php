@@ -119,10 +119,10 @@ trait CanGenerateModalHtml
 
         ob_start();
         if ($trigger) { ?>
-            <div <?php if ((! $id) && (! $trigger->attributes->get('disabled'))) { ?> x-data="filamentModalTrigger({ openEventName: <?= e(Js::from($openEventName)) ?> })" <?php } ?>><div
+            <div <?php if ((! $id) && (! $trigger->attributes->get('disabled'))) { ?> x-data="filamentModalTrigger" <?php } ?>><div
                 <?php if (! $trigger->attributes->get('disabled')) { ?>
                     <?php if ($id) { ?> x-on:click="$dispatch(<?= e(Js::from($openEventName)) ?>, { id: <?= e(Js::from($id)) ?> })"
-                    <?php } else { ?> x-on:click="openModalFromTrigger($el)" <?php } ?>
+                    <?php } else { ?> x-on:click="openModalFromTrigger($el, <?= e(Js::from($openEventName)) ?>)" <?php } ?>
                 <?php } ?>
                 <?= $trigger->attributes->except(['disabled'])->class(['fi-modal-trigger']) ?>
             ><?= e($trigger) ?></div>
@@ -139,9 +139,9 @@ trait CanGenerateModalHtml
             x-data="filamentModal({ id: <?= e(Js::from($id)) ?>, isScrollLocked: <?= e(Js::from(! $isClickThrough)) ?>, shouldRestoreFocus: <?= e(Js::from($restoresFocus && (! $isClickThrough))) ?>, })"
             <?php if ($id) { ?>
                 data-fi-modal-id="<?= e($id) ?>"
-                x-on:<?= e($closeEventName) ?>.window="handleCloseEvent($event)"
-                x-on:<?= e($closeQuietlyEventName) ?>.window="handleCloseQuietlyEvent($event)"
-                x-on:<?= e($openEventName) ?>.window="handleOpenEvent($event)"
+                x-on:<?= e($closeEventName) ?>.window="handleCloseEvent($event, <?= e(Js::from($id)) ?>)"
+                x-on:<?= e($closeQuietlyEventName) ?>.window="handleCloseQuietlyEvent($event, <?= e(Js::from($id)) ?>)"
+                x-on:<?= e($openEventName) ?>.window="handleOpenEvent($event, <?= e(Js::from($id)) ?>)"
             <?php } else { ?>
                 x-on:<?= e($closeEventName) ?>.stop="isOpen && close()"
                 x-on:<?= e($closeQuietlyEventName) ?>.stop="isOpen && closeQuietly()"

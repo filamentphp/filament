@@ -1,5 +1,5 @@
-export default ({ openEventName = 'open-modal' } = {}) => ({
-    openModalFromTrigger(trigger) {
+export default () => ({
+    openModalFromTrigger(trigger, openEventName) {
         trigger.nextElementSibling.dispatchEvent(new CustomEvent(openEventName))
     },
 })

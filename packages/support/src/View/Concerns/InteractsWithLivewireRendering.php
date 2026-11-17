@@ -26,6 +26,9 @@ trait InteractsWithLivewireRendering
         return $isEnd ? '<!--[if ENDBLOCK]><![endif]-->' : '<!--[if BLOCK]><![endif]-->';
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function hasRenderSmartKeys(): bool
     {
         return class_exists(SupportCompiledWireKeys::class) && config('livewire.smart_wire_keys', false) && ExtendBlade::isRenderingLivewireComponent();

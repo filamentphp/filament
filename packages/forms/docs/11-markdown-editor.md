@@ -66,6 +66,33 @@ The editor has a minimum height of `10rem` by default. Once the content exceeds 
 
 <UtilityInjection set="formFields">As well as allowing static values, the `minHeight()` and `maxHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
+## Customizing the loading placeholder
+
+The editable Markdown editor displays a loading placeholder while its JavaScript is loaded and initialized. Disabled Markdown editors render static content and do not display this placeholder. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->loadingPlaceholder(fn () => view('forms.markdown-editor-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all editable Markdown editors, use [`MarkdownEditor::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::configureUsing(function (MarkdownEditor $markdownEditor): void {
+    $markdownEditor->loadingPlaceholder(fn () => view('forms.markdown-editor-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual Markdown editor to restore the default loading placeholder.
+
 ## Uploading images to the editor
 
 Images may be uploaded to the editor. They will always be uploaded to a publicly available URL with public storage permissions, since generating temporary file upload URLs is not supported in static content. You may customize where images are uploaded using configuration methods:
