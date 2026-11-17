@@ -53,9 +53,11 @@ export default function jsSchemaComponent({
                         error,
                     )
                 },
+                onReady: () => this.$dispatch('async-component-ready'),
                 onFailure: () => {
                     this.$refs.host.replaceChildren()
                     this.hasError = true
+                    this.$dispatch('async-component-ready')
                 },
             })
 

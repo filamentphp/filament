@@ -13,6 +13,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\RawJs;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 
@@ -75,6 +76,21 @@ it('renders effective `stateBindingModifiers()` instead of overridden `live()` o
     'seconds' => [['live', 'debounce', '1s'], true, false, 1000],
     'zero debounce' => [['live', 'debounce', 0], true, false, 0],
 ]);
+
+it('renders custom `loadingPlaceholder()` content and restores the default with `null`', function (string $contentType): void {
+    $field = JsField::make('location')->loadingPlaceholder(match ($contentType) {
+        'view' => view('loading-placeholder', ['label' => 'location <loading>']),
+        'html' => new HtmlString('<div data-testid="custom-loading-placeholder">location &lt;loading&gt;</div>'),
+        'closure' => static fn (JsField $component) => view('loading-placeholder', ['label' => $component->getName() . ' <loading>']),
+    });
+    Schema::make(Livewire::make())->statePath('data')->components([$field])->fill();
+
+    expect($field->toHtml())->toContain('data-testid="custom-loading-placeholder"', 'location &lt;loading&gt;');
+
+    expect($field->loadingPlaceholder(null)->toHtml())
+        ->not->toContain('data-testid="custom-loading-placeholder"')
+        ->toContain('class="fi-loading-placeholder"');
+})->with(['view', 'html', 'closure']);
 
 it('supplies nested validation and required descriptions to renderers', function (bool $plain): void {
     $previousErrors = view()->shared('errors');

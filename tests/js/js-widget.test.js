@@ -5,6 +5,7 @@ import jsWidget from '../../packages/widgets/resources/js/components/js-widget.j
 function fixture(renderer, rendererConfiguration = {}) {
     const widget = jsWidget({ renderer, rendererConfiguration })
     widget.$refs = { host: { replaceChildren() {} } }
+    widget.$dispatch = () => {}
     widget.$el = { ownerDocument: { baseURI: import.meta.url } }
     widget.$wire = { refreshTotal: () => 'refreshed' }
     return widget

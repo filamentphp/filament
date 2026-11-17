@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+    @include('renderer-readiness')
+
     <div>
         <x-filament::button color="gray" wire:click="showValidationError">
             Show validation error

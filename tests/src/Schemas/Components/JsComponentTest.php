@@ -9,6 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\RawJs;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Illuminate\Support\HtmlString;
 
 uses(TestCase::class);
 
@@ -37,6 +38,21 @@ it('renders a JavaScript host without field bindings or child components', funct
     expect($html)->toContain('jsSchemaComponent', 'wire:ignore', 'data-renderer-configuration=', 'data-sales="true"', 'role="alert"')
         ->not->toContain('This child must not render', '$entangle', 'onChange', '<script>alert(1)</script>', 'data-field-wrapper');
 });
+
+it('renders custom `loadingPlaceholder()` content and restores the default with `null`', function (string $contentType): void {
+    $component = JsComponent::make()->id('sales')->loadingPlaceholder(match ($contentType) {
+        'view' => view('loading-placeholder', ['label' => 'sales <loading>']),
+        'html' => new HtmlString('<div data-testid="custom-loading-placeholder">sales &lt;loading&gt;</div>'),
+        'closure' => static fn (JsComponent $component) => view('loading-placeholder', ['label' => $component->getId() . ' <loading>']),
+    });
+    Schema::make(Livewire::make())->components([$component])->getComponents();
+
+    expect($component->toHtml())->toContain('data-testid="custom-loading-placeholder"', 'sales &lt;loading&gt;');
+
+    expect($component->loadingPlaceholder(null)->toHtml())
+        ->not->toContain('data-testid="custom-loading-placeholder"')
+        ->toContain('class="fi-loading-placeholder"');
+})->with(['view', 'html', 'closure']);
 
 it('updates only the props key when PHP configuration changes', function (): void {
     $component = JsComponent::make()->key('sales')->renderer('/sales.js')->rendererConfiguration(['message' => 'Original']);

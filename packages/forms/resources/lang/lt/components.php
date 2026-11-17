@@ -308,10 +308,6 @@ return [
 
     ],
 
-    'js_field' => [
-        'failed_to_load' => 'Šio lauko įkelti nepavyko. Įkelkite puslapį iš naujo ir bandykite dar kartą.',
-    ],
-
     'key_value' => [
 
         'actions' => [
