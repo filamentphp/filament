@@ -37,6 +37,7 @@ trait CanGenerateBadgeHtml
         ?IconPosition $iconPosition = IconPosition::Before,
         IconSize | string | null $iconSize = null,
         bool $isDisabled = false,
+        bool $isDisabledDuringLoading = true,
         ?array $keyBindings = null,
         string | Htmlable | null $label = null,
         Size | string | null $size = null,
@@ -87,8 +88,8 @@ trait CanGenerateBadgeHtml
                     'form' => 'submit',
                     default => null,
                 },
-                'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
-                'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.attr' => ($tag === 'button' && $isDisabledDuringLoading) ? 'aria-disabled' : null,
+                'wire:loading.class' => ($tag === 'button' && $isDisabledDuringLoading) ? $attributes->prepends('fi-disabled') : null,
                 'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
