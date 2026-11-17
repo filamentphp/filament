@@ -459,6 +459,22 @@ By default, the whole table re-renders after a select column is updated. You may
 
 ### Authorization
 
-Select columns do not automatically check model policies. Without an authorization check, users can update the column for records accessible through the table query, even if the record's `update()` policy denies access to its edit page. Use `disabled()` with your authorization logic, for example `disabled(fn ($record) => $record->user_id !== auth()->id())`. Filament checks this condition on the server before saving.
+By default, select columns do not check model policies. Without an authorization check, users can update the column for records accessible through the table query, even if the record's `update()` policy denies access to its edit page.
+
+Use `authorize()` to check the record's `update()` policy. Denied columns are disabled, and changes are rejected on the server:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->authorize()
+```
+
+You may pass a different ability, such as `authorize('updateStatus')`, or a custom callback. See [authorizing editable columns](overview#authorizing-editable-columns) for callbacks and global configuration.
 
 Check permission for the specific attribute being changed. If the column updates a related model or pivot, authorize that operation too. Alternatively, use a resource edit page or a policy-backed `EditAction` to apply the resource's edit authorization.
