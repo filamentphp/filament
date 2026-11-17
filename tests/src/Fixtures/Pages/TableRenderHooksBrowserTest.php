@@ -22,11 +22,17 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
     #[Url]
     public bool $isTableLazyLoaded = false;
 
+    #[Url]
+    public bool $hasCustomLoadingPlaceholder = false;
+
     public function table(Table $table): Table
     {
         return $table
             ->query(Post::query())
             ->lazyLoaded(fn (): bool => $this->isTableLazyLoaded)
+            ->loadingPlaceholder(fn () => $this->hasCustomLoadingPlaceholder
+                ? view('loading-placeholder', ['label' => 'Preparing table records'])
+                : null)
             ->loadingSkeleton()
             ->columns([
                 Tables\Columns\TextColumn::make('title'),

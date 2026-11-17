@@ -2753,11 +2753,22 @@
                             aria-live="polite"
                             class="fi-ta-table-loading-ctn"
                         >
-                            {{ \Filament\Support\generate_loading_indicator_html(size: IconSize::TwoExtraLarge) }}
-
                             <span class="fi-sr-only">
                                 {{ __('filament-tables::table.loading') }}
                             </span>
+
+                            <div
+                                aria-hidden="true"
+                                class="fi-loading-placeholder-content"
+                            >
+                                @if (($loadingPlaceholder = $getLoadingPlaceholder()) !== null)
+                                    {{ $loadingPlaceholder }}
+                                @else
+                                    <x-filament::loading-placeholder
+                                        :loading-label="__('filament-tables::table.loading')"
+                                    />
+                                @endif
+                            </div>
                         </div>
                     @endif
                 </div>

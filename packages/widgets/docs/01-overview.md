@@ -171,6 +171,30 @@ Filament also checks `canView()` before a widget's `mount()` method runs, includ
 
 Keep sensitive work out of the widget's `boot()` and lazy `placeholder()` methods, which can run before this authorization check. If you need sensitive work in these methods, authorize it separately.
 
+## Customizing the loading placeholder
+
+Lazy widgets display a section containing a spinner and loading text until they load. You may replace the content with a custom Blade view, such as a skeleton, by overriding `getLoadingPlaceholder()` on the widget class:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
+
+public function getLoadingPlaceholder(): View | Htmlable | null
+{
+    return view('widgets.loading-placeholder');
+}
+```
+
+You may also return an `Illuminate\Support\HtmlString` containing trusted HTML, or `null` to use the default spinner and loading text. Filament preserves the widget's section, grid position, and accessible loading announcement. The custom content is decorative and hidden from assistive technologies, so it should not contain interactive controls.
+
+To change the reserved height, set `$placeholderHeight` on the widget class:
+
+```php
+protected ?string $placeholderHeight = '12rem';
+```
+
+You may still override Livewire's `placeholder()` method if you need to replace the entire placeholder view, including its outer section. In that case, your view is responsible for the loading announcement and grid layout.
+
 ## Table widgets
 
 You may easily add tables to your dashboard. Start by creating a widget with the command:
