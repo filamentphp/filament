@@ -157,6 +157,20 @@ describe('search results', function (): void {
             ->assertValue($inputSelector, '   ');
     })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
 
+    it('keeps the focus in the search field when a result is pressed, so browsers that do not focus links on click can open it', function (string $panel): void {
+        Artisan::call('filament:assets');
+        Filament::getPanel($panel)->globalSearch(ActionSearchProvider::class);
+
+        $post = Post::factory()->create(['title' => 'Invoice 761']);
+        $resultUrl = PostResource::getUrl('view', ['record' => $post], panel: $panel);
+
+        $page = visit(PostResource::getUrl(panel: $panel));
+
+        $page->type('input[type="search"][aria-controls]', 'Invoice 761')
+            ->assertVisible("[role=region] a[href=\"{$resultUrl}\"]:not([target])")
+            ->assertScript("[...document.querySelectorAll('[role=region] a[href], [role=region] button')].every((element) => ! element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true })))");
+    })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
+
     it('orders resource global search results by `$globalSearchSort`', function (): void {
         User::factory()->create([
             'name' => 'Test',
