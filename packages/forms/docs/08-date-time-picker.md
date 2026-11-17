@@ -215,6 +215,34 @@ DateTimePicker::make('date')
 
 <UtilityInjection set="formFields">As well as allowing a static value, the `closeOnDateSelection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Customizing the loading placeholder
+
+When using `native(false)`, date-time pickers, date pickers, and time pickers display a loading placeholder while their JavaScript is loaded and initialized. Native pickers do not display this placeholder. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')
+    ->native(false)
+    ->loadingPlaceholder(fn () => view('forms.date-time-picker-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder globally, use [`configureUsing()`](overview#global-settings) on the picker class you use (`DateTimePicker`, `DatePicker`, or `TimePicker`) in a service provider's `boot()` method. For example, to configure all JavaScript date-time pickers:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::configureUsing(function (DateTimePicker $dateTimePicker): void {
+    $dateTimePicker->loadingPlaceholder(fn () => view('forms.date-time-picker-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual picker to restore the default loading placeholder.
+
 ## Autocompleting dates with a datalist
 
 Unless you're using the [JavaScript date picker](#enabling-the-javascript-date-picker), you may specify [datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) options for a date picker using the `datalist()` method:

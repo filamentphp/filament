@@ -93,3 +93,30 @@ CodeEditor::make('code')
 ```
 
 <AutoScreenshot name="forms/fields/code-editor/wrap" alt="Code editor with line wrapping" />
+
+## Customizing the loading placeholder
+
+The code editor displays a loading placeholder while its JavaScript is loaded and initialized. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\CodeEditor;
+
+CodeEditor::make('code')
+    ->loadingPlaceholder(fn () => view('forms.code-editor-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all code editors, use [`CodeEditor::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\CodeEditor;
+
+CodeEditor::configureUsing(function (CodeEditor $codeEditor): void {
+    $codeEditor->loadingPlaceholder(fn () => view('forms.code-editor-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual code editor to restore the default loading placeholder.

@@ -62,6 +62,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasLoadingMessage;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
     use Concerns\HasPivotData;
@@ -2003,6 +2004,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         }"
                     ></div>
                     <div
+                        x-bind:inert="isLoading"
+                        x-bind:aria-hidden="isLoading"
+                        inert
+                        aria-hidden="true"
                         x-load
                         x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('select', 'filament/forms')) ?>"
                         x-data="selectFormComponent({
@@ -2048,7 +2053,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                         <?= (new FilamentComponentAttributeBag)
                             ->merge($this->getExtraAlpineAttributes(), escape: false)
-                            ->class(['fi-select-input'])
+                            ->class(['fi-select-input', 'fi-async-component-content'])
                             ->toHtml() ?>
                     >
                         <div x-ref="select"></div>
@@ -2056,6 +2061,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 <?php } ?>
 
         <?php $slotHtml = ob_get_clean();
+
+        if (! $isNative) {
+            $slotHtml = $this->wrapAsyncComponentHtml(
+                $slotHtml,
+                key: $livewireKey . '.' . md5(serialize([$isDisabled, $isReorderable])),
+            );
+        }
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

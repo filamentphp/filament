@@ -138,6 +138,12 @@ export default function selectFormComponent({
                     }
                 })
             })
+
+            this.$dispatch('async-component-ready')
+
+            if (isAutofocused) {
+                this.$nextTick(() => this.select?.selectButton.focus())
+            }
         },
 
         destroy() {

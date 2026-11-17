@@ -525,6 +525,35 @@ FileUpload::make('attachments')
 
 <UtilityInjection set="formFields">As well as allowing a static value, the `panelLayout()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Customizing the loading placeholder
+
+The file upload field displays a loading placeholder while its JavaScript is loaded and initialized. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->loadingPlaceholder(fn () => view('forms.file-upload-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+This placeholder is separate from the upload progress indicators and the [`uploadingMessage()`](#customizing-the-uploading-message) shown in the form's submit button.
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all file upload fields, use [`FileUpload::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::configureUsing(function (FileUpload $fileUpload): void {
+    $fileUpload->loadingPlaceholder(fn () => view('forms.file-upload-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual file upload field to restore the default loading placeholder.
+
 ## Reordering files
 
 You can also allow users to re-order uploaded files using the `reorderable()` method:

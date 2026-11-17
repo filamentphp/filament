@@ -30,6 +30,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
     use Concerns\HasAffixes;
     use Concerns\HasDatalistOptions;
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasPlaceholder;
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
@@ -213,6 +214,10 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                     ?>
                     <div hidden data-field-accessibility <?= $triggerAttributes->only(['aria-describedby', 'aria-invalid'])->toHtml() ?>></div>
                     <div
+                        x-bind:inert="isLoading"
+                        x-bind:aria-hidden="isLoading"
+                        inert
+                        aria-hidden="true"
                         x-load
                         x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms')) ?>"
                         x-data="dateTimePickerFormComponent({
@@ -238,7 +243,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                             x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
                             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                         <?php } ?>
-                        <?= $extraAlpineAttributeBag->toHtml() ?>
+                        <?= $extraAlpineAttributeBag->class(['fi-async-component-content'])->toHtml() ?>
                     >
                         <input x-ref="maxDate" type="hidden" value="<?= e($maxDate) ?>" />
                         <input x-ref="minDate" type="hidden" value="<?= e($minDate) ?>" />
@@ -355,6 +360,13 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         <?php } ?>
 
         <?php $slotHtml = ob_get_clean();
+
+        if (! $isNative) {
+            $slotHtml = $this->wrapAsyncComponentHtml(
+                $slotHtml,
+                key: $livewireKey . '.' . md5(serialize([$disabledDates, $isDisabled, $isReadOnly, $maxDate, $minDate, $hasDate, $hasTime, $hasSeconds])),
+            );
+        }
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

@@ -144,6 +144,8 @@ export default function codeEditorFormComponent({
             if (language && !languageExtension) {
                 this.loadLanguageExtension()
             }
+
+            this.$dispatch('async-component-ready')
         },
 
         isDarkMode() {

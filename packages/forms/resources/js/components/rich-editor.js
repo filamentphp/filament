@@ -568,6 +568,8 @@ export default function richEditorFormComponent({
             window.dispatchEvent(
                 new CustomEvent(`schema-component-${livewireId}-${key}-loaded`),
             )
+
+            this.$dispatch('async-component-ready')
         },
 
         getEditor() {

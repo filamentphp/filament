@@ -56,6 +56,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasMaxHeight;
     use Concerns\HasMinHeight;
     use Concerns\HasPlaceholder;
@@ -1764,6 +1765,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             data-rich-editor-key="<?= e($key) ?>"
             id="<?= e($id) ?>"
             role="group"
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
+            class="fi-async-component-content"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
             x-data="richEditorFormComponent({
@@ -2017,7 +2023,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             </div>
         </div>
 
-        <?php $slotHtml = ob_get_clean();
+        <?php $slotHtml = $this->wrapAsyncComponentHtml(
+            ob_get_clean(),
+            key: $livewireKey . '.' . md5(serialize([$isDisabled])),
+        );
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

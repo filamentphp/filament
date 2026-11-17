@@ -555,6 +555,33 @@ Slider::make('slider')
     ->behavior(null)
 ```
 
+## Customizing the loading placeholder
+
+The slider displays a loading placeholder while its JavaScript is loaded and initialized. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\Slider;
+
+Slider::make('slider')
+    ->loadingPlaceholder(fn () => view('forms.slider-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all sliders, use [`Slider::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\Slider;
+
+Slider::configureUsing(function (Slider $slider): void {
+    $slider->loadingPlaceholder(fn () => view('forms.slider-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual slider to restore the default loading placeholder.
+
 ## Non-linear tracks
 
 You can create non-linear tracks, where certain parts of the track are compressed or expanded, by defining an array of percentage points in the `nonLinearPoints()` method of the slider. Each percentage key of the array should have a corresponding real value, which will be used to calculate the position of the handle on the track. The example below features [pips](#adding-pips-to-tracks) to demonstrate the non-linear behavior of the track:

@@ -17,6 +17,7 @@ use Illuminate\Support\Js;
 
 class KeyValue extends Field implements HasEmbeddedView
 {
+    use Concerns\HasLoadingPlaceholder;
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
 
@@ -342,6 +343,10 @@ class KeyValue extends Field implements HasEmbeddedView
         ob_start(); ?>
 
         <div
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms')) ?>"
             x-id="['key-value-row']"
@@ -355,7 +360,7 @@ class KeyValue extends Field implements HasEmbeddedView
                     })"
             wire:ignore
             wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64)) ?>"
-            <?= $alpineDivAttributes->toHtml() ?>
+            <?= $alpineDivAttributes->class(['fi-async-component-content'])->toHtml() ?>
         >
                 <table aria-labelledby="<?= e($id) ?>-label" id="<?= e($id) ?>" class="fi-fo-key-value-table">
                     <thead>
@@ -493,7 +498,10 @@ class KeyValue extends Field implements HasEmbeddedView
             <?php } ?>
         </div>
 
-        <?php $slotHtml = ob_get_clean();
+        <?php $slotHtml = $this->wrapAsyncComponentHtml(
+            ob_get_clean(),
+            key: $livewireKey . '.' . md5(serialize([$isDisabled, $isReorderable])),
+        );
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

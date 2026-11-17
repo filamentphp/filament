@@ -22,6 +22,7 @@ use function Filament\Support\generate_icon_html;
 class FileUpload extends BaseFileUpload implements HasEmbeddedView
 {
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasPlaceholder;
     use HasAlignment;
     use HasExtraAlpineAttributes;
@@ -762,6 +763,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             ->merge($this->getExtraAlpineAttributes(), escape: false)
             ->class([
                 'fi-fo-file-upload',
+                'fi-async-component-content',
                 'fi-fo-file-upload-avatar' => $isAvatar,
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ]);
@@ -788,6 +790,10 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             <?= $inputAttributes->only(['aria-describedby', 'aria-invalid'])->toHtml() ?>
         ></div>
         <div
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"
             x-data="fileUploadFormComponent({
@@ -1069,6 +1075,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
+        <?php return $this->wrapEmbeddedHtml(
+            $this->wrapAsyncComponentHtml(ob_get_clean(), key: $wireKey),
+            labelTag: 'div',
+        );
     }
 }
