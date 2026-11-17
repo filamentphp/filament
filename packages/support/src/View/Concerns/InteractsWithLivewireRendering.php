@@ -27,15 +27,7 @@ trait InteractsWithLivewireRendering
     }
 
     /**
-     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
-     */
-    protected function hasRenderSmartKeys(): bool
-    {
-        return class_exists(SupportCompiledWireKeys::class) && config('livewire.smart_wire_keys', false) && ExtendBlade::isRenderingLivewireComponent();
-    }
-
-    /**
-     * Keep nested Blade views' loop metadata and Livewire child keys.
+     * Keep nested Blade views' loop metadata.
      *
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      *
@@ -45,35 +37,18 @@ trait InteractsWithLivewireRendering
     protected function iterateRenderLoop(iterable $items): Generator
     {
         $viewFactory = app('view');
-        $hasSmartKeys = $this->hasRenderSmartKeys();
+        $previousRenderLoop = SupportCompiledWireKeys::$currentLoop;
         $viewFactory->addLoop($items);
-
-        if ($hasSmartKeys) {
-            SupportCompiledWireKeys::openLoop();
-        }
 
         try {
             foreach ($items as $key => $item) {
                 $viewFactory->incrementLoopIndices();
 
-                if ($hasSmartKeys) {
-                    SupportCompiledWireKeys::startLoopIteration();
-                }
-
-                try {
-                    yield $key => $item;
-                } finally {
-                    if ($hasSmartKeys) {
-                        SupportCompiledWireKeys::endLoop();
-                    }
-                }
+                yield $key => $item;
             }
         } finally {
             $viewFactory->popLoop();
-
-            if ($hasSmartKeys) {
-                SupportCompiledWireKeys::closeLoop();
-            }
+            SupportCompiledWireKeys::$currentLoop = $previousRenderLoop;
         }
     }
 
@@ -84,8 +59,10 @@ trait InteractsWithLivewireRendering
      */
     protected function setRenderKey(?string $key): void
     {
-        if ($this->hasRenderSmartKeys()) {
-            SupportCompiledWireKeys::$currentLoop['key'] = $key;
-        }
+        SupportCompiledWireKeys::$currentLoop = [
+            'count' => null,
+            'index' => null,
+            'key' => $key,
+        ];
     }
 }

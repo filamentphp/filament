@@ -76,7 +76,8 @@ trait HasFilterIndicators
                             class="fi-ta-filter-indicators-badges-ctn"
                             role="list"
                         >
-                            <?php foreach ($this->iterateRenderLoop($filterIndicators) as $indicator) { ?>
+                            <?php foreach ($this->iterateRenderLoop($filterIndicators) as $indicatorIndex => $indicator) {
+                                $this->setRenderKey($livewire->getId() . '.table.filter-indicator.' . $indicatorIndex); ?>
                                 <?= $this->generateFilterIndicatorHtml($indicator); ?>
                             <?php } ?>
                         </div>

@@ -14,6 +14,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\View\TablesRenderHook;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
+use Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys;
 
 trait CanBeRendered
 {
@@ -27,6 +28,7 @@ trait CanBeRendered
     public function toEmbeddedHtml(): string
     {
         $viewFactory = app('view');
+        $previousRenderLoop = SupportCompiledWireKeys::$currentLoop;
 
         // Isolate record-dependent results across repeated and nested renders.
         $previousRecordActionScan = $this->cachedRenderRecordActionScan;
@@ -54,6 +56,7 @@ trait CanBeRendered
             $this->cachedHasRenderSummary = $previousHasSummary;
             $this->cachedRenderGroupedSummarySelectedState = $previousGroupedSummarySelectedState;
             $this->cachedRenderPartiallyRenderableColumnNames = $previousPartiallyRenderableColumnNames;
+            SupportCompiledWireKeys::$currentLoop = $previousRenderLoop;
             $viewFactory->decrementRender();
             $viewFactory->flushStateIfDoneRendering();
         }
