@@ -6,8 +6,11 @@ use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Filament\Tables\Table;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -123,5 +126,66 @@ trait HasEmptyState
         return $this->evaluate($this->emptyStateIcon)
             ?? FilamentIcon::resolve(TablesIconAlias::EMPTY_STATE)
             ?? Heroicon::OutlinedXMark;
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    protected function generateEmptyStateHtml(): string
+    {
+        $records = $this->isLoaded() ? $this->getRecords() : null;
+
+        ob_start(); ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if (($records !== null) && ! count($records)) { ?>
+            <?php if ($emptyState = $this->getEmptyState()) { ?>
+                <?= e($emptyState); ?>
+            <?php } else { ?>
+                <div class="fi-ta-empty-state" role="status">
+                    <div class="fi-ta-empty-state-content">
+                        <div class="fi-ta-empty-state-icon-bg">
+                            <?= e(\Filament\Support\generate_icon_html($this->getEmptyStateIcon(), attributes: (new FilamentComponentAttributeBag([
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => implode(',', Table::LOADING_TARGETS),
+                            ])), size: IconSize::Large)); ?>
+
+                            <?= e(\Filament\Support\generate_loading_indicator_html((new FilamentComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => implode(',', Table::LOADING_TARGETS),
+                            ])), size: IconSize::Large)); ?>
+                        </div>
+
+                        <<?= e($this->getHeadingTag($this->getHeading() ? 1 : 0)); ?>
+                            class="fi-ta-empty-state-heading"
+                        >
+                            <?= e($this->getEmptyStateHeading()); ?>
+                        </<?= e($this->getHeadingTag($this->getHeading() ? 1 : 0)); ?>>
+
+                        <?= $this->generateMorphMarkerHtml(); ?>
+                        <?php if (filled($emptyStateDescription = $this->getEmptyStateDescription())) { ?>
+                            <p class="fi-ta-empty-state-description">
+                                <?= e($emptyStateDescription); ?>
+                            </p>
+                        <?php } ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+
+                        <?php if ($emptyStateActions = array_filter(
+                            $this->getEmptyStateActions(),
+                            fn (\Filament\Actions\Action | ActionGroup $action): bool => $action->isVisible(),
+                        )) { ?>
+                            <div
+                                class="fi-ta-actions fi-align-center fi-wrapped"
+                            >
+                                <?php foreach ($this->iterateRenderLoop($emptyStateActions) as $action) { ?>
+                                    <?= e($action); ?>
+                                <?php } ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            <?php } ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+        <?php return ob_get_clean();
     }
 }

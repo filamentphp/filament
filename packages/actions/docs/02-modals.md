@@ -436,7 +436,7 @@ Action::make('updateAuthor')
 
 <AutoScreenshot name="actions/modal/slide-over-start" alt="Slide over from the start of the screen" />
 
-This is useful when the action trigger sits near the start of the viewport — for example, a row action at the beginning of a table row — so the slide-over opens adjacent to its trigger instead of across the screen.
+This is useful when the action trigger sits near the start of the viewport — for example, a record action at the beginning of a table row — so the slide-over opens adjacent to its trigger instead of across the screen.
 
 ## Changing the modal width
 

@@ -3,6 +3,7 @@
 namespace Filament\Support\View\Concerns;
 
 use BackedEnum;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -11,6 +12,7 @@ use Filament\Support\View\Components\IconButtonComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -18,11 +20,14 @@ use function Filament\Support\generate_loading_indicator_html;
 
 trait CanGenerateIconButtonHtml
 {
+    use InteractsWithLivewireRendering;
+
     /**
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      *
      * @param  string | array<string> | null  $badgeColor,
      * @param  string | array<string> | null  $color,
+     * @param  string | array<string> | null  $iconAlias
      * @param  array<string>  $keyBindings
      */
     public function generateIconButtonHtml(
@@ -37,7 +42,7 @@ trait CanGenerateIconButtonHtml
         ?bool $hasSpaMode = null,
         ?string $href = null,
         string | BackedEnum | Htmlable | null $icon = null,
-        ?string $iconAlias = null,
+        string | array | null $iconAlias = null,
         IconSize | string | null $iconSize = null,
         bool $isDisabled = false,
         bool $isDisabledDuringLoading = true,
@@ -48,7 +53,39 @@ trait CanGenerateIconButtonHtml
         ?string $target = null,
         string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
+        bool $shouldCheckForPublishedView = false,
     ): string {
+        if ($shouldCheckForPublishedView && ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.icon-button')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
+            return view('filament::components.icon-button', [
+                'attributes' => $attributes,
+                'badge' => $badge,
+                'badgeColor' => $badgeColor,
+                'badgeSize' => $badgeSize,
+                'color' => $color,
+                'disabled' => $isDisabled,
+                'form' => $form,
+                'formId' => $formId,
+                'href' => $href,
+                'icon' => $icon,
+                'iconAlias' => $iconAlias,
+                'iconSize' => $iconSize,
+                'keyBindings' => $keyBindings,
+                'label' => $label,
+                'loadingIndicator' => $hasLoadingIndicator,
+                'size' => $size,
+                'slot' => new ComponentSlot,
+                'spaMode' => $hasSpaMode,
+                'tag' => $tag,
+                'target' => $target,
+                'tooltip' => $tooltip,
+                'type' => $type,
+            ])->render();
+        }
+
         $badgeColor ??= 'primary';
         $color ??= 'primary';
 
@@ -143,20 +180,28 @@ trait CanGenerateIconButtonHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
+            <?= $this->generateMorphMarkerHtml() ?>
             <?= $hasLoadingIndicator ? generate_loading_indicator_html(new FilamentComponentAttributeBag([
                 'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
                 'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
             ]), size: $iconSize)->toHtml() : '' ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, size: $iconSize)?->toHtml() ?? '' : '' ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-icon-btn-badge-ctn">
+                    <?php if ($badge instanceof ComponentSlot) { ?>
+                        <?= e($badge) ?>
+                    <?php } else { ?>
                     <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>
                         <?= e($badge) ?>
                     </span>
+                    <?php } ?>
                 </div>
             <?php } ?>
         </<?= ($tag === 'form') ? 'button' : $tag ?>>

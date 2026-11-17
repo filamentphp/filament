@@ -15,5 +15,14 @@ export default function toggleTableColumn(configuration) {
 
             return [1, '1'].includes(this.$refs.serverState.value)
         },
+
+        toggleState(element) {
+            if (element.hasAttribute('disabled')) {
+                return
+            }
+
+            this.clearError()
+            this.state = !this.state
+        },
     }
 }

@@ -108,7 +108,7 @@ These properties are not automatically re-queried against their original resourc
 
 `InteractsWithPageTable` is a specific exception when accessing table data: it knows the table's page class. For a resource page, it resolves the synthetic page's parent and checks ancestor resource access before booting or mounting that page, using the nested resource rules above. It does not check the parent record's `view()` or `update()` policy, or validate other uses of the widget's own model properties.
 
-Table row actions resolve their record through the table query. Attach and associate actions resolve selected records through their configured relationship or options query. Filament does not provide either guarantee for model values passed to custom Livewire methods or action arguments.
+Table record actions resolve their record through the table query. Attach and associate actions resolve selected records through their configured relationship or options query. Filament does not provide either guarantee for model values passed to custom Livewire methods or action arguments.
 
 > [!WARNING]
 > Component authorization is separate from record scoping. A relation manager still runs `canViewForRecord()`, and a widget still runs `canView()`. Neither automatically reapplies the parent resource's query or authorizes a passed-in record. For a relation manager, enforce owner-record restrictions in `canViewForRecord()`. For widget or custom component code, query and authorize records before accessing them.
