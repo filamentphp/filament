@@ -816,7 +816,3 @@ Table::configureUsing(function (Table $table): void {
         ->paginationPageOptions([10, 25, 50]);
 });
 ```
-
-## Customizing table rendering
-
-Existing published Blade views remain supported. A published `resources/views/vendor/filament-tables/index.blade.php` replaces the entire native renderer. Published child component views replace only that component, including shared components under `resources/views/vendor/filament/`. An explicitly configured table `view()` also takes precedence over the native renderer.
