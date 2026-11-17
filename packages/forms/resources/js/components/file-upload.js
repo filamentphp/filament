@@ -1128,6 +1128,9 @@ export default function fileUploadFormComponent({
 
             if (this.pond) {
                 this.pond.destroy()
+                // `pond.destroy()` only restores the original input after a timeout,
+                // too late for the page snapshot Livewire stores for the back button.
+                FilePond.destroy(this.pond.element)
                 this.pond = null
             }
         },
