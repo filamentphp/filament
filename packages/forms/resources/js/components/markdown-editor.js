@@ -301,6 +301,8 @@ export default function markdownEditorFormComponent({
                 this.handleEditorVisibilityChange(),
             )
             this.intersectionObserver.observe(this.$el)
+
+            this.$dispatch('async-component-ready')
         },
 
         isEditorVisible() {

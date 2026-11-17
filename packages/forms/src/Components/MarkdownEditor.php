@@ -21,6 +21,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
     use CanConfigureCommonMark;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasFileAttachments;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasMaxHeight;
     use Concerns\HasMinHeight;
     use Concerns\HasPlaceholder;
@@ -131,6 +132,10 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
             aria-labelledby="<?= e($id) ?>-label"
             id="<?= e($id) ?>"
             role="group"
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms')) ?>"
             x-data="markdownEditorFormComponent({
@@ -171,12 +176,15 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
                         },
                     })"
             wire:ignore
-            <?= $extraAlpineAttributeBag->toHtml() ?>
+            <?= $extraAlpineAttributeBag->class(['fi-async-component-content'])->toHtml() ?>
         >
             <textarea x-ref="editor" x-cloak></textarea>
         </div>
 
-        <?php $slotHtml = ob_get_clean();
+        <?php $slotHtml = $this->wrapAsyncComponentHtml(
+            ob_get_clean(),
+            key: $this->getLivewireKey(),
+        );
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

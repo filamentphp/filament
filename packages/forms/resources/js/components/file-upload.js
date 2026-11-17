@@ -620,6 +620,8 @@ export default function fileUploadFormComponent({
             this.pond.on('removefile', () => (this.error = null))
 
             this.isInitializing = false
+
+            this.$dispatch('async-component-ready')
         },
 
         dispatchFormEvent(name, detail = {}) {

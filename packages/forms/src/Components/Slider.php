@@ -20,6 +20,7 @@ use Illuminate\Support\Js;
 
 class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
+    use Concerns\HasLoadingPlaceholder;
     use HasExtraAlpineAttributes;
     use HasNestedRecursiveValidationRules;
     use HasStep;
@@ -535,6 +536,7 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
             ->merge($this->getExtraAlpineAttributes(), escape: false)
             ->class([
                 'fi-fo-slider',
+                'fi-async-component-content',
                 'fi-fo-slider-has-pips' => $pipsMode,
                 'fi-fo-slider-has-tooltips' => $this->hasTooltips(),
                 'fi-fo-slider-vertical' => $isVertical,
@@ -552,6 +554,10 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
 
         <div hidden data-field-accessibility <?= $accessibilityAttributes->toHtml() ?>></div>
         <div
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"
             x-data="sliderFormComponent({
@@ -584,7 +590,15 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
             <?= $attributes->toHtml() ?>
         ></div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: VerticalAlignment::Center, labelTag: 'div');
+        <?php return $this->wrapEmbeddedHtml(
+            $this->wrapAsyncComponentHtml(
+                ob_get_clean(),
+                key: $livewireKey . '.' . md5(serialize([$isDisabled])),
+            ),
+            extraWrapperAttributes: ['class' => 'fi-fo-slider-wrp'],
+            inlineLabelVerticalAlignment: VerticalAlignment::Center,
+            labelTag: 'div',
+        );
     }
 
     /**
