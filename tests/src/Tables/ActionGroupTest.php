@@ -116,7 +116,9 @@ it('scopes row and bulk `ActionGroup` menu attributes and keyboard interactions'
     $page
         ->assertSee('Refreshed record')
         ->keys($firstItem, 'Escape')
+        ->assertMissing($firstItem)
         ->keys($firstTrigger, 'Enter')
+        ->assertPresent($firstItem . ':focus')
         ->keys($firstItem, 'Enter')
         ->assertSeeIn('[data-testid="last-action"]', 'Refreshed record')
         ->assertPresent($firstTrigger . ':focus');
