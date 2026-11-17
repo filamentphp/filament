@@ -99,11 +99,11 @@ it('exports through separate serialized database worker processes', function ():
 
         $excluded = Post::factory()->create(['title' => 'Excluded', 'rating' => 9]);
         livewire(ExportTable::class)
-            ->selectTableRecords([Post::query()->first()->id, $excluded->id])
+            ->selectTableRecords([Post::query()->orderBy('id')->first()->id, $excluded->id])
             ->callAction(TestAction::make('export')->table()->bulk())
             ->assertHasNoFormErrors();
 
-        expect(Export::query()->pluck('total_rows')->all())->toBe([5, 5, 2])
+        expect(Export::query()->orderBy('id')->pluck('total_rows')->all())->toBe([5, 5, 2])
             ->and(Export::query()->sum('processed_rows'))->toBe(0)
             ->and(DB::table('jobs')->count())->toBe(3)
             ->and(DB::table('notifications')->count())->toBe(0);
