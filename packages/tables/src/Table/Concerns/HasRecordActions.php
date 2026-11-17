@@ -12,6 +12,7 @@ use Filament\Tables\Enums\RecordActionsPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\View\Factory;
 use InvalidArgumentException;
 
 trait HasRecordActions
@@ -348,7 +349,7 @@ trait HasRecordActions
      *
      * @param  array<Action | ActionGroup>  $recordActions
      */
-    protected function generateRecordActionsHtml(array $recordActions): string
+    protected function generateRecordActionsHtml(array $recordActions, ?Factory $viewFactory = null): string
     {
         ob_start(); ?>
         <div
@@ -363,7 +364,7 @@ trait HasRecordActions
                 },
             ]); ?>"
         >
-            <?php foreach ($this->iterateRenderLoop($recordActions) as $action) { ?>
+            <?php foreach ($this->iterateRenderLoop($recordActions, $viewFactory) as $action) { ?>
                 <?= e($action); ?>
             <?php } ?>
         </div>

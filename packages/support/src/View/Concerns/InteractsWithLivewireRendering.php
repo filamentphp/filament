@@ -3,6 +3,7 @@
 namespace Filament\Support\View\Concerns;
 
 use Generator;
+use Illuminate\View\Factory;
 use Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys;
 use Livewire\Mechanisms\ExtendBlade\ExtendBlade;
 
@@ -34,9 +35,9 @@ trait InteractsWithLivewireRendering
      * @param  iterable<mixed>  $items
      * @return Generator<mixed>
      */
-    protected function iterateRenderLoop(iterable $items): Generator
+    protected function iterateRenderLoop(iterable $items, ?Factory $viewFactory = null): Generator
     {
-        $viewFactory = app('view');
+        $viewFactory ??= app('view');
         $previousRenderLoop = SupportCompiledWireKeys::$currentLoop;
         $viewFactory->addLoop($items);
 

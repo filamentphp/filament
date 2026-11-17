@@ -26,6 +26,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\Factory;
 use Stringable;
 use UnhandledMatchError;
 
@@ -686,7 +687,7 @@ trait HasRecords
             ?>
 
                 <?= $morphMarkerStartHtml; ?>
-                <?php foreach ($this->iterateRenderLoop($records) as $record) {
+                <?php foreach ($this->iterateRenderLoop($records, $viewFactory) as $record) {
                     $loop = $viewFactory->getLastLoop();
                     $recordKey = $this->getRecordKey($record);
                     $recordUrl = $this->getRecordUrl($record);
@@ -748,6 +749,7 @@ trait HasRecords
                         $recordActionsPosition,
                         $recordCheckboxPosition,
                         $isStackedOnMobile,
+                        $viewFactory,
                     ); ?>
 
                     <?php
@@ -831,9 +833,8 @@ trait HasRecords
         RecordActionsPosition $recordActionsPosition,
         RecordCheckboxPosition $recordCheckboxPosition,
         bool $isStackedOnMobile,
+        Factory $viewFactory,
     ): string {
-        $viewFactory = app('view');
-
         ob_start(); ?>
         <?php if (! $isGroupsOnly) { ?>
             <tr
@@ -863,7 +864,7 @@ trait HasRecords
                 <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::BeforeCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
-                        <?= $this->generateRecordActionsHtml($recordActions); ?>
+                        <?= $this->generateRecordActionsHtml($recordActions, $viewFactory); ?>
                     </td>
                 <?php } ?>
                 <?= $morphMarkerEndHtml; ?>
@@ -883,13 +884,13 @@ trait HasRecords
                 <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::BeforeColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
-                        <?= $this->generateRecordActionsHtml($recordActions); ?>
+                        <?= $this->generateRecordActionsHtml($recordActions, $viewFactory); ?>
                     </td>
                 <?php } ?>
                 <?= $morphMarkerEndHtml; ?>
 
                 <?= $morphMarkerStartHtml; ?>
-                <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $column) {
+                <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns(), $viewFactory) as $column) {
                     $loop = $viewFactory->getLastLoop(); ?>
                     <?= $this->generateRecordCellHtml($column, $record, $loop, $recordKey, $recordUrl, $recordAction, $openRecordUrlInNewTab, $isReordering, $isStackedOnMobile); ?>
                 <?php } $loop = $viewFactory->getLastLoop(); ?>
@@ -898,7 +899,7 @@ trait HasRecords
                 <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
-                        <?= $this->generateRecordActionsHtml($recordActions); ?>
+                        <?= $this->generateRecordActionsHtml($recordActions, $viewFactory); ?>
                     </td>
                 <?php } ?>
                 <?= $morphMarkerEndHtml; ?>
@@ -917,7 +918,7 @@ trait HasRecords
 
                 <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::AfterCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
-                        <?= $this->generateRecordActionsHtml($recordActions); ?>
+                        <?= $this->generateRecordActionsHtml($recordActions, $viewFactory); ?>
                     </td>
                 <?php } ?>
             </tr>
