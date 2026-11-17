@@ -215,12 +215,12 @@ export default ({ isMenu = true } = {}) => ({
     },
 
     getTriggerContainer() {
-        return this.$el.querySelector(':scope > .fi-dropdown-trigger')
+        return this.$root.querySelector(':scope > .fi-dropdown-trigger')
     },
 
     getTriggers() {
         return Array.from(
-            this.$el.querySelectorAll(
+            this.$root.querySelectorAll(
                 ':scope > .fi-dropdown-trigger button, :scope > .fi-dropdown-trigger a, :scope > .fi-dropdown-trigger [tabindex]',
             ),
         )
@@ -355,16 +355,13 @@ export default ({ isMenu = true } = {}) => ({
             this.activeMenuItem = null
         }
 
-        this.setAttributeIfChanged(
-            trigger,
-            'aria-haspopup',
-            this.isMenu ? 'menu' : 'true',
-        )
-
         if (this.isMenu) {
+            this.setAttributeIfChanged(trigger, 'aria-haspopup', 'menu')
             this.triggerId = this.getTriggerId(trigger)
             this.setAttributeIfChanged(panel, 'role', 'menu')
             this.setAttributeIfChanged(panel, 'aria-labelledby', this.triggerId)
+        } else {
+            trigger.removeAttribute('aria-haspopup')
         }
 
         this.setAttributeIfChanged(trigger, 'aria-controls', this.panelId)
@@ -376,7 +373,7 @@ export default ({ isMenu = true } = {}) => ({
 
         // The floating UI plugin also writes `aria-expanded` onto the non-focusable
         // `.fi-dropdown-trigger` wrapper; remove it so the state only lives on the real control.
-        this.$el
+        this.$root
             .querySelector(':scope > .fi-dropdown-trigger')
             ?.removeAttribute('aria-expanded')
 
@@ -425,7 +422,7 @@ export default ({ isMenu = true } = {}) => ({
                 item.setAttribute('role', 'menuitem')
             }
 
-            item.setAttribute('tabindex', '-1')
+            this.setAttributeIfChanged(item, 'tabindex', '-1')
 
             if (item.hasAttribute('disabled')) {
                 item.setAttribute('aria-disabled', 'true')
@@ -503,7 +500,9 @@ export default ({ isMenu = true } = {}) => ({
         }
 
         const panel = this.$refs.panel
-        const trigger = this.$el.querySelector(':scope > .fi-dropdown-trigger')
+        const trigger = this.$root.querySelector(
+            ':scope > .fi-dropdown-trigger',
+        )
         const isFromTrigger = trigger?.contains(event.target)
 
         if (

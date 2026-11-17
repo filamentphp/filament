@@ -64,9 +64,8 @@ In this example, all ratings in the table will be added together and divided by 
 
 <AutoScreenshot name="tables/summaries/average" alt="Table with average summary" />
 
-<Aside variant="info">
-    On SQL Server, an average summary's custom [`query()`](#scoping-the-dataset) cannot combine `distinct()` with `union()`, `unionAll()`, or `having()` on the same summary query. These combinations throw a `LogicException`. You may use these operations separately, or combine them within the table's source query before Filament builds the summary query.
-</Aside>
+> [!NOTE]
+> On SQL Server, an average summary's custom [`query()`](#scoping-the-dataset) cannot combine `distinct()` with `union()`, `unionAll()`, or `having()` on the same summary query. These combinations throw a `LogicException`. You may use these operations separately, or combine them within the table's source query before Filament builds the summary query.
 
 ## Count
 

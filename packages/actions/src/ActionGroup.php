@@ -49,7 +49,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }
-    use Concerns\CanBeLabeledFrom;
+    use Concerns\CanBeLabeledFromBreakpoint;
     use Concerns\CanBeOutlined;
     use Concerns\HasDropdown;
     use Concerns\HasGroupedIcon;
@@ -547,10 +547,11 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-ref="panel"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
+                role="menu"
                 <?= $panelAttributes->toHtml() ?>
             >
                 <?php foreach ($actionLists as $actions) { ?>
-                    <div class="fi-dropdown-list">
+                    <div class="fi-dropdown-list" role="group">
                         <?php foreach ($actions as $action) { ?>
                             <?= $action->toHtml() ?>
                         <?php } ?>
@@ -610,6 +611,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->evaluate($this->defaultTriggerView);
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function toTriggerHtml(): string
     {
         return match ($this->getTriggerView()) {
@@ -622,6 +626,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         };
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toBadgeTriggerHtml(): string
     {
         return $this->generateBadgeHtml(
@@ -639,6 +646,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toButtonTriggerHtml(): string
     {
         return $this->generateButtonHtml(
@@ -661,6 +671,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toGroupedTriggerHtml(): string
     {
         return $this->generateDropdownItemHtml(
@@ -679,6 +692,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toIconButtonTriggerHtml(): string
     {
         return $this->generateIconButtonHtml(
@@ -697,6 +713,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toLinkTriggerHtml(): string
     {
         return $this->generateLinkHtml(
@@ -717,6 +736,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function renderTrigger(): View
     {
         return view(
@@ -745,10 +767,18 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $this->actions,
         );
 
-        $this->flatActions = array_map(
-            fn (Action $action): Action => $action->getClone()->group($this),
-            $this->flatActions,
-        );
+        $this->flatActions = [];
+
+        foreach ($this->actions as $action) {
+            if ($action instanceof ActionGroup) {
+                $this->flatActions = [
+                    ...$this->flatActions,
+                    ...$action->getFlatActions(),
+                ];
+            } else {
+                $this->flatActions[$action->getName()] = $action;
+            }
+        }
     }
 
     /**

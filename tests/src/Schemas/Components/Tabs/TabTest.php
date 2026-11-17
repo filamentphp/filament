@@ -282,8 +282,8 @@ describe('icon position', function (): void {
     });
 });
 
-describe('deferred badge', function (): void {
-    it('defaults `isBadgeDeferred()` to `false`', function (): void {
+describe('lazy-loaded badges', function (): void {
+    it('defaults `isBadgeLazyLoaded()` and its deprecated alias to `false`', function (): void {
         $tab = Tab::make('Test');
 
         expect($tab->isBadgeDeferred())->toBeFalse()

@@ -4,15 +4,18 @@ use Composer\InstalledVersions;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Panel;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Table;
 use Filament\Upgrade\Rector;
 use Filament\Upgrade\Rector\AddTraitByTraitRector;
@@ -37,6 +40,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
         [
+            'Filament\\Actions\\Concerns\\CanBeLabeledFrom' => 'Filament\\Actions\\Concerns\\CanBeLabeledFromBreakpoint',
+            'Filament\\Support\\Concerns\\CanBeLazy' => 'Filament\\Support\\Concerns\\CanBeLazyLoaded',
+            'Filament\\Tables\\Filters\\Concerns\\HasSchema' => 'Filament\\Tables\\Filters\\Concerns\\HasForm',
+            'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersSchema' => 'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersForm',
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
             'Filament\\Pages\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\BelongsToManyCheckboxList' => 'Filament\\Forms\\Components\\CheckboxList',
@@ -312,13 +319,16 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
+        new MethodCallRename(Panel::class, 'getResetPasswordRoutePrefix', 'getPasswordResetRoutePrefix'),
+        new MethodCallRename(EmailAuthentication::class, 'generateCodesUsing', 'generateCodeUsing'),
+        new MethodCallRename(FileUpload::class, 'isSvgEditingConfirmed', 'shouldConfirmSvgEditing'),
+        new MethodCallRename(MentionProvider::class, 'getChar', 'getTriggerCharacter'),
         new MethodCallRename(Action::class, 'infolist', 'schema'),
         new MethodCallRename(Action::class, 'form', 'schema'),
         new MethodCallRename(Action::class, 'mutateFormDataUsing', 'mutateDataUsing'),
         new MethodCallRename(Component::class, 'getChildComponents', 'getDefaultChildComponents'),
         new MethodCallRename(Component::class, 'getChildComponentContainer', 'getChildSchema'),
         new MethodCallRename(Component::class, 'getChildComponentContainers', 'getChildSchemas'),
-        new MethodCallRename(BaseFilter::class, 'form', 'schema'),
         new MethodCallRename(Schema::class, 'schema', 'components'),
         new MethodCallRename(FilamentManager::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
         new MethodCallRename(Filament::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),

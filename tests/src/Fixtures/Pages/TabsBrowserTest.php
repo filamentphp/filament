@@ -3,6 +3,8 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Group;
@@ -21,7 +23,7 @@ class TabsBrowserTest extends Page
 
     public ?array $data = [];
 
-    public bool $deferredBadges = false;
+    public bool $hasLazyLoadedBadges = false;
 
     public bool $livewireTabs = false;
 
@@ -47,6 +49,8 @@ class TabsBrowserTest extends Page
 
     public bool $hasNativeValidation = false;
 
+    public bool $showRepeater = false;
+
     public bool $isSaved = false;
 
     public function mount(): void
@@ -57,7 +61,8 @@ class TabsBrowserTest extends Page
         $this->isRightToLeft = request()->boolean('rtl');
         $this->hasDisabledProfileHeader = request()->boolean('disabled-profile');
         $this->hasNativeValidation = request()->boolean('native-validation');
-        $this->deferredBadges = request()->boolean('deferred');
+        $this->showRepeater = request()->boolean('repeater');
+        $this->hasLazyLoadedBadges = request()->boolean('lazy-loaded-badges');
         $this->livewireTabs = request()->boolean('livewire');
         $this->form->fill();
     }
@@ -77,9 +82,9 @@ class TabsBrowserTest extends Page
                             ->id('profile-account')
                             ->extraAttributes(fn (): array => $this->hasDisabledProfileHeader ? ['disabled' => true] : [])
                             ->badge('Available')
-                            ->deferBadge($this->deferredBadges)
+                            ->lazyLoadedBadge($this->hasLazyLoadedBadges)
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
-                            ->extraAttributes(['data-testid' => 'deferred-tab'], merge: true)
+                            ->extraAttributes(['data-testid' => 'lazy-loaded-tab'], merge: true)
                             ->schema([
                                 TextInput::make('username')
                                     ->label('Username')
@@ -94,6 +99,14 @@ class TabsBrowserTest extends Page
                                     ->label('Phone Number')
                                     ->tel()
                                     ->required(fn (): bool => $this->hasNativeValidation),
+                                Repeater::make('items')
+                                    ->visible(fn (): bool => $this->showRepeater)
+                                    ->default(array_map(static fn (int $number): array => ['name' => "Item {$number}"], range(1, 30)))
+                                    ->deleteAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'delete-item']))
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->extraInputAttributes(['data-testid' => 'item-name']),
+                                    ]),
                             ]),
                         Tab::make('Billing')->key('billing')->id('profile-billing')
                             ->visible(fn (): bool => $this->hasDisabledProfileHeader),
@@ -117,7 +130,7 @@ class TabsBrowserTest extends Page
                     ->scrollable(false)
                     ->tabs([
                         Tab::make('Overview and activity')->key('overview'),
-                        Tab::make('Contact information')->key('contact')->badge('12')->deferBadge(),
+                        Tab::make('Contact information')->key('contact')->badge('12')->lazyLoadedBadge(),
                         Tab::make('Billing information')->key('billing'),
                         Tab::make('Security settings')->key('security'),
                         Tab::make('Additional preferences')->key('hidden')->visibleJs('showOverflowChoice'),

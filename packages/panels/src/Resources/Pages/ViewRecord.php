@@ -83,7 +83,7 @@ class ViewRecord extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(static::getResource()::canView($this->getRecord()), 403);
+        static::getResource()::authorizeView($this->getRecord());
     }
 
     #[Unexposed]

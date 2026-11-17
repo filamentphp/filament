@@ -8,9 +8,8 @@ Enums are special PHP classes that represent a fixed set of constants. They are 
 
 Since enum "cases" are instances of the enum class, adding interfaces to enums proves to be very useful. Filament provides a collection of interfaces that you can add to enums, which enhance your experience when working with them.
 
-<Aside variant="warning">
-    When using an enum with an attribute on your Eloquent model, please [ensure that it is cast correctly](https://laravel.com/docs/eloquent-mutators#enum-casting).
-</Aside>
+> [!WARNING]
+> When using an enum with an attribute on your Eloquent model, please [ensure that it is cast correctly](https://laravel.com/docs/eloquent-mutators#enum-casting).
 
 ## Enum labels
 

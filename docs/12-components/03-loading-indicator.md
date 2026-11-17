@@ -50,6 +50,5 @@ class CustomLoadingIndicator implements LoadingIndicator
 
 The attributes already contain the `fi-icon fi-loading-indicator` and size hook classes, so you can forward them directly to your root element.
 
-<Aside variant="warning">
-    The resolved `LoadingIndicator` instance is cached for the lifetime of the PHP process. Under Laravel Octane, this means the binding is only resolved once when the worker boots and will not be re-resolved between requests. Register your binding in a service provider rather than rebinding it at runtime.
-</Aside>
+> [!WARNING]
+> The resolved `LoadingIndicator` instance is cached for the lifetime of the PHP process. Under Laravel Octane, this means the binding is only resolved once when the worker boots and will not be re-resolved between requests. Register your binding in a service provider rather than rebinding it at runtime.

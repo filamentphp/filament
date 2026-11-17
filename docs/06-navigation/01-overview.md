@@ -192,9 +192,8 @@ public static function getNavigationParentItem(): ?string
 
 The parent and child items must belong to the same navigation group. If the parent item has a navigation group, that group must also be defined on the child, otherwise the correct parent item cannot be identified. This applies whether you reference the parent by its class or by its label.
 
-<Aside variant="tip">
-    If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and custom pages, which can share their own separate navigation.
-</Aside>
+> [!TIP]
+> If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and custom pages, which can share their own separate navigation.
 
 ### Customizing navigation groups
 
@@ -419,9 +418,8 @@ public function panel(Panel $panel): Panel
 
 ### Navigation groups in a collapsible sidebar on desktop
 
-<Aside variant="info">
-    This section only applies to `sidebarCollapsibleOnDesktop()`, not `sidebarFullyCollapsibleOnDesktop()`, since the fully collapsible UI just hides the entire sidebar instead of changing its design.
-</Aside>
+> [!NOTE]
+> This section only applies to `sidebarCollapsibleOnDesktop()`, not `sidebarFullyCollapsibleOnDesktop()`, since the fully collapsible UI just hides the entire sidebar instead of changing its design.
 
 When using a collapsible sidebar on desktop, you will also often be using [navigation groups](#grouping-navigation-items). By default, the labels of each navigation group will be hidden when the sidebar is collapsed, since there is no space to display them. Even if the navigation group itself is [collapsible](#making-navigation-groups-not-collapsible), all items will still be visible in the collapsed sidebar, since there is no group label to click on to expand the group.
 
@@ -491,9 +489,8 @@ public static function shouldRegisterNavigation(): bool
 }
 ```
 
-<Aside variant="danger">
-    `shouldRegisterNavigation()` only hides the link from the sidebar — it does not prevent a user from typing the URL directly. To actually restrict access, use [resource authorization](../resources#authorization) or [page authorization](custom-pages#authorization).
-</Aside>
+> [!CAUTION]
+> `shouldRegisterNavigation()` only hides the link from the sidebar — it does not prevent a user from typing the URL directly. To actually restrict access, use [resource authorization](../resources#authorization) or [page authorization](custom-pages#authorization).
 
 ## Using top navigation
 

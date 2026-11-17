@@ -37,6 +37,22 @@ class Range extends Summarizer
         return $this;
     }
 
+    public function limit(int $length = 100, ?string $end = '...'): static
+    {
+        $this->formatStateUsing(static function (?array $state) use ($end, $length): ?array {
+            if (blank($state)) {
+                return null;
+            }
+
+            return array_map(
+                static fn ($value): ?string => blank($value) ? null : Str::limit(strval($value), $length, $end ?? ''),
+                $state,
+            );
+        });
+
+        return $this;
+    }
+
     public function minimalDateTimeDifference(): static
     {
         $this->formatStateUsing(static function (Range $summarizer, array $state): array {
@@ -148,7 +164,7 @@ class Range extends Summarizer
 
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label = $this->getLabel())) { ?>
-                <span class="fi-ta-range-summary-label">
+                <span class="fi-ta-range-summary-label<?= $this->isLabelHidden() ? ' fi-sr-only' : '' ?>">
                     <?= e($label) ?>
                 </span>
             <?php } ?>

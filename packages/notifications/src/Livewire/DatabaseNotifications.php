@@ -144,6 +144,9 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return static::$pollingInterval;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     #[Unexposed]
     public function getTrigger(): ?View
     {

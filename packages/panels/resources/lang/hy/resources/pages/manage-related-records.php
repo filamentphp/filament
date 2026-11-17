@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'Խմբագրել :label :relationship',
+    'title' => 'Կառավարել :label :relationship',
 
 ];

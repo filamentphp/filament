@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
@@ -20,9 +21,14 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\VarLikeIdentifier;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Rector\Reflection\ClassReflectionAnalyzer;
 
 class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
 {
+    public function __construct(
+        private ClassReflectionAnalyzer $classReflectionAnalyzer,
+    ) {}
+
     /**
      * @return array<array{
      *     class: class-string | array<class-string>,
@@ -98,7 +104,7 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
 
         foreach ($this->getChanges() as $change) {
             foreach ((is_array($change['class']) ? $change['class'] : [$change['class']]) as $class) {
-                if (! $this->isObjectType($node->expr->var->class, new ObjectType($class))) {
+                if (! $this->isObjectTypeIncludingRenamedParents($node->expr->var->class, new ObjectType($class))) {
                     continue;
                 }
 
@@ -107,28 +113,37 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
                         continue;
                     }
 
+                    // Evaluate the RHS in its original scope, then capture its value without introducing a local variable.
                     $node->expr = new StaticCall(
                         class: $node->expr->var->class,
                         name: new Identifier('configureUsing'),
                         args: [
                             new Arg(
-                                value: new ArrowFunction(
-                                    subNodes: [
-                                        'params' => [
-                                            new Param(
-                                                var: new Variable(lcfirst(class_basename($node->expr->var->class->toCodeString()))),
-                                                type: $node->expr->var->class,
+                                value: new FuncCall(
+                                    name: new ArrowFunction(
+                                        subNodes: [
+                                            'static' => true,
+                                            'params' => [new Param(var: new Variable('value'))],
+                                            'expr' => new ArrowFunction(
+                                                subNodes: [
+                                                    'static' => true,
+                                                    'params' => [
+                                                        new Param(
+                                                            var: new Variable('component'),
+                                                            type: new FullyQualified($node->expr->var->class->toString()),
+                                                        ),
+                                                    ],
+                                                    'expr' => new MethodCall(
+                                                        var: new Variable('component'),
+                                                        name: new Identifier($node->expr->var->name->toString()),
+                                                        args: [new Arg(value: new Variable('value'))],
+                                                    ),
+                                                ],
                                             ),
                                         ],
-                                        'expr' => new MethodCall(
-                                            var: new Variable(lcfirst(class_basename($node->expr->var->class->toCodeString()))),
-                                            name: new Identifier($node->expr->var->name->toString()),
-                                            args: [
-                                                new Arg(
-                                                    value: $node->expr->expr,
-                                                ),
-                                            ],
-                                        ),
+                                    ),
+                                    args: [
+                                        new Arg(value: $node->expr->expr),
                                     ],
                                 ),
                             ),
@@ -139,5 +154,31 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
                 }
             }
         }
+
+        return null;
+    }
+
+    private function isObjectTypeIncludingRenamedParents(FullyQualified $name, ObjectType $requiredType): bool
+    {
+        if ($this->isObjectType($name, $requiredType)) {
+            return true;
+        }
+
+        $type = $this->getType($name);
+
+        if (! ($type instanceof ObjectType)) {
+            return false;
+        }
+
+        // PHPStan may omit a removed v3 parent from the analysed ancestry before Rector's renames are applied.
+        foreach ($type->getClassReflection()?->getAncestors() ?? [] as $ancestor) {
+            $parentClassName = $this->classReflectionAnalyzer->resolveParentClassName($ancestor);
+
+            if (($parentClassName !== null) && $this->isObjectType(new FullyQualified($parentClassName), $requiredType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
