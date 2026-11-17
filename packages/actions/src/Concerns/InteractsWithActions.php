@@ -142,11 +142,15 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                     })"
             style="height: 0"
         >
+            <?= $this->generateMorphMarkerHtml(); ?>
             <?php foreach ($this->iterateRenderLoop($mountedActions) as $action) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
                 <?php if ((++$mountedActionIndex < $mountedActionsCount) || $this->mountedActionShouldOpenModal()) { ?>
                     <?= e($action->toModalHtmlable()) ?>
                 <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
             <?php } ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         </div>
 
         <?php if ($this->shouldMountDefaultActions()) { ?>
