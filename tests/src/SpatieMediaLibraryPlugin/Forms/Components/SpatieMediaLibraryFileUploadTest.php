@@ -596,9 +596,11 @@ describe('reordering', function (): void {
         $record = MediaPost::factory()->create();
         $firstMedia = $record->addMediaFromString('first-file')
             ->usingFileName('first.txt')
+            ->withProperties(['order_column' => 1])
             ->toMediaCollection('avatars');
         $secondMedia = $record->addMediaFromString('second-file')
             ->usingFileName('second.txt')
+            ->withProperties(['order_column' => 2])
             ->toMediaCollection('avatars');
 
         $isReorderable = false;

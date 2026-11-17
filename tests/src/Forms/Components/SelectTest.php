@@ -1442,9 +1442,9 @@ describe('`BelongsToMany` relationship', function (): void {
         expect($user->teams)->toHaveCount(3);
 
         livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
-            ->assertSchemaStateSet([
-                'teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all(),
-            ]);
+            ->assertSchemaStateSet(function (array $state) use ($teams): void {
+                expect($state['teams'])->toEqualCanonicalizing($teams->pluck('id')->map(strval(...))->all());
+            });
     });
 
     it('can save `BelongsToMany` relationship as multiple select', function (): void {
@@ -1492,7 +1492,7 @@ describe('`BelongsToMany` relationship', function (): void {
 
         livewire(TestComponentWithBelongsToManySelect::class, ['record' => $user])
             ->assertSchemaStateSet([
-                'teams' => (string) $teams->first()->id,
+                'teams' => (string) $user->teams->first()->getKey(),
             ]);
     });
 
