@@ -7,6 +7,7 @@ export default function createJsRenderer({
     getProps,
     onError,
     onFailure,
+    onReady = () => {},
     onDestroy = () => {},
 }) {
     let instance
@@ -59,7 +60,10 @@ export default function createJsRenderer({
         async init() {
             let phase = typeof renderer === 'string' ? 'import' : 'mount'
             try {
-                if (!renderer) return
+                if (!renderer) {
+                    onReady()
+                    return
+                }
                 const mount =
                     typeof renderer === 'string'
                         ? (await import(new URL(renderer, getBaseUrl()).href))
@@ -92,6 +96,8 @@ export default function createJsRenderer({
 
                 instance = mounted
                 update()
+
+                if (!destroyed) onReady()
             } catch (error) {
                 fail(phase, error)
             }

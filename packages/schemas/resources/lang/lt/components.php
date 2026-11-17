@@ -2,10 +2,6 @@
 
 return [
 
-    'js_component' => [
-        'failed_to_load' => 'Šio komponento įkelti nepavyko. Įkelkite puslapį iš naujo ir bandykite dar kartą.',
-    ],
-
     'callout' => [
 
         'statuses' => [

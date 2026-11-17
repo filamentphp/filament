@@ -30,7 +30,7 @@ class JsWidgetBrowserTest extends Page
     public function mount(): void
     {
         $this->framework = request('framework', 'js');
-        abort_unless(in_array($this->framework, ['js', 'js-ts', 'react', 'react-ts', 'vue', 'vue-ts', 'svelte', 'svelte-ts', 'inline', 'broken']), 404);
+        abort_unless(in_array($this->framework, ['js', 'js-ts', 'react', 'react-ts', 'vue', 'vue-ts', 'svelte', 'svelte-ts', 'inline', 'broken', 'pending']), 404);
     }
 
     public function filtersForm(Schema $schema): Schema

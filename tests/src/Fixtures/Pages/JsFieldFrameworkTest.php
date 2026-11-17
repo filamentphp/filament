@@ -46,7 +46,7 @@ class JsFieldFrameworkTest extends Page
     {
         $this->framework = request('framework', 'react');
         abort_unless(in_array($this->framework, request('scenario') === 'generated'
-            ? ['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts']
+            ? ['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts', 'pending']
             : ['react', 'vue', 'svelte']), 404);
         $this->mounted = ! request()->boolean('unmounted');
         $this->blurIsLive = ! request()->boolean('deferredBlur');
@@ -114,10 +114,11 @@ class JsFieldFrameworkTest extends Page
             return $schema->statePath('data')->components([
                 JsField::make('live')->label('Display name')->live()->required()
                     ->helperText('Enter the name shown on your profile.')
-                    ->renderer(FilamentAsset::getScriptSrc('field-' . $this->framework, 'tests/js-field-starters'))
+                    ->loadingPlaceholder($this->framework === 'pending' ? view('loading-placeholder', ['label' => 'Preparing display name']) : null)
+                    ->renderer($this->framework === 'pending' ? '/pending-js-renderer.js' : FilamentAsset::getScriptSrc('field-' . $this->framework, 'tests/js-field-starters'))
                     ->disabled(fn (): bool => $this->locked),
                 JsField::make('blur')->label('Reference')->live(onBlur: true)
-                    ->renderer(FilamentAsset::getScriptSrc('field-' . $this->framework, 'tests/js-field-starters'))
+                    ->renderer($this->framework === 'pending' ? '/pending-js-renderer.js' : FilamentAsset::getScriptSrc('field-' . $this->framework, 'tests/js-field-starters'))
                     ->readOnly(fn (): bool => $this->locked),
             ]);
         }

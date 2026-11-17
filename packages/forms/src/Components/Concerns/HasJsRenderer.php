@@ -2,13 +2,18 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Icons\Heroicon;
 use Filament\Support\RawJs;
 use Illuminate\Support\Js;
+
+use function Filament\Support\generate_icon_html;
 
 trait HasJsRenderer
 {
     use CanBeReadOnly;
+    use HasLoadingPlaceholder;
 
     abstract public function getRenderer(): string | RawJs | null;
 
@@ -47,12 +52,18 @@ trait HasJsRenderer
             'debounce' => $isLiveOnBlur ? null : $debounce,
         ];
 
+        $key = $this->getLivewireKey() . '.' . md5(json_encode($bindingConfiguration) . $renderer);
+
         // Keep `x-data` stable when props change. Only the keyed props node is
         // replaced, so its `x-init` updates the renderer without remounting it.
         ob_start(); ?>
 
         <div
-            wire:key="<?= e($this->getLivewireKey() . '.' . md5(json_encode($bindingConfiguration) . $renderer)) ?>"
+            wire:key="<?= e($key) ?>"
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('js-field', 'filament/forms')) ?>"
             x-data="jsFieldFormComponent({
@@ -64,7 +75,7 @@ trait HasJsRenderer
                             ...JSON.parse($el.querySelector('[data-renderer-configuration]').dataset.fieldConfiguration),
                         },
                     })"
-            <?= $this->getExtraAttributeBag()->toHtml() ?>
+            <?= $this->getExtraAttributeBag()->class(['fi-async-component-content'])->toHtml() ?>
         >
             <span
                 hidden
@@ -74,11 +85,12 @@ trait HasJsRenderer
                 x-init="updateRendererConfiguration(JSON.parse($el.dataset.rendererConfiguration), JSON.parse($el.dataset.fieldConfiguration))"
             ></span>
             <div wire:ignore x-ref="host"></div>
-            <p x-cloak x-show="hasError" role="alert" class="fi-fo-field-wrp-error-message">
-                <?= e(__('filament-forms::components.js_field.failed_to_load')) ?>
+            <p x-cloak x-show="hasError" role="alert" class="fi-fo-field-wrp-error-message fi-async-component-error">
+                <?= generate_icon_html(Heroicon::ExclamationCircle, size: IconSize::Small)->toHtml() ?>
+                <span><?= e(__('filament::loading.error')) ?></span>
             </p>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml($this->wrapAsyncComponentHtml(ob_get_clean(), key: $key));
     }
 }

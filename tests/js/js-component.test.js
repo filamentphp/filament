@@ -13,6 +13,7 @@ function fixture(renderer) {
         },
     })
     component.$refs = { host: { replaceChildren() {} } }
+    component.$dispatch = () => {}
     component.$el = { ownerDocument: { baseURI: 'https://example.test/' } }
     return component
 }

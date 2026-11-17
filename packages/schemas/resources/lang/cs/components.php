@@ -2,10 +2,6 @@
 
 return [
 
-    'js_component' => [
-        'failed_to_load' => 'Tuto komponentu se nepodařilo načíst. Pro nový pokus obnovte stránku.',
-    ],
-
     'callout' => [
 
         'statuses' => [

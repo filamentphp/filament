@@ -2,6 +2,8 @@
 
 use Filament\Tests\Fixtures\Widgets\JsWidget;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 
 use function Filament\Tests\livewire;
 
@@ -22,6 +24,20 @@ it('renders JavaScript widgets without a custom Blade view and synchronizes `get
 
     expect($initialRendererKey[1])->toBe($updatedRendererKey[1]);
     expect($initialConfigurationKey[1])->not->toBe($updatedConfigurationKey[1]);
+});
+
+it('renders the `getLoadingPlaceholder()` override in the JavaScript widget view', function (): void {
+    $widget = new class extends JsWidget
+    {
+        public function getLoadingPlaceholder(): View | Htmlable | null
+        {
+            return view('loading-placeholder', ['label' => 'Widget <loading>']);
+        }
+    };
+
+    livewire($widget::class, ['framework' => 'inline'])
+        ->assertSeeHtml('data-testid="custom-loading-placeholder"')
+        ->assertSeeHtml('Widget &lt;loading&gt;');
 });
 
 it('honors a custom `$view` on a JavaScript widget', function (): void {

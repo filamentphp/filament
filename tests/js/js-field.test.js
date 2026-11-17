@@ -23,6 +23,7 @@ async function fixture(fieldConfiguration = {}, renderer) {
             }),
     })
     field.$refs = { host: {} }
+    field.$dispatch = () => {}
     field.$el = { ownerDocument: { baseURI: 'https://example.test/form' } }
     field.$wire = { $commit: () => commits++ }
     field.$watch = (key, callback) => {
@@ -262,6 +263,7 @@ test('passes through schema utilities and reads current scope state', async () =
     field.$statePath = 'data.items.first.title'
     field.$state = 'Initial'
     field.$refs = { host: {} }
+    field.$dispatch = () => {}
     field.$watch = () => {}
     await field.init()
 
@@ -317,6 +319,7 @@ test('binds component calls to the schema key and preserves `$wire`, promises an
     )
     field.$statePath = 'data.items.second.title'
     field.$refs = { host: {} }
+    field.$dispatch = () => {}
     field.$watch = () => {}
     await field.init()
     assert.equal(utilities.$wire, field.$wire)
@@ -364,6 +367,7 @@ test('updates renderer configuration without remounting or mutating state, inclu
         },
     })
     field.$refs = { host: {} }
+    field.$dispatch = () => {}
     field.$watch = () => {}
     const initialization = field.init()
     const next = { price: 18, isDisabled: true, value: 'Not field state' }
@@ -404,6 +408,7 @@ test('reports initialization failure with field context without losing state', a
         renderer,
     })
     field.$el = { ownerDocument: { baseURI: 'https://example.test/' } }
+    field.$dispatch = () => {}
     field.$refs = {
         host: {
             replaceChildren: () => {

@@ -2,10 +2,6 @@
 
 return [
 
-    'js_component' => [
-        'failed_to_load' => 'Komponen ini tidak dapat dimuat. Silakan muat ulang halaman untuk mencoba lagi.',
-    ],
-
     'callout' => [
 
         'statuses' => [

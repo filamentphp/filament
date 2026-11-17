@@ -37,7 +37,7 @@ class JsComponentBrowserTest extends Page
     {
         $this->framework = request('framework', 'js');
         $this->showUtilities = request()->boolean('utilities');
-        abort_unless(in_array($this->framework, ['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts']), 404);
+        abort_unless(in_array($this->framework, ['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts', 'pending']), 404);
         $this->form->fill(['caption' => 'Quarterly sales']);
     }
 
@@ -51,12 +51,13 @@ class JsComponentBrowserTest extends Page
         return $schema->statePath('data')->components([
             TextInput::make('caption')->live(),
             JsComponent::make()->key('report')
-                ->renderer($this->failed ? RawJs::make('() => { throw new Error("Expected test failure") }') : FilamentAsset::getScriptSrc('component-' . $this->framework, 'tests/js-components'))
+                ->loadingPlaceholder($this->framework === 'pending' ? view('loading-placeholder', ['label' => 'Preparing sales report']) : null)
+                ->renderer($this->failed ? RawJs::make('() => { throw new Error("Expected test failure") }') : ($this->framework === 'pending' ? '/pending-js-renderer.js' : FilamentAsset::getScriptSrc('component-' . $this->framework, 'tests/js-components')))
                 ->rendererConfiguration(fn (Get $get): array => $this->cleared ? [] : ['message' => $get('caption')])
                 ->extraAttributes(['data-report' => 'true'])
                 ->schema([Text::make('This child must not render')]),
             JsComponent::make()->key('comparison')
-                ->renderer(FilamentAsset::getScriptSrc('component-' . $this->framework, 'tests/js-components'))
+                ->renderer($this->framework === 'pending' ? '/pending-js-renderer.js' : FilamentAsset::getScriptSrc('component-' . $this->framework, 'tests/js-components'))
                 ->rendererConfiguration(['message' => 'Previous quarter'])
                 ->extraAttributes(['data-comparison' => 'true']),
             JsComponentWithExposedMethod::make()->key('utilities')
