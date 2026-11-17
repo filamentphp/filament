@@ -1076,8 +1076,8 @@ describe('editable columns', function (): void {
         $ticket = Ticket::factory()->create();
         $department = Department::factory()->create();
 
-        $ticket->departments()->attach($department, ['id' => 10, 'price' => 100]);
-        $ticket->departments()->attach($department, ['id' => 20, 'price' => 0]);
+        $ticket->departments()->attach($department, ['price' => 100]);
+        $ticket->departments()->attach($department, ['price' => 0]);
 
         $livewire = livewire(DepartmentsRelationManagerWithEditableColumns::class, [
             'ownerRecord' => $ticket,

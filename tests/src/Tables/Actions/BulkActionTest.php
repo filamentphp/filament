@@ -1037,7 +1037,7 @@ describe('selectable records query', function (): void {
     it('counts selectable records in a grouped base query', function (): void {
         Table::configureUsing(
             static fn (Table $table): Table => $table->modifyQueryUsing(
-                static fn (Builder $query): Builder => $query->groupBy('posts.id'),
+                static fn (Builder $query): Builder => $query->select('posts.id')->groupBy('posts.id'),
             ),
             during: function (): void {
                 $component = livewire(QuerySelectablePostsTable::class)->instance();
@@ -1125,7 +1125,7 @@ describe('selectable records query', function (): void {
     });
 
     it('does not apply the base query offset twice when checking visible records', function (bool $shouldUseGlobalScope): void {
-        $scope = static fn (Builder $query): Builder => $query->orderBy('id')->offset(1)->limit(4);
+        $scope = static fn (Builder $query): Builder => $query->reorder('posts.id')->offset(1)->limit(4);
 
         Table::configureUsing(
             static fn (Table $table): Table => $table->paginated(false)->modifyQueryUsing(
