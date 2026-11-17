@@ -109,9 +109,7 @@
             {{ $prefixIconHtml }}
 
             @if ($hasLoadingIndicator)
-                {{
-                    \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag)->color(IconComponent::class, 'gray'))
-                }}
+                {{ \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag)->color(IconComponent::class, 'gray')) }}
             @endif
 
             @if (filled($prefix))
