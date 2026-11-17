@@ -1145,7 +1145,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 ImageColumn::make('colleagues')
                     ->circular()
                     ->stacked()
-                    ->overlap(2),
+                    ->overlap(4),
             ]);
     }
 

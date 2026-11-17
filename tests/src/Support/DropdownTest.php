@@ -16,7 +16,7 @@ it('uses menu behavior by default and supports opting out', function (): void {
     $disabledItem = '[data-testid="menu-dropdown-disabled-item"]';
     $lastItem = '[data-testid="menu-dropdown-last-item"]';
 
-    visit('/dropdown-test')
+    visit('/dropdown-browser-test')
         ->assertAttribute($trigger, 'aria-haspopup', 'menu')
         ->assertAttributeMissing('[data-testid="dropdown-trigger"]', 'aria-haspopup')
         ->keys($trigger, 'Enter')
@@ -57,7 +57,7 @@ it('keeps an opted-out popup open when closing a nested menu', function (): void
 
     $this->actingAs(User::factory()->create());
 
-    visit('/dropdown-test')
+    visit('/dropdown-browser-test')
         ->click('[data-testid="dropdown-trigger"]')
         ->assertVisible('[data-testid="nested-menu-trigger"]')
         ->keys('[data-testid="nested-menu-trigger"]', 'Enter')
@@ -75,7 +75,7 @@ it('closes nested form controls before their dropdown on `Escape`', function ():
 
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/dropdown-test');
+    $page = visit('/dropdown-browser-test');
 
     $select = 'button[aria-haspopup="listbox"]';
     $search = 'input[role="combobox"]:not([aria-haspopup="dialog"])';
@@ -131,7 +131,7 @@ it('keeps `aria-expanded` in sync with the panel after a Livewire request', func
 
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/dropdown-test');
+    $page = visit('/dropdown-browser-test');
 
     $page
         ->click('[data-testid="refresh"]')
@@ -150,7 +150,7 @@ it('only closes the owning dynamically mounted dropdown on `Escape`', function (
 
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/dropdown-test');
+    $page = visit('/dropdown-browser-test');
 
     $page
         ->click('[data-testid="dropdown-trigger"]')
@@ -181,7 +181,7 @@ it('closes nested dropdowns when their parent closes', function (): void {
 
     $this->actingAs(User::factory()->create());
 
-    visit('/dropdown-test')
+    visit('/dropdown-browser-test')
         ->click('[data-testid="dropdown-trigger"]')
         ->click('[data-testid="show-secondary-dropdown"]')
         ->assertVisible('[data-testid="secondary-dropdown-trigger"]')
@@ -209,7 +209,7 @@ it('closes a rich editor toolbar menu before its dropdown on `Escape`', function
 
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/dropdown-test');
+    $page = visit('/dropdown-browser-test');
 
     $content = '[data-testid="rich-editor-content"]';
     $trigger = '[data-rich-editor-tool="Headings"]';

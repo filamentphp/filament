@@ -9,17 +9,21 @@ use Illuminate\Support\Arr;
 
 trait CanUpdateState
 {
-    // Security: Inline editable columns (`ToggleColumn`, `TextInputColumn`,
-    // `SelectColumn`, `CheckboxColumn`) do not automatically check Laravel
-    // Model Policies before saving. Only the `disabled()` state is
-    // checked. Use `disabled()` with a closure, or use a full edit
-    // page / modal action where resource authorization is enforced.
+    // Security: Inline editing requires explicit `authorize()` configuration
+    // to restrict access, even in strict authorization mode.
 
     protected ?Closure $updateStateUsing = null;
 
     protected ?Closure $beforeStateUpdated = null;
 
     protected ?Closure $afterStateUpdated = null;
+
+    protected bool | Closure $isPartiallyRenderedAfterStateUpdated = false;
+
+    /**
+     * @var array<string>
+     */
+    protected array $columnsToPartiallyRenderAfterStateUpdated = [];
 
     public function updateStateUsing(?Closure $callback): static
     {
@@ -40,6 +44,52 @@ trait CanUpdateState
         $this->afterStateUpdated = $callback;
 
         return $this;
+    }
+
+    public function partiallyRenderAfterStateUpdated(bool | Closure $condition = true): static
+    {
+        $this->isPartiallyRenderedAfterStateUpdated = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string>  $columns
+     */
+    public function partiallyRenderColumnsAfterStateUpdated(array $columns): static
+    {
+        $this->columnsToPartiallyRenderAfterStateUpdated = $columns;
+
+        return $this;
+    }
+
+    public function isPartiallyRenderedAfterStateUpdated(): bool
+    {
+        return (bool) $this->evaluate($this->isPartiallyRenderedAfterStateUpdated);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getColumnsToPartiallyRenderAfterStateUpdated(): array
+    {
+        return $this->columnsToPartiallyRenderAfterStateUpdated;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPartiallyRenderableColumnNamesAfterStateUpdated(): array
+    {
+        if (filled($this->columnsToPartiallyRenderAfterStateUpdated)) {
+            return [$this->getName(), ...$this->columnsToPartiallyRenderAfterStateUpdated];
+        }
+
+        if ($this->isPartiallyRenderedAfterStateUpdated === false) {
+            return [];
+        }
+
+        return [$this->getName()];
     }
 
     /**

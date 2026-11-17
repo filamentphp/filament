@@ -1,5 +1,4 @@
 @php
-    use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Actions\BulkAction;
     use Filament\Actions\BulkActionGroup;
@@ -45,6 +44,7 @@
     $isSelectionDisabled = $isSelectionDisabled();
     $maxSelectableRecords = $getMaxSelectableRecords();
     $columns = $getVisibleColumns();
+    $partiallyRenderableColumnNames = $getPartiallyRenderableColumnNames();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
     $content = $getContent();
@@ -228,7 +228,7 @@
 
 <div
     @if (! $isLoaded)
-        wire:init="loadTable"
+        x-intersect.once="$wire.loadTable()"
     @endif
     x-data="filamentTable({
                 areGroupsCollapsedByDefault: @js($areGroupsCollapsedByDefault),
@@ -1951,21 +1951,18 @@
                                                         @endif
 
                                                         {{
+                                                            \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                                                                'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => 'fi-loading',
+                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                            ]))
+                                                        }}
+
+                                                        {{
                                                             \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? Heroicon::ChevronUp : Heroicon::ChevronDown, alias: match (true) {
                                                                 $isColumnActivelySorted && ($sortDirection === 'asc') => TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
                                                                 $isColumnActivelySorted && ($sortDirection === 'desc') => TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                                                                 default => TablesIconAlias::HEADER_CELL_SORT_BUTTON,
-                                                            }, attributes: (new Filament\Support\View\ComponentAttributeBag([
-                                                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
-                                                                'wire:target' => "sortTable('{$columnName}')",
-                                                            ])))
-                                                        }}
-
-                                                        {{
-                                                            \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
-                                                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                                                'wire:target' => "sortTable('{$columnName}')",
-                                                            ]))
+                                                            })
                                                         }}
                                                     </{{ $columnSortControlTag }}>
                                                 @else
@@ -2559,59 +2556,18 @@
                                                         $column->record($record);
                                                         $column->rowLoop($loop->parent);
                                                         $column->recordKey($recordKey);
-
-                                                        $columnAction = $column->getAction();
-                                                        $columnUrl = $column->getUrl();
-                                                        $columnHasStateBasedUrls = $column->hasStateBasedUrls();
-                                                        $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
-
-                                                        $columnWrapperTag = match (true) {
-                                                            ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
-                                                            ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
-                                                            default => 'div',
-                                                        };
-
-                                                        if ($columnWrapperTag === 'button') {
-                                                            if ($columnAction instanceof Action) {
-                                                                $columnWireClickAction = "mountAction('{$columnAction->getName()}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
-                                                            } elseif ($columnAction) {
-                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', " . Js::from($recordKey) . ')';
-                                                            } else {
-                                                                if ($this->getTable()->getAction($recordAction)) {
-                                                                    $columnWireClickAction = "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
-                                                                } else {
-                                                                    $columnWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
-                                                                }
-                                                            }
-                                                        }
                                                     @endphp
 
-                                                    <td
-                                                        wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                                        {!! $column->getCachedCellAttributeHtml() !!}
-                                                    >
-                                                        {!! $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' !!}
-                                                        <{{ $columnWrapperTag }}
-                                                            @if ($columnWrapperTag === 'a')
-                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
-                                                                @if (blank($columnUrl) && filled($recordUrl))
-                                                                    {{ $getExtraRecordLinkAttributeBag($record) }}
-                                                                @endif
-                                                            @elseif ($columnWrapperTag === 'button')
-                                                                type="button"
-                                                                wire:click.prevent.stop="{{ $columnWireClickAction }}"
-                                                                wire:loading.attr="disabled"
-                                                                wire:target="{{ $columnWireClickAction }}"
-                                                            @endif
-                                                            @class([
-                                                                'fi-ta-col',
-                                                                'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
-                                                            ])
-                                                        >
-                                                            {{ $column }}
-                                                        </{{ $columnWrapperTag }}>
-                                                        {!! $isStackedOnMobile ? '</div>' : '' !!}
-                                                    </td>
+                                                    {{
+                                                        $column->renderInTableCell(
+                                                            recordAction: $recordAction,
+                                                            recordUrl: $recordUrl,
+                                                            shouldOpenRecordUrlInNewTab: $openRecordUrlInNewTab,
+                                                            isPartiallyRenderable: array_key_exists($column->getName(), $partiallyRenderableColumnNames),
+                                                            isReordering: $isReordering,
+                                                            isStackedOnMobile: $isStackedOnMobile,
+                                                        )
+                                                    }}
                                                 @endforeach
 
                                                 @if ($hasRecordActionsForAnyRecord && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
@@ -2753,11 +2709,22 @@
                             aria-live="polite"
                             class="fi-ta-table-loading-ctn"
                         >
-                            {{ \Filament\Support\generate_loading_indicator_html(size: IconSize::TwoExtraLarge) }}
-
                             <span class="fi-sr-only">
                                 {{ __('filament-tables::table.loading') }}
                             </span>
+
+                            <div
+                                aria-hidden="true"
+                                class="fi-loading-placeholder-content"
+                            >
+                                @if (($loadingPlaceholder = $getLoadingPlaceholder()) !== null)
+                                    {{ $loadingPlaceholder }}
+                                @else
+                                    <x-filament::loading-placeholder
+                                        :loading-label="__('filament-tables::table.loading')"
+                                    />
+                                @endif
+                            </div>
                         </div>
                     @endif
                 </div>

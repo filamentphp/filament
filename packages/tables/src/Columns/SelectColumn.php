@@ -42,12 +42,11 @@ use function Filament\Support\get_query_orders;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
-    // Security: This column saves directly without checking Laravel
-    // Model Policies. Use `disabled()` to restrict editing
-    // based on your own authorization logic.
+    // Security: Authorization is opt-in. Use `authorize()` to restrict editing.
 
     use CanDisableOptions;
     use CanSelectPlaceholder;
+    use Concerns\CanBeAuthorized;
     use Concerns\CanBeValidated {
         getRules as getBaseRules;
     }

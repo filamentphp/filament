@@ -1440,6 +1440,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<Block>  $blocks
      * @param  array<string, ?int> | int | null  $columns
      */
@@ -1613,7 +1615,9 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'x-on:click' => 'close',
                                         'wire:click' => $wireClick,
                                         'type' => 'button',
-                                        'wire:loading.attr' => 'disabled',
+                                        'wire:loading.attr' => 'aria-disabled',
+                                        'wire:loading.class' => 'fi-disabled',
+                                        'wire:loading.class.delay.' . $loadingDelay => 'fi-loading',
                                         'wire:target' => $wireClick,
                                         'wire:key' => $isSearchable ? md5($wireClick . $blockSearchLabel) : null,
                                         'data-block-label' => $isSearchable ? e($blockSearchLabel) : null,
@@ -1624,17 +1628,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                 ?>
 
                             <button <?= $itemAttributes->toHtml() ?>>
-                                <?php if (filled($blockIcon)) { ?>
-                                    <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag([
-                                        'wire:loading.remove.delay.' . $loadingDelay => true,
-                                        'wire:target' => $wireClick,
-                                    ]))->color(IconComponent::class, 'gray'))?->toHtml() ?>
-                                <?php } ?>
+                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))->toHtml() ?>
 
-                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                                    'wire:loading.delay.' . $loadingDelay => '',
-                                    'wire:target' => $wireClick,
-                                ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
+                                <?php if (filled($blockIcon)) { ?>
+                                    <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))?->toHtml() ?>
+                                <?php } ?>
 
                                 <span class="fi-dropdown-list-item-label">
                                     <?= e($blockLabel) ?>
@@ -1965,7 +1963,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 ) ?>
             <?php } ?>
 
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <?= $this->generateReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -2005,8 +2003,12 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         ];
     }
 
-    /** @param array<Schema> $items */
-    protected function getReorderingDescriptionHtml(array $items): string
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @param  array<Schema>  $items
+     */
+    protected function generateReorderingDescriptionHtml(array $items): string
     {
         $html = '';
         $position = 0;

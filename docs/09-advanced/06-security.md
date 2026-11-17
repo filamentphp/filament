@@ -5,9 +5,8 @@ title: Security
 
 ## Introduction
 
-<Aside variant="info">
-    This page provides a general overview of security considerations when using Filament. Many individual features have their own specific security recommendations documented alongside them — for example, file uploads, rich editors, inline editable columns, and more. When using any Filament feature, make sure to read the full documentation for that feature, including any security warnings it contains.
-</Aside>
+> [!NOTE]
+> This page provides a general overview of security considerations when using Filament. Many individual features have their own specific security recommendations documented alongside them — for example, file uploads, rich editors, inline editable columns, and more. When using any Filament feature, make sure to read the full documentation for that feature, including any security warnings it contains.
 
 Filament is a powerful framework that gives developers extensive control over how components are configured and rendered. This flexibility is by design — developers need to be able to do powerful things with configuration methods like `url()`, `icon()`, `html()`, and others. However, this means that Filament trusts the values you pass into these methods, and it is your responsibility to ensure that any user-supplied data is properly validated and sanitized before it reaches Filament.
 
@@ -19,9 +18,8 @@ This page covers key security considerations when building applications with Fil
 
 Filament automatically checks [Laravel Model Policies](https://laravel.com/docs/authorization#creating-policies) for standard CRUD operations on [resources](../resources/overview#authorization). When a policy exists for a resource's model, Filament will check methods like `viewAny()`, `create()`, `update()`, `view()`, `delete()`, and others before allowing access to the corresponding pages and actions.
 
-<Aside variant="warning">
-    By default, a missing resource policy or policy method does not deny access: Filament allows the operation unless a Gate before callback denies it. Define the policy methods your application needs, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. Strict mode does not add authorization to custom actions, inline editable columns, or other code that does not use resource authorization. Skipping authorization on a resource bypasses its policy checks even in strict mode.
-</Aside>
+> [!WARNING]
+> By default, a missing resource policy or policy method does not deny access: Filament allows the operation unless a Gate before callback denies it. Define the policy methods your application needs, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. Strict mode does not add authorization to custom actions, inline editable columns, or other code that does not use resource authorization. Skipping authorization on a resource bypasses its policy checks even in strict mode.
 
 However, Filament's automatic authorization only covers these built-in resource operations. Any custom functionality you add — custom actions, custom pages, custom Livewire components, API endpoints, or other business logic — must be authorized by you. Filament cannot know your application's authorization requirements beyond the standard CRUD operations it provides.
 
@@ -112,9 +110,8 @@ These properties are not automatically re-queried against their original resourc
 
 Table row actions resolve their record through the table query. Attach and associate actions resolve selected records through their configured relationship or options query. Filament does not provide either guarantee for model values passed to custom Livewire methods or action arguments.
 
-<Aside variant="warning">
-    Component authorization is separate from record scoping. A relation manager still runs `canViewForRecord()`, and a widget still runs `canView()`. Neither automatically reapplies the parent resource's query or authorizes a passed-in record. For a relation manager, enforce owner-record restrictions in `canViewForRecord()`. For widget or custom component code, query and authorize records before accessing them.
-</Aside>
+> [!WARNING]
+> Component authorization is separate from record scoping. A relation manager still runs `canViewForRecord()`, and a widget still runs `canView()`. Neither automatically reapplies the parent resource's query or authorizes a passed-in record. For a relation manager, enforce owner-record restrictions in `canViewForRecord()`. For widget or custom component code, query and authorize records before accessing them.
 
 #### Protecting your own model properties
 
@@ -170,13 +167,12 @@ Do not rely on the order of lifecycle hooks from different traits for authorizat
 
 After the applicable built-in authorization check, Livewire runs per-property hydration hooks, requested property updates, public methods requested by Livewire, actions, and normal rendering. This only protects models covered by that check. For example, a custom page's `canAccess()` method does not authorize each model property that you add to the page.
 
-<Aside variant="warning">
-    Filament explicitly checks widget and relation manager authorization while a lazy component is waiting to mount. Pages do not have an equivalent check during this waiting state. Do not enable Livewire lazy loading on a Filament page that relies on page authorization hooks.
-</Aside>
+> [!WARNING]
+> Filament explicitly checks widget and relation manager authorization while a lazy component is waiting to mount. Pages do not have an equivalent check during this waiting state. Do not enable Livewire lazy loading on a Filament page that relies on page authorization hooks.
 
 ### Inline editable columns
 
-Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `disabled()` method with your own authorization logic. See the documentation for each [editable column type](../tables/columns/toggle) for more details.
+Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check model policies by default, even in strict authorization mode. Use `authorize()` with a policy ability or custom callback to restrict editing. Denied columns are disabled, and changes are rejected on the server. See [authorizing editable columns](../tables/columns/overview#authorizing-editable-columns) for examples and global configuration.
 
 ### Custom actions
 
@@ -238,6 +234,10 @@ The `RichEditor` applies the same principle to the CSS it generates from stored 
 The `icon()` method expects either a Blade icon name (like `heroicon-o-user`) or an image URL (any string containing `/`). Icon name strings are resolved via Blade's icon system, and URL strings are escaped before rendering into `src` attributes. However, passing an invalid icon name from user input will cause a rendering error, so you should still validate icon values against a known allowlist if they are user-controlled.
 
 Methods like `extraAttributes()`, `extraInputAttributes()`, `extraCellAttributes()`, and other `extra*Attributes()` methods render their values into HTML without escaping. This is by design, as these methods are often used to pass Alpine.js directives and Livewire attributes that must not be escaped. However, if you pass user-controlled data as attribute names or values, an attacker could break out of the HTML attribute and inject arbitrary markup, leading to XSS. Always ensure that any dynamic values passed to these methods are validated or sourced from trusted data.
+
+Class names and CSS styles passed to Filament configuration methods are also trusted configuration. Do not assume that Filament automatically escapes or sanitizes them. Validate user-controlled values against an allowlist of classes or supported CSS values before passing them to these methods. HTML escaping alone does not prevent a CSS value from injecting additional declarations or loading external resources.
+
+When working directly with `Filament\Support\View\ComponentAttributeBag`, its `class()` and `style()` methods do not HTML-escape their arguments, unlike Laravel's attribute bag. You are responsible for HTML-escaping any untrusted values you include in class names or style declarations, in addition to validating their contents. Escape the dynamic values before passing them to the bag; do not rely on rendering the bag with `{{ $attributes }}` to escape them.
 
 As a general rule: whenever you pass user-controlled data into a Filament configuration method, treat it with the same caution you would when rendering it directly in a Blade template.
 
@@ -313,9 +313,8 @@ public function register(): void
 }
 ```
 
-<Aside variant="danger">
-    Removing attributes that Filament's rich editor depends on (such as `data-color`, `data-cols`, `data-id`, or `style`) may break rich text rendering. Only restrict attributes when you understand their impact on Filament's components.
-</Aside>
+> [!CAUTION]
+> Removing attributes that Filament's rich editor depends on (such as `data-color`, `data-cols`, `data-id`, or `style`) may break rich text rendering. Only restrict attributes when you understand their impact on Filament's components.
 
 #### Replacing the sanitizer configuration entirely
 
@@ -398,9 +397,8 @@ class ViewProduct extends Component implements HasSchemas
 
 With the trait in place, an attacker tampering with a Livewire request to upload to an arbitrary property name is rejected; legitimate uploads from your schema's `FileUpload` fields continue to work because their target property matches a registered component. Uploads from components that support file attachments — such as the [`MarkdownEditor`](../forms/markdown-editor) and [`RichEditor`](../forms/rich-editor) — are also allowed when they target a registered component.
 
-<Aside variant="tip">
-    Hidden fields are not considered matchable targets. If a `FileUpload` field is conditionally hidden (`->visible(false)` or equivalent), uploads to its state path are rejected — only fields the user can actually see are valid upload targets.
-</Aside>
+> [!TIP]
+> Hidden fields are not considered matchable targets. If a `FileUpload` field is conditionally hidden (`->visible(false)` or equivalent), uploads to its state path are rejected — only fields the user can actually see are valid upload targets.
 
 ## Scoping queries
 

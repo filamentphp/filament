@@ -2,6 +2,7 @@
     'columnSpan' => [],
     'columnStart' => [],
     'height' => null,
+    'loadingPlaceholder' => null,
     'loadingLabel' => null,
 ])
 
@@ -20,6 +21,14 @@
     }}
 >
     <span class="fi-sr-only">
-        {{ $loadingLabel ?? __('filament::components/loading-section.label') }}
+        {{ $loadingLabel ?? __('filament::loading.label') }}
     </span>
+
+    <div aria-hidden="true" class="fi-loading-placeholder-content">
+        @if ($loadingPlaceholder !== null)
+            {{ $loadingPlaceholder }}
+        @else
+            <x-filament::loading-placeholder :loading-label="$loadingLabel" />
+        @endif
+    </div>
 </div>

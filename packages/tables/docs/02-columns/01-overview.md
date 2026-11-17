@@ -140,9 +140,8 @@ TextColumn::make('users_exists')->exists('users')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-<Aside variant="info">
-    `exists()` relies on Laravel's `withExists()`, which does not support SQL Server. You can use [`counts()`](#counting-relationships) instead to display the number of related records.
-</Aside>
+> [!NOTE]
+> `exists()` relies on Laravel's `withExists()`, which does not support SQL Server. You can use [`counts()`](#counting-relationships) instead to display the number of related records.
 
 If you'd like to scope the relationship before checking existence, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
@@ -559,9 +558,8 @@ TextColumn::make('title')
     ->splitIndividualSearchTerms(false)
 ```
 
-<Aside variant="info">
-    This method only affects the column's individual search. Search term splitting for the table's global search is controlled by the table's `splitSearchTerms()` method.
-</Aside>
+> [!NOTE]
+> This method only affects the column's individual search. Search term splitting for the table's global search is controlled by the table's `splitSearchTerms()` method.
 
 ## Clickable cell content
 
@@ -580,11 +578,10 @@ TextColumn::make('title')
 
 <UtilityInjection set="tableColumns">The `url()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="tip">
-    You can also pick a URL for the entire row to open, not just a singular column. Please see the [Record URLs section](../overview#record-urls-clickable-rows).
-
-    When using a record URL and a column URL, the column URL will override the record URL for those cells only.
-</Aside>
+> [!TIP]
+> You can also pick a URL for the entire row to open, not just a singular column. Please see the [Record URLs section](../overview#record-urls-clickable-rows).
+>
+> When using a record URL and a column URL, the column URL will override the record URL for those cells only.
 
 You may also choose to open the URL in a new tab:
 
@@ -596,9 +593,8 @@ TextColumn::make('title')
     ->openUrlInNewTab()
 ```
 
-<Aside variant="danger">
-    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
-</Aside>
+> [!CAUTION]
+> If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
 
 ### Triggering actions
 
@@ -1065,6 +1061,79 @@ TextColumn::make('slug')
 <UtilityInjection set="tableColumns">As well as allowing a static value, the `extraHeaderAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, calling `extraHeaderAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+
+## Authorizing editable columns
+
+Editable columns do not check model policies by default, even in [strict authorization mode](../../panel-configuration#strict-authorization-mode). Use `authorize()` to check the record's `update()` policy. Denied columns are disabled, and changes are rejected on the server:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('title')
+    ->authorize()
+```
+
+Pass a different ability name, such as `authorize('updateTitle')`, to customize the policy check. These checks use Laravel's Gate, including its authorization callbacks. Missing policies or abilities deny access unless a Gate callback grants it; strict mode does not turn these denials into exceptions.
+
+For custom authorization logic, pass a callback that returns a boolean or an `Illuminate\Auth\Access\Response`:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('title')
+    ->authorize(fn ($record): bool => $record->user_id === auth()->id())
+```
+
+<UtilityInjection set="tableColumns">The function passed to `authorize()` can inject various utilities as parameters.</UtilityInjection>
+
+### Authorizing editable columns globally
+
+To enable policy checks globally, call `configureUsing()` in a service provider's `boot()` method for each editable column type you use:
+
+```php
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Columns\ToggleColumn;
+
+CheckboxColumn::configureUsing(fn (CheckboxColumn $column) => $column->authorize());
+SelectColumn::configureUsing(fn (SelectColumn $column) => $column->authorize());
+TextInputColumn::configureUsing(fn (TextInputColumn $column) => $column->authorize());
+ToggleColumn::configureUsing(fn (ToggleColumn $column) => $column->authorize());
+```
+
+Individual columns can override this configuration with their own `authorize()` call. Use `authorize(true)` or `authorize(null)` to skip authorization. An authorized column can still be disabled by `disabled()`.
+
+## Rendering only the updated cells of editable columns
+
+By default, when a user updates an [editable column](#introduction), the whole Livewire component re-renders, and the browser updates the entire table. On large tables, you may use the `partiallyRenderAfterStateUpdated()` method to re-render only the cell that was updated:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('purchase_price')
+    ->partiallyRenderAfterStateUpdated()
+```
+
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `partiallyRenderAfterStateUpdated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+If saving the column also changes other columns of the same record, you may pass their names to `partiallyRenderColumnsAfterStateUpdated()`. The updated cell is always re-rendered too:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('purchase_price')
+    ->partiallyRenderColumnsAfterStateUpdated(['purchase_currency'])
+
+SelectColumn::make('purchase_currency')
+    ->options([
+        'EUR' => 'EUR',
+        'USD' => 'USD',
+    ])
+```
+
+Anything else that depends on the updated record, such as other rows or content outside the table, is not updated until the component next renders. Columns that are not visible in the table are skipped. If the table has [summaries](../summaries) or a [content layout](../layout), the whole component is rendered instead.
 
 ## Column utility injection
 

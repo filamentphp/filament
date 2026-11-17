@@ -85,7 +85,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
         $hasRelationship = $query && $column->hasRelationship($query->getModel());
 
         if ($this->hasQueryModificationCallback() && $hasRelationship) {
-            $baseQueryForModification = $query->toBase();
+            $baseQueryForModification = $query->getQuery();
             $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
                 'query' => $baseQueryForModification,

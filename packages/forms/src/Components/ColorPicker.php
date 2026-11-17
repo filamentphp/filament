@@ -14,6 +14,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 {
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
@@ -139,6 +140,10 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         ob_start(); ?>
 
         <div
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"
             x-data="colorPickerFormComponent({
@@ -154,7 +159,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
             wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
-            <?= $this->getExtraAlpineAttributeBag()->class(['fi-input-wrp-content'])->toHtml() ?>
+            <?= $this->getExtraAlpineAttributeBag()->class(['fi-input-wrp-content', 'fi-async-component-content'])->toHtml() ?>
         >
             <input
                 x-on:focus="$refs.panel.open($refs.input)"
@@ -188,7 +193,10 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
             </div>
         </div>
 
-        <?php $slotHtml = ob_get_clean();
+        <?php $slotHtml = $this->wrapAsyncComponentHtml(
+            ob_get_clean(),
+            key: $livewireKey . '.' . md5(serialize([$isDisabled])),
+        );
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

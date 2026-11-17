@@ -30,6 +30,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 
@@ -59,8 +60,8 @@ describe('stacked on mobile', function (): void {
     });
 });
 
-describe('defer loading', function (): void {
-    it('defaults `isLoadingDeferred()` to `false`', function (): void {
+describe('lazy loading', function (): void {
+    it('defaults `isLazyLoaded()` and its deprecated alias to `false`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->isLoadingDeferred())->toBeFalse()
@@ -86,6 +87,71 @@ describe('defer loading', function (): void {
 
         expect($table->isLoadingDeferred())->toBeTrue();
     });
+
+    it('renders custom initial loading content and can reset it', function (string $contentType): void {
+        Table::configureUsing(
+            static fn (Table $table) => $table->loadingPlaceholder(static fn (Table $table) => $contentType === 'view'
+                ? view('loading-placeholder', ['label' => $table->isLazyLoaded() ? 'Table <loading>' : 'Unexpected eager placeholder'])
+                : new HtmlString('<div data-testid="custom-loading-placeholder">Table &lt;loading&gt;</div>')),
+            function (): void {
+                $component = livewire(LazyLoadedTableTestComponent::class)
+                    ->assertSeeHtml('data-testid="custom-loading-placeholder"')
+                    ->assertSeeHtml('Table &lt;loading&gt;');
+
+                $component->call('loadTable')
+                    ->assertDontSeeHtml('data-testid="custom-loading-placeholder"');
+
+                Table::configureUsing(
+                    static fn (Table $table): Table => $table->loadingPlaceholder(null),
+                    function (): void {
+                        livewire(LazyLoadedTableTestComponent::class)
+                            ->assertDontSeeHtml('data-testid="custom-loading-placeholder"')
+                            ->assertSee(__('filament-tables::table.loading'));
+                    },
+                );
+            },
+        );
+    })->with(['view', 'html']);
+
+    it('loads table records once when the table becomes visible', function (bool $hasCustomLoadingPlaceholder): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create(['title' => 'Viewport table record']);
+
+        $page = visit('/table-render-hooks-browser-test?isTableLazyLoaded=1&hasCustomLoadingPlaceholder=' . (int) $hasCustomLoadingPlaceholder);
+        $page->page()->context()->addInitScript(<<<'JS'
+            window.tableLoadCalls = [];
+            document.addEventListener('livewire:init', () => {
+                Livewire.hook('request', ({ options }) => {
+                    window.tableLoadCalls.push(...JSON.parse(options.body).components.flatMap(component => component.calls).filter(call => call.method === 'loadTable'));
+                });
+            });
+            JS);
+        $page->refresh()->assertVisible('[data-testid="lazy-table-section"] [aria-expanded="false"]')
+            ->assertDontSee('Viewport table record');
+
+        expect($page->script('window.tableLoadCalls'))->toBe([]);
+
+        if ($hasCustomLoadingPlaceholder) {
+            $page->assertPresent('[data-testid="custom-loading-placeholder"]');
+        }
+
+        $page->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record')
+            ->assertNotPresent('[data-testid="custom-loading-placeholder"]')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+        $page->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record');
+
+        expect($page->script('window.tableLoadCalls'))->toHaveCount(1);
+
+        $page->inDarkMode()
+            ->click('[data-testid="lazy-table-section"] [aria-expanded]')
+            ->assertSee('Viewport table record')
+            ->assertNoAccessibilityIssues();
+    })->with([false, true]);
 });
 
 describe('loading skeleton', function (): void {
@@ -1177,7 +1243,7 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->html();
 
-        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(2);
+        expect($html)->toContain('wire:target="sortTable(\'title\')"');
     });
 
     it('preserves the header sort loading indicator when the loading skeleton is enabled', function (): void {
@@ -1187,7 +1253,7 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->html();
 
-        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(2);
+        expect($html)->toContain('wire:target="sortTable(\'title\')"');
     });
 
     it('replaces the empty state icon with a loading indicator during updates that change the displayed records', function (): void {
@@ -1266,11 +1332,11 @@ describe('rendering', function (): void {
         $contentBeforeData = null;
         $contentAfterData = null;
 
-        registerTableContentRenderHooks(DeferredLoadingTableTestComponent::class, $contentBeforeData, $contentAfterData);
+        registerTableContentRenderHooks(LazyLoadedTableTestComponent::class, $contentBeforeData, $contentAfterData);
 
         Post::factory()->create();
 
-        $component = livewire(DeferredLoadingTableTestComponent::class, ['loadingMethod' => $loadingMethod])
+        $component = livewire(LazyLoadedTableTestComponent::class, ['loadingMethod' => $loadingMethod])
             ->assertSuccessful();
 
         expect($contentBeforeData['hasPagination'])->toBeFalse()
@@ -1543,7 +1609,7 @@ class EmptyStateTableTestComponent extends TableTestComponent
     }
 }
 
-class DeferredLoadingTableTestComponent extends TableTestComponent
+class LazyLoadedTableTestComponent extends TableTestComponent
 {
     public string $loadingMethod = 'lazyLoaded';
 

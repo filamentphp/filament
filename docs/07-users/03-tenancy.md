@@ -8,9 +8,8 @@ Multi-tenancy is a concept where a single instance of an application serves mult
 
 Multi-tenancy is a very sensitive topic. It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them.
 
-<Aside variant="warning">
-    Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure. Please see the [security](#tenancy-security) section for more information.
-</Aside>
+> [!WARNING]
+> Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure. Please see the [security](#tenancy-security) section for more information.
 
 ## Simple one-to-many tenancy
 
@@ -407,18 +406,17 @@ public function panel(Panel $panel): Panel
 
 <AutoScreenshot name="tenancy/tenant-menu-grouping" alt="Tenant menu items split into separate groups" />
 
-<Aside variant="info">
-    The `register` item is added to the last group by default. To place it yourself, register it explicitly in any group using the `register` array key. Since its default `sort()` puts it at the end of its group, adjust the sort if you want it elsewhere within the group:
-
-    ```php
-    ->tenantMenuItems([
-        // ...
-        [
-            'register' => fn (Action $action): Action => $action->sort(2),
-        ],
-    ])
-    ```
-</Aside>
+> [!NOTE]
+> The `register` item is added to the last group by default. To place it yourself, register it explicitly in any group using the `register` array key. Since its default `sort()` puts it at the end of its group, adjust the sort if you want it elsewhere within the group:
+>
+> ```php
+> ->tenantMenuItems([
+>     // ...
+>     [
+>         'register' => fn (Action $action): Action => $action->sort(2),
+>     ],
+> ])
+> ```
 
 ### Allowing the tenants to be searched
 
@@ -832,9 +830,8 @@ public function panel(Panel $panel): Panel
 
 In this example, the `domain` attribute should contain a valid domain host, like `example.com` or `subdomain.example.com`.
 
-<Aside variant="info">
-    When using a parameter for the entire domain (`tenantDomain('{tenant:domain}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
-</Aside>
+> [!NOTE]
+> When using a parameter for the entire domain (`tenantDomain('{tenant:domain}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
 
 ## Disabling tenancy for a resource
 
@@ -872,15 +869,13 @@ The scope applies only while the matching panel is current and a tenant has been
 
 Tenant scoping is not record authorization. Implement `canAccessTenant()` to control which tenants a user may access, and policies or explicit authorization checks to restrict what they can do within a tenant. A table query does not automatically filter each row through its `view()` policy. Add query restrictions for records that should not be listed or included in widget aggregates.
 
-<Aside variant="warning">
-    `withoutGlobalScopes()` also removes tenant isolation. To remove other scopes while retaining tenancy, pass only those scopes to `withoutGlobalScopes([...])`. Use `withoutGlobalScope(filament()->getTenancyScopeName())` only when you intentionally need access across tenants, and authorize that access separately.
-</Aside>
+> [!WARNING]
+> `withoutGlobalScopes()` also removes tenant isolation. To remove other scopes while retaining tenancy, pass only those scopes to `withoutGlobalScopes([...])`. Use `withoutGlobalScope(filament()->getTenancyScopeName())` only when you intentionally need access across tenants, and authorize that access separately.
 
 ### Protecting models between Livewire requests
 
-<Aside variant="warning">
-    On each Livewire request to a resource page, Filament re-resolves its record through the resource binding query, including tenant scoping unless that query removes it. This protection does not extend to records passed into relation managers, widgets, or modal table selects: their model properties use Livewire's native restoration, which does not apply global scopes by default. Filament also does not re-query a tenant registration page's `$tenant`, model properties that you add, or models nested inside other public state. Enforce tenant and ownership restrictions and authorize those models before using them. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for the complete boundary.
-</Aside>
+> [!WARNING]
+> On each Livewire request to a resource page, Filament re-resolves its record through the resource binding query, including tenant scoping unless that query removes it. This protection does not extend to records passed into relation managers, widgets, or modal table selects: their model properties use Livewire's native restoration, which does not apply global scopes by default. Filament also does not re-query a tenant registration page's `$tenant`, model properties that you add, or models nested inside other public state. Enforce tenant and ownership restrictions and authorize those models before using them. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for the complete boundary.
 
 ### Associating new records with the current tenant
 
@@ -888,9 +883,8 @@ Filament associates newly created models with the current tenant when they have 
 
 Associate the tenant yourself when creating models without a tenant-aware resource or creating records outside that panel context, using [model events](https://laravel.com/docs/eloquent#events) or your application's save logic. Do not assume the tenant relationship is already populated in your own creation callbacks, especially for relationships associated after creation.
 
-<Aside variant="warning">
-    Automatic association depends on Eloquent model events. If you [mute events](https://laravel.com/docs/eloquent#muting-events) or remove their listeners, you must set the tenant relationship yourself. Check both query scoping and record association before deploying your application.
-</Aside>
+> [!WARNING]
+> Automatic association depends on Eloquent model events. If you [mute events](https://laravel.com/docs/eloquent#muting-events) or remove their listeners, you must set the tenant relationship yourself. Check both query scoping and record association before deploying your application.
 
 ### `unique` and `exists` validation
 

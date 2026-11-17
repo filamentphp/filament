@@ -7,6 +7,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -35,6 +36,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use PHPUnit\Framework\AssertionFailedError;
 
 use function Filament\Tests\livewire;
 
@@ -568,6 +570,45 @@ describe('column properties and assertions', function (): void {
         livewire(PostsTable::class)
             ->assertTableColumnVisible('visible')
             ->assertTableColumnHidden('hidden');
+    });
+
+    it('checks only the disabled state of hidden and non-editable columns', function (string $columnName, bool $isDisabled): void {
+        $post = Post::factory()->create();
+
+        Column::configureUsing(
+            fn (Column $column) => $column->disabled($isDisabled),
+            during: fn () => livewire(PostsTable::class)
+                ->{$isDisabled ? 'assertTableColumnDisabled' : 'assertTableColumnEnabled'}($columnName, $post),
+        );
+    })->with(['hidden', 'with_options'])->with([false, true]);
+
+    it('fails `assertTableColumnEnabled()` when disabled', function (): void {
+        $post = Post::factory()->create();
+
+        TextColumn::configureUsing(
+            fn (TextColumn $column) => $column->disabled(),
+            during: fn () => livewire(PostsTable::class)
+                ->assertTableColumnEnabled('title', $post),
+        );
+    })->throws(AssertionFailedError::class);
+
+    it('fails `assertTableColumnDisabled()` when enabled', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(PostsTable::class)
+            ->assertTableColumnDisabled('title', $post);
+    })->throws(AssertionFailedError::class);
+
+    it('accepts a record key in the enabled and disabled column assertions', function (): void {
+        $published = Post::factory()->create(['is_published' => true]);
+        $draft = Post::factory()->create(['is_published' => false]);
+
+        TextColumn::configureUsing(
+            fn (TextColumn $column) => $column->disabled(fn (Post $record): bool => ! $record->is_published),
+            during: fn () => livewire(PostsTable::class)
+                ->assertTableColumnEnabled('title', $published->getKey())
+                ->assertTableColumnDisabled('title', (string) $draft->getKey()),
+        );
     });
 
     it('can call a column action', function (): void {

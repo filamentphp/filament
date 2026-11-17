@@ -1,3 +1,12 @@
+.fi-fo-slider-wrp {
+    &
+        .fi-async-component-loading
+        > .fi-loading-placeholder-content
+        > .fi-loading-placeholder {
+        @apply justify-self-start leading-6;
+    }
+}
+
 .fi-fo-slider {
     @apply gap-4 rounded-lg border-0 bg-transparent shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
 

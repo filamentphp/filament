@@ -19,7 +19,7 @@ use function Filament\Support\generate_loading_indicator_html;
 trait CanGenerateIconButtonHtml
 {
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      *
      * @param  string | array<string> | null  $badgeColor,
      * @param  string | array<string> | null  $color,
@@ -40,6 +40,7 @@ trait CanGenerateIconButtonHtml
         ?string $iconAlias = null,
         IconSize | string | null $iconSize = null,
         bool $isDisabled = false,
+        bool $isDisabledDuringLoading = true,
         ?array $keyBindings = null,
         string | Htmlable | null $label = null,
         Size | string | null $size = null,
@@ -77,6 +78,8 @@ trait CanGenerateIconButtonHtml
             $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
         }
 
+        $hasSeparateLoadingIndicatorTarget = $hasLoadingIndicator && $attributes->has('wire:target') && blank($attributes->get('wire:target'));
+
         $hasTooltip = filled($tooltip);
 
         $formAttributes = $attributes->only(['action', 'method', 'wire:submit']);
@@ -98,8 +101,9 @@ trait CanGenerateIconButtonHtml
                     'form' => 'submit',
                     default => null,
                 },
-                'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
-                'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.attr' => ($tag === 'button' && $isDisabledDuringLoading) ? 'aria-disabled' : null,
+                'wire:loading.class' => ($tag === 'button' && $isDisabledDuringLoading) ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->merge([
@@ -117,10 +121,6 @@ trait CanGenerateIconButtonHtml
                 ($size instanceof Size) ? "fi-size-{$size->value}" : $size,
             ])
             ->color(IconButtonComponent::class, $color);
-
-        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
-            ? config('filament.livewire_loading_delay', 'default')
-            : null;
 
         ob_start(); ?>
 
@@ -143,14 +143,11 @@ trait CanGenerateIconButtonHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ])), size: $iconSize)?->toHtml() ?? '' : '' ?>
-            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ])), size: $iconSize)->toHtml() : '' ?>
+            <?= $hasLoadingIndicator ? generate_loading_indicator_html(new FilamentComponentAttributeBag([
+                'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+                'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+            ]), size: $iconSize)->toHtml() : '' ?>
+            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, size: $iconSize)?->toHtml() ?? '' : '' ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-icon-btn-badge-ctn">

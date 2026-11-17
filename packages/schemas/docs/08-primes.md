@@ -82,9 +82,8 @@ use Illuminate\Support\HtmlString;
 Text::make(new HtmlString('<strong>Warning:</strong> Modifying these permissions may give users access to sensitive information.'))
 ```
 
-<Aside variant="danger">
-    Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
-</Aside>
+> [!CAUTION]
+> Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
 <AutoScreenshot name="primes/text/html" alt="Text with HTML" />
 

@@ -21,7 +21,7 @@ use function Filament\Support\generate_loading_indicator_html;
 trait CanGenerateLinkHtml
 {
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      *
      * @param  string | array<string> | null  $badgeColor,
      * @param  string | array<string> | null  $color,
@@ -43,6 +43,7 @@ trait CanGenerateLinkHtml
         ?IconPosition $iconPosition = IconPosition::Before,
         IconSize | string | null $iconSize = null,
         bool $isDisabled = false,
+        bool $isDisabledDuringLoading = true,
         bool $isLabelSrOnly = false,
         ?array $keyBindings = null,
         string | Htmlable | null $label = null,
@@ -89,6 +90,8 @@ trait CanGenerateLinkHtml
             $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
         }
 
+        $hasSeparateLoadingIndicatorTarget = $hasLoadingIndicator && $attributes->has('wire:target') && blank($attributes->get('wire:target'));
+
         $hasTooltip = filled($tooltip);
 
         $formAttributes = $attributes->only(['action', 'method', 'wire:submit']);
@@ -111,8 +114,9 @@ trait CanGenerateLinkHtml
                     'form' => 'submit',
                     default => null,
                 },
-                'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
-                'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.attr' => ($tag === 'button' && $isDisabledDuringLoading) ? 'aria-disabled' : null,
+                'wire:loading.class' => ($tag === 'button' && $isDisabledDuringLoading) ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->when(
@@ -129,19 +133,12 @@ trait CanGenerateLinkHtml
             ])
             ->color(LinkComponent::class, $color);
 
-        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
-            ? config('filament.livewire_loading_delay', 'default')
-            : null;
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, size: $iconSize)?->toHtml() ?? '' : '';
 
-        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize)?->toHtml() ?? '' : '';
-
-        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-            'wire:loading.delay.' . $loadingDelay => '',
-            'wire:target' => $loadingIndicatorTarget,
-        ])), size: $iconSize)->toHtml() : '';
+        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html(new FilamentComponentAttributeBag([
+            'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+            'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+        ]), size: $iconSize)->toHtml() : '';
 
         ob_start(); ?>
 
@@ -165,8 +162,8 @@ trait CanGenerateLinkHtml
             <?= $attributes->toHtml() ?>
         >
             <?php if ($iconPosition === IconPosition::Before) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
             <?php } ?>
 
             <?php if (! $isLabelSrOnly) { ?>
@@ -176,8 +173,8 @@ trait CanGenerateLinkHtml
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
             <?php } ?>
 
             <?php if (filled($badge)) { ?>

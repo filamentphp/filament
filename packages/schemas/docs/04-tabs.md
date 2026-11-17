@@ -156,7 +156,7 @@ Tabs::make('Tabs')
 
 ### Lazy loading tab badges
 
-If you have expensive queries powering your tab badges, the initial page load may be slow. You can lazy load tab badges using the `lazyLoadedBadge()` method, which will load the badge values asynchronously after the page has rendered:
+If you have expensive queries powering your tab badges, the initial page load may be slow. You can lazy load tab badges using the `lazyLoadedBadge()` method, which loads the badge values in a separate request when the tab bar enters the viewport:
 
 ```php
 use App\Models\Notification;
@@ -176,11 +176,10 @@ Tabs::make('Tabs')
     ])
 ```
 
-<Aside variant="warning">
-    The `badge()` value must be returned from a function when using `lazyLoadedBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of lazy loading.
-
-    The `Tabs` component must have a `key()` set when using `lazyLoadedBadge()`. Without a key, the lazy badge request cannot identify the correct component on the server.
-</Aside>
+> [!WARNING]
+> The `badge()` value must be returned from a function when using `lazyLoadedBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of lazy loading.
+>
+> The `Tabs` component must have a `key()` set when using `lazyLoadedBadge()`. Without a key, the lazy badge request cannot identify the correct component on the server.
 
 <UtilityInjection set="schemaComponents">As well as allowing a static value, the `lazyLoadedBadge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

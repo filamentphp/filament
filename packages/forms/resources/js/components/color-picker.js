@@ -24,10 +24,6 @@ export default function colorPickerFormComponent({
                 this.setState(this.state)
             }
 
-            if (isAutofocused) {
-                this.togglePanelVisibility(this.$refs.input)
-            }
-
             this.$watch(
                 'state',
                 Alpine.debounce((value) => {
@@ -78,6 +74,16 @@ export default function colorPickerFormComponent({
                 this.panelObserver.observe(this.$refs.panel, {
                     attributes: true,
                     childList: true,
+                })
+            }
+
+            this.$dispatch('async-component-ready')
+
+            if (isAutofocused) {
+                this.$nextTick(() => {
+                    if (!isDestroyed) {
+                        this.togglePanelVisibility()
+                    }
                 })
             }
         },

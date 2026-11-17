@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Վերականգնել ընտրածը',
+        'label' => 'Վերականգնել ընտրվածները',
 
         'modal' => [
 
-            'heading' => 'Վերականգնել ընտրած :label',
+            'heading' => 'Վերականգնել ընտրված :label',
 
             'actions' => [
 
@@ -57,13 +57,13 @@ return [
             'restored_partial' => [
                 'title' => 'Վերականգնվեց :count-ը ընդհանուր :total-ից',
                 'missing_authorization_failure_message' => 'Դուք իրավունք չունեք վերականգնելու :count-ը։',
-                'missing_processing_failure_message' => ':count-ը հնարավոր չէր վերականգնել։',
+                'missing_processing_failure_message' => ':count-ը հնարավոր չեղավ վերականգնել։',
             ],
 
             'restored_none' => [
                 'title' => 'Չհաջողվեց վերականգնել',
                 'missing_authorization_failure_message' => 'Դուք իրավունք չունեք վերականգնելու :count-ը։',
-                'missing_processing_failure_message' => ':count-ը հնարավոր չէր վերականգնել։',
+                'missing_processing_failure_message' => ':count-ը հնարավոր չեղավ վերականգնել։',
             ],
 
         ],

@@ -24,6 +24,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
     use CanTrimState;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
     use HasColor;
@@ -296,6 +297,10 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
         ob_start(); ?>
 
         <div
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms')) ?>"
             x-data="tagsInputFormComponent({
@@ -304,7 +309,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
                         tagAddedMessage: <?= Js::from(__('filament-forms::components.tags_input.tag_added')) ?>,
                         tagRemovedMessage: <?= Js::from(__('filament-forms::components.tags_input.tag_removed')) ?>,
                     })"
-            <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
+            <?= $this->getExtraAlpineAttributeBag()->class(['fi-async-component-content'])->toHtml() ?>
         >
             <input <?= $inputAttributes->toHtml() ?> />
 
@@ -370,7 +375,10 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
             </div>
         </div>
 
-        <?php $slotHtml = ob_get_clean();
+        <?php $slotHtml = $this->wrapAsyncComponentHtml(
+            ob_get_clean(),
+            key: $this->getLivewireKey() . '.' . md5(serialize([$isDisabled, $isReorderable])),
+        );
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

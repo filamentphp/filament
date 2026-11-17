@@ -283,9 +283,8 @@ SelectColumn::make('author_id')
     ->rememberOptions(false)
 ```
 
-<Aside variant="warning">
-    When options are remembered, any record-specific options or disabled options will not work correctly, as the same options will be used for all records in the table. If you need record-specific options or disabled options, you should disable option remembering.
-</Aside>
+> [!WARNING]
+> When options are remembered, any record-specific options or disabled options will not work correctly, as the same options will be used for all records in the table. If you need record-specific options or disabled options, you should disable option remembering.
 
 <UtilityInjection set="tableColumns">As well as allowing a static value, the `rememberOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -307,9 +306,8 @@ SelectColumn::make('technology')
     ->allowOptionsHtml()
 ```
 
-<Aside variant="danger">
-    Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
-</Aside>
+> [!CAUTION]
+> Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
 Optionally, you may pass a boolean value to control if the input should allow HTML or not:
 
@@ -453,10 +451,30 @@ SelectColumn::make('status')
     })
 ```
 
+## Rendering only the updated cells
+
+By default, the whole table re-renders after a select column is updated. You may [re-render only the updated cells](overview#rendering-only-the-updated-cells-of-editable-columns) using `partiallyRenderAfterStateUpdated()` or `partiallyRenderColumnsAfterStateUpdated()`.
+
 ## Security
 
 ### Authorization
 
-Select columns do not automatically check model policies. Without an authorization check, users can update the column for records accessible through the table query, even if the record's `update()` policy denies access to its edit page. Use `disabled()` with your authorization logic, for example `disabled(fn ($record) => $record->user_id !== auth()->id())`. Filament checks this condition on the server before saving.
+By default, select columns do not check model policies. Without an authorization check, users can update the column for records accessible through the table query, even if the record's `update()` policy denies access to its edit page.
+
+Use `authorize()` to check the record's `update()` policy. Denied columns are disabled, and changes are rejected on the server:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->authorize()
+```
+
+You may pass a different ability, such as `authorize('updateStatus')`, or a custom callback. See [authorizing editable columns](overview#authorizing-editable-columns) for callbacks and global configuration.
 
 Check permission for the specific attribute being changed. If the column updates a related model or pivot, authorize that operation too. Alternatively, use a resource edit page or a policy-backed `EditAction` to apply the resource's edit authorization.

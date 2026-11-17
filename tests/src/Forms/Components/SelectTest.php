@@ -2042,13 +2042,57 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->assertSeeHtml('Select an option...');
     });
+
+    it('renders static options inline in a `native(false)` select', function (): void {
+        livewire(RenderSelectWithStaticNonNativeOptions::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Electronics')
+            ->assertSeeHtml('Clothing');
+    });
+
+    it('does not evaluate or render dynamic options in a `native(false)` select with blank state', function (): void {
+        RenderSearchableSelectWithClosureOptions::$optionsEvaluations = 0;
+
+        livewire(RenderSearchableSelectWithClosureOptions::class)
+            ->assertSuccessful()
+            ->set('data.note', 'Updated')
+            ->assertDontSeeHtml('Electronics')
+            ->assertDontSeeHtml('Clothing');
+
+        expect(RenderSearchableSelectWithClosureOptions::$optionsEvaluations)->toBe(0);
+    });
+
+    it('still returns dynamic options from `getOptionsForJs()` when they are not rendered inline', function (): void {
+        livewire(RenderSearchableSelectWithClosureOptions::class)
+            ->assertFormComponentExists('category', function (Select $select): bool {
+                return $select->getOptionsForJs() === [
+                    ['label' => 'Electronics', 'value' => 'electronics', 'isDisabled' => false],
+                    ['label' => 'Clothing', 'value' => 'clothing', 'isDisabled' => false],
+                ];
+            });
+    });
+
+    it('renders the label of the selected dynamic option without rendering the other options', function (): void {
+        livewire(RenderSearchableSelectWithClosureOptionsAndState::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Clothing')
+            ->assertDontSeeHtml('Electronics');
+    });
+
+    it('renders the labels of the selected dynamic options in a `multiple()` select without rendering the other options', function (): void {
+        livewire(RenderMultipleSelectWithClosureOptionsAndState::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Clothing')
+            ->assertSeeHtml('Books')
+            ->assertDontSeeHtml('Electronics');
+    });
 });
 
 describe('browser interactions', function (): void {
     it('can select, search, and clear options in select dropdowns in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $browser = visit('/select-test');
+        $browser = visit('/select-browser-test');
 
         $browser
             ->assertDontSee('One')
@@ -2096,7 +2140,7 @@ describe('browser interactions', function (): void {
             ->assertDontSee('Active')
             ->assertNoSmoke();
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
     });
@@ -2104,7 +2148,7 @@ describe('browser interactions', function (): void {
     it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertDontSee('Two')
             ->click('[data-testid="single-select"] .fi-select-input-btn')
             ->assertSee('One')
@@ -2116,7 +2160,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->inDarkMode()
             ->keys('[data-testid="single-select"] [role="combobox"]', 'Enter')
             ->assertNoAccessibilityIssues();
@@ -2125,7 +2169,7 @@ describe('browser interactions', function (): void {
     it('can create an option using `createOptionForm()` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertDontSee('New status')
             ->click('[data-testid="create-option-action-trigger"]')
             ->assertVisible('[data-testid="create-option-action-modal"]')
@@ -2146,7 +2190,7 @@ describe('browser interactions', function (): void {
     it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
 
         $page
             ->assertDontSee('Apple')
@@ -2183,7 +2227,7 @@ describe('browser interactions', function (): void {
     it('shows "no options" message when dynamic options returns empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-empty-options-select"] .fi-select-input-btn')
             ->assertSeeIn('[data-testid="dynamic-empty-options-select"] [role="status"]', 'No options available')
             ->assertNoSmoke();
@@ -2192,7 +2236,7 @@ describe('browser interactions', function (): void {
     it('shows options when dynamic options returns options', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-with-options-select"] .fi-select-input-btn')
             ->assertSee('Option 1')
             ->assertSee('Option 2')
@@ -2203,7 +2247,7 @@ describe('browser interactions', function (): void {
     it('shows "no options" message when dynamic options and search returns empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-options-and-search-empty-select"] .fi-select-input-btn')
             ->assertSeeIn('[data-testid="dynamic-options-and-search-empty-select"] [role="status"]', 'No options available')
             ->assertNoSmoke();
@@ -2212,7 +2256,7 @@ describe('browser interactions', function (): void {
     it('shows "no options" message when static options is empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="static-empty-options-select"] .fi-select-input-btn')
             ->assertSeeIn('[data-testid="static-empty-options-select"] [role="status"]', 'No options available')
             ->assertNoSmoke();
@@ -2221,7 +2265,7 @@ describe('browser interactions', function (): void {
     it('shows options when dynamic options returns non-empty array', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->click('[data-testid="dynamic-options-with-results-select"] .fi-select-input-btn')
             ->assertSee('Dynamic Option 1')
             ->assertSee('Dynamic Option 2')
@@ -2229,10 +2273,38 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
+    it('shows the selected label of a dynamic options select and loads its options when opened', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-browser-test')
+            ->assertSeeIn('[data-testid="dynamic-options-with-default-select"] .fi-select-input-btn', 'Preset Option 2')
+            ->assertDontSee('Preset Option 1')
+            ->click('[data-testid="dynamic-options-with-default-select"] .fi-select-input-btn')
+            ->assertSee('Preset Option 1')
+            ->click('Preset Option 1')
+            ->assertSeeIn('[data-testid="dynamic-options-with-default-select"] .fi-select-input-btn', 'Preset Option 1')
+            ->assertNoSmoke();
+    });
+
+    it('shows the selected labels of a dynamic options `multiple()` select and loads its options when opened', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-browser-test')
+            ->assertPresent('[data-testid="multiple-dynamic-options-with-default-select"] [aria-label="Remove Shelf Option 1"]')
+            ->assertPresent('[data-testid="multiple-dynamic-options-with-default-select"] [aria-label="Remove Shelf Option 3"]')
+            ->assertDontSee('Shelf Option 2')
+            ->click('[data-testid="multiple-dynamic-options-with-default-select"] .fi-select-input-btn')
+            ->assertSee('Shelf Option 2')
+            ->click('Shelf Option 2')
+            ->keys('[data-testid="multiple-dynamic-options-with-default-select"] .fi-select-input-btn', 'Escape')
+            ->assertPresent('[data-testid="multiple-dynamic-options-with-default-select"] [aria-label="Remove Shelf Option 2"]')
+            ->assertNoSmoke();
+    });
+
     it('restores initial options when clearing a search', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
 
         $page
             ->click('#dynamic-select')
@@ -2249,7 +2321,7 @@ describe('browser interactions', function (): void {
     it('keeps option navigation and keyboard removal on stable owners in a non-searchable `multiple()` select', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
         $owner = '[data-testid="nonsearchable-multiple-select"] [role="combobox"]';
         $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
 
@@ -2295,7 +2367,7 @@ describe('browser interactions', function (): void {
     it('keeps search editing, descriptions, and sequential focus on the searchable select owners', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
         $launcher = '[data-testid="searchable-select"] button[aria-haspopup="listbox"]';
         $search = '[data-testid="searchable-select"] input[role="combobox"]';
         $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
@@ -2344,7 +2416,7 @@ describe('browser interactions', function (): void {
     it('consumes select `Escape` before the containing action modal closes', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/select-test');
+        $page = visit('/select-browser-test');
         $launcher = '[data-testid="modal-select"] button[aria-haspopup="listbox"]';
         $search = '[data-testid="modal-select"] input[role="combobox"]';
 
@@ -2379,7 +2451,7 @@ describe('browser interactions', function (): void {
     it('only adds one remove button when selecting multiple options in sequence', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
             ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
             ->assertSee('First')
@@ -2401,7 +2473,7 @@ describe('browser interactions', function (): void {
     it('removes the clear button when selection is cleared', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
             ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
             ->assertSee('First')
@@ -2415,7 +2487,7 @@ describe('browser interactions', function (): void {
     it('does not show another native `Select` option for a missing value in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/select-test')
+        visit('/select-browser-test')
             ->select('[data-testid="native-dynamic-options-context-select"]', 'first')
             ->assertPresent('[data-testid="native-dynamic-options-value-select"] option[value="first_only"]')
             ->select('[data-testid="native-dynamic-options-value-select"]', 'first_only')
@@ -3853,6 +3925,65 @@ class RenderSelectWithNonNative extends Livewire
     {
         return $form->schema([
             Select::make('category')->options(['a' => 'A', 'b' => 'B'])->native(false),
+        ])->statePath('data');
+    }
+}
+
+class RenderSelectWithStaticNonNativeOptions extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Select::make('category')
+                ->options(['electronics' => 'Electronics', 'clothing' => 'Clothing'])
+                ->native(false),
+        ])->statePath('data');
+    }
+}
+
+class RenderSearchableSelectWithClosureOptions extends Livewire
+{
+    public static int $optionsEvaluations = 0;
+
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            TextInput::make('note'),
+            Select::make('category')
+                ->options(static function (): array {
+                    self::$optionsEvaluations++;
+
+                    return ['electronics' => 'Electronics', 'clothing' => 'Clothing'];
+                })
+                ->getSearchResultsUsing(static fn (string $search): array => [])
+                ->disableOptionWhen(static fn (string $value): bool => false)
+                ->searchable(),
+        ])->statePath('data');
+    }
+}
+
+class RenderSearchableSelectWithClosureOptionsAndState extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Select::make('category')
+                ->options(static fn (): array => ['electronics' => 'Electronics', 'clothing' => 'Clothing'])
+                ->default('clothing')
+                ->searchable(),
+        ])->statePath('data');
+    }
+}
+
+class RenderMultipleSelectWithClosureOptionsAndState extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Select::make('categories')
+                ->options(static fn (): array => ['electronics' => 'Electronics', 'clothing' => 'Clothing', 'books' => 'Books'])
+                ->default(['clothing', 'books'])
+                ->multiple(),
         ])->statePath('data');
     }
 }

@@ -282,9 +282,8 @@ public function boot(): void
 
 This is useful if you want to set a default timezone for all text entries in your application. It is also used in other places where timezones are used in Filament.
 
-<Aside variant="warning">
-    Filament's default timezone will only apply when the entry stores a time. If the entry stores a date only (`date()` instead of `dateTime()`), the timezone will not be applied. This is to prevent timezone shifts when storing dates without times.
-</Aside>
+> [!WARNING]
+> Filament's default timezone will only apply when the entry stores a time. If the entry stores a date only (`date()` instead of `dateTime()`), the timezone will not be applied. This is to prevent timezone shifts when storing dates without times.
 
 ### Number formatting
 
@@ -417,9 +416,8 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries">As well as allowing a static value, the `html()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="danger">
-    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
-</Aside>
+> [!CAUTION]
+> Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
 
 #### Rendering raw HTML without sanitization
 
@@ -433,9 +431,8 @@ TextEntry::make('description')
     ->formatStateUsing(fn (string $state): HtmlString => new HtmlString($state))
 ```
 
-<Aside variant="danger">
-    Be cautious when rendering raw HTML, as it may contain malicious content, which can lead to security vulnerabilities in your app such as cross-site scripting (XSS) attacks. Always ensure that the HTML you are rendering is safe before using this method.
-</Aside>
+> [!CAUTION]
+> Be cautious when rendering raw HTML, as it may contain malicious content, which can lead to security vulnerabilities in your app such as cross-site scripting (XSS) attacks. Always ensure that the HTML you are rendering is safe before using this method.
 
 Alternatively, you can return a `view()` object from the `formatStateUsing()` method, which will also not be sanitized:
 
@@ -525,9 +522,8 @@ TextEntry::make('authors.name')
     ->expandableLimitedList()
 ```
 
-<Aside variant="info">
-    This is only a feature for `listWithLineBreaks()` or `bulleted()`, where each item is on its own line.
-</Aside>
+> [!NOTE]
+> This is only a feature for `listWithLineBreaks()` or `bulleted()`, where each item is on its own line.
 
 Optionally, you may pass a boolean value to control if the text should be expandable or not:
 
@@ -767,9 +763,8 @@ TextEntry::make('apiKey')
 
 <UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="warning">
-    This feature only works when SSL is enabled for the app.
-</Aside>
+> [!WARNING]
+> This feature only works when SSL is enabled for the app.
 
 ## Adding suffix and prefix actions
 

@@ -128,9 +128,8 @@ it('can sort posts by title', function () {
 });
 ```
 
-<Aside variant="info">
-    Filament tables use a SQL `order` statement to sort records before they are output. Different database drivers can use different sorting strategies, and they can differ from PHP's own sorting strategy, so you should ensure that test records are sorted using `orderBy()` on a database query rather than `sortBy()` on a collection of models.
-</Aside>
+> [!NOTE]
+> Filament tables use a SQL `order` statement to sort records before they are output. Different database drivers can use different sorting strategies, and they can differ from PHP's own sorting strategy, so you should ensure that test records are sorted using `orderBy()` on a database query rather than `sortBy()` on a collection of models.
 
 ### Testing the state of a column
 
@@ -204,6 +203,21 @@ it('shows the correct columns', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableColumnVisible('created_at')
         ->assertTableColumnHidden('author');
+});
+```
+
+### Testing whether a column is enabled or disabled
+
+To ensure a column is enabled or disabled for a record, you can use the `assertTableColumnEnabled()` and `assertTableColumnDisabled()` methods. These check the column's disabled state, including any [editable column authorization](../tables/columns/toggle#authorization). They do not check visibility, validation, or whether an update is saved:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('disables publishing posts for non-editors', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnDisabled('is_published', record: $post);
 });
 ```
 

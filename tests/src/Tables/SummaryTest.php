@@ -143,6 +143,26 @@ describe('ranges', function (): void {
             ->assertCanSeeTableRecords($posts->take(10))
             ->assertTableColumnSummarySet('author.name', 'range', [$posts->take(10)->min('author.name'), $posts->take(10)->max('author.name')], isCurrentPaginationPageOnly: true);
     });
+
+    it('can scope relationship summaries with `query()` on soft-deletable models', function (): void {
+        Post::factory()
+            ->for(User::factory()->state(['name' => 'Published author']), 'author')
+            ->create(['is_published' => true]);
+        Post::factory()
+            ->for(User::factory()->state(['name' => 'Draft author']), 'author')
+            ->create(['is_published' => false]);
+        Post::factory()
+            ->for(User::factory()->state(['name' => 'Deleted author']), 'author')
+            ->trashed()
+            ->create(['is_published' => true]);
+
+        $livewire = livewire(PostsTable::class);
+
+        // Keep `SoftDeletingScope` active instead of letting `TrashedFilter` remove it.
+        $livewire->instance()->getTable()->filters([]);
+
+        $livewire->assertTableColumnSummarySet('author.name', 'published_range', ['Published author', 'Published author']);
+    });
 });
 
 describe('sums', function (): void {

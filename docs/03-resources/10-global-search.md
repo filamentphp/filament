@@ -18,9 +18,8 @@ protected static ?string $recordTitleAttribute = 'title';
 
 This attribute is used to retrieve the search result title for that record.
 
-<Aside variant="info">
-    Your resource does not need an Edit or View page to appear in global search results. Results can also link to table action modals, as explained in [Customizing global search result URLs](#customizing-global-search-result-urls).
-</Aside>
+> [!NOTE]
+> Your resource does not need an Edit or View page to appear in global search results. Results can also link to table action modals, as explained in [Customizing global search result URLs](#customizing-global-search-result-urls).
 
 You may customize the title further by overriding `getGlobalSearchResultTitle()` method. It may return a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even Markdown, in the search result title:
 

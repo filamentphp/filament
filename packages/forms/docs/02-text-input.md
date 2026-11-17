@@ -266,9 +266,8 @@ TextInput::make('apiKey')
 
 <UtilityInjection set="formFields">As well as allowing static values, the `copyable()` method parameters also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="warning">
-    This feature only works when SSL is enabled for the app.
-</Aside>
+> [!WARNING]
+> This feature only works when SSL is enabled for the app.
 
 ## Input masking
 

@@ -2,12 +2,15 @@
 
 namespace Filament\Tests\Widgets;
 
+use DOMDocument;
+use DOMXPath;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
@@ -196,11 +199,29 @@ it('does not render `getChartAssistiveContent()` in the empty state', function (
 });
 
 it('exposes the chart wrapper as an image and hides the canvas', function (): void {
-    Livewire::test(TestChartWidgetWithDescription::class)
-        ->assertSeeHtml('class="fi-wi-chart-image"')
-        ->assertSeeHtml('role="img"')
-        ->assertSeeHtml('aria-label="A summary of sales"')
-        ->assertSeeHtml('aria-hidden="true"');
+    $document = new DOMDocument;
+    @$document->loadHTML(Livewire::test(TestChartWidgetWithDescription::class)->html());
+    $xpath = new DOMXPath($document);
+
+    expect($xpath->query('//*[@role="img" and @aria-label="A summary of sales"]//canvas[@aria-hidden="true"]')->length)
+        ->toBe(1);
+});
+
+it('renders a custom loading `View` while an eager chart initializes in the browser', function (): void {
+    $widget = new class extends TestChartWidgetDefault
+    {
+        protected static ?bool $isLazyLoaded = false;
+
+        public function getLoadingPlaceholder(): View | Htmlable | null
+        {
+            return view('loading-placeholder', ['label' => 'Chart <loading>']);
+        }
+    };
+
+    Livewire::test($widget::class)
+        ->assertSeeHtml('data-testid="custom-loading-placeholder"')
+        ->assertSeeHtml('Chart &lt;loading&gt;')
+        ->assertDontSeeHtml('&lt;div data-testid=');
 });
 
 it('keeps the accessible name and alternative synchronized when the chart data is unchanged', function (): void {
