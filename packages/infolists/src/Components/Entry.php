@@ -115,6 +115,9 @@ class Entry extends Component
         return parent::toHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function wrapLazyLoadedStatePlaceholderHtml(string $html): string
     {
         return $this->wrapEmbeddedHtml($html);
