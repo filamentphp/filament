@@ -650,9 +650,8 @@ Builder::make('content')
 
 <UtilityInjection set="formFields">As well as allowing static values, the `minItems()` and `maxItems()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="info">
-    `maxItems()` is a validation rule. Filament can build and render item schemas before validation rejects excessive item counts. To avoid long processing times if your application accidentally creates too many items, you can [limit item processing](#limiting-item-processing) separately.
-</Aside>
+> [!NOTE]
+> `maxItems()` is a validation rule. Filament can build and render item schemas before validation rejects excessive item counts. To avoid long processing times if your application accidentally creates too many items, you can [limit item processing](#limiting-item-processing) separately.
 
 ## Limiting item processing
 
@@ -671,9 +670,8 @@ Builder::make('content')
 
 The processing limit is independent of `maxItems()` validation and is disabled by default. It accepts an integer, or `null` to disable it. It limits the number of items in each builder, not the total number of nested items or fields in a request.
 
-<Aside variant="danger">
-    The processing limit also applies to existing data loaded from your database. A record above the limit cannot be opened through that form until you raise the limit or correct its data elsewhere. Choose a limit that accommodates existing records you need to edit, including records above your validation limit.
-</Aside>
+> [!CAUTION]
+> The processing limit also applies to existing data loaded from your database. A record above the limit cannot be opened through that form until you raise the limit or correct its data elsewhere. Choose a limit that accommodates existing records you need to edit, including records above your validation limit.
 
 This is an opt-in performance safeguard, not a security boundary or a guarantee of request duration. See the shared [guidance on configuring processing limits globally](repeater#applying-processing-limits-globally) for repeaters, builders, and repeatable entries, including increasing, decreasing, or disabling the limit on individual components and the scope of the processing limit.
 
@@ -756,9 +754,8 @@ Builder::make('content')
     )
 ```
 
-<Aside variant="info">
-    The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
-</Aside>
+> [!NOTE]
+> The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
 
 Completing a drag that changes the block order invokes `reorderAction()`, which supports `requiresConfirmation()`. Clicking the drag handle alone does not invoke the action.
 

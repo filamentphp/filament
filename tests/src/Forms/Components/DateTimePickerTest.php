@@ -1238,7 +1238,7 @@ describe('browser interactions', function (): void {
     it('enforces native timed bounds and reloads accepted values', function (bool $hasDate, bool $hasSeconds): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?bounds=1&date=' . (int) $hasDate . '&seconds=' . (int) $hasSeconds);
+        $page = visit('/date-time-picker-browser-test?bounds=1&date=' . (int) $hasDate . '&seconds=' . (int) $hasSeconds);
         $page->assertNoSmoke();
 
         $minimumPrefix = $hasDate ? '2025-07-15T' : '';
@@ -1286,7 +1286,7 @@ describe('browser interactions', function (): void {
         $this->actingAs(User::factory()->create());
 
         try {
-            $page = visit('/date-time-picker-test?app-dst-gap=1')->withTimezone('America/New_York');
+            $page = visit('/date-time-picker-browser-test?app-dst-gap=1')->withTimezone('America/New_York');
 
             $page->fill('[data-testid="timed-input"]', '2025-03-30T01:30:17')
                 ->assertPresent('[data-testid="timed-input"]:valid');
@@ -1312,7 +1312,7 @@ describe('browser interactions', function (): void {
         $this->actingAs(User::factory()->create());
 
         try {
-            $page = visit('/date-time-picker-test?' . http_build_query([
+            $page = visit('/date-time-picker-browser-test?' . http_build_query([
                 'native' => 0,
                 'time' => (int) $hasTime,
                 'seconds' => (int) $hasSeconds,
@@ -1433,7 +1433,7 @@ describe('browser interactions', function (): void {
         config(['app.timezone' => 'UTC']);
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?' . http_build_query([
+        $page = visit('/date-time-picker-browser-test?' . http_build_query([
             'native' => 0,
             'date' => (int) $hasDate,
             'calendar-state' => '2025-07-14 12:00:00',
@@ -1454,7 +1454,7 @@ describe('browser interactions', function (): void {
     it('preserves hidden seconds after editing and reloading a custom time-only picker', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&date=0&seconds=0&dst=1')->withTimezone('Europe/London');
+        $page = visit('/date-time-picker-browser-test?native=0&date=0&seconds=0&dst=1')->withTimezone('Europe/London');
 
         $page->assertValue('[data-testid="timed-trigger"]', '01:45')
             ->click('[data-testid="timed-trigger"]')
@@ -1488,7 +1488,7 @@ describe('browser interactions', function (): void {
 
         $initialState = $hasDate ? ($hasTime ? '2025-07-15 13:24:37' : '2025-07-15') : '13:24:37';
         $displayFormat = $hasDate ? ($hasTime ? 'Y-m-d H:i:s' : 'Y-m-d') : 'H:i:s';
-        $page = visit('/date-time-picker-test?native=0&close-on-selection=1&date=' . (int) $hasDate . '&time=' . (int) $hasTime . '&initial-state=' . urlencode($initialState) . '&display-format=' . urlencode($displayFormat))->withTimezone('UTC');
+        $page = visit('/date-time-picker-browser-test?native=0&close-on-selection=1&date=' . (int) $hasDate . '&time=' . (int) $hasTime . '&initial-state=' . urlencode($initialState) . '&display-format=' . urlencode($displayFormat))->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
         $page->assertValue($trigger, $initialState)
@@ -1558,7 +1558,7 @@ describe('browser interactions', function (): void {
     it('navigates month and year boundaries without changing the selected date until activation', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&time=0&initial-state=2024-01-31&display-format=Y-m-d')->withTimezone('UTC');
+        $page = visit('/date-time-picker-browser-test?native=0&time=0&initial-state=2024-01-31&display-format=Y-m-d')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
         $page->assertValue($trigger, '2024-01-31')
@@ -1625,7 +1625,7 @@ describe('browser interactions', function (): void {
     it('keeps unavailable dates focusable but rejects activation, even in a wholly unavailable month', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&bounds=1&disabled-dates=1&initial-state=2025-07-15%2007:39:37&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
+        $page = visit('/date-time-picker-browser-test?native=0&bounds=1&disabled-dates=1&initial-state=2025-07-15%2007:39:37&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
         $page->click($trigger)
@@ -1657,7 +1657,7 @@ describe('browser interactions', function (): void {
     it('uses localized date names, a Sunday week start and RTL horizontal navigation', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&time=0&locale=fr&week-start=7&rtl=1&initial-state=2025-07-15&display-format=Y-m-d')->withTimezone('UTC');
+        $page = visit('/date-time-picker-browser-test?native=0&time=0&locale=fr&week-start=7&rtl=1&initial-state=2025-07-15&display-format=Y-m-d')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
         $page->assertValue($trigger, '2025-07-15')
@@ -1686,7 +1686,7 @@ describe('browser interactions', function (): void {
     it('closes the calendar before its nested action modal and restores each focus owner in turn', function (bool $overlaysParentModal): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&overlay=' . (int) $overlaysParentModal);
+        $page = visit('/date-time-picker-browser-test?native=0&overlay=' . (int) $overlaysParentModal);
 
         $page->keys('[data-testid="calendar-modal-trigger"]', 'Enter')
             ->assertVisible('[data-testid="calendar-modal"]')
@@ -1724,7 +1724,7 @@ describe('browser interactions', function (): void {
     it('preserves control focus and the selected date when browsing before editing time', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&initial-state=2024-03-31%2013:24:37&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
+        $page = visit('/date-time-picker-browser-test?native=0&initial-state=2024-03-31%2013:24:37&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
         $page->click($trigger)
@@ -1772,7 +1772,7 @@ describe('browser interactions', function (): void {
     it('opens the calendar and focuses an invalid stepped time input on submission', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&hour-step=2&minute-step=5&initial-state=2025-07-15%2014:25:00&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
+        $page = visit('/date-time-picker-browser-test?native=0&hour-step=2&minute-step=5&initial-state=2025-07-15%2014:25:00&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
         $page->click($trigger)
@@ -1803,7 +1803,7 @@ describe('browser interactions', function (): void {
     it('can use the calendar after replacing its configuration', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0');
+        $page = visit('/date-time-picker-browser-test?native=0');
         $trigger = '[data-testid="timed-trigger"]';
 
         $page->click($trigger)
@@ -1822,7 +1822,7 @@ describe('browser interactions', function (): void {
     it('does not open or clear a disabled or read-only custom picker, including with `autofocus()`', function (string $mode, bool $hasDate, bool $hasTime): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?' . http_build_query([
+        $page = visit('/date-time-picker-browser-test?' . http_build_query([
             'native' => 0,
             'date' => (int) $hasDate,
             'time' => (int) $hasTime,

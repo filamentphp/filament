@@ -189,7 +189,7 @@ describe('rendering', function (): void {
 it('can toggle state by clicking in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/toggle-test');
+    $page = visit('/toggle-browser-test');
 
     $page
         ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
@@ -207,7 +207,7 @@ it('can toggle state by clicking in the browser', function (): void {
 it('keeps `helperText()` visible after toggling off when `inlineLabel()` and `live()` are used', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/toggle-test')
+    visit('/toggle-browser-test')
         ->assertSee('Live inline label helper text')
         ->click('[data-testid="live-inline-label-toggle"]')
         ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'true')

@@ -21,9 +21,8 @@ Action::make('delete')
 
 <AutoScreenshot name="actions/modal/confirmation" alt="Confirmation modal" />
 
-<Aside variant="warning">
-    The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
-</Aside>
+> [!WARNING]
+> The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
 
 ## Controlling modal content
 
@@ -497,9 +496,8 @@ Action::make('help')
 
 The [methods available to customize trigger buttons](overview) will work to modify the `$action` instance inside the closure.
 
-<Aside variant="tip">
-    To customize the button labels in your modal, the `modalSubmitActionLabel()` and `modalCancelActionLabel()` methods can be used instead of passing a function to `modalSubmitAction()` and `modalCancelAction()`, if you don't require any further customizations.
-</Aside>
+> [!TIP]
+> To customize the button labels in your modal, the `modalSubmitActionLabel()` and `modalCancelActionLabel()` methods can be used instead of passing a function to `modalSubmitAction()` and `modalCancelAction()`, if you don't require any further customizations.
 
 ### Removing a default modal footer action button
 
@@ -749,9 +747,8 @@ Action::make('second')
     })
 ```
 
-<Aside variant="warning">
-    `getValidatedData()` validates the data without submitting the parent action. It skips `beforeStateDehydrated()` hooks, so a newly uploaded file can remain a `TemporaryUploadedFile` instead of a stored path. It also skips `mutateDataUsing()`, `beforeFormValidated()`, and `afterFormValidated()`.
-</Aside>
+> [!WARNING]
+> `getValidatedData()` validates the data without submitting the parent action. It skips `beforeStateDehydrated()` hooks, so a newly uploaded file can remain a `TemporaryUploadedFile` instead of a stored path. It also skips `mutateDataUsing()`, `beforeFormValidated()`, and `afterFormValidated()`.
 
 ### Filling in the data of a parent action
 
@@ -909,9 +906,8 @@ Action::make('updateAuthor')
 
 When a modal is click-through, its backdrop is removed, clicks outside the modal window pass through to the page beneath, and the page remains scrollable. The modal can still be closed using its close button or by pressing the escape key.
 
-<Aside variant="info">
-    A click-through modal cannot be closed by clicking away, as that would be incompatible with interacting with the page behind it. Enabling `modalClickThrough()` therefore disables closing by clicking away automatically.
-</Aside>
+> [!NOTE]
+> A click-through modal cannot be closed by clicking away, as that would be incompatible with interacting with the page behind it. Enabling `modalClickThrough()` therefore disables closing by clicking away automatically.
 
 <UtilityInjection set="actions">The `modalClickThrough()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -1058,9 +1054,8 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions">As well as allowing a static value, the `extraModalWindowAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="tip">
-    By default, calling `extraModalWindowAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
-</Aside>
+> [!TIP]
+> By default, calling `extraModalWindowAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
 
 ## Adding extra attributes to the modal overlay
@@ -1076,6 +1071,5 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions">As well as allowing a static value, the `extraModalOverlayAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="tip">
-    By default, calling `extraModalOverlayAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass <code>merge: true</code> to the method.
-</Aside>
+> [!TIP]
+> By default, calling `extraModalOverlayAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass <code>merge: true</code> to the method.

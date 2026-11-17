@@ -11,6 +11,7 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
+use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
@@ -498,7 +499,7 @@ describe('`prepare_inherited_attributes()`', function (): void {
 describe('`generate_search_column_expression()`', function (): void {
     it('handles ordinary columns, case-sensitivity defaults and collations', function (string $driver, string $column, ?bool $isForced, ?string $collation, string $expected, bool $isExpression): void {
         $connection = new Connection(null, config: ['driver' => $driver, 'search_collation' => $collation]);
-        $grammar = new MySqlGrammar($connection);
+        $grammar = ($driver === 'pgsql') ? new PostgresGrammar($connection) : new MySqlGrammar($connection);
         $connection->setQueryGrammar($grammar);
 
         $expression = generate_search_column_expression($column, $isForced, $connection);
@@ -509,7 +510,7 @@ describe('`generate_search_column_expression()`', function (): void {
         'plain column' => ['sqlite', 'title', null, null, 'title', false],
         'forced lower' => ['mysql', 'title', true, null, 'lower(title)', true],
         'Postgres default' => ['pgsql', 'title', null, null, 'lower("title"::text)', true],
-        'Postgres sensitive' => ['pgsql', 'title', false, null, '"title"::text', false],
+        'Postgres sensitive' => ['pgsql', 'title', false, null, '"title"::text', true],
         'JSON expression default' => ['mysql', "json_extract(data, '$.name')", null, null, "lower(json_extract(data, '$.name'))", true],
         'JSON expression sensitive' => ['mysql', "json_extract(data, '$.name')", false, null, "json_extract(data, '$.name')", true],
         'collation' => ['mysql', 'title', false, 'utf8mb4_bin', 'title collate utf8mb4_bin', true],
@@ -543,6 +544,7 @@ describe('`generate_search_column_expression()`', function (): void {
         $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
 
         $grammar = new PostgresGrammar($databaseConnection);
+        $databaseConnection->shouldReceive('getQueryGrammar')->andReturn($grammar);
 
         $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
@@ -559,6 +561,7 @@ describe('`generate_search_column_expression()`', function (): void {
         $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
 
         $grammar = new PostgresGrammar($databaseConnection);
+        $databaseConnection->shouldReceive('getQueryGrammar')->andReturn($grammar);
 
         $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
@@ -575,6 +578,7 @@ describe('`generate_search_column_expression()`', function (): void {
         $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
 
         $grammar = new PostgresGrammar($databaseConnection);
+        $databaseConnection->shouldReceive('getQueryGrammar')->andReturn($grammar);
 
         $actualExpression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
@@ -589,12 +593,8 @@ describe('`generate_search_column_expression()`', function (): void {
     it('will generate a search column expression for Postgres with a table prefix', function (string $column, string $expectedExpression): void {
         $isSearchForcedCaseInsensitive = true;
 
-        $databaseConnection = Mockery::mock(Connection::class);
-        $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
-        $databaseConnection->shouldReceive('getTablePrefix')->andReturn('app_');
-        $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
-
-        $grammar = new PostgresGrammar($databaseConnection);
+        $databaseConnection = new PostgresConnection(null, tablePrefix: 'app_', config: ['driver' => 'pgsql']);
+        $grammar = $databaseConnection->getQueryGrammar();
 
         $actualExpression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
@@ -615,6 +615,7 @@ describe('`generate_search_column_expression()`', function (): void {
         $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
 
         $grammar = new PostgresGrammar($databaseConnection);
+        $databaseConnection->shouldReceive('getQueryGrammar')->andReturn($grammar);
 
         $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
@@ -631,6 +632,7 @@ describe('`generate_search_column_expression()`', function (): void {
         $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
 
         $grammar = new PostgresGrammar($databaseConnection);
+        $databaseConnection->shouldReceive('getQueryGrammar')->andReturn($grammar);
 
         $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
@@ -647,6 +649,7 @@ describe('`generate_search_column_expression()`', function (): void {
         $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
 
         $grammar = new PostgresGrammar($databaseConnection);
+        $databaseConnection->shouldReceive('getQueryGrammar')->andReturn($grammar);
 
         $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 

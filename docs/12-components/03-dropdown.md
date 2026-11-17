@@ -46,9 +46,8 @@ By default, a dropdown item's underlying HTML tag is `<button>`. You can change 
 </x-filament::dropdown.list.item>
 ```
 
-<Aside variant="danger">
-    If you are passing user-controlled data to the `href` attribute, validate its scheme using [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) before rendering it. HTML escaping alone does not prevent a `javascript:` URL from executing code when clicked.
-</Aside>
+> [!CAUTION]
+> If you are passing user-controlled data to the `href` attribute, validate its scheme using [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) before rendering it. HTML escaping alone does not prevent a `javascript:` URL from executing code when clicked.
 
 ## Changing the color of a dropdown item
 

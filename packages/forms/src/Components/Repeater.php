@@ -1809,12 +1809,15 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                 </div>
             <?php } ?>
 
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <?= $this->generateReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toSimpleEmbeddedHtml(): string
     {
         $items = $this->getItems();
@@ -1952,12 +1955,15 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                 </div>
             <?php } ?>
 
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <?= $this->generateReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toTableEmbeddedHtml(): string
     {
         $items = $this->getItems();
@@ -2191,7 +2197,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                 </div>
             <?php } ?>
 
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <?= $this->generateReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -2294,8 +2300,12 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         ];
     }
 
-    /** @param array<Schema> $items */
-    protected function getReorderingDescriptionHtml(array $items): string
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @param  array<Schema>  $items
+     */
+    protected function generateReorderingDescriptionHtml(array $items): string
     {
         $html = '';
         $position = 0;

@@ -101,23 +101,27 @@ export default () => ({
     },
 
     groupIsCollapsed(group) {
-        return this.collapsedGroups.includes(group)
+        return (this.collapsedGroups ?? []).includes(group)
     },
 
     collapseGroup(group) {
-        if (this.collapsedGroups.includes(group)) {
+        const collapsedGroups = this.collapsedGroups ?? []
+
+        if (collapsedGroups.includes(group)) {
             return
         }
 
-        this.collapsedGroups = this.collapsedGroups.concat(group)
+        this.collapsedGroups = collapsedGroups.concat(group)
     },
 
     toggleCollapsedGroup(group) {
-        this.collapsedGroups = this.collapsedGroups.includes(group)
-            ? this.collapsedGroups.filter(
+        const collapsedGroups = this.collapsedGroups ?? []
+
+        this.collapsedGroups = collapsedGroups.includes(group)
+            ? collapsedGroups.filter(
                   (collapsedGroup) => collapsedGroup !== group,
               )
-            : this.collapsedGroups.concat(group)
+            : collapsedGroups.concat(group)
     },
 
     close() {

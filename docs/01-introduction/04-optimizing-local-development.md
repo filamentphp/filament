@@ -24,9 +24,8 @@ You should see `opcache.enable => 1`. If not, enable it by adding the following 
 opcache.enable=1 # Enable OPcache
 ```
 
-<Aside variant="tip">
-    To locate your `php.ini` file, run: `php --ini`
-</Aside>
+> [!TIP]
+> To locate your `php.ini` file, run: `php --ini`
 
 ### Configuring OPcache settings
 
@@ -37,9 +36,8 @@ opcache.memory_consumption=128
 opcache.max_accelerated_files=10000
 ```
 
-<Aside variant="tip">
-    To locate your `php.ini` file, run: `php --ini`
-</Aside>
+> [!TIP]
+> To locate your `php.ini` file, run: `php --ini`
 
 - `opcache.memory_consumption`: defines how much memory (in megabytes) OPcache can use to store precompiled PHP code. You can try setting this to `128` and adjust based on your project's needs.
 - `opcache.max_accelerated_files`: sets the maximum number of PHP files that OPcache can cache. You can try `10000` as a starting point and increase if your application includes a large number of files.
@@ -56,9 +54,8 @@ If you're noticing slowness, consider excluding your local project folder from r
 
 Tools like [Microsoft Defender](https://www.microsoft.com/en-us/microsoft-365/microsoft-defender-for-individuals), or similar antivirus solutions, can be configured to skip specific directories. Check your antivirus or security software documentation for instructions on how to exclude specific folders from realtime scanning.
 
-<Aside variant="warning">
-    Only exclude folders from scanning if you fully trust the project and understand the risks.
-</Aside>
+> [!WARNING]
+> Only exclude folders from scanning if you fully trust the project and understand the risks.
 
 ## Disabling debugging tools
 
@@ -99,9 +96,8 @@ If `Xdebug` is installed but not disabled, it will still be enabled by default. 
 xdebug.mode=off # Disable Xdebug
 ```
 
-<Aside variant="tip">
-    To locate your `php.ini` file, run: `php --ini`
-</Aside>
+> [!TIP]
+> To locate your `php.ini` file, run: `php --ini`
 
 ## Caching Blade icons
 

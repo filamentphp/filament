@@ -973,6 +973,9 @@ class ModalTableSelect extends Field implements HasEmbeddedView
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function generateBadgeHtml(string | Htmlable $label, ?string $color): string
     {
         $attributes = (new FilamentComponentAttributeBag)

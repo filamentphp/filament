@@ -13,9 +13,9 @@ trait CanStripCharactersFromState
     protected string | array | Closure | null $stripCharacters = null;
 
     /**
-     * @var array<string>
+     * @var array<string> | null
      */
-    protected array $cachedStripCharacters;
+    protected ?array $cachedStripCharacters = null;
 
     /**
      * @param  string | array<string> | Closure | null  $characters
@@ -23,6 +23,8 @@ trait CanStripCharactersFromState
     public function stripCharacters(string | array | Closure | null $characters): static
     {
         $this->stripCharacters = $characters;
+
+        $this->cachedStripCharacters = null;
 
         return $this;
     }

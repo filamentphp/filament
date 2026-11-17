@@ -1,6 +1,6 @@
 {
     "name": "filament/forms",
-    "description": "Easily add beautiful forms to any Livewire component.",
+    "description": "Build reactive forms with reusable fields and validation for Livewire.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

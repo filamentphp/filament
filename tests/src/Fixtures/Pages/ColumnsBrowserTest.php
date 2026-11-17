@@ -17,6 +17,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Livewire\Attributes\Url;
+use stdClass;
 
 class ColumnsBrowserTest extends Page implements HasTable
 {
@@ -40,8 +41,25 @@ class ColumnsBrowserTest extends Page implements HasTable
     #[Url]
     public string $saveScenario = 'success';
 
+    #[Url]
+    public bool $imageTooltips = false;
+
     public function table(Table $table): Table
     {
+        if ($this->imageTooltips) {
+            return $table->query(Post::query())->columns([
+                Tables\Columns\ImageColumn::make('avatars')
+                    ->state(array_fill(0, 5, 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="#6366f1" /></svg>')))
+                    ->circular()
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText()
+                    ->tooltip('Visible colleague')
+                    ->limitedRemainingTextTooltip(static fn (array $state): string => 'More from ' . count($state) . ' colleagues: <b>Dan & Alex</b>')
+                    ->extraAttributes(['data-testid' => 'image-stack']),
+            ]);
+        }
+
         if ($this->editableColumns) {
             $columns = [
                 Tables\Columns\CheckboxColumn::make('is_published')->label('Published'),
@@ -71,6 +89,35 @@ class ColumnsBrowserTest extends Page implements HasTable
                     ->updateStateUsing(static function (Post $record, string $state): void {
                         $record->update(['title' => strtoupper($state)]);
                     });
+            }
+
+            if (in_array($this->saveScenario, ['partial', 'partial-columns', 'partial-row-loop', 'partial-summary'])) {
+                $columns[2]
+                    ->updateStateUsing(static function (Post $record, string $state): void {
+                        $record->update(['title' => strtoupper($state), 'rating' => 2]);
+                    })
+                    ->partiallyRenderAfterStateUpdated()
+                    ->partiallyRenderColumnsAfterStateUpdated(match ($this->saveScenario) {
+                        'partial-columns' => ['rating'],
+                        'partial-row-loop' => ['position'],
+                        default => [],
+                    });
+            }
+
+            if ($this->saveScenario === 'partial-row-loop') {
+                $columns[] = Tables\Columns\TextColumn::make('position')
+                    ->rowIndex()
+                    ->extraAttributes(['data-testid' => 'editable-position'])
+                    ->extraCellAttributes(static fn (stdClass $rowLoop): array => [
+                        'data-row-index' => $rowLoop->index,
+                        'data-row-remaining' => $rowLoop->remaining,
+                    ]);
+
+                $table->paginated([3]);
+            }
+
+            if ($this->saveScenario === 'partial-summary') {
+                $columns[3]->summarize(Tables\Columns\Summarizers\Sum::make()->extraAttributes(['data-testid' => 'rating-total']));
             }
 
             if ($this->saveScenario === 'custom-records') {

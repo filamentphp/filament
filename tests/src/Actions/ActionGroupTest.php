@@ -430,7 +430,10 @@ describe('actions management', function (): void {
     });
 
     it('can `getClone()` an `ActionGroup` independently', function (): void {
-        $original = ActionGroup::make([Action::make('edit')->label('Original edit'), Action::make('delete')]);
+        $original = ActionGroup::make([
+            Action::make('edit')->label('Original edit'),
+            ActionGroup::make([Action::make('delete')])->hidden(),
+        ]);
         $clone = $original->getClone();
 
         $clone->getFlatActions()['edit']->label('Cloned edit');
@@ -439,6 +442,8 @@ describe('actions management', function (): void {
         expect($clone->getFlatActions()['edit']->getLabel())->toBe('Cloned edit');
         expect($original->getFlatActions()['edit']->getLabel())->toBe('Original edit');
         expect($clone->getFlatActions()['edit']->getName())->toBe('edit');
+        expect($clone->getActions()[0]->getLabel())->toBe('Cloned edit');
+        expect($clone->getFlatActions()['delete']->isHidden())->toBeTrue();
     });
 });
 

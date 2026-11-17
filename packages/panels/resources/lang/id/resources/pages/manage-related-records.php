@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'Manage :label :relationship',
+    'title' => 'Kelola :relationship :label',
 
 ];

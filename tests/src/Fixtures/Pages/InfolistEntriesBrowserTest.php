@@ -5,6 +5,7 @@ namespace Filament\Tests\Fixtures\Pages;
 use BackedEnum;
 use Filament\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -14,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\Url;
 
 class InfolistEntriesBrowserTest extends Page
 {
@@ -25,6 +27,9 @@ class InfolistEntriesBrowserTest extends Page
 
     public ?Post $record = null;
 
+    #[Url]
+    public bool $imageTooltips = false;
+
     public function mount(): void
     {
         $this->record = Post::factory()->create();
@@ -32,6 +37,20 @@ class InfolistEntriesBrowserTest extends Page
 
     public function infolist(Schema $schema): Schema
     {
+        if ($this->imageTooltips) {
+            return $schema->record($this->record)->components([
+                ImageEntry::make('avatars')
+                    ->state(array_fill(0, 5, 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="#6366f1" /></svg>')))
+                    ->circular()
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText()
+                    ->tooltip('Visible colleague')
+                    ->limitedRemainingTextTooltip(static fn (array $state): HtmlString => new HtmlString('More from ' . count($state) . ' colleagues: <b>Dan &amp; Alex</b>'))
+                    ->extraAttributes(['data-testid' => 'image-stack']),
+            ]);
+        }
+
         return $schema
             ->record($this->record)
             ->components([

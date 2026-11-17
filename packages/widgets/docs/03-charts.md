@@ -182,28 +182,27 @@ protected function getData(): array
 
 <AutoScreenshot name="widgets/chart/filter" alt="Chart with filter" />
 
-<Aside variant="danger">
-    The `$filter` property is user-controllable. Although the `<select>` element only offers the keys returned from `getFilters()`, a crafted request can set `$this->filter` to any string, so it is not limited to those keys. You must ensure the value is valid before using it in a query — for example, by checking it against the keys of `getFilters()`, or by using a `match` expression with a safe default. Never interpolate `$this->filter` directly into a raw query.
-</Aside>
+> [!CAUTION]
+> The `$filter` property is user-controllable. Although the `<select>` element only offers the keys returned from `getFilters()`, a crafted request can set `$this->filter` to any string, so it is not limited to those keys. You must ensure the value is valid before using it in a query — for example, by checking it against the keys of `getFilters()`, or by using a `match` expression with a safe default. Never interpolate `$this->filter` directly into a raw query.
 
 ### Custom filters
 
 You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
 
-To get started, use the `HasFiltersSchema` trait and implement the `filtersSchema()` method:
+To get started, use the `HasFiltersForm` trait and implement the `filtersForm()` method:
 
 ```php
 use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class BlogPostsChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
     
     // ...
     
-    public function filtersSchema(Schema $schema): Schema
+    public function filtersForm(Schema $schema): Schema
     {
         return $schema->components([
             DatePicker::make('startDate')
@@ -233,13 +232,12 @@ The `$this->filters` array will always reflect the current form data. Please not
 
 <AutoScreenshot name="widgets/chart/custom-filters" alt="Chart with custom filters" />
 
-<Aside variant="info">
-    If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
-</Aside>
+> [!NOTE]
+> If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
 
 #### Deferring filter updates
 
-By default, filters using the `filtersSchema()` method update the chart data immediately as they are changed. However, for complex queries or better user experience, you may want to **defer** filter updates until the user clicks an "Apply" button.
+By default, filters using the `filtersForm()` method update the chart data immediately as they are changed. However, for complex queries or better user experience, you may want to **defer** filter updates until the user clicks an "Apply" button.
 
 When deferred, filter changes are only applied when the user clicks the "Apply" button. This ensures that the chart only re-renders when the user has finished adjusting all of their filters.
 
@@ -248,11 +246,11 @@ The chart will display data using the default filter values when the page first 
 To enable deferred filters, set the `$hasDeferredFilters` property to `true`:
 
 ```php
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class BlogPostsChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 
     protected bool $hasDeferredFilters = true;
 
@@ -271,7 +269,7 @@ public function hasDeferredFilters(): bool
 
 #### Resetting filters to defaults
 
-When using deferred filters, a "Reset" link appears in the filter dropdown footer alongside the "Apply" button. Clicking this link restores all filters to their default values as defined in the `filtersSchema()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
+When using deferred filters, a "Reset" link appears in the filter dropdown footer alongside the "Apply" button. Clicking this link restores all filters to their default values as defined in the `filtersForm()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
 
 You may also call `$this->resetFilters()` from your chart widget to restore the default filter values and refresh the chart data. This applies the defaults immediately, even when filter updates are deferred.
 
@@ -503,9 +501,8 @@ To style the canvas-rendered chart from a [custom theme](../styling/overview), s
 
 Use unitless numbers and the supported keywords, not CSS lengths such as `3px`. You may set different values for light and dark mode.
 
-<Aside variant="info">
-    To configure an individual chart, use [`getOptions()`](#setting-chart-configuration-options). Explicit options for these settings take precedence over the CSS custom properties.
-</Aside>
+> [!NOTE]
+> To configure an individual chart, use [`getOptions()`](#setting-chart-configuration-options). Explicit options for these settings take precedence over the CSS custom properties.
 
 ### Styling the chart legend
 
@@ -577,6 +574,22 @@ To disable this behavior, you may override the `$isLazyLoaded` property on the w
 ```php
 protected static ?bool $isLazyLoaded = false;
 ```
+
+### Customizing the loading placeholder
+
+You may override `getLoadingPlaceholder()` to return a Blade view or an `Htmlable` instance. This placeholder is used during server-side lazy loading and again while the chart's JavaScript is loaded and initialized in the browser, even when `$isLazyLoaded` is `false`:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
+
+public function getLoadingPlaceholder(): View | Htmlable | null
+{
+    return view('widgets.charts.loading-placeholder');
+}
+```
+
+Return `null` to use the default loading placeholder. Keep your placeholder HTML decorative and noninteractive: Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the chart's JavaScript fails to load or initialize, the placeholder remains visible.
 
 ## Making the chart collapsible
 

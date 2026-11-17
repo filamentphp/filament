@@ -252,8 +252,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute :number\'a eşittir',
-                    'inverse' => ':attribute :number\'a eşit değildir',
+                    'direct' => ':attribute :number değerine eşittir',
+                    'inverse' => ':attribute :number değerine eşit değildir',
                 ],
 
             ],
@@ -267,7 +267,7 @@ return [
 
                 'summary' => [
                     'direct' => ':attribute maksimum :number',
-                    'inverse' => ':attribute :number\'dan büyük',
+                    'inverse' => ':attribute :number değerinden büyük',
                 ],
 
             ],
@@ -281,7 +281,7 @@ return [
 
                 'summary' => [
                     'direct' => ':attribute minimum :number',
-                    'inverse' => ':attribute :number\'dan küçük',
+                    'inverse' => ':attribute :number değerinden küçük',
                 ],
 
             ],
@@ -513,8 +513,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute :text\'e eşittir',
-                    'inverse' => ':attribute :text\'e eşit değildir',
+                    'direct' => ':attribute :text değerine eşittir',
+                    'inverse' => ':attribute :text değerine eşit değildir',
                 ],
 
             ],

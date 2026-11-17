@@ -4,11 +4,11 @@ title: Getting started
 
 ## Introduction
 
-While Filament comes with virtually any tool you'll need to build great apps, sometimes you'll need to add your own functionality either for just your app or as redistributable packages that other developers can include in their own apps. This is why Filament offers a plugin system that allows you to extend its functionality.
+Filament's plugin system lets you extend the framework with your own components and features. You can keep extensions within your application or distribute them as Composer packages for other developers to use.
 
 ## Creating a plugin
 
-While you can certainly build plugins from scratch, we recommend using the [Filament Plugin Skeleton](https://github.com/filamentphp/plugin-skeleton) to quickly get started. This skeleton includes all the necessary boilerplate to get you up and running quickly.
+You can build plugins from scratch or use the [Filament Plugin Skeleton](https://github.com/filamentphp/plugin-skeleton) as a starting point. The skeleton provides a package structure and a configuration script.
 
 ### Usage
 
@@ -47,9 +47,8 @@ Filament introduces the concept of a Plugin object that is used to configure the
 
 While the plugin object is extremely helpful, it is not required to build a plugin. You can still build plugins without using the plugin object as you can see in the [building a panel plugin](building-a-panel-plugin) tutorial.
 
-<Aside variant="info">
-   The Plugin object is only used for Panel Providers. Standalone Plugins do not use this object. All configuration for Standalone Plugins should be handled in the plugin's service provider.
-</Aside>
+> [!NOTE]
+> The Plugin object is only used for Panel Providers. Standalone Plugins do not use this object. All configuration for Standalone Plugins should be handled in the plugin's service provider.
 
 ### Registering assets
 

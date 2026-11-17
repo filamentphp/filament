@@ -263,7 +263,7 @@ trait HasFilters
 
         foreach ($this->getFilters() as $filterName => $filter) {
             $filters[$filterName] = Group::make()
-                ->schema($filter->getSchemaComponents())
+                ->schema($filter->getFormSchema())
                 ->statePath($filterName)
                 ->key($filterName)
                 ->columnSpan($filter->getColumnSpan())

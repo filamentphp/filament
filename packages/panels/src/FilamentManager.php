@@ -191,31 +191,49 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getSerifFontFamily();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getFontHtml(): Htmlable
     {
         return $this->getCurrentOrDefaultPanel()->getFontHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getMonoFontHtml(): Htmlable
     {
         return $this->getCurrentOrDefaultPanel()->getMonoFontHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getSerifFontHtml(): Htmlable
     {
         return $this->getCurrentOrDefaultPanel()->getSerifFontHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getFontPreloadHtml(): Htmlable
     {
         return $this->getCurrentOrDefaultPanel()->getFontPreloadHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getMonoFontPreloadHtml(): Htmlable
     {
         return $this->getCurrentOrDefaultPanel()->getMonoFontPreloadHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getSerifFontPreloadHtml(): Htmlable
     {
         return $this->getCurrentOrDefaultPanel()->getSerifFontPreloadHtml();

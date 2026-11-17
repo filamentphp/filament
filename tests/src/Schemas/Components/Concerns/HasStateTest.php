@@ -15,7 +15,7 @@ beforeEach(function (): void {
 it('can use `$set()` in `afterStateUpdatedJs()` to set another field value', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/after-state-updated-js-test');
+    $page = visit('/after-state-updated-js-browser-test');
 
     $page
         ->fill('#form\.name', 'John Doe')

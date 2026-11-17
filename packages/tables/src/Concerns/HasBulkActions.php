@@ -300,7 +300,38 @@ trait HasBulkActions
         $query = $this->getSelectedTableRecordsQuery(chunkSize: $chunkSize);
 
         if ((! $shouldFetchSelectedRecords) && (! $table->checksIfRecordIsSelectable())) {
-            return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
+            $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
+            $baseQuery = $query->toBase();
+
+            // Without a limit, group limit, or offset, neither the ordering nor the selected
+            // columns can affect which keys are returned, unless another
+            // clause could still reference a selected column alias.
+            if (
+                ($baseQuery->limit === null) &&
+                ($baseQuery->groupLimit === null) &&
+                (! $baseQuery->offset) &&
+                blank($baseQuery->havings) &&
+                blank($baseQuery->groups) &&
+                blank($baseQuery->unions) &&
+                (! $baseQuery->distinct)
+            ) {
+                $baseQuery->reorder();
+
+                // SQLite allows aliases in `WHERE` and `JOIN`, and PostgreSQL
+                // set-returning projections can determine which rows exist.
+                // Preserve the projection while pruning unused output columns.
+                if (in_array($query->getModel()->getConnection()->getDriverName(), ['pgsql', 'sqlite'])) {
+                    $baseQuery->addSelect($qualifiedKeyName . ' as filament_record_key');
+                    $baseQuery = $baseQuery->newQuery()
+                        ->fromSub($baseQuery, 'filament_bulk_records')
+                        ->when($baseQuery->useWritePdo, static fn ($query) => $query->useWritePdo());
+                    $qualifiedKeyName = 'filament_record_key';
+                }
+
+                $baseQuery->select($qualifiedKeyName);
+            }
+
+            return $this->cachedSelectedTableRecords = $baseQuery->pluck($qualifiedKeyName);
         }
 
         if ($chunkSize || (! $shouldFetchSelectedRecords)) {

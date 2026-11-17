@@ -230,6 +230,9 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1'], labelTag: 'div');
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toGroupedEmbeddedHtml(): string
     {
         $id = $this->getId();

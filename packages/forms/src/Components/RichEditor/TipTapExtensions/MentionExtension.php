@@ -85,10 +85,10 @@ class MentionExtension extends Node
      */
     public function renderText($node): string
     {
-        $char = $node->attrs->char ?? '@';
+        $triggerCharacter = $node->attrs->char ?? '@';
         $label = $node->attrs->label ?? '';
 
-        return "{$char}{$label}";
+        return "{$triggerCharacter}{$label}";
     }
 
     /**
@@ -98,7 +98,7 @@ class MentionExtension extends Node
      */
     public function renderHTML($node, $HTMLAttributes = []): array
     {
-        $char = $node->attrs->char ?? '@';
+        $triggerCharacter = $node->attrs->char ?? '@';
         $label = $node->attrs->label ?? null;
         $href = $node->attrs->href ?? null;
 
@@ -106,7 +106,7 @@ class MentionExtension extends Node
             $node->content = [
                 (object) [
                     'type' => 'text',
-                    'text' => "{$char}{$label}",
+                    'text' => "{$triggerCharacter}{$label}",
                 ],
             ];
         } else {

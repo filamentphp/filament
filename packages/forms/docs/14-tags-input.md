@@ -37,9 +37,8 @@ class Post extends Model
 }
 ```
 
-<Aside variant="tip">
-    Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-tags) for more information.
-</Aside>
+> [!TIP]
+> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-tags) for more information.
 
 ## Comma-separated tags
 
@@ -159,6 +158,33 @@ TagsInput::configureUsing(function (TagsInput $component): void {
     $component->trim();
 });
 ```
+
+## Customizing the loading placeholder
+
+The tags input displays a loading placeholder while its JavaScript is loaded and initialized. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->loadingPlaceholder(fn () => view('forms.tags-input-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all tags inputs, use [`TagsInput::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::configureUsing(function (TagsInput $tagsInput): void {
+    $tagsInput->loadingPlaceholder(fn () => view('forms.tags-input-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual tags input to restore the default loading placeholder.
 
 ## Tags validation
 

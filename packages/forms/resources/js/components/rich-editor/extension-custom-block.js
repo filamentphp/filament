@@ -129,8 +129,8 @@ export default Node.create({
 
                 preview.className = previewClasses.join(' ')
                 preview.innerHTML = new TextDecoder().decode(
-                    Uint8Array.from(atob(node.attrs.preview), (char) =>
-                        char.charCodeAt(0),
+                    Uint8Array.from(atob(node.attrs.preview), (character) =>
+                        character.charCodeAt(0),
                     ),
                 )
                 dom.appendChild(preview)

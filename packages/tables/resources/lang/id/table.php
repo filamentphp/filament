@@ -6,10 +6,34 @@ return [
 
         'heading' => 'Kolom',
 
+        'position' => 'Posisi :position dari :count.',
+
+        'position_in_group' => 'Posisi :position dari :count dalam :group.',
+
+        'reordered' => ':column dipindahkan ke posisi :position dari :count.',
+
+        'reordered_deferred' => ':column dipindahkan ke posisi :position dari :count. Terapkan kolom untuk menyimpan perubahan Anda.',
+
+        'reordered_in_group' => ':column dipindahkan ke posisi :position dari :count dalam :group.',
+
+        'reordered_in_group_deferred' => ':column dipindahkan ke posisi :position dari :count dalam :group. Terapkan kolom untuk menyimpan perubahan Anda.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'Terapkan kolom',
+            ],
+
+            'move_up' => [
+                'label' => 'Naikkan :column',
+            ],
+
+            'move_down' => [
+                'label' => 'Turunkan :column',
+            ],
+
+            'reorder' => [
+                'label' => 'Ubah urutan kolom',
             ],
 
             'reset' => [
@@ -24,6 +48,22 @@ return [
 
         'actions' => [
             'label' => 'Aksi|Aksi',
+        ],
+
+        'editable' => [
+            'saving' => 'Menyimpan perubahan...',
+            'saved' => 'Perubahan tersimpan.',
+            'failure' => 'Penyimpanan tidak dapat dipastikan. Muat ulang halaman sebelum mencoba lagi.',
+            'unavailable' => 'Item ini sudah tidak dapat diubah.',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Ya',
+                'false' => 'Tidak',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +155,18 @@ return [
             'label' => 'Urutkan ulang data',
         ],
 
+        'reorder_record' => [
+            'label' => 'Ubah urutan item :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Naikkan :label',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Turunkan :label',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -129,6 +181,10 @@ return [
 
         'column_manager' => [
             'label' => 'Pilih kolom',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Tampilkan/sembunyikan item :key',
         ],
 
     ],
@@ -219,7 +275,16 @@ return [
 
     ],
 
+    'loading' => 'Memuat...',
+
     'reorder_indicator' => 'Seret dan lepaskan data ke dalam urutan.',
+
+    'reordering' => [
+        'position' => ':label, posisi :position dari :count.',
+        'moved' => ':label dipindahkan ke posisi :position dari :count.',
+    ],
+
+    'result_count' => '{0} Tidak ada hasil|{1} :count hasil|[2,*] :count hasil',
 
     'selection_indicator' => [
 

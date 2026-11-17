@@ -153,32 +153,16 @@ prepare_demo_checkout() {
     local current_demo_branch
     local demo_branch
     local demo_filament_constraint
-    local demo_major_version
-    local filament_major_version
-    local locked_filament_version
-
-    locked_filament_version="$(php -r '
-        $lock = json_decode(file_get_contents($argv[1]), true, flags: JSON_THROW_ON_ERROR);
-
-        foreach (array_merge($lock["packages"], $lock["packages-dev"]) as $package) {
-            if ($package["name"] === "filament/support") {
-                echo $package["version"];
-                break;
-            }
-        }
-    ' "$repository_root/composer.lock")"
-    filament_major_version="$(sed -E 's/^([0-9]+)\.x-dev$/\1/' <<< "$locked_filament_version")"
-    demo_major_version="$filament_major_version"
 
     # Filament 4.x feature work currently uses the 5.x demo application.
-    if [[ "$filament_major_version" == 4 ]]; then
-        demo_major_version=5
-    fi
+    # Keep this explicit: Composer path packages may be locked as `dev-main`,
+    # including on release branches, feature branches, and detached checkouts.
+    local demo_major_version=5
 
     demo_branch="$demo_major_version.x"
 
     if ! git ls-remote --exit-code --heads https://github.com/filamentphp/demo.git "$demo_branch" >/dev/null 2>&1; then
-        echo "The preferred filamentphp/demo branch $demo_branch was not found for Filament $locked_filament_version." >&2
+        echo "The preferred filamentphp/demo branch $demo_branch was not found." >&2
         return 1
     fi
 

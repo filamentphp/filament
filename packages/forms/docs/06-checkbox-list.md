@@ -70,9 +70,8 @@ CheckboxList::make('technologies')
 
 <AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" />
 
-<Aside variant="info">
-    Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
-</Aside>
+> [!NOTE]
+> Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
 
 ## Splitting options into columns
 
@@ -234,9 +233,8 @@ CheckboxList::make('technology')
 
 <AutoScreenshot name="forms/fields/checkbox-list/html-labels" alt="Checkbox list with HTML labels" />
 
-<Aside variant="danger">
-    Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
-</Aside>
+> [!CAUTION]
+> Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
 Optionally, you may pass a boolean value to control if the options should allow HTML or not:
 
@@ -269,17 +267,16 @@ CheckboxList::make('technologies')
     ->relationship(titleAttribute: 'name')
 ```
 
-<Aside variant="warning">
-    When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `saved()` call from `disabled()` is not applied after the `relationship()` configuration:
-
-    ```php
-    use Filament\Forms\Components\CheckboxList;
-
-    CheckboxList::make('technologies')
-        ->disabled()
-        ->relationship(titleAttribute: 'name')
-    ```
-</Aside>
+> [!WARNING]
+> When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `saved()` call from `disabled()` is not applied after the `relationship()` configuration:
+>
+> ```php
+> use Filament\Forms\Components\CheckboxList;
+>
+> CheckboxList::make('technologies')
+>     ->disabled()
+>     ->relationship(titleAttribute: 'name')
+> ```
 
 ### Customizing the relationship query
 
