@@ -298,6 +298,66 @@ class TestsColumns
         };
     }
 
+    public function assertTableColumnEnabled(): Closure
+    {
+        return function (string $name, $record): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $column = $this->instance()->getTable()->getColumn($name);
+
+            $recordKey = ($record instanceof Model) || is_array($record)
+                ? $this->instance()->getTableRecordKey($record)
+                : (string) $record;
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
+
+            $column->record($record);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertFalse(
+                $column->isDisabled(),
+                "Failed asserting that a table column with name [{$name}] is enabled for record [{$recordKey}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnDisabled(): Closure
+    {
+        return function (string $name, $record): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $column = $this->instance()->getTable()->getColumn($name);
+
+            $recordKey = ($record instanceof Model) || is_array($record)
+                ? $this->instance()->getTableRecordKey($record)
+                : (string) $record;
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
+
+            $column->record($record);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertTrue(
+                $column->isDisabled(),
+                "Failed asserting that a table column with name [{$name}] is disabled for record [{$recordKey}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableColumnFormattedStateSet(): Closure
     {
         return function (string $name, $state, $record): static {

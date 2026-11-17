@@ -9,11 +9,8 @@ use Illuminate\Support\Arr;
 
 trait CanUpdateState
 {
-    // Security: Inline editable columns (`ToggleColumn`, `TextInputColumn`,
-    // `SelectColumn`, `CheckboxColumn`) do not automatically check Laravel
-    // Model Policies before saving. Only the `disabled()` state is
-    // checked. Use `disabled()` with a closure, or use a full edit
-    // page / modal action where resource authorization is enforced.
+    // Security: Inline editing requires explicit `authorize()` configuration
+    // to restrict access, even in strict authorization mode.
 
     protected ?Closure $updateStateUsing = null;
 
