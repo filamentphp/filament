@@ -58,10 +58,12 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records', function (): void {
-        Post::factory()->count(10)->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $title) {
+            Post::factory()->create(['title' => $title]);
+        }
 
         $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
-        $sortedDesc = Post::query()->orderByDesc('title')->orderBy('id')->get();
+        $sortedDesc = Post::query()->orderByDesc('title')->orderByDesc('id')->get();
 
         livewire(PostsTable::class)
             ->sortTable('title')
@@ -71,7 +73,9 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records with relationship', function (): void {
-        Post::factory()->count(10)->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $authorName) {
+            Post::factory()->for(User::factory()->state(['name' => $authorName]), 'author')->create();
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -90,7 +94,7 @@ describe('rendering and sorting', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -156,13 +160,13 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records with JSON column', function (): void {
-        $posts = Post::factory()->count(10)->state(fn (): array => [
-            'json' => ['foo' => Str::random()],
-        ])->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $value) {
+            Post::factory()->create(['json' => ['foo' => $value]]);
+        }
 
         // Get database-sorted results to match actual query behavior
         $sortedAsc = Post::query()->orderBy('json->foo')->orderBy('id')->get();
-        $sortedDesc = Post::query()->orderByDesc('json->foo')->orderBy('id')->get();
+        $sortedDesc = Post::query()->orderByDesc('json->foo')->orderByDesc('id')->get();
 
         livewire(PostsTable::class)
             ->sortTable('json.foo')
@@ -172,13 +176,13 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records with nested JSON column', function (): void {
-        $posts = Post::factory()->count(10)->state(fn (): array => [
-            'json' => ['bar' => ['baz' => Str::random()]],
-        ])->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $value) {
+            Post::factory()->create(['json' => ['bar' => ['baz' => $value]]]);
+        }
 
         // Get database-sorted results to match actual query behavior
         $sortedAsc = Post::query()->orderBy('json->bar->baz')->orderBy('id')->get();
-        $sortedDesc = Post::query()->orderByDesc('json->bar->baz')->orderBy('id')->get();
+        $sortedDesc = Post::query()->orderByDesc('json->bar->baz')->orderByDesc('id')->get();
 
         livewire(PostsTable::class)
             ->sortTable('json.bar.baz')
@@ -188,9 +192,9 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records with relationship JSON column', function (): void {
-        $posts = Post::factory()->count(10)->state(fn (): array => [
-            'author_id' => User::factory()->state(['json' => ['foo' => Str::random()]]),
-        ])->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $value) {
+            Post::factory()->for(User::factory()->state(['json' => ['foo' => $value]]), 'author')->create();
+        }
 
         // Get database-sorted results using subquery orderBy
         $sortedAsc = Post::query()
@@ -210,7 +214,7 @@ describe('rendering and sorting', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -221,9 +225,9 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records with relationship nested JSON column', function (): void {
-        $posts = Post::factory()->count(10)->state(fn (): array => [
-            'author_id' => User::factory()->state(['json' => ['bar' => ['baz' => Str::random()]]]),
-        ])->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $value) {
+            Post::factory()->for(User::factory()->state(['json' => ['bar' => ['baz' => $value]]]), 'author')->create();
+        }
 
         // Get database-sorted results using subquery orderBy
         $sortedAsc = Post::query()
@@ -243,7 +247,7 @@ describe('rendering and sorting', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1013,7 +1017,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1058,7 +1062,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1140,7 +1144,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('profiles.user_id', 'users.id')
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)
@@ -1184,7 +1188,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('profiles.user_id', 'users.id')
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)
@@ -1262,7 +1266,7 @@ describe('relationship columns', function (): void {
                     ->where('images.imageable_type', User::class)
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)
@@ -1308,7 +1312,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1357,7 +1361,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1645,7 +1649,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1727,7 +1731,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1816,7 +1820,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -1903,7 +1907,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('profiles.user_id', 'users.id')
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)
@@ -1993,7 +1997,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('profiles.user_id', 'users.id')
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)
@@ -2058,7 +2062,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -2158,7 +2162,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('profiles.user_id', 'users.id')
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)
@@ -2244,7 +2248,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -2287,7 +2291,7 @@ describe('relationship columns', function (): void {
                     ->where('posts.is_published', true)
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)
@@ -2338,7 +2342,7 @@ describe('relationship columns', function (): void {
                     ->whereColumn('profiles.user_id', 'users.id')
                     ->limit(1)
             )
-            ->orderBy('users.id')
+            ->orderByDesc('users.id')
             ->get();
 
         livewire(UsersTable::class)

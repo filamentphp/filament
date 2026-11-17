@@ -654,7 +654,11 @@ describe('duplicate relationship selection', function (): void {
                         ->set('isTrackingDeselectedTableRecords', true)
                         ->set('deselectedTableRecords', $excludedKeys)
                         ->callTableBulkAction($action === 'chunked' ? 'customBulk' : $action, [])
-                        ->assertDispatched('customBulk-called', quantities: $expectedQuantities),
+                        ->assertDispatched('customBulk-called', function (string $name, array $parameters) use ($expectedQuantities): bool {
+                            expect($parameters['quantities'])->toEqualCanonicalizing($expectedQuantities);
+
+                            return true;
+                        }),
                 );
             },
         );
@@ -676,7 +680,11 @@ describe('duplicate relationship selection', function (): void {
                 during: static fn () => livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])
                     ->set('isTrackingDeselectedTableRecords', true)
                     ->callTableBulkAction($action === 'chunked' ? 'customBulk' : $action, [])
-                    ->assertDispatched('customBulk-called', quantities: $crossesBatchBoundary ? [3, 7, 11] : [3, 7]),
+                    ->assertDispatched('customBulk-called', function (string $name, array $parameters) use ($crossesBatchBoundary): bool {
+                        expect($parameters['quantities'])->toEqualCanonicalizing($crossesBatchBoundary ? [3, 7, 11] : [3, 7]);
+
+                        return true;
+                    }),
             ),
         );
     })->with([
@@ -1002,7 +1010,7 @@ describe('selectable records query', function (): void {
     it('counts selectable records in a grouped base query', function (): void {
         Table::configureUsing(
             static fn (Table $table): Table => $table->modifyQueryUsing(
-                static fn (Builder $query): Builder => $query->groupBy('posts.id'),
+                static fn (Builder $query): Builder => $query->select('posts.id')->groupBy('posts.id'),
             ),
             during: function (): void {
                 $component = livewire(QuerySelectablePostsTable::class)->instance();
@@ -1090,7 +1098,7 @@ describe('selectable records query', function (): void {
     });
 
     it('does not apply the base query offset twice when checking visible records', function (bool $shouldUseGlobalScope): void {
-        $scope = static fn (Builder $query): Builder => $query->orderBy('id')->offset(1)->limit(4);
+        $scope = static fn (Builder $query): Builder => $query->reorder('posts.id')->offset(1)->limit(4);
 
         Table::configureUsing(
             static fn (Table $table): Table => $table->paginated(false)->modifyQueryUsing(
@@ -1293,14 +1301,19 @@ describe('selectable records query', function (): void {
 
                 expect($component->instance()->getAllSelectableTableRecordsCount())->toBe(2)
                     ->and($component->instance()->getAllSelectableTableRecordKeys())->toHaveCount(2)
-                    ->and($component->instance()->getTableRecords()->map(fn (Department $record): bool => $component->instance()->getTable()->isRecordSelectable($record))->all())->toBe([true, false, true]);
+                    ->and($component->instance()->getTableRecords())->toHaveCount(3)
+                    ->and($component->instance()->getTableRecords()->mapWithKeys(fn (Department $record): array => [$record->quantity => $component->instance()->getTable()->isRecordSelectable($record)])->all())->toEqual([3 => true, 5 => false, 7 => true]);
 
                 BulkAction::configureUsing(
                     static fn (BulkAction $bulkAction) => $bulkAction->chunkSelectedRecords($action === 'chunked' ? 1 : null),
                     during: static fn () => $component
                         ->set('isTrackingDeselectedTableRecords', true)
                         ->callTableBulkAction($action === 'chunked' ? 'customBulk' : $action, [])
-                        ->assertDispatched('customBulk-called', quantities: [3, 7]),
+                        ->assertDispatched('customBulk-called', function (string $name, array $parameters): bool {
+                            expect($parameters['quantities'])->toEqualCanonicalizing([3, 7]);
+
+                            return true;
+                        }),
                 );
             },
         );
