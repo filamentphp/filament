@@ -97,7 +97,7 @@ it('falls back to browser delivery when the notification cache is unavailable du
         ->assertNoSmoke();
 });
 
-it('dispatches `notificationClosed` when inline notifications expire', function (): void {
+it('dispatches `notificationsClosed` when inline notifications expire', function (): void {
     visit('/notification-browser-test')
         ->click('[data-testid="show-inline-notification"]')
         ->assertSeeIn('[data-testid="inline-notification-expiry"]', 'Expired');

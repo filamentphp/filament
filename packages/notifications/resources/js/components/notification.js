@@ -1,5 +1,40 @@
 import { once } from 'alpinejs/src/utils/once'
 
+const pendingDismissals = []
+let dismissalTimeout
+
+function queueNotificationDismissal(id, livewireRoot) {
+    pendingDismissals.push({ id, livewireRoot })
+
+    if (dismissalTimeout) {
+        return
+    }
+
+    dismissalTimeout = setTimeout(() => {
+        dismissalTimeout = null
+
+        const ids = [
+            ...new Set(
+                pendingDismissals
+                    .splice(0)
+                    .filter(
+                        ({ livewireRoot }) =>
+                            !livewireRoot || livewireRoot.isConnected,
+                    )
+                    .map(({ id }) => id),
+            ),
+        ]
+
+        if (!ids.length) {
+            return
+        }
+
+        window.dispatchEvent(
+            new CustomEvent('notificationsClosed', { detail: { ids } }),
+        )
+    }, 50)
+}
+
 export default function notificationComponent({ notification }) {
     return {
         isShown: false,
@@ -342,19 +377,16 @@ export default function notificationComponent({ notification }) {
             this.durationTimeout = null
             this.durationStartedAt = null
 
-            const dispatchClosedEvent = () =>
-                window.dispatchEvent(
-                    new CustomEvent('notificationClosed', {
-                        detail: {
-                            id: notification.id,
-                        },
-                    }),
-                )
+            const livewireRoot = Alpine.findClosest(this.$el, (element) =>
+                element.hasAttribute('wire:id'),
+            )
+            const queueDismissal = () =>
+                queueNotificationDismissal(notification.id, livewireRoot)
 
             if (isImmediate === true) {
                 this.isShown = false
 
-                dispatchClosedEvent()
+                queueDismissal()
 
                 return
             }
@@ -363,23 +395,17 @@ export default function notificationComponent({ notification }) {
             // notifications modal, are part of a list, so they are removed
             // from it as soon as possible instead of fading out first.
             if (this.$root.classList.contains('fi-inline')) {
-                dispatchClosedEvent()
+                queueDismissal()
 
                 return
             }
 
-            const livewireRoot = this.$el.closest('[wire\\:id]')
-
             this.isShown = false
 
-            this.closeTimeout = setTimeout(() => {
-                // Do not deliver an old dismissal to a new host after navigation.
-                if (livewireRoot && !livewireRoot.isConnected) {
-                    return
-                }
-
-                dispatchClosedEvent()
-            }, this.transitionDuration)
+            this.closeTimeout = setTimeout(
+                queueDismissal,
+                this.transitionDuration,
+            )
         },
 
         dismiss() {
@@ -421,8 +447,8 @@ export default function notificationComponent({ notification }) {
 
         destroy() {
             this.isDestroyed = true
-            // Keep the pending `notificationClosed` event so a dismissal is not
-            // lost if Livewire removes this notification before its transition ends.
+            // Keep the pending dismissal if Livewire removes this notification
+            // before its transition ends.
             clearTimeout(this.durationTimeout)
             this.durationTimeout = null
             this.unsubscribeLivewireHook?.()
