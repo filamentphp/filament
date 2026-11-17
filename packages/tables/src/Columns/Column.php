@@ -118,6 +118,9 @@ class Column extends ViewComponent
         return parent::toHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function wrapLazyLoadedStatePlaceholderHtml(string $html): string
     {
         return '<div class="fi-ta-state-placeholder">' . $html . '</div>';
@@ -230,6 +233,9 @@ class Column extends ViewComponent
         <?php return new HtmlString(ob_get_clean());
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getCellAttributeHtml(): string
     {
         $columnAlignment = $this->getAlignment();
@@ -245,6 +251,9 @@ class Column extends ViewComponent
         ])->toHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getCachedCellAttributeHtml(): string
     {
         if ($this->cachedCellAttributeHtml !== null) {

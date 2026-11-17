@@ -1344,6 +1344,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<Block>  $blocks
      * @param  array<string, ?int> | int | null  $columns
      */
@@ -1909,7 +1911,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         ];
     }
 
-    /** @param array<Schema> $items */
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @param  array<Schema>  $items
+     */
     protected function getReorderingDescriptionHtml(array $items): string
     {
         $html = '';

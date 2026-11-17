@@ -9,6 +9,8 @@ use InvalidArgumentException;
 class LazyLoadedState
 {
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<string, Column | Entry>  $components
      * @return array<string, string>
      */

@@ -154,6 +154,9 @@ class Js extends Asset
         return $this->extraAttributes;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getExtraAttributesHtml(): string
     {
         $attributes = '';

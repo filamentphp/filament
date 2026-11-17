@@ -47,7 +47,7 @@ trait CanLazyLoadState
     }
 
     /**
-     * @internal
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
     public function renderLazyLoadedState(bool $hasState = false, mixed $state = null): string
     {
@@ -67,6 +67,8 @@ trait CanLazyLoadState
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<string, mixed>  $target
      * @param  array<mixed>  $arguments
      */

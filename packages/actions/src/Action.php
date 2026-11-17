@@ -750,6 +750,9 @@ class Action extends ViewComponent implements Arrayable
         return $this->nestingIndex;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function renderModal(): View
     {
         return view('filament-actions::action-modal', [
@@ -757,6 +760,9 @@ class Action extends ViewComponent implements Arrayable
         ]);
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function toModalHtmlable(): Htmlable
     {
         return new HtmlString(Utils::insertAttributesIntoHtmlRoot($this->renderModal()->render(), [
@@ -844,6 +850,9 @@ class Action extends ViewComponent implements Arrayable
         return $this->livewireTarget !== null;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toOptimizedLinkHtml(): string
     {
         $color = $this->getColor() ?? 'primary';
@@ -925,6 +934,9 @@ class Action extends ViewComponent implements Arrayable
             && ! $this->hasCanSubmitForm();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toOptimizedGroupedHtml(): string
     {
         $color = $this->getColor() ?? 'gray';
@@ -984,6 +996,9 @@ class Action extends ViewComponent implements Arrayable
         return "<button type=\"button\" wire:loading.attr=\"aria-disabled\" wire:loading.class=\"fi-disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString} role=\"menuitem\" tabindex=\"-1\">{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toBadgeHtml(): string
     {
         $isDisabled = $this->isDisabled();
@@ -1019,6 +1034,9 @@ class Action extends ViewComponent implements Arrayable
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toButtonHtml(): string
     {
         $isDisabled = $this->isDisabled();
@@ -1059,6 +1077,9 @@ class Action extends ViewComponent implements Arrayable
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toGroupedHtml(): string
     {
         $isDisabled = $this->isDisabled();
@@ -1093,6 +1114,9 @@ class Action extends ViewComponent implements Arrayable
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toIconButtonHtml(): string
     {
         $isDisabled = $this->isDisabled();
@@ -1129,6 +1153,9 @@ class Action extends ViewComponent implements Arrayable
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toLinkHtml(): string
     {
         $isDisabled = $this->isDisabled();
