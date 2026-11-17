@@ -114,7 +114,11 @@
 @endphp
 
 @if ($trigger)
-    {!! '<div>' !!}
+    @if ((! $id) && (! $trigger->attributes->get('disabled')))
+        {!! '<div x-data="filamentModalTrigger">' !!}
+    @else
+        {!! '<div>' !!}
+    @endif
     {{-- Avoid formatting issues with unclosed elements --}}
 
     <div
@@ -122,7 +126,7 @@
             @if ($id)
                 x-on:click="$dispatch(@js($openEventName), { id: @js($id) })"
             @else
-                x-on:click="$el.nextElementSibling.dispatchEvent(new CustomEvent(@js($openEventName)))"
+                x-on:click="openModalFromTrigger($el, @js($openEventName))"
             @endif
         @endif
         {{ $trigger->attributes->except(['disabled'])->class(['fi-modal-trigger']) }}
@@ -158,13 +162,13 @@
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
-        x-on:{{ $closeEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) close()"
-        x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
-        x-on:{{ $openEventName }}.window="if (($event.detail.id === @js($id)) && (! isOpen)) open()"
+        x-on:{{ $closeEventName }}.window="handleCloseEvent($event, @js($id))"
+        x-on:{{ $closeQuietlyEventName }}.window="handleCloseQuietlyEvent($event, @js($id))"
+        x-on:{{ $openEventName }}.window="handleOpenEvent($event, @js($id))"
     @else
-        x-on:{{ $closeEventName }}.stop="if (isOpen) close()"
-        x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
-        x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
+        x-on:{{ $closeEventName }}.stop="isOpen && close()"
+        x-on:{{ $closeQuietlyEventName }}.stop="isOpen && closeQuietly()"
+        x-on:{{ $openEventName }}.stop="! isOpen && open()"
     @endif
     x-bind:class="{
         'fi-modal-open': isOpen,
@@ -215,7 +219,7 @@
     >
         <{{ filled($wireSubmitHandler) ? 'form' : 'div' }}
             @if ($closeByEscaping)
-                x-on:keydown.window.escape="if (isTopmost()) {{ $closeEventHandler }}"
+                x-on:keydown.window.escape="isTopmost() && {{ $closeEventHandler }}"
             @endif
             x-show="isWindowVisible"
             x-transition:enter="fi-transition-enter"

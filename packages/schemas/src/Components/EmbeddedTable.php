@@ -3,11 +3,11 @@
 namespace Filament\Schemas\Components;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\View\View;
 use LogicException;
 
-class EmbeddedTable extends Component
+class EmbeddedTable extends Component implements HasEmbeddedView
 {
     /**
      * @param  array<string, mixed> | Closure  $livewireComponentData
@@ -24,7 +24,7 @@ class EmbeddedTable extends Component
         return $static;
     }
 
-    public function render(): View
+    public function toEmbeddedHtml(): string
     {
         $livewire = $this->getLivewire();
 
@@ -32,6 +32,6 @@ class EmbeddedTable extends Component
             throw new LogicException('The [' . $livewire::class . '] component must have a table defined.');
         }
 
-        return $livewire->getTable()->render();
+        return $livewire->getTable()->toHtml();
     }
 }

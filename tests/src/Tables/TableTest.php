@@ -58,6 +58,30 @@ describe('stacked on mobile', function (): void {
     });
 });
 
+describe('search on blur', function (): void {
+    it('applies the global search on blur', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create(['title' => 'Matching search record']);
+        Post::factory()->create(['title' => 'Other table record']);
+
+        $page = visit('/table-render-hooks-browser-test?isSearchOnBlur=1');
+
+        $input = $page->page()->getByRole('searchbox', ['name' => 'Search', 'exact' => true]);
+
+        $input->fill('Matching');
+        $page->assertSee('Other table record');
+        $input->press('Tab');
+        $page->assertDontSee('Other table record')
+            ->assertSee('Matching search record');
+        $input->fill('');
+        $input->press('Tab');
+        $page->assertSee('Other table record');
+
+        $page->assertNoSmoke();
+    });
+});
+
 describe('lazy loading', function (): void {
     it('defaults `isLazyLoaded()` and its deprecated alias to `false`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();

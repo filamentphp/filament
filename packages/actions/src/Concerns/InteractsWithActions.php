@@ -15,10 +15,12 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
+use Filament\Support\View\Concerns\InteractsWithLivewireRendering;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +28,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Livewire\Attributes\Locked;
@@ -40,6 +44,7 @@ use function Livewire\store;
 
 trait InteractsWithActions /** @phpstan-ignore trait.unused */
 {
+    use InteractsWithLivewireRendering;
     use WithRateLimiting;
 
     /**
@@ -296,6 +301,54 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         ]);
 
         return Broadcast::connection()->validAuthenticationResponse($request, true);
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    #[Unexposed]
+    public function generateActionModalsHtml(): HtmlString
+    {
+        if (ViewComponent::hasPublishedEmbeddedViewOverride('filament-actions::components.modals')) {
+            return new HtmlString(view('filament-actions::components.modals')->render());
+        }
+
+        if ($this->hasActionsModalRendered) {
+            return new HtmlString('');
+        }
+
+        $mountedActions = $this->getMountedActions();
+        $mountedActionsCount = count($mountedActions);
+        $mountedActionIndex = 0;
+
+        ob_start(); ?>
+
+        <div
+            wire:partial="action-modals"
+            x-data="filamentActionModals({
+                        livewireId: <?= Js::from($this->getId()) ?>,
+                    })"
+            style="height: 0"
+        >
+            <?= $this->generateMorphMarkerHtml(); ?>
+            <?php foreach ($this->iterateRenderLoop($mountedActions) as $action) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php if ((++$mountedActionIndex < $mountedActionsCount) || $this->mountedActionShouldOpenModal()) { ?>
+                    <?= e($action->toModalHtmlable()) ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+            <?php } ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+        </div>
+
+        <?php if ($this->shouldMountDefaultActions()) { ?>
+            <div wire:init="mountDefaultActions"></div>
+        <?php } ?>
+
+        <?php
+        $this->hasActionsModalRendered = true;
+
+        return new HtmlString(ob_get_clean());
     }
 
     #[Unexposed]

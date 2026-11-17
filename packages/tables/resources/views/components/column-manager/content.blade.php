@@ -1,3 +1,5 @@
+{{-- @deprecated Copy the code from this view directly into your own view to improve performance. --}}
+
 @props([
     'columns' => null,
     'hasReorderableColumns',
@@ -32,7 +34,7 @@
 >
     <template
         x-for="column in getVisibleColumns()"
-        x-bind:key="JSON.stringify([column.type, column.name])"
+        x-bind:key="getColumnKey(column)"
     >
         <div
             @if ($hasReorderableColumns)
@@ -53,7 +55,7 @@
                                     x-bind:id="$id('fi-ta-col-manager-group-checkbox', column.name)"
                                     x-bind:checked="(groupedColumns[column.name] || {}).checked || false"
                                     x-bind:disabled="(groupedColumns[column.name] || {}).disabled || false"
-                                    x-effect="$el.indeterminate = (groupedColumns[column.name] || {}).indeterminate || false"
+                                    x-effect="syncGroupCheckboxIndeterminate($el, column.name)"
                                     x-on:change="toggleGroup(column.name)"
                                 />
                             @endif
@@ -121,7 +123,7 @@
                     >
                         <template
                             x-for="groupColumn in getVisibleColumns(column.name)"
-                            x-bind:key="JSON.stringify([groupColumn.type, groupColumn.name])"
+                            x-bind:key="getColumnKey(groupColumn)"
                         >
                             <div
                                 @if ($hasReorderableColumns)

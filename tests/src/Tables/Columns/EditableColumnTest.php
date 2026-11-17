@@ -88,7 +88,7 @@ it('renders the configured cells instead of the whole table after `updateTableCo
     $component->call('$refresh');
 
     foreach ($partials as $partialHtml) {
-        expect($component->effects['html'])->toContain($partialHtml);
+        expect($component->effects['html'])->toContain(trim($partialHtml));
     }
 })->with([
     '`partiallyRenderAfterStateUpdated()`' => ['partial', ['title']],

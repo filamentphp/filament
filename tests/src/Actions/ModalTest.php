@@ -2,6 +2,7 @@
 
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Support\Facades\Artisan;
@@ -47,6 +48,26 @@ describe('browser interactions', function (): void {
             ->assertVisible('[data-testid="eyebrow-modal"]')
             ->assertSeeIn('[data-testid="eyebrow-modal"]', 'Edit post')
             ->assertNoAccessibilityIssues();
+    });
+
+    it('preserves mounted action fields across full table renders', function (): void {
+        Post::factory()->create();
+
+        $browser = visit('/table-render-hooks-browser-test')
+            ->click('[data-testid="view-record"]')
+            ->assertVisible('[data-testid="record-note"]')
+            ->fill('[data-testid="record-note"]', 'Unsaved draft');
+
+        $browser->script('window.originalRecordNote = document.querySelector(\'[data-testid="record-note"]\')');
+
+        foreach ([1, 2] as $refreshCount) {
+            $browser->click('[data-testid="refresh-table"]')
+                ->assertSee("Refresh {$refreshCount}")
+                ->assertValue('[data-testid="record-note"]', 'Unsaved draft')
+                ->assertScript('window.originalRecordNote === document.querySelector(\'[data-testid="record-note"]\')', true);
+        }
+
+        $browser->assertNoSmoke();
     });
 
     it('cancels `beforeunload` events only while actions that can contain unsaved changes are mounted', function (): void {

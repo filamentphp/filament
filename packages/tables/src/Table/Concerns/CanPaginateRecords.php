@@ -4,7 +4,13 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Arr;
+use Illuminate\View\ComponentAttributeBag;
 
 trait CanPaginateRecords
 {
@@ -161,5 +167,51 @@ trait CanPaginateRecords
     public function hasExtremePaginationLinks(): bool
     {
         return (bool) $this->evaluate($this->hasExtremePaginationLinks);
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    protected function hasRenderPagination(): bool
+    {
+        $records = $this->isLoaded() ? $this->getRecords() : null;
+
+        return (($records instanceof Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator))
+            && (($records instanceof LengthAwarePaginator) ? (bool) $records->total() : $records->isNotEmpty());
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    protected function generatePaginationContainerHtml(): string
+    {
+        $records = $this->isLoaded() ? $this->getRecords() : null;
+
+        ob_start(); ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($this->hasRenderPagination()) {
+            $hasExtremePaginationLinks = $this->hasExtremePaginationLinks();
+            $paginationPageOptions = $this->getPaginationPageOptions();
+            ?>
+
+            <?= ($records instanceof AbstractPaginator) || ($records instanceof CursorPaginator)
+                ? $this->generatePaginationHtml(
+                    paginator: $records,
+                    livewireId: $this->getLivewire()->getId(),
+                    extremeLinks: $hasExtremePaginationLinks,
+                    pageOptions: $paginationPageOptions,
+                    loadingTargets: Table::LOADING_TARGETS,
+                    isRtl: __('filament-panels::layout.direction') === 'rtl',
+                )
+                : view('filament::components.pagination.index', [
+                    'paginator' => $records,
+                    'extremeLinks' => $hasExtremePaginationLinks,
+                    'pageOptions' => $paginationPageOptions,
+                    'loadingTargets' => Table::LOADING_TARGETS,
+                    'attributes' => new ComponentAttributeBag,
+                ])->render(); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+        <?php return ob_get_clean();
     }
 }
