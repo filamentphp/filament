@@ -19,7 +19,6 @@ use Filament\Support\View\Components\InputComponent\WrapperComponent\IconCompone
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
-use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
@@ -649,6 +648,10 @@ class Field extends Component implements Contracts\HasValidationRules
 
         $wrapperAttributes = $attributes
             ->except(['wire:target', 'tabindex'])
+            ->merge([
+                'wire:loading.class.delay.' . $loadingDelay => $hasLoadingIndicator ? $attributes->prepends('fi-loading') : null,
+                'wire:target' => $loadingIndicatorTarget,
+            ], escape: false)
             ->class([
                 'fi-input-wrp',
                 'fi-disabled' => (! $hasAlpineClasses) && $isDisabled,
@@ -682,15 +685,6 @@ class Field extends Component implements Contracts\HasValidationRules
                     'fi-input-wrp-prefix-has-label' => filled($prefix),
                 ]);
 
-                if (! $hasPrefix) {
-                    $prefixDivAttributes = $prefixDivAttributes->merge([
-                        'wire:loading.delay.' . $loadingDelay . '.flex' => true,
-                        'wire:target' => $loadingIndicatorTarget,
-                        // Forces the loading indicator to hide once the request completes.
-                        'wire:key' => Str::random(),
-                    ], escape: false);
-                }
-
                 if ($canClickPrefixAffix) {
                     $prefixDivAttributes = $prefixDivAttributes->merge([
                         'x-on:click' => "if (! \$event.target.closest('.fi-input-wrp-actions')) \$dispatch('focus-input')",
@@ -708,19 +702,11 @@ class Field extends Component implements Contracts\HasValidationRules
 
                     <?= generate_icon_html(
                         $prefixIcon,
-                        attributes: (new FilamentComponentAttributeBag)
-                            ->merge([
-                                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                            ], escape: false)
-                            ->color(IconComponent::class, $prefixIconColor),
+                        attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $prefixIconColor),
                     )?->toHtml() ?>
 
                     <?php if ($hasLoadingIndicator) { ?>
-                        <?= generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                            'wire:loading.delay.' . $loadingDelay => $hasPrefix,
-                            'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
-                        ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
+                        <?= generate_loading_indicator_html((new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))->toHtml() ?>
                     <?php } ?>
 
                     <?php if (filled($prefix)) { ?>
@@ -736,13 +722,6 @@ class Field extends Component implements Contracts\HasValidationRules
                     'fi-input-wrp-content-ctn',
                     'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $hasInlinePrefix,
                 ]);
-
-        if ($hasLoadingIndicator && (! $hasPrefix)) {
-            $contentCtnAttributes = $contentCtnAttributes->merge([
-                'wire:target' => $loadingIndicatorTarget,
-                'wire:loading.delay.' . $loadingDelay . '.class.remove' => $hasInlinePrefix ? 'ps-3' : false,
-            ], escape: false);
-        }
         ?>
             <div <?= $contentCtnAttributes->toHtml() ?>>
                 <?= $html ?>
@@ -770,12 +749,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                     <?= generate_icon_html(
                         $suffixIcon,
-                        attributes: (new FilamentComponentAttributeBag)
-                            ->merge([
-                                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                            ], escape: false)
-                            ->color(IconComponent::class, $suffixIconColor),
+                        attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $suffixIconColor),
                     )?->toHtml() ?>
 
                     <?php if (count($suffixActions)) { ?>

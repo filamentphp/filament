@@ -52,6 +52,8 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 
+    $hasSeparateLoadingIndicatorTarget = $hasLoadingIndicator && $attributes->has('wire:target') && blank($attributes->get('wire:target'));
+
     $hasTooltip = filled($tooltip);
 
     $loadingDelay = ($icon || $hasLoadingIndicator || $isDeletable)
@@ -83,6 +85,7 @@
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
                 'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.class.delay.' . $loadingDelay => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->when(
@@ -102,19 +105,16 @@
     @if ($iconPosition === IconPosition::Before)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? IconSize::Small)
+                \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
-                    'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? IconSize::Small)
+                \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.class.delay.' . $loadingDelay => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+                    'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+                ]), size: $iconSize ?? IconSize::Small)
             }}
         @endif
     @endif
@@ -134,6 +134,8 @@
             if ($deleteButtonHasLoadingIndicator) {
                 $deleteButtonLoadingIndicatorTarget = html_entity_decode($deleteButtonWireTarget, ENT_QUOTES);
             }
+
+            $deleteButtonHasSeparateLoadingIndicatorTarget = $deleteButtonHasLoadingIndicator && $deleteButton->attributes->has('wire:target') && blank($deleteButton->attributes->get('wire:target'));
         @endphp
 
         <button
@@ -145,6 +147,7 @@
                     ->merge([
                         'wire:loading.attr' => $deleteButtonHasLoadingIndicator ? 'aria-disabled' : null,
                         'wire:loading.class' => $deleteButtonHasLoadingIndicator ? $deleteButton->attributes->prepends('fi-disabled') : null,
+                        'wire:loading.class.delay.' . $loadingDelay => ($deleteButtonHasLoadingIndicator && (! $deleteButtonHasSeparateLoadingIndicatorTarget)) ? $deleteButton->attributes->prepends('fi-loading') : null,
                         'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : null,
                     ], escape: false)
                     ->class([
@@ -152,24 +155,14 @@
                     ])
             }}
         >
-            <span
-                {{
-                    (new Filament\Support\View\ComponentAttributeBag([
-                        'aria-hidden' => 'true',
-                        'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
-                        'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
-                    ]))->class([
-                        'fi-badge-delete-btn-icon',
-                    ])
-                }}
-            ></span>
+            <span aria-hidden="true" class="fi-badge-delete-btn-icon"></span>
 
             @if ($deleteButtonHasLoadingIndicator)
                 {{
-                    \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                        'wire:loading.delay.' . $loadingDelay => '',
-                        'wire:target' => $deleteButtonLoadingIndicatorTarget,
-                    ])), size: IconSize::ExtraSmall)
+                    \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                        'wire:loading.class.delay.' . $loadingDelay => $deleteButtonHasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+                        'wire:target' => $deleteButtonHasSeparateLoadingIndicatorTarget ? $deleteButtonLoadingIndicatorTarget : null,
+                    ]), size: IconSize::ExtraSmall)
                 }}
             @endif
 
@@ -180,19 +173,16 @@
     @elseif ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? IconSize::Small)
+                \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
-                    'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? IconSize::Small)
+                \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.class.delay.' . $loadingDelay => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+                    'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+                ]), size: $iconSize ?? IconSize::Small)
             }}
         @endif
     @endif

@@ -1614,6 +1614,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'wire:click' => $wireClick,
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
+                                        'wire:loading.class.delay.' . $loadingDelay => 'fi-loading',
                                         'wire:target' => $wireClick,
                                         'wire:key' => $isSearchable ? md5($wireClick . $blockSearchLabel) : null,
                                         'data-block-label' => $isSearchable ? e($blockSearchLabel) : null,
@@ -1625,16 +1626,10 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
                             <button <?= $itemAttributes->toHtml() ?>>
                                 <?php if (filled($blockIcon)) { ?>
-                                    <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag([
-                                        'wire:loading.remove.delay.' . $loadingDelay => true,
-                                        'wire:target' => $wireClick,
-                                    ]))->color(IconComponent::class, 'gray'))?->toHtml() ?>
+                                    <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))?->toHtml() ?>
                                 <?php } ?>
 
-                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                                    'wire:loading.delay.' . $loadingDelay => '',
-                                    'wire:target' => $wireClick,
-                                ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
+                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))->toHtml() ?>
 
                                 <span class="fi-dropdown-list-item-label">
                                     <?= e($blockLabel) ?>

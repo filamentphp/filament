@@ -21,7 +21,6 @@
     use Filament\Actions\Action;
     use Filament\Support\View\ComponentAttributeBag;
     use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
-    use Illuminate\Support\Str;
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -51,19 +50,11 @@
 
     $prefixIconHtml = ($prefixIcon || $prefixIconAlias)
         ? \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new ComponentAttributeBag)
-            ->merge([
-                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ], escape: false)
             ->color(IconComponent::class, $prefixIconColor))
         : null;
 
     $suffixIconHtml = ($suffixIcon || $suffixIconAlias)
         ? \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new ComponentAttributeBag)
-            ->merge([
-                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ], escape: false)
             ->color(IconComponent::class, $suffixIconColor))
         : null;
 
@@ -84,6 +75,10 @@
     {{
         $attributes
             ->except(['wire:target', 'tabindex'])
+            ->merge([
+                'wire:loading.class.delay.' . $loadingDelay => $hasLoadingIndicator ? $attributes->prepends('fi-loading') : null,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+            ], escape: false)
             ->class([
                 'fi-input-wrp',
                 'fi-disabled' => (! $hasAlpineDisabledClasses) && $disabled,
@@ -93,11 +88,6 @@
 >
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
-            @if (! $hasPrefix)
-                wire:loading.delay.{{ $loadingDelay }}.flex
-                wire:target="{{ $loadingIndicatorTarget }}"
-                wire:key="{{ Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
-            @endif
             @if ($canClickPrefixAffix)
                 x-on:click="if (! $event.target.closest('.fi-input-wrp-actions')) $dispatch('focus-input')"
             @endif
@@ -120,10 +110,7 @@
 
             @if ($hasLoadingIndicator)
                 {{
-                    \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag([
-                        'wire:loading.delay.' . $loadingDelay => $hasPrefix,
-                        'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
-                    ]))->color(IconComponent::class, 'gray'))
+                    \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag)->color(IconComponent::class, 'gray'))
                 }}
             @endif
 
@@ -136,13 +123,6 @@
     @endif
 
     <div
-        @if ($hasLoadingIndicator && (! $hasPrefix))
-            @if ($inlinePrefix)
-                wire:loading.delay.{{ $loadingDelay }}.class.remove="fi-input-wrp-content-ctn-ps"
-            @endif
-
-            wire:target="{{ $loadingIndicatorTarget }}"
-        @endif
         @class([
             'fi-input-wrp-content-ctn',
             'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,

@@ -67,6 +67,8 @@ trait CanGenerateBadgeHtml
             $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
         }
 
+        $hasSeparateLoadingIndicatorTarget = $hasLoadingIndicator && $attributes->has('wire:target') && blank($attributes->get('wire:target'));
+
         $hasTooltip = filled($tooltip);
 
         $formAttributes = $attributes->only(['action', 'method', 'wire:submit']);
@@ -87,6 +89,7 @@ trait CanGenerateBadgeHtml
                 },
                 'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
                 'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
+                'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->when(
@@ -102,19 +105,12 @@ trait CanGenerateBadgeHtml
             ])
             ->color(BadgeComponent::class, $color);
 
-        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
-            ? config('filament.livewire_loading_delay', 'default')
-            : null;
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, size: $iconSize ?? IconSize::Small)?->toHtml() ?? '' : '';
 
-        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize ?? IconSize::Small)?->toHtml() ?? '' : '';
-
-        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-            'wire:loading.delay.' . $loadingDelay => '',
-            'wire:target' => $loadingIndicatorTarget,
-        ])), size: $iconSize ?? IconSize::Small)->toHtml() : '';
+        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html(new FilamentComponentAttributeBag([
+            'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
+            'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
+        ]), size: $iconSize ?? IconSize::Small)->toHtml() : '';
 
         ob_start(); ?>
 

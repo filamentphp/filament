@@ -1955,15 +1955,12 @@
                                                                 $isColumnActivelySorted && ($sortDirection === 'asc') => TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
                                                                 $isColumnActivelySorted && ($sortDirection === 'desc') => TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                                                                 default => TablesIconAlias::HEADER_CELL_SORT_BUTTON,
-                                                            }, attributes: (new Filament\Support\View\ComponentAttributeBag([
-                                                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
-                                                                'wire:target' => "sortTable('{$columnName}')",
-                                                            ])))
+                                                            })
                                                         }}
 
                                                         {{
                                                             \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
-                                                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                                                'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => 'fi-loading',
                                                                 'wire:target' => "sortTable('{$columnName}')",
                                                             ]))
                                                         }}

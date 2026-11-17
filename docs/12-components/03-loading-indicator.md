@@ -13,6 +13,20 @@ The loading indicator can be used to indicate that something is in progress:
 
 <AutoScreenshot name="components/loading-indicator/simple" alt="A loading indicator" />
 
+## Controlling an indicator inside a button
+
+Buttons manage the visibility of loading indicators that are their direct children. To control an indicator independently, wrap it in another element:
+
+```blade
+<x-filament::button :loading-indicator="false" x-data="{ isProcessing: false }">
+    <span>
+        <x-filament::loading-indicator x-show="isProcessing" x-cloak />
+    </span>
+
+    Save
+</x-filament::button>
+```
+
 ## Replacing the default loading indicator
 
 Filament renders the loading indicator through the `Filament\Support\Contracts\LoadingIndicator` contract, which is bound to `Filament\Support\View\DefaultLoadingIndicator` by default. You may replace it with your own implementation by binding a different class in a service provider:

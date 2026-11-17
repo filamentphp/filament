@@ -914,22 +914,13 @@ class Action extends ViewComponent implements Arrayable
 
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
 
-        $iconHtml = $icon ? generate_icon_html(
-            $icon,
-            attributes: (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => true,
-                'wire:target' => $handler,
-            ])),
-            size: IconSize::Small,
-        )?->toHtml() : '';
+        $iconHtml = $icon ? generate_icon_html($icon, size: IconSize::Small)?->toHtml() : '';
 
-        $loadingHtml = generate_loading_indicator_html(
-            (new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $handler,
-            ])),
-            size: IconSize::Small,
-        )->toHtml();
+        // Keep the spinner targeted to this action while the button disables for all `mountAction()` requests.
+        $loadingHtml = generate_loading_indicator_html(new FilamentComponentAttributeBag([
+            'wire:loading.class.delay.' . $loadingDelay => 'fi-loading',
+            'wire:target' => $handler,
+        ]), size: IconSize::Small)->toHtml();
 
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handler = str_replace('"', '\\"', $handler);
@@ -1000,18 +991,14 @@ class Action extends ViewComponent implements Arrayable
 
         $iconHtml = $icon ? generate_icon_html(
             $icon,
-            attributes: (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => true,
-                'wire:target' => $handler,
-            ]))->color(IconComponent::class, $color),
+            attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $color),
         )?->toHtml() : '';
 
-        $loadingHtml = generate_loading_indicator_html(
-            (new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
-                'wire:target' => $handler,
-            ])),
-        )->toHtml();
+        // Keep the spinner targeted to this action while the button disables for all `mountAction()` requests.
+        $loadingHtml = generate_loading_indicator_html(new FilamentComponentAttributeBag([
+            'wire:loading.class.delay.' . $loadingDelay => 'fi-loading',
+            'wire:target' => $handler,
+        ]))->toHtml();
 
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handlerEscaped = str_replace('"', '\\"', $handler);
