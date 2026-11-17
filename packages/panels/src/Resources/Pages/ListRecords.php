@@ -163,6 +163,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                         continue;
                     }
 
+                    if ($actionGroup = $action->getRootGroup()) {
+                        $action = $actionGroup->getClone()->getFlatActions()[$action->getName()];
+                    } else {
+                        $action = clone $action;
+                    }
+
                     $action->record($record);
 
                     $actionGroup = $action->getGroup();
@@ -196,7 +202,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                         continue;
                     }
 
-                    $action = clone $action;
+                    if ($actionGroup = $action->getRootGroup()) {
+                        $action = $actionGroup->getClone()->getFlatActions()[$action->getName()];
+                    } else {
+                        $action = clone $action;
+                    }
 
                     $action->record($record);
 

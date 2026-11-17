@@ -18,7 +18,7 @@ it('uses menu behavior by default and supports opting out', function (): void {
 
     visit('/dropdown-test')
         ->assertAttribute($trigger, 'aria-haspopup', 'menu')
-        ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-haspopup', 'true')
+        ->assertAttributeMissing('[data-testid="dropdown-trigger"]', 'aria-haspopup')
         ->keys($trigger, 'Enter')
         ->assertPresent($firstItem . ':focus')
         ->assertAttribute($firstItem, 'role', 'menuitem')
