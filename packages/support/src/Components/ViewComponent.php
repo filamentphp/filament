@@ -220,6 +220,8 @@ abstract class ViewComponent extends Component implements Htmlable
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  view-string  $view
      */
     protected function renderView(string $view): View
