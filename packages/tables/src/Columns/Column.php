@@ -109,7 +109,7 @@ class Column extends ViewComponent
     public function toHtml(): string
     {
         if ((! $this->isRenderingLazyLoadedState) && $this->isStateLazyLoaded()) {
-            return $this->getLazyLoadedStatePlaceholderHtml('loadTableColumnStates', [
+            return $this->generateLazyLoadedStatePlaceholderHtml('loadTableColumnStates', [
                 'column' => $this->getName(),
                 'record' => $this->getRecordKey(),
             ]);

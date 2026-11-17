@@ -107,7 +107,7 @@ class Entry extends Component
     public function toHtml(): string
     {
         if ((! $this->isRenderingLazyLoadedState) && $this->isStateLazyLoaded()) {
-            return $this->getLazyLoadedStatePlaceholderHtml('callSchemaComponentMethod', [
+            return $this->generateLazyLoadedStatePlaceholderHtml('callSchemaComponentMethod', [
                 'entry' => $this->getKey(),
             ], arguments: [$this->getKey(), 'loadState']);
         }
