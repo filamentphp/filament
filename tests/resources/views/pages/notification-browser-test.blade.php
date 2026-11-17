@@ -49,7 +49,7 @@
             <div
                 data-testid="inline-notification"
                 x-data="{ hasExpired: false }"
-                x-on:notification-closed.camel.window="if ($event.detail.id === 'inline-timed-notification') hasExpired = true"
+                x-on:notifications-closed.camel.window="if ($event.detail.ids.includes('inline-timed-notification')) hasExpired = true"
             >
                 {!!
                     Notification::make('inline-timed-notification')

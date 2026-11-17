@@ -137,7 +137,7 @@
                             $wire,
                             broadcastChannel: @js($broadcastChannel),
                             event: '.database-notifications.sent',
-                            onNotification: () => $wire.call('$refresh'),
+                            onNotifications: () => $wire.call('$refresh'),
                         })
                     </script>
                 @endscript

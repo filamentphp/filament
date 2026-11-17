@@ -28,8 +28,8 @@
                     $wire,
                     broadcastChannel: @js($broadcastChannel),
                     event: '.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated',
-                    onNotification: (notification) =>
-                        $wire.handleBroadcastNotification(notification),
+                    onNotifications: (notifications) =>
+                        $wire.handleBroadcastNotifications(notifications),
                 })
             </script>
         @endscript
