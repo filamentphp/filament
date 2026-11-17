@@ -659,6 +659,7 @@ trait HasColumns
         ?string $recordAction,
         bool $openRecordUrlInNewTab,
         bool $isReordering,
+        bool $isStackedOnMobile,
     ): string {
         $column->record($record);
         $column->rowLoop($loop->parent);
@@ -672,7 +673,7 @@ trait HasColumns
             shouldOpenRecordUrlInNewTab: $openRecordUrlInNewTab,
             isPartiallyRenderable: array_key_exists($column->getName(), $this->cachedRenderPartiallyRenderableColumnNames ??= $this->getPartiallyRenderableColumnNames()),
             isReordering: $isReordering,
-            isStackedOnMobile: $this->isStackedOnMobile(),
+            isStackedOnMobile: $isStackedOnMobile,
         )->toHtml();
     }
 }

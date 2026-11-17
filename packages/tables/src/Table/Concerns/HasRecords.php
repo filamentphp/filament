@@ -652,6 +652,10 @@ trait HasRecords
         $viewFactory = app('view');
         $records = $this->getRecords();
         $isReordering = $this->isReordering();
+        $isSelectionEnabled = $this->isRenderSelectionEnabled();
+        $recordActionsPosition = $this->getRecordActionsPosition();
+        $recordCheckboxPosition = $this->getRecordCheckboxPosition();
+        $isStackedOnMobile = $this->isStackedOnMobile();
         $group = $this->getGrouping();
         $isGroupsOnly = $this->isGroupsOnly() && $group;
         $isGroupCollapsible = $group?->isCollapsible() ?? false;
@@ -690,7 +694,7 @@ trait HasRecords
                     $openRecordUrlInNewTab = $this->shouldOpenRecordUrlInNewTab($record);
                     $recordGroupKey = $group?->getStringKey($record);
                     $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
-                    $recordIsSelectable = $this->isRenderSelectionEnabled() && $this->isRecordSelectable($record);
+                    $recordIsSelectable = $isSelectionEnabled && $this->isRecordSelectable($record);
 
                     $recordActions = $this->getRenderRecordActions($record, $recordKey);
                     ?>
@@ -709,11 +713,11 @@ trait HasRecords
                                 query: $groupScopedAllTableSummaryQuery,
                                 selectedState: $this->getRenderGroupedSummarySelectedState()[$previousRecordGroupKey] ?? [],
                                 actions: $this->hasRenderRecordActions(),
-                                actionsPosition: $this->getRecordActionsPosition(),
+                                actionsPosition: $recordActionsPosition,
                                 groupColumn: $groupColumn,
                                 groupsOnly: $isGroupsOnly,
-                                selectionEnabled: $this->isRenderSelectionEnabled(),
-                                recordCheckboxPosition: $this->getRecordCheckboxPosition(),
+                                selectionEnabled: $isSelectionEnabled,
+                                recordCheckboxPosition: $recordCheckboxPosition,
                                 attributes: new ComponentAttributeBag(['wire:key' => $groupSummaryKey]),
                             ); ?>
                         <?php } ?>
@@ -740,6 +744,10 @@ trait HasRecords
                         $isGroupCollapsible,
                         $morphMarkerStartHtml,
                         $morphMarkerEndHtml,
+                        $isSelectionEnabled,
+                        $recordActionsPosition,
+                        $recordCheckboxPosition,
+                        $isStackedOnMobile,
                     ); ?>
 
                     <?php
@@ -762,11 +770,11 @@ trait HasRecords
                         query: $groupScopedAllTableSummaryQuery,
                         selectedState: $this->getRenderGroupedSummarySelectedState()[$previousRecordGroupKey] ?? [],
                         actions: $this->hasRenderRecordActions(),
-                        actionsPosition: $this->getRecordActionsPosition(),
+                        actionsPosition: $recordActionsPosition,
                         groupColumn: $groupColumn,
                         groupsOnly: $isGroupsOnly,
-                        selectionEnabled: $this->isRenderSelectionEnabled(),
-                        recordCheckboxPosition: $this->getRecordCheckboxPosition(),
+                        selectionEnabled: $isSelectionEnabled,
+                        recordCheckboxPosition: $recordCheckboxPosition,
                         attributes: new ComponentAttributeBag(['wire:key' => $groupSummaryKey]),
                     ); ?>
                 <?php } ?>
@@ -781,13 +789,13 @@ trait HasRecords
                         pluralModelLabel: $this->getPluralModelLabel(),
                         records: $records,
                         actions: $this->hasRenderRecordActions(),
-                        actionsPosition: $this->getRecordActionsPosition(),
+                        actionsPosition: $recordActionsPosition,
                         allTableSummary: $this->hasAllTableSummary(),
                         groupColumn: $groupColumn,
                         groupsOnly: $isGroupsOnly,
                         pageSummary: $this->hasPageSummary(),
-                        recordCheckboxPosition: $this->getRecordCheckboxPosition(),
-                        selectionEnabled: $this->isRenderSelectionEnabled(),
+                        recordCheckboxPosition: $recordCheckboxPosition,
+                        selectionEnabled: $isSelectionEnabled,
                         attributes: new ComponentAttributeBag([]),
                     ); ?>
                 <?php } ?>
@@ -819,6 +827,10 @@ trait HasRecords
         bool $isGroupCollapsible,
         string $morphMarkerStartHtml,
         string $morphMarkerEndHtml,
+        bool $isSelectionEnabled,
+        RecordActionsPosition $recordActionsPosition,
+        RecordCheckboxPosition $recordCheckboxPosition,
+        bool $isStackedOnMobile,
     ): string {
         $viewFactory = app('view');
 
@@ -849,7 +861,7 @@ trait HasRecords
                 <?= $morphMarkerEndHtml; ?>
 
                 <?= $morphMarkerStartHtml; ?>
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeCells && (! $isReordering)) { ?>
+                <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::BeforeCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
@@ -857,7 +869,7 @@ trait HasRecords
                 <?= $morphMarkerEndHtml; ?>
 
                 <?= $morphMarkerStartHtml; ?>
-                <?php if ($this->isRenderSelectionEnabled() && ($this->getRecordCheckboxPosition() === RecordCheckboxPosition::BeforeCells) && (! $isReordering)) { ?>
+                <?php if ($isSelectionEnabled && ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) && (! $isReordering)) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
                     >
@@ -869,7 +881,7 @@ trait HasRecords
                 <?= $morphMarkerEndHtml; ?>
 
                 <?= $morphMarkerStartHtml; ?>
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeColumns && (! $isReordering)) { ?>
+                <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::BeforeColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
@@ -879,12 +891,12 @@ trait HasRecords
                 <?= $morphMarkerStartHtml; ?>
                 <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $column) {
                     $loop = $viewFactory->getLastLoop(); ?>
-                    <?= $this->generateRecordCellHtml($column, $record, $loop, $recordKey, $recordUrl, $recordAction, $openRecordUrlInNewTab, $isReordering); ?>
+                    <?= $this->generateRecordCellHtml($column, $record, $loop, $recordKey, $recordUrl, $recordAction, $openRecordUrlInNewTab, $isReordering, $isStackedOnMobile); ?>
                 <?php } $loop = $viewFactory->getLastLoop(); ?>
                 <?= $morphMarkerEndHtml; ?>
 
                 <?= $morphMarkerStartHtml; ?>
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterColumns && (! $isReordering)) { ?>
+                <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
@@ -892,7 +904,7 @@ trait HasRecords
                 <?= $morphMarkerEndHtml; ?>
 
                 <?= $morphMarkerStartHtml; ?>
-                <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::AfterCells && (! $isReordering)) { ?>
+                <?php if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells && (! $isReordering)) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
                     >
@@ -903,7 +915,7 @@ trait HasRecords
                 <?php } ?>
                 <?= $morphMarkerEndHtml; ?>
 
-                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterCells && (! $isReordering)) { ?>
+                <?php if ($this->hasRenderRecordActions() && $recordActionsPosition === RecordActionsPosition::AfterCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
