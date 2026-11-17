@@ -4,12 +4,10 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Support\Components\Attributes\Exposed;
-use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
@@ -212,9 +210,8 @@ trait HasColumns
     public function callTableColumnMethod(string $name, string $recordKey, string $method, array $arguments = []): mixed
     {
         // Security: This method is callable from the frontend and dispatches
-        // to `#[Exposed]` methods on table columns. It does
-        // not perform per-record policy checks. Inline editable columns
-        // called through here bypass `authorize()` and Model Policies.
+        // to `#[Exposed]` methods on table columns. These methods must
+        // enforce their own authorization.
 
         $column = $this->getTable()->getColumn($name);
 
@@ -249,12 +246,6 @@ trait HasColumns
         $column->record($record);
 
         return $column->{$method}(...$arguments);
-    }
-
-    #[Unexposed]
-    public function getDefaultTableColumnAuthorizationResponse(Column $column): ?Response
-    {
-        return null;
     }
 
     /**

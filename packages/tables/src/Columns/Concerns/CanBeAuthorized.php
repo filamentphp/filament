@@ -25,13 +25,7 @@ trait CanBeAuthorized
     public function getAuthorizationResponse(): Response
     {
         if ($this->authorization === null) {
-            $livewire = $this->getLivewire();
-
-            if (! method_exists($livewire, 'getDefaultTableColumnAuthorizationResponse')) {
-                return Response::allow();
-            }
-
-            return $livewire->getDefaultTableColumnAuthorizationResponse($this) ?? Response::allow();
+            return Response::allow();
         }
 
         if (is_string($this->authorization)) {

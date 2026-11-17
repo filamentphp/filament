@@ -13,10 +13,7 @@ use Illuminate\Support\Js;
 
 class CheckboxColumn extends Column implements Editable, HasEmbeddedView
 {
-    // Security: This column only checks Laravel Model Policies when
-    // `authorize()` is used, or when the table belongs to a resource
-    // in a panel with strict authorization. Use `authorize()` or
-    // `disabled()` to restrict editing.
+    // Security: Authorization is opt-in. Use `authorize()` to restrict editing.
 
     use Concerns\CanBeAuthorized;
     use Concerns\CanBeValidated;

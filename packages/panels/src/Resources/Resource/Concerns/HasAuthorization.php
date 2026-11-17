@@ -17,10 +17,10 @@ trait HasAuthorization
     // automatically. Bulk actions use `*Any()` policy methods
     // (`deleteAny`, `forceDeleteAny`, `restoreAny`) for performance —
     // use `authorizeIndividualRecords()` if per-record checks are
-    // needed. Inline editable table columns only check `update` when
-    // `authorize()` is used or strict authorization mode is enabled;
-    // otherwise they only respect `disabled()`. Custom actions require manual
-    // authorization via `authorize()`, `visible()`, or `hidden()`.
+    // needed. Inline editable table columns require explicit `authorize()`
+    // configuration, even in strict authorization mode.
+    // Custom actions require manual authorization via `authorize()`,
+    // `visible()`, or `hidden()`.
 
     protected static bool $shouldCheckPolicyExistence = true;
 
