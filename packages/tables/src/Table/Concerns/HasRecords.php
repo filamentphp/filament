@@ -655,6 +655,8 @@ trait HasRecords
         $group = $this->getGrouping();
         $isGroupsOnly = $this->isGroupsOnly() && $group;
         $isGroupCollapsible = $group?->isCollapsible() ?? false;
+        $morphMarkerStartHtml = $this->generateMorphMarkerHtml();
+        $morphMarkerEndHtml = $this->generateMorphMarkerHtml(isEnd: true);
 
         ob_start(); ?>
         <?php if (count($records)) { ?>
@@ -679,7 +681,7 @@ trait HasRecords
             $previousRecordGroupTitle = null;
             ?>
 
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php foreach ($this->iterateRenderLoop($records) as $record) {
                     $loop = $viewFactory->getLastLoop();
                     $recordKey = $this->getRecordKey($record);
@@ -736,6 +738,8 @@ trait HasRecords
                         $isReordering,
                         $isGroupsOnly,
                         $isGroupCollapsible,
+                        $morphMarkerStartHtml,
+                        $morphMarkerEndHtml,
                     ); ?>
 
                     <?php
@@ -766,7 +770,7 @@ trait HasRecords
                         attributes: new ComponentAttributeBag(['wire:key' => $groupSummaryKey]),
                     ); ?>
                 <?php } ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
                 <?php if ((! $isReordering) && $this->hasRenderSummary()) {
                     $groupColumn = $group?->getColumn();
@@ -813,6 +817,8 @@ trait HasRecords
         bool $isReordering,
         bool $isGroupsOnly,
         bool $isGroupCollapsible,
+        string $morphMarkerStartHtml,
+        string $morphMarkerEndHtml,
     ): string {
         $viewFactory = app('view');
 
@@ -834,23 +840,23 @@ trait HasRecords
                     ...$this->getRecordClasses($record),
                 ]); ?>"
             >
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php if ($isReordering) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordReorderControlsHtml($record, $recordKey, $loop); ?>
                     </td>
                 <?php } ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
                 <?php } ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->isRenderSelectionEnabled() && ($this->getRecordCheckboxPosition() === RecordCheckboxPosition::BeforeCells) && (! $isReordering)) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
@@ -860,32 +866,32 @@ trait HasRecords
                         <?php } ?>
                     </td>
                 <?php } ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
                 <?php } ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $column) {
                     $loop = $viewFactory->getLastLoop(); ?>
                     <?= $this->generateRecordCellHtml($column, $record, $loop, $recordKey, $recordUrl, $recordAction, $openRecordUrlInNewTab, $isReordering); ?>
                 <?php } $loop = $viewFactory->getLastLoop(); ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterColumns && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
                     </td>
                 <?php } ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
-                <?= $this->generateMorphMarkerHtml(); ?>
+                <?= $morphMarkerStartHtml; ?>
                 <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::AfterCells && (! $isReordering)) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
@@ -895,7 +901,7 @@ trait HasRecords
                         <?php } ?>
                     </td>
                 <?php } ?>
-                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
+                <?= $morphMarkerEndHtml; ?>
 
                 <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterCells && (! $isReordering)) { ?>
                     <td class="fi-ta-cell">
