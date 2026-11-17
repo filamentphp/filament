@@ -28,6 +28,9 @@ class TextColor
         return $this->label;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getSafeLabelHtml(): string
     {
         return e($this->getLabel());

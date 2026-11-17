@@ -611,6 +611,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->evaluate($this->defaultTriggerView);
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function toTriggerHtml(): string
     {
         return match ($this->getTriggerView()) {
@@ -623,6 +626,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         };
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toBadgeTriggerHtml(): string
     {
         return $this->generateBadgeHtml(
@@ -640,6 +646,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toButtonTriggerHtml(): string
     {
         return $this->generateButtonHtml(
@@ -662,6 +671,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toGroupedTriggerHtml(): string
     {
         return $this->generateDropdownItemHtml(
@@ -680,6 +692,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toIconButtonTriggerHtml(): string
     {
         return $this->generateIconButtonHtml(
@@ -698,6 +713,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function toLinkTriggerHtml(): string
     {
         return $this->generateLinkHtml(
@@ -718,6 +736,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         );
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function renderTrigger(): View
     {
         return view(

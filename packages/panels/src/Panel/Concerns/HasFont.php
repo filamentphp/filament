@@ -70,6 +70,9 @@ trait HasFont
         return $this->fontFamily !== null;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getFontHtml(): Htmlable
     {
         return app($this->getFontProvider())->getHtml(
@@ -106,6 +109,9 @@ trait HasFont
         return [];
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getFontPreloadHtml(): Htmlable
     {
         return $this->getPreloadHtml($this->getFontPreload());
@@ -137,6 +143,9 @@ trait HasFont
         return $this->monoFontFamily !== null;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getMonoFontHtml(): Htmlable
     {
         return app($this->getMonoFontProvider())->getHtml(
@@ -163,6 +172,9 @@ trait HasFont
         return $this->evaluate($this->monoFontPreload) ?? [];
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getMonoFontPreloadHtml(): Htmlable
     {
         return $this->getPreloadHtml($this->getMonoFontPreload());
@@ -194,6 +206,9 @@ trait HasFont
         return $this->serifFontFamily !== null;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getSerifFontHtml(): Htmlable
     {
         return app($this->getSerifFontProvider())->getHtml(
@@ -220,6 +235,9 @@ trait HasFont
         return $this->evaluate($this->serifFontPreload) ?? [];
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getSerifFontPreloadHtml(): Htmlable
     {
         return $this->getPreloadHtml($this->getSerifFontPreload());
@@ -256,6 +274,8 @@ trait HasFont
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<string>  $urls
      */
     protected function getPreloadHtml(array $urls): Htmlable
