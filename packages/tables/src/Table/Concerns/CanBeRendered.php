@@ -22,18 +22,6 @@ trait CanBeRendered
     use CanGenerateLinkHtml;
     use CanGenerateModalHtml;
     use CanGeneratePaginationHtml;
-    use CanRenderColumnHeaders;
-    use CanRenderColumnManager;
-    use CanRenderContent;
-    use CanRenderFilters;
-    use CanRenderGroups;
-    use CanRenderHeader;
-    use CanRenderRecordActions;
-    use CanRenderRecords;
-    use CanRenderReordering;
-    use CanRenderSearch;
-    use CanRenderSelection;
-    use CanRenderSummaries;
     use InteractsWithLivewireRendering;
 
     public function toEmbeddedHtml(): string

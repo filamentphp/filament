@@ -48,6 +48,7 @@ class Table extends ViewComponent implements HasEmbeddedView
     use Table\Concerns\HasRecordClasses;
     use Table\Concerns\HasRecords;
     use Table\Concerns\HasRecordUrl;
+    use Table\Concerns\HasToolbar;
     use Table\Concerns\HasToolbarActions;
 
     protected ?string $publishedViewOverrideCheckPath = 'filament-tables::index';
