@@ -269,7 +269,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
     public function toEmbeddedHtml(): string
     {
         if ($this->isTable()) {
-            return $this->toEmbeddedTableHtml();
+            return $this->toTableEmbeddedHtml();
         }
 
         $items = $this->getItems();
@@ -325,7 +325,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
     /**
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
-    protected function toEmbeddedTableHtml(): string
+    protected function toTableEmbeddedHtml(): string
     {
         $items = $this->getItems();
         $tableColumns = $this->getTableColumns();
