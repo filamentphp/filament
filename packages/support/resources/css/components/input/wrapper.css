@@ -90,6 +90,25 @@
         }
     }
 
+    &:not(.fi-loading) > .fi-input-wrp-prefix > .fi-loading-indicator {
+        @apply hidden!;
+    }
+
+    &.fi-loading {
+        & > .fi-input-wrp-prefix {
+            @apply flex;
+        }
+
+        & > .fi-input-wrp-prefix > .fi-icon:not(.fi-loading-indicator),
+        & > .fi-input-wrp-suffix > .fi-icon {
+            @apply hidden!;
+        }
+
+        & > .fi-input-wrp-content-ctn.fi-input-wrp-content-ctn-ps {
+            @apply ps-0;
+        }
+    }
+
     & .fi-input-wrp-label {
         @apply text-sm whitespace-nowrap text-gray-500 dark:text-gray-400;
     }

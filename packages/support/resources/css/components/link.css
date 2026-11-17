@@ -1,6 +1,15 @@
 .fi-link {
     @apply relative inline-flex items-center justify-center gap-1.5 font-medium text-gray-700 outline-none dark:text-gray-200;
 
+    &:not(.fi-loading) > .fi-loading-indicator:not(.fi-loading) {
+        @apply hidden!;
+    }
+
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    & > .fi-loading-indicator.fi-loading + .fi-icon:not(.fi-loading-indicator) {
+        @apply hidden!;
+    }
+
     /* Pinning the link's baseline to the label keeps it aligned with surrounding text, even when the loading indicator is the first flex item. */
     & > .fi-link-label {
         @apply self-baseline;

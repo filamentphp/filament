@@ -1147,6 +1147,48 @@ TextColumn::make('slug')
 
 By default, calling `extraHeaderAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
+## Authorizing editable columns
+
+Editable columns do not check model policies by default, even in [strict authorization mode](../../panel-configuration#strict-authorization-mode). Use `authorize()` to check the record's `update()` policy. Denied columns are disabled, and changes are rejected on the server:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('title')
+    ->authorize()
+```
+
+Pass a different ability name, such as `authorize('updateTitle')`, to customize the policy check. These checks use Laravel's Gate, including its authorization callbacks. Missing policies or abilities deny access unless a Gate callback grants it; strict mode does not turn these denials into exceptions.
+
+For custom authorization logic, pass a callback that returns a boolean or an `Illuminate\Auth\Access\Response`:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('title')
+    ->authorize(fn ($record): bool => $record->user_id === auth()->id())
+```
+
+<UtilityInjection set="tableColumns">The function passed to `authorize()` can inject various utilities as parameters.</UtilityInjection>
+
+### Authorizing editable columns globally
+
+To enable policy checks globally, call `configureUsing()` in a service provider's `boot()` method for each editable column type you use:
+
+```php
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Columns\ToggleColumn;
+
+CheckboxColumn::configureUsing(fn (CheckboxColumn $column) => $column->authorize());
+SelectColumn::configureUsing(fn (SelectColumn $column) => $column->authorize());
+TextInputColumn::configureUsing(fn (TextInputColumn $column) => $column->authorize());
+ToggleColumn::configureUsing(fn (ToggleColumn $column) => $column->authorize());
+```
+
+Individual columns can override this configuration with their own `authorize()` call. Use `authorize(true)` or `authorize(null)` to skip authorization. An authorized column can still be disabled by `disabled()`.
+
 ## Rendering only the updated cells of editable columns
 
 By default, when a user updates an [editable column](#introduction), the whole Livewire component re-renders, and the browser updates the entire table. On large tables, you may use the `partiallyRenderAfterStateUpdated()` method to re-render only the cell that was updated:
