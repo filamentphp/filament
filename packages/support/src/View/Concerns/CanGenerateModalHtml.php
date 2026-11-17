@@ -75,6 +75,10 @@ trait CanGenerateModalHtml
         $slot = $slot instanceof ComponentSlot ? $slot : new ComponentSlot(e($slot));
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.modal.index')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.modal.index', get_defined_vars())->render();
         }
 
@@ -159,9 +163,9 @@ trait CanGenerateModalHtml
                 'fi-modal-click-through' => $isClickThrough,
             ]) ?>
         >
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if (! $isClickThrough) { ?><div aria-hidden="true" x-show="isOpen" x-transition.duration.300ms.opacity <?= ($extraModalOverlayAttributeBag ?? new ComponentAttributeBag)->class(['fi-modal-close-overlay']) ?>></div><?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
             <div
                 <?php if (! $shouldTrapFocusOnModalWindow) { ?> tabindex="-1" <?php } ?>
                 <?php if ($closeByClickingAway) { ?> x-on:click.self="<?= e($closeEventHandler) ?>" <?php } ?>
@@ -186,37 +190,37 @@ trait CanGenerateModalHtml
                         $width instanceof Width ? "fi-width-{$width->value}" : $width,
                     ]) ?>
                 >
-                    <?= filled($id) ? '' : $this->renderMorphMarkerHtml() ?>
+                    <?= filled($id) ? '' : $this->generateMorphMarkerHtml() ?>
                     <?php if ($heading || $header) { ?>
                         <div
                             <?php if (filled($id)) { ?> wire:key="<?= e("{$wireKeyPrefix}modal.{$id}.header") ?>" <?php } ?>
                             <?= (new ComponentAttributeBag)->class(['fi-modal-header', 'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasEyebrow) && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left])]) ?>
                         >
-                            <?= $this->renderMorphMarkerHtml() ?>
+                            <?= $this->generateMorphMarkerHtml() ?>
                             <?php if ($closeButton) {
                                 echo $this->generateIconButtonHtml(attributes: new ComponentAttributeBag(['tabindex' => $closeByEscaping ? '-1' : null, 'x-on:click' => e($closeEventHandler), 'class' => 'fi-modal-close-btn']), color: 'gray', icon: Heroicon::OutlinedXMark, iconAlias: SupportIconAlias::MODAL_CLOSE_BUTTON, iconSize: 'lg', label: __('filament::components/modal.actions.close.label'), shouldCheckForPublishedView: true);
                             } ?>
-                            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                             <?php if ($header) {
                                 echo e($header);
                             } else { ?>
-                                <?= $this->renderMorphMarkerHtml() ?>
+                                <?= $this->generateMorphMarkerHtml() ?>
                                 <?php if ($hasIcon) { ?><div class="fi-modal-icon-ctn"><div <?= (new ComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) ?>><?= e($iconHtml) ?></div></div><?php } ?>
-                                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                                 <div>
-                                    <?= filled($id) ? '' : $this->renderMorphMarkerHtml() ?>
+                                    <?= filled($id) ? '' : $this->generateMorphMarkerHtml() ?>
                                     <?php if ($hasHeading && $hasEyebrow) { ?><p class="fi-modal-eyebrow"><?= e($eyebrow) ?></p><?php } ?>
-                                    <?= filled($id) ? '' : $this->renderMorphMarkerHtml(isEnd: true) ?>
+                                    <?= filled($id) ? '' : $this->generateMorphMarkerHtml(isEnd: true) ?>
                                     <h2 <?php if ($headingId) { ?> id="<?= e($headingId) ?>" <?php } ?> class="fi-modal-heading"><?= e($heading) ?></h2>
                                     <?php if ($hasDescription) { ?><p <?php if ($descriptionId) { ?> id="<?= e($descriptionId) ?>" <?php } ?> class="fi-modal-description"><?= e($description) ?></p><?php } ?>
                                 </div>
                             <?php } ?>
                         </div>
                     <?php } ?>
-                    <?= filled($id) ? '' : $this->renderMorphMarkerHtml(isEnd: true) ?>
-                    <?= filled($id) ? '' : $this->renderMorphMarkerHtml() ?>
+                    <?= filled($id) ? '' : $this->generateMorphMarkerHtml(isEnd: true) ?>
+                    <?= filled($id) ? '' : $this->generateMorphMarkerHtml() ?>
                     <?php if ($hasContent) { ?><div <?php if (filled($id)) { ?> wire:key="<?= e("{$wireKeyPrefix}modal.{$id}.content") ?>" <?php } ?> class="fi-modal-content"><?= e($slot) ?></div><?php } ?>
-                    <?= filled($id) ? '' : $this->renderMorphMarkerHtml(isEnd: true) ?>
+                    <?= filled($id) ? '' : $this->generateMorphMarkerHtml(isEnd: true) ?>
                     <?php if ($hasFooter) { ?>
                         <div <?php if (filled($id)) { ?> wire:key="<?= e("{$wireKeyPrefix}modal.{$id}.footer") ?>" <?php } ?> <?= (new ComponentAttributeBag)->class(['fi-modal-footer', $footerActionsAlignment instanceof Alignment ? "fi-align-{$footerActionsAlignment->value}" : null]) ?>>
                             <?php if (! is_slot_empty($footer)) {

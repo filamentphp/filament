@@ -43,16 +43,17 @@ trait CanRenderColumnHeaders
 
         ob_start(); ?>
         <thead>
-        <?= $this->generateStackedHeaderHtml($sortableColumns); ?>
+            <?= $this->generateStackedHeaderHtml($sortableColumns); ?>
 
-        <?= $this->generateColumnGroupsHtml(); ?>
+            <?= $this->generateColumnGroupsHtml(); ?>
 
             <tr>
-        <?= $this->renderMorphMarkerHtml(); ?>                                    <?php if (count($records)) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php if (count($records)) { ?>
                     <?php if ($this->isReordering()) { ?>
                         <th></th>
                     <?php } else { ?>
-                        <?= $this->renderMorphMarkerHtml(); ?>
+                        <?= $this->generateMorphMarkerHtml(); ?>
                         <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeCells) { ?>
                             <?php if ($recordActionsColumnLabel) { ?>
                                 <th
@@ -60,7 +61,6 @@ trait CanRenderColumnHeaders
                                     class="fi-ta-header-cell"
                                 >
                                     <?= e($recordActionsColumnLabel); ?>
-
                                 </th>
                             <?php } else { ?>
                                 <th
@@ -70,9 +70,9 @@ trait CanRenderColumnHeaders
                                 ></th>
                             <?php } ?>
                         <?php } ?>
-                        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                        <?= $this->renderMorphMarkerHtml(); ?>
+                        <?= $this->generateMorphMarkerHtml(); ?>
                         <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::BeforeCells) { ?>
                             <th
                                 scope="col"
@@ -80,11 +80,10 @@ trait CanRenderColumnHeaders
                             >
                                 <?php if (($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly())) { ?>
                                     <?= $this->generatePageCheckboxHtml(); ?>
-
                                 <?php } ?>
                             </th>
                         <?php } ?>
-                        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                         <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeColumns) { ?>
                             <?php if ($recordActionsColumnLabel) { ?>
@@ -93,7 +92,6 @@ trait CanRenderColumnHeaders
                                     class="fi-ta-header-cell"
                                 >
                                     <?= e($recordActionsColumnLabel); ?>
-
                                 </th>
                             <?php } else { ?>
                                 <th
@@ -104,27 +102,26 @@ trait CanRenderColumnHeaders
                             <?php } ?>
                         <?php } ?>
                     <?php } ?>
-                <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                <?php
-                    $hasHeaderCellRenderHook = FilamentView::hasRenderHook(TablesRenderHook::HEADER_CELL, scopes: $livewire::class);
-        ?>
+                <?php $hasHeaderCellRenderHook = FilamentView::hasRenderHook(TablesRenderHook::HEADER_CELL, scopes: $livewire::class); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                                    <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $column) {  ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $column) { ?>
                     <?php if ($hasHeaderCellRenderHook && filled($headerCellView = FilamentView::renderHook(TablesRenderHook::HEADER_CELL, scopes: $livewire::class, data: [
                         'column' => $column,
                         'isReordering' => $this->isReordering(),
                     ]))) { ?>
                         <?= e($headerCellView); ?>
-
                     <?php } else { ?>
                         <?= $this->generateColumnHeaderHtml($column); ?>
-
                     <?php } ?>
-                <?php }  ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?php if ((! $this->isReordering()) && count($records)) { ?>
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterColumns) { ?>
                         <?php if ($recordActionsColumnLabel) { ?>
                             <th
@@ -132,7 +129,6 @@ trait CanRenderColumnHeaders
                                 class="fi-ta-header-cell fi-align-end"
                             >
                                 <?= e($recordActionsColumnLabel); ?>
-
                             </th>
                         <?php } else { ?>
                             <th
@@ -142,9 +138,9 @@ trait CanRenderColumnHeaders
                             ></th>
                         <?php } ?>
                     <?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::AfterCells) { ?>
                         <th
                             scope="col"
@@ -152,11 +148,10 @@ trait CanRenderColumnHeaders
                         >
                             <?php if (($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly())) { ?>
                                 <?= $this->generatePageCheckboxHtml(); ?>
-
                             <?php } ?>
                         </th>
                     <?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                     <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterCells) { ?>
                         <?php if ($recordActionsColumnLabel) { ?>
@@ -165,7 +160,6 @@ trait CanRenderColumnHeaders
                                 class="fi-ta-header-cell fi-align-end"
                             >
                                 <?= e($recordActionsColumnLabel); ?>
-
                             </th>
                         <?php } else { ?>
                             <th
@@ -189,7 +183,8 @@ trait CanRenderColumnHeaders
     protected function generateStackedHeaderHtml(array $sortableColumns): string
     {
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>                                <?php if ($this->isStackedOnMobile() && (count($sortableColumns) || ($this->isRenderSelectionEnabled() && ($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly()))) && (! $this->isReordering())) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($this->isStackedOnMobile() && (count($sortableColumns) || ($this->isRenderSelectionEnabled() && ($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly()))) && (! $this->isReordering())) { ?>
             <tr class="fi-ta-table-stacked-header-row">
                 <td
                     colspan="100%"
@@ -209,19 +204,17 @@ trait CanRenderColumnHeaders
                                             value=""
                                         >
                                             <?= e($this->getDefaultSortOptionLabel()); ?>
-
                                         </option>
 
-                                        <?php foreach ($this->iterateRenderLoop($sortableColumns) as $sortableColumn) {  ?>
+                                        <?php foreach ($this->iterateRenderLoop($sortableColumns) as $sortableColumn) { ?>
                                             <option
                                                 value="<?= e($sortableColumn->getName()); ?>"
                                             >
                                                 <?= e($sortableColumn->getLabel()); ?>
-
                                             </option>
-                                        <?php }  ?>
-                                     <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
-                                 <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                        <?php } ?>
+                                    <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
                             </label>
 
                             <label
@@ -232,7 +225,6 @@ trait CanRenderColumnHeaders
                                     class="fi-sr-only"
                                 >
                                     <?= e(__('filament-tables::table.sorting.fields.direction.label')); ?>
-
                                 </span>
 
                                 <?php $inputWrapperArguments = ['attributes' => new ComponentAttributeBag([])];
@@ -243,28 +235,26 @@ trait CanRenderColumnHeaders
                                             value="asc"
                                         >
                                             <?= e(__('filament-tables::table.sorting.fields.direction.options.asc')); ?>
-
                                         </option>
 
                                         <option
                                             value="desc"
                                         >
                                             <?= e(__('filament-tables::table.sorting.fields.direction.options.desc')); ?>
-
                                         </option>
-                                     <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
-                                 <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                    <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
                             </label>
                         </div>
                     <?php } ?>
 
                     <?php if ($this->isRenderSelectionEnabled() && ($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly())) { ?>
                         <?= $this->generatePageCheckboxHtml(isStacked: true); ?>
-
                     <?php } ?>
                 </td>
             </tr>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -276,9 +266,10 @@ trait CanRenderColumnHeaders
         $records = $this->getRecords();
 
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>                                <?php if ($this->hasColumnGroups()) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($this->hasColumnGroups()) { ?>
             <tr class="fi-ta-table-head-groups-row">
-                <?= $this->renderMorphMarkerHtml(); ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
                 <?php if (count($records)) { ?>
                     <?php if ($this->isReordering()) { ?>
                         <th></th>
@@ -292,19 +283,17 @@ trait CanRenderColumnHeaders
                         <?php } ?>
                     <?php } ?>
                 <?php } ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                <?php foreach ($this->iterateRenderLoop($this->getColumnsLayout()) as $columnGroup) {  ?>
+                <?php foreach ($this->iterateRenderLoop($this->getColumnsLayout()) as $columnGroup) { ?>
                     <?php if ($columnGroup instanceof Column) { ?>
                         <?php if ($columnGroup->isVisible() && (! $columnGroup->isToggledHidden())) { ?>
                             <th></th>
                         <?php } ?>
-                    <?php } elseif ($columnGroup instanceof ColumnGroup) { ?>
-                        <?php
-                            $columnGroupColumnsCount = count($columnGroup->getVisibleColumns());
-                        ?>
+                    <?php } elseif ($columnGroup instanceof ColumnGroup) {
+                        $columnGroupColumnsCount = count($columnGroup->getVisibleColumns());
 
-                        <?php if ($columnGroupColumnsCount) { ?>
+                        if ($columnGroupColumnsCount) { ?>
                             <th
                                 colspan="<?= e($columnGroupColumnsCount); ?>"
                                 scope="colgroup"
@@ -315,14 +304,12 @@ trait CanRenderColumnHeaders
                                     (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
                                     (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
                                 ])); ?>
-
                             >
                                 <?= e($columnGroup->getLabel()); ?>
-
                             </th>
                         <?php } ?>
                     <?php } ?>
-                <?php }  ?>
+                <?php } ?>
 
                 <?php if ((! $this->isReordering()) && count($records)) { ?>
                     <?php if ($this->hasRenderRecordActions() && in_array($this->getRecordActionsPosition(), [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells])) { ?>
@@ -334,7 +321,8 @@ trait CanRenderColumnHeaders
                     <?php } ?>
                 <?php } ?>
             </tr>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -345,9 +333,9 @@ trait CanRenderColumnHeaders
     {
         $sortDirection = $this->getSortDirection();
 
-        ob_start(); ?>
-        <?php
-            $columnName = $column->getName();
+        ob_start();
+
+        $columnName = $column->getName();
         $columnLabel = $column->getLabel();
         $columnAlignment = $column->getAlignment();
         $columnWidth = $column->getWidth();
@@ -383,11 +371,9 @@ trait CanRenderColumnHeaders
                 ->style([
                     ('width: ' . e($columnWidth)) => filled($columnWidth),
                 ])); ?>
-
         >
             <?php if ($isColumnSortable) { ?>
                 <<?= e($columnSortControlTag); ?>
-
                     <?php if ($columnSortControlTag === 'button') { ?>
                         type="button"
                     <?php } else { ?>
@@ -412,11 +398,9 @@ trait CanRenderColumnHeaders
                             class="fi-ta-header-cell-tooltip"
                         >
                             <?= e($columnLabel); ?>
-
                         </span>
                     <?php } else { ?>
                         <?= e($columnLabel); ?>
-
                     <?php } ?>
 
                     <?= e(\Filament\Support\generate_loading_indicator_html(new FilamentComponentAttributeBag([
@@ -429,7 +413,6 @@ trait CanRenderColumnHeaders
                         $isColumnActivelySorted && ($sortDirection === 'desc') => TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                         default => TablesIconAlias::HEADER_CELL_SORT_BUTTON,
                     })); ?>
-
                 </<?= e($columnSortControlTag); ?>>
             <?php } else { ?>
                 <?php if (filled($columnHeaderTooltip)) { ?>
@@ -441,11 +424,9 @@ trait CanRenderColumnHeaders
                         class="fi-ta-header-cell-tooltip"
                     >
                         <?= e($columnLabel); ?>
-
                     </span>
                 <?php } else { ?>
                     <?= e($columnLabel); ?>
-
                 <?php } ?>
             <?php } ?>
         </th>

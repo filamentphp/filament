@@ -110,25 +110,27 @@ trait CanRenderHeader
 
         ob_start(); ?>
         <div
-            <?php if (! $this->hasRenderHeader()) { ?> x-cloak <?php } ?>
+            <?php if (! $this->hasRenderHeader()) { ?>
+                x-cloak
+            <?php } ?>
             x-show="<?= Js::from($this->hasRenderHeader())->toHtml() ?> || <?= Js::from($this->hasRenderNonBulkToolbarAction())->toHtml() ?> || (getSelectedRecordsCount() && <?= Js::from(count($this->getRenderToolbarActions()))->toHtml() ?>)"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.header.' . e($this->getRenderHeaderVisibilityMode()) . ''); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.header.<?= e($this->getRenderHeaderVisibilityMode()); ?>"
+            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.header.' . e($this->getRenderHeaderVisibilityMode()) . ''); ?>
+            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.header.<?= e($this->getRenderHeaderVisibilityMode()); ?>"
             class="fi-ta-header-ctn"
         >
             <?= e(FilamentView::renderHook(TablesRenderHook::HEADER_BEFORE, scopes: $livewire::class)); ?>
 
-        <?= $this->generateHeaderContentHtml(); ?>
+            <?= $this->generateHeaderContentHtml(); ?>
 
             <?= e(FilamentView::renderHook(TablesRenderHook::HEADER_AFTER, scopes: $livewire::class)); ?>
 
-        <?= $this->generateFiltersAboveContentHtml(); ?>
+            <?= $this->generateFiltersAboveContentHtml(); ?>
 
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_BEFORE, scopes: $livewire::class)); ?>
 
             <?= $this->generateToolbarHtml(); ?>
 
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER, scopes: $livewire::class)); ?>
-
         </div>
         <?php return ob_get_clean();
     }
@@ -143,9 +145,9 @@ trait CanRenderHeader
         $heading = $this->getHeading();
 
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>                <?php if ($header) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($header) { ?>
             <?= e($header); ?>
-
         <?php } elseif ($heading || $description || ($this->getRenderHeaderActions() && (! $this->isReordering()))) { ?>
             <div
                 class="<?= Arr::toCssClasses([
@@ -153,43 +155,40 @@ trait CanRenderHeader
                     'fi-ta-header-adaptive-actions-position' => $this->getRenderHeaderActions() && (! $this->isReordering()) && ($this->getHeaderActionsPosition() === HeaderActionsPosition::Adaptive),
                 ]); ?>"
             >
-                <?= $this->renderMorphMarkerHtml(); ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
                 <?php if ($heading || $description) { ?>
                     <div>
-                        <?= $this->renderMorphMarkerHtml(); ?>
+                        <?= $this->generateMorphMarkerHtml(); ?>
                         <?php if ($heading) { ?>
                             <<?= e($this->getHeadingTag()); ?>
-
                                 class="fi-ta-header-heading"
                             >
                                 <?= e($heading); ?>
-
                             </<?= e($this->getHeadingTag()); ?>>
                         <?php } ?>
-                        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                         <?php if ($description) { ?>
                             <p class="fi-ta-header-description">
                                 <?= e($description); ?>
-
                             </p>
                         <?php } ?>
                     </div>
                 <?php } ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?php if ((! $this->isReordering()) && $this->getRenderHeaderActions()) { ?>
                     <div
                         class="fi-ta-actions fi-align-start fi-wrapped"
                     >
-                        <?php foreach ($this->iterateRenderLoop($this->getRenderHeaderActions()) as $action) {  ?>
+                        <?php foreach ($this->iterateRenderLoop($this->getRenderHeaderActions()) as $action) { ?>
                             <?= e($action); ?>
-
-                        <?php }  ?>
+                        <?php } ?>
                     </div>
                 <?php } ?>
             </div>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -202,46 +201,47 @@ trait CanRenderHeader
 
         ob_start(); ?>
         <div
-            <?php if (! $this->hasRenderHeaderToolbar()) { ?> x-cloak <?php } ?>
+            <?php if (! $this->hasRenderHeaderToolbar()) { ?>
+                x-cloak
+            <?php } ?>
             x-show="<?= Js::from($this->hasRenderHeaderToolbar())->toHtml() ?> || <?= Js::from($this->hasRenderNonBulkToolbarAction())->toHtml() ?> || (getSelectedRecordsCount() && <?= Js::from(count($this->getRenderToolbarActions()))->toHtml() ?>)"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.header-toolbar.' . e($this->getRenderHeaderToolbarVisibilityMode()) . ''); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.header-toolbar.<?= e($this->getRenderHeaderToolbarVisibilityMode()); ?>"
+            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.header-toolbar.' . e($this->getRenderHeaderToolbarVisibilityMode()) . ''); ?>
+            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.header-toolbar.<?= e($this->getRenderHeaderToolbarVisibilityMode()); ?>"
             class="fi-ta-header-toolbar"
         >
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: $livewire::class)); ?>
 
             <?= $this->generateToolbarActionsHtml(); ?>
 
-            <?= $this->renderMorphMarkerHtml(); ?>
+            <?= $this->generateMorphMarkerHtml(); ?>
             <?php if ($this->isSearchable() || $this->hasRenderFiltersTrigger() || $this->hasColumnManager()) { ?>
                 <div>
                     <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: $livewire::class)); ?>
 
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?= $this->generateGlobalSearchHtml(); ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                     <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_AFTER, scopes: $livewire::class)); ?>
 
                     <?php if ($this->hasRenderFiltersTrigger() || $this->hasColumnManager()) { ?>
-                        <?= $this->renderMorphMarkerHtml(); ?>
+                        <?= $this->generateMorphMarkerHtml(); ?>
                         <?= $this->generateFiltersTriggerHtml(); ?>
-                        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                         <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE, scopes: $livewire::class)); ?>
 
-                        <?= $this->renderMorphMarkerHtml(); ?>
+                        <?= $this->generateMorphMarkerHtml(); ?>
                         <?= $this->generateColumnManagerTriggerHtml(); ?>
-                        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                         <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER, scopes: $livewire::class)); ?>
-
                     <?php } ?>
                 </div>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_END, scopes: $livewire::class)); ?>
-
         </div>
         <?php return ob_get_clean();
     }
@@ -257,26 +257,27 @@ trait CanRenderHeader
         <div class="fi-ta-actions fi-align-start fi-wrapped">
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: $livewire::class)); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                        <?php if ($this->isReorderable()) { ?>
+            <?= $this->generateMorphMarkerHtml(); ?>
+            <?php if ($this->isReorderable()) { ?>
                 <?= e($this->getReorderRecordsTriggerAction($this->isReordering())); ?>
-
-            <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+            <?php } ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: $livewire::class)); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                        <?php if ((! $this->isReordering()) && count($this->getRenderToolbarActions())) { ?>
-                <?php foreach ($this->iterateRenderLoop($this->getRenderToolbarActions()) as $action) {  ?>
+            <?= $this->generateMorphMarkerHtml(); ?>
+            <?php if ((! $this->isReordering()) && count($this->getRenderToolbarActions())) { ?>
+                <?php foreach ($this->iterateRenderLoop($this->getRenderToolbarActions()) as $action) { ?>
                     <?= e($action); ?>
-
-                <?php }  ?>
-            <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+            <?php } ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: $livewire::class)); ?>
 
             <?= $this->generateGroupingSettingsHtml(); ?>
 
             <?= e(FilamentView::renderHook(TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: $livewire::class)); ?>
-
         </div>
         <?php return ob_get_clean();
     }

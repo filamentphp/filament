@@ -56,6 +56,10 @@ trait CanGenerateIconButtonHtml
         bool $shouldCheckForPublishedView = false,
     ): string {
         if ($shouldCheckForPublishedView && ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.icon-button')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.icon-button', [
                 'attributes' => $attributes,
                 'badge' => $badge,
@@ -176,15 +180,15 @@ trait CanGenerateIconButtonHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?= $hasLoadingIndicator ? generate_loading_indicator_html(new FilamentComponentAttributeBag([
                 'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
                 'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
             ]), size: $iconSize)->toHtml() : '' ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, size: $iconSize)?->toHtml() ?? '' : '' ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-icon-btn-badge-ctn">

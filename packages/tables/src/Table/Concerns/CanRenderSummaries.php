@@ -118,13 +118,13 @@ trait CanRenderSummaries
         $html = '';
 
         // The optional page header and row precede the unkeyed all-records row.
-        $html .= $this->renderMorphMarkerHtml();
+        $html .= $this->generateMorphMarkerHtml();
 
         if ($hasPageSummary) {
             $html .= '<tr class="fi-ta-row fi-ta-summary-header-row fi-striped">';
-            $html .= $this->renderMorphMarkerHtml();
+            $html .= $this->generateMorphMarkerHtml();
             $html .= $this->generateSummaryPlaceholderCellsHtml($placeholderColumns, $actions, $actionsPosition, $selectionEnabled, $recordCheckboxPosition, isBefore: true);
-            $html .= $this->renderMorphMarkerHtml(isEnd: true);
+            $html .= $this->generateMorphMarkerHtml(isEnd: true);
 
             if ($extraHeadingColumn) {
                 $html .= '<th scope="col" class="fi-ta-cell fi-ta-summary-header-cell fi-align-start">' . e($heading) . '</th>';
@@ -178,7 +178,7 @@ trait CanRenderSummaries
             );
         }
 
-        $html .= $this->renderMorphMarkerHtml(isEnd: true);
+        $html .= $this->generateMorphMarkerHtml(isEnd: true);
 
         if ($allTableSummary) {
             $html .= $this->generateSummaryRowHtml(
@@ -300,9 +300,9 @@ trait CanRenderSummaries
         }
 
         $html = '<tr' . (filled($summaryHeadingHiddenAt) ? ' data-summary-heading-hidden-at="' . e(implode(' ', $summaryHeadingHiddenAt)) . '"' : '') . ' ' . $attributes->class(['fi-ta-row fi-ta-summary-row'])->toHtml() . '>';
-        $html .= $this->renderMorphMarkerHtml();
+        $html .= $this->generateMorphMarkerHtml();
         $html .= $this->generateSummaryPlaceholderCellsHtml($placeholderColumns, $actions, $actionsPosition, $selectionEnabled, $recordCheckboxPosition, isBefore: true);
-        $html .= $this->renderMorphMarkerHtml(isEnd: true);
+        $html .= $this->generateMorphMarkerHtml(isEnd: true);
         $headingColumnSpan = 1;
 
         if ($extraHeadingColumn || $groupsOnly) {
@@ -360,20 +360,20 @@ trait CanRenderSummaries
             } elseif ((! $placeholderColumns) || $columnState['hasSummary']) {
                 // These optional `div` siblings must not morph into the label or a
                 // custom summarizer's `div` when responsive configuration changes.
-                $html .= $this->renderMorphMarkerHtml();
+                $html .= $this->generateMorphMarkerHtml();
 
                 if (filled($summaryHeadingHiddenAt) && $columnState['hasSummary']) {
                     $html .= '<div class="fi-ta-summary-row-heading-fallback"><span data-visible-at="' . e(implode(' ', $summaryHeadingFallbackVisibleAt[$columnKey] ?? [])) . '">' . e($heading) . '</span></div>';
                 }
 
-                $html .= $this->renderMorphMarkerHtml(isEnd: true);
-                $html .= $this->renderMorphMarkerHtml();
+                $html .= $this->generateMorphMarkerHtml(isEnd: true);
+                $html .= $this->generateMorphMarkerHtml();
 
                 if ($isStackedOnMobile) {
                     $html .= '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div>';
                 }
 
-                $html .= $this->renderMorphMarkerHtml(isEnd: true);
+                $html .= $this->generateMorphMarkerHtml(isEnd: true);
 
                 foreach ($this->iterateRenderLoop($columnState['summarizers']) as $summarizer) {
                     $html .= e($summarizer->query($query)->selectedState($selectedState));

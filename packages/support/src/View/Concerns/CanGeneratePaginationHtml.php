@@ -44,6 +44,10 @@ trait CanGeneratePaginationHtml
         $attributes ??= new ComponentAttributeBag;
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.pagination.item')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.pagination.item', [...get_defined_vars(), 'slot' => new ComponentSlot])->render();
         }
 
@@ -63,11 +67,11 @@ trait CanGeneratePaginationHtml
                     'wire:target' => $hasLoadingState ? (implode(',', $loadingTargets) ?: $wireClickAction) : null,
                 ], escape: false)->class(['fi-pagination-item-btn']) ?>
             >
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?php if ($icon || $iconAlias) {
                     echo e(generate_icon_html($icon, $iconAlias, attributes: (new ComponentAttributeBag)->merge(['aria-hidden' => 'true'], escape: false)->class(['fi-pagination-item-icon'])));
                 } ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                 <?php if (filled($label)) { ?><span class="fi-pagination-item-label"><?= e(is_numeric($label) ? Number::format($label) : $label) ?></span><?php } ?>
             </button>
         </li>
@@ -94,6 +98,10 @@ trait CanGeneratePaginationHtml
         $attributes ??= new ComponentAttributeBag;
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.pagination.index')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.pagination.index', [...get_defined_vars(), 'slot' => new ComponentSlot])->render();
         }
 
@@ -113,17 +121,17 @@ trait CanGeneratePaginationHtml
 
         ob_start(); ?>
         <nav aria-label="<?= e(__('filament::components/pagination.label')) ?>" <?= $attributes->class(['fi-pagination', 'fi-simple' => $isSimple]) ?>>
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if (! $onFirstPage) {
                 echo $this->generateButtonHtml(label: new ComponentSlot(e(__('filament::components/pagination.actions.previous.label'))), attributes: new ComponentAttributeBag(['rel' => 'prev', 'wire:click' => e($previousAction), 'wire:key' => e($livewireId . '.pagination.previous'), 'wire:target' => e($wireLoadingTargets), 'class' => 'fi-pagination-previous-btn']), color: 'gray', shouldCheckForPublishedView: true);
             } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if (! $isSimple) { ?>
                 <span class="fi-pagination-overview"><?= e(trans_choice('filament::components/pagination.overview', $paginator->total(), ['first' => Number::format($paginator->firstItem() ?? 0), 'last' => Number::format($paginator->lastItem() ?? 0), 'total' => Number::format($paginator->total())])) ?></span>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if (count($pageOptions) > 1) { ?>
                 <div class="fi-pagination-records-per-page-select-ctn">
                     <?php ob_start();
@@ -137,12 +145,12 @@ trait CanGeneratePaginationHtml
                     </label>
                 </div>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if ($hasMorePages) {
                 echo $this->generateButtonHtml(label: new ComponentSlot(e(__('filament::components/pagination.actions.next.label'))), attributes: new ComponentAttributeBag(['rel' => 'next', 'wire:click' => e($nextAction), 'wire:key' => e($livewireId . '.pagination.next'), 'wire:target' => e($wireLoadingTargets), 'class' => 'fi-pagination-next-btn']), color: 'gray', shouldCheckForPublishedView: true);
             } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
             <?php if ((! $isSimple) && $paginator->hasPages()) { ?>
                 <ol class="fi-pagination-items">
                     <?php if (! $onFirstPage) {

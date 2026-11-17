@@ -14,6 +14,8 @@ use function Filament\Support\is_slot_empty;
 
 trait CanGenerateDropdownHtml
 {
+    use InteractsWithLivewireRendering;
+
     /**
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
@@ -38,6 +40,10 @@ trait CanGenerateDropdownHtml
         $slot = $slot instanceof ComponentSlot ? $slot : new ComponentSlot(e($slot));
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.dropdown.index')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.dropdown.index', get_defined_vars())->render();
         }
 

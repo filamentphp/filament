@@ -90,18 +90,17 @@ trait CanBeRendered
                 x-intersect.once="$wire.loadTable()"
             <?php } ?>
             x-data="filamentTable({
-                        areGroupsCollapsedByDefault: <?= Js::from($this->areGroupsCollapsedByDefault())->toHtml() ?>,
-                        canTrackDeselectedRecords: <?= Js::from($this->canTrackDeselectedRecords())->toHtml() ?>,
-                        currentSelectionLivewireProperty: <?= Js::from($this->getCurrentSelectionLivewireProperty())->toHtml() ?>,
-                        maxSelectableRecords: <?= Js::from($this->getMaxSelectableRecords())->toHtml() ?>,
-                        reorderMessage: <?= Js::from(__('filament-tables::table.reordering.moved'))->toHtml() ?>,
-                        selectsCurrentPageOnly: <?= Js::from($this->selectsCurrentPageOnly())->toHtml() ?>,
-                    })"
+                areGroupsCollapsedByDefault: <?= Js::from($this->areGroupsCollapsedByDefault())->toHtml() ?>,
+                canTrackDeselectedRecords: <?= Js::from($this->canTrackDeselectedRecords())->toHtml() ?>,
+                currentSelectionLivewireProperty: <?= Js::from($this->getCurrentSelectionLivewireProperty())->toHtml() ?>,
+                maxSelectableRecords: <?= Js::from($this->getMaxSelectableRecords())->toHtml() ?>,
+                reorderMessage: <?= Js::from(__('filament-tables::table.reordering.moved'))->toHtml() ?>,
+                selectsCurrentPageOnly: <?= Js::from($this->selectsCurrentPageOnly())->toHtml() ?>,
+            })"
             <?= e($this->getExtraAttributeBag()->class([
                 'fi-ta',
                 'fi-loading' => $records === null,
             ])); ?>
-
         >
             <input
                 type="hidden"
@@ -109,7 +108,7 @@ trait CanBeRendered
                 x-ref="allSelectableRecordsCount"
             />
 
-            <?= $this->renderMorphMarkerHtml(); ?>
+            <?= $this->generateMorphMarkerHtml(); ?>
             <?php if ($this->isReorderable()) { ?>
                 <span
                     wire:ignore
@@ -120,7 +119,7 @@ trait CanBeRendered
                     class="fi-sr-only"
                 ></span>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
             <div
                 class="<?= Arr::toCssClasses([
@@ -135,13 +134,13 @@ trait CanBeRendered
                 <div class="fi-ta-main">
                     <?= $this->generateHeaderHtml(); ?>
 
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?php if ($this->isReordering()) { ?>
                         <?= $this->generateReorderingIndicatorHtml(); ?>
                     <?php } elseif ($this->isRenderSelectionEnabled() && ($this->getMaxSelectableRecords() !== 1) && $this->isLoaded()) { ?>
                         <?= $this->generateSelectionIndicatorHtml(); ?>
                     <?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                     <?= $this->generateFilterIndicatorsHtml(); ?>
 
@@ -177,8 +176,8 @@ trait CanBeRendered
             return '';
         }
 
-        if (method_exists($livewire, 'getActionModalsHtml')) {
-            return $livewire->getActionModalsHtml()->toHtml();
+        if (method_exists($livewire, 'generateActionModalsHtml')) {
+            return $livewire->generateActionModalsHtml()->toHtml();
         }
 
         return view('filament-actions::components.modals')->render();

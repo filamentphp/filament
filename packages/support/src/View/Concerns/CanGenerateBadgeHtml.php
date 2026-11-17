@@ -54,6 +54,10 @@ trait CanGenerateBadgeHtml
         bool $shouldCheckForPublishedView = false,
     ): string {
         if ($shouldCheckForPublishedView && ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.badge')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.badge', [
                 'attributes' => $attributes,
                 'color' => $color,
@@ -168,14 +172,14 @@ trait CanGenerateBadgeHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::Before) { ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $loadingIndicatorHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                 <?= $iconHtml ?>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
             <span class="fi-badge-label-ctn">
                 <span class="fi-badge-label">
@@ -195,21 +199,21 @@ trait CanGenerateBadgeHtml
                     'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($deleteButtonHasLoadingIndicator && (! $deleteButtonHasSeparateLoadingIndicatorTarget)) ? $deleteButton->attributes->prepends('fi-loading') : null,
                     'wire:target' => $deleteButtonLoadingIndicatorTarget,
                 ], escape: false)->class(['fi-badge-delete-btn']) ?>>
-                    <?= $this->renderMorphMarkerHtml() ?>
+                    <?= $this->generateMorphMarkerHtml() ?>
                     <?php if ($deleteButtonHasLoadingIndicator) {
                         echo e(generate_loading_indicator_html(new FilamentComponentAttributeBag([
                             'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => $deleteButtonHasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
                             'wire:target' => $deleteButtonHasSeparateLoadingIndicatorTarget ? $deleteButtonLoadingIndicatorTarget : null,
                         ]), size: IconSize::ExtraSmall));
                     } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                     <span aria-hidden="true" class="fi-badge-delete-btn-icon"></span>
                     <span class="fi-sr-only"><?= e(filled($deleteLabel = $deleteButton->attributes->get('label')) ? $deleteLabel : __('filament::components/badge.actions.delete.label')) ?></span>
                 </button>
             <?php } elseif ($iconPosition === IconPosition::After) { ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $loadingIndicatorHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                 <?= $iconHtml ?>
             <?php } ?>
         </<?= ($tag === 'form') ? 'button' : $tag ?>>

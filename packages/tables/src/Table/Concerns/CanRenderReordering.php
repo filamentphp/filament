@@ -20,7 +20,8 @@ trait CanRenderReordering
             x-cloak
             role="status"
             aria-live="polite"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.reorder.indicator'); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.reorder.indicator"
+            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.reorder.indicator'); ?>
+            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.reorder.indicator"
             class="fi-ta-reorder-indicator"
         >
             <?= e(\Filament\Support\generate_loading_indicator_html(new FilamentComponentAttributeBag([
@@ -29,7 +30,6 @@ trait CanRenderReordering
             ]))); ?>
 
             <?= e(__('filament-tables::table.reorder_indicator')); ?>
-
         </div>
         <?php return ob_get_clean();
     }
@@ -43,9 +43,9 @@ trait CanRenderReordering
     {
         $viewFactory = app('view');
 
-        ob_start(); ?>
-        <?php
-            $reorderLabel = ($record instanceof Model && ($this->hasCustomRecordTitle() || filled($this->getRecordTitleAttribute()))) ? $this->getRecordTitle($record) : $recordKey;
+        ob_start();
+
+        $reorderLabel = ($record instanceof Model && ($this->hasCustomRecordTitle() || filled($this->getRecordTitleAttribute()))) ? $this->getRecordTitle($record) : $recordKey;
         $reorderPosition = $loop->iteration;
         $reorderCount = $loop->count;
         $reorderDescriptionId = $this->getLivewire()->getId() . '-table-reorder-' . md5($recordKey);
@@ -58,7 +58,6 @@ trait CanRenderReordering
             type="button"
         >
             <?= e(\Filament\Support\generate_icon_html(Heroicon::Bars2, alias: TablesIconAlias::REORDER_HANDLE)); ?>
-
         </button>
 
         <span
@@ -67,7 +66,6 @@ trait CanRenderReordering
             data-table-reorder-label="<?= e($reorderLabel); ?>"
         >
             <?= e(__('filament-tables::table.reordering.position', ['label' => $reorderLabel, 'position' => $reorderPosition, 'count' => $reorderCount])); ?>
-
         </span>
 
         <div class="fi-sr-only">
@@ -85,7 +83,6 @@ trait CanRenderReordering
                     x-on:click.stop="moveTableRecord($event, <?= Js::from($recordKey)->toHtml() ?>, <?= Js::from($direction)->toHtml() ?>)"
                 >
                     <?= e(__('filament-tables::table.actions.move_record_' . $direction . '.label', ['label' => $reorderLabel])); ?>
-
                 </button>
             <?php } $loop = $viewFactory->getLastLoop(); ?>
         </div>

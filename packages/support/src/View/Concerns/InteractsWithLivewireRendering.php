@@ -17,7 +17,7 @@ trait InteractsWithLivewireRendering
      *
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
-    protected function renderMorphMarkerHtml(bool $isEnd = false): string
+    protected function generateMorphMarkerHtml(bool $isEnd = false): string
     {
         if ((! config('livewire.inject_morph_markers', true)) || (! ExtendBlade::isRenderingLivewireComponent())) {
             return '';
@@ -82,7 +82,7 @@ trait InteractsWithLivewireRendering
      *
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
-    protected function setRenderKey(string $key): void
+    protected function setRenderKey(?string $key): void
     {
         if ($this->hasRenderSmartKeys()) {
             SupportCompiledWireKeys::$currentLoop['key'] = $key;

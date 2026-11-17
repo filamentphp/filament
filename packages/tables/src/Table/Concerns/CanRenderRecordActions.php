@@ -122,10 +122,9 @@ trait CanRenderRecordActions
                 },
             ]); ?>"
         >
-            <?php foreach ($this->iterateRenderLoop($recordActions) as $action) {  ?>
+            <?php foreach ($this->iterateRenderLoop($recordActions) as $action) { ?>
                 <?= e($action); ?>
-
-            <?php }  ?>
+            <?php } ?>
         </div>
         <?php return ob_get_clean();
     }

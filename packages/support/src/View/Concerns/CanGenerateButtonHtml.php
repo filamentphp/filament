@@ -61,6 +61,10 @@ trait CanGenerateButtonHtml
         bool $shouldCheckForPublishedView = false,
     ): string {
         if ($shouldCheckForPublishedView && ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.button.index')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.button.index', [
                 'attributes' => $attributes,
                 'badge' => $badge,
@@ -194,7 +198,7 @@ trait CanGenerateButtonHtml
 
         ob_start(); ?>
 
-        <?= $this->renderMorphMarkerHtml() ?>
+        <?= $this->generateMorphMarkerHtml() ?>
         <?php if ($labeledFromBreakpoint) { ?>
             <?= $this->generateIconButtonHtml(
                 attributes: $iconButtonAttributes,
@@ -222,7 +226,7 @@ trait CanGenerateButtonHtml
                 shouldCheckForPublishedView: $shouldCheckForPublishedView,
             ) ?>
         <?php } ?>
-        <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
         <?= ($tag === 'form') ? ('<form ' . $formAttributes->toHtml() . '>' . csrf_field()) : '' ?>
 
@@ -248,19 +252,19 @@ trait CanGenerateButtonHtml
             <?php } ?>
             <?= $buttonAttributes->toHtml() ?>
         >
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::Before) { ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $loadingIndicatorHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $iconHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                 <?= $formProcessingLoadingIndicatorHtml ?>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if (! $isLabelSrOnly) { ?>
                 <?php if ($hasFormProcessingLoadingIndicator) { ?>
                     <span x-show="! isProcessing">
@@ -278,19 +282,19 @@ trait CanGenerateButtonHtml
                     x-text="processingMessage"
                 ></span>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::After) { ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $loadingIndicatorHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $iconHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                 <?= $formProcessingLoadingIndicatorHtml ?>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-btn-badge-ctn">

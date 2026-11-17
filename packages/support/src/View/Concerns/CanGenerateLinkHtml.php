@@ -61,6 +61,10 @@ trait CanGenerateLinkHtml
         bool $shouldCheckForPublishedView = false,
     ): string {
         if ($shouldCheckForPublishedView && ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.link')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.link', [
                 'attributes' => $attributes,
                 'badge' => $badge,
@@ -196,31 +200,31 @@ trait CanGenerateLinkHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::Before) { ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $loadingIndicatorHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                 <?= $iconHtml ?>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if (! $isLabelSrOnly) { ?>
                 <span class="fi-link-label">
                     <?= e($label) ?>
                 </span>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::After) { ?>
-                <?= $this->renderMorphMarkerHtml() ?>
+                <?= $this->generateMorphMarkerHtml() ?>
                 <?= $loadingIndicatorHtml ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                 <?= $iconHtml ?>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-link-badge-ctn">

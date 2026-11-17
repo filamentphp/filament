@@ -39,11 +39,11 @@ trait CanRenderContent
         $content = $this->getContent();
 
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>            <?php if (((! $content) && (! $this->hasColumnsLayout())) || ($records === null) || count($records)) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if (((! $content) && (! $this->hasColumnsLayout())) || ($records === null) || count($records)) { ?>
             <div
                 <?php if ((! $this->isReordering()) && ($pollingInterval = $this->getPollingInterval())) { ?>
                     wire:poll.<?= e($pollingInterval); ?>
-
                 <?php } ?>
                 wire:loading.attr="aria-busy"
                 <?php if ($this->hasLoadingSkeleton()) { ?>
@@ -55,27 +55,24 @@ trait CanRenderContent
                 <?= $this->generateResultCountHtml(); ?>
 
                 <?php if (($content || $this->hasColumnsLayout()) && ($records !== null) && count($records)) { ?>
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?= $this->generateContentHeaderHtml(); ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                     <?php if ($content) { ?>
                         <?= $this->generateCustomContentHtml($content, ['records' => $records]); ?>
-
                     <?php } else { ?>
                         <?= $this->generateGridRecordsHtml(); ?>
-
                     <?php } ?>
 
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?php if (($content || $this->hasColumnsLayout()) && ($contentFooter = $this->getContentFooter())) { ?>
                         <?= $this->generateCustomContentHtml($contentFooter, [
                             'columns' => $this->getVisibleColumns(),
                             'records' => $records,
                         ]); ?>
-
                     <?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                     <?php if ((! $this->isReordering()) && ($this->hasPageSummary() || $this->hasAllTableSummary()) && $this->hasRenderSummary()) { ?>
                         <table
@@ -98,16 +95,14 @@ trait CanRenderContent
                             </tbody>
                         </table>
                     <?php } ?>
-                <?php } elseif ((! ($content || $this->hasColumnsLayout())) && ($records !== null)) { ?>
-                    <?php
-                        $sortableColumns = $this->isStackedOnMobile() ? array_filter(
-                            $this->getVisibleColumns(),
-                            fn (Column $column): bool => $column->isSortable(),
-                        ) : [];
+                <?php } elseif ((! ($content || $this->hasColumnsLayout())) && ($records !== null)) {
+                    $sortableColumns = $this->isStackedOnMobile() ? array_filter(
+                        $this->getVisibleColumns(),
+                        fn (Column $column): bool => $column->isSortable(),
+                    ) : [];
                     ?>
 
                     <?= $this->generateRecordsTableHtml($sortableColumns); ?>
-
                 <?php } elseif ($records === null) { ?>
                     <div
                         role="status"
@@ -117,7 +112,6 @@ trait CanRenderContent
                     >
                         <span class="fi-sr-only">
                             <?= e(__('filament-tables::table.loading')); ?>
-
                         </span>
 
                         <div aria-hidden="true" class="fi-loading-placeholder-content">
@@ -134,7 +128,8 @@ trait CanRenderContent
                     </div>
                 <?php } ?>
             </div>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -145,16 +140,16 @@ trait CanRenderContent
     {
         $records = $this->isLoaded() ? $this->getRecords() : null;
 
-        ob_start(); ?>
-        <?php if ($records !== null) { ?>
-            <?php
-                // The total across all pages, not the current page's count — and since the total is
-                // stable across pages, the live region only announces when the result set really
-                // changes, not on every pagination click. Non-length-aware paginators fall back to
-                // the page count.
-                $resultCount = ($records instanceof LengthAwarePaginator)
-                    ? $records->total()
-                    : count($records);
+        ob_start();
+
+        if ($records !== null) {
+            // The total across all pages, not the current page's count — and since the total is
+            // stable across pages, the live region only announces when the result set really
+            // changes, not on every pagination click. Non-length-aware paginators fall back to
+            // the page count.
+            $resultCount = ($records instanceof LengthAwarePaginator)
+                ? $records->total()
+                : count($records);
             ?>
 
             <div
@@ -164,7 +159,6 @@ trait CanRenderContent
                 class="fi-sr-only"
             >
                 <?= e(trans_choice('filament-tables::table.result_count', $resultCount, ['count' => $resultCount])); ?>
-
             </div>
 
             <div
@@ -176,7 +170,6 @@ trait CanRenderContent
                 class="fi-sr-only"
             >
                 <?= e(__('filament-tables::table.loading')); ?>
-
             </div>
         <?php } ?>
         <?php return ob_get_clean();
@@ -199,23 +192,21 @@ trait CanRenderContent
      */
     protected function generateContentHeaderHtml(): string
     {
-        ob_start(); ?>
-        <?php if (! $this->isReordering()) { ?>
-            <?php
-                $sortableColumns = array_filter(
-                    $this->getVisibleColumns(),
-                    fn (Column $column): bool => $column->isSortable(),
-                );
-            ?>
+        ob_start();
 
-            <?php if (($this->isRenderSelectionEnabled() && ($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly())) || count($sortableColumns)) { ?>
+        if (! $this->isReordering()) {
+            $sortableColumns = array_filter(
+                $this->getVisibleColumns(),
+                fn (Column $column): bool => $column->isSortable(),
+            );
+
+            if (($this->isRenderSelectionEnabled() && ($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly())) || count($sortableColumns)) { ?>
                 <div class="fi-ta-content-header">
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?php if ($this->isRenderSelectionEnabled() && ($this->getMaxSelectableRecords() !== 1) && (! $this->selectsGroupsOnly())) { ?>
                         <?= $this->generatePageCheckboxHtml(); ?>
-
                     <?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                     <?php if (count($sortableColumns)) { ?>
                         <div
@@ -229,25 +220,22 @@ trait CanRenderContent
                         ob_start(); ?>
                                         <option value="">
                                             <?= e($this->getDefaultSortOptionLabel()); ?>
-
                                         </option>
 
-                                        <?php foreach ($this->iterateRenderLoop($sortableColumns) as $column) {  ?>
+                                        <?php foreach ($this->iterateRenderLoop($sortableColumns) as $column) { ?>
                                             <option
                                                 value="<?= e($column->getName()); ?>"
                                             >
                                                 <?= e($column->getLabel()); ?>
-
                                             </option>
-                                        <?php }  ?>
-                                     <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
-                                 <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                        <?php } ?>
+                                    <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
                             </label>
 
                             <label x-cloak x-show="column">
                                 <span class="fi-sr-only">
                                     <?= e(__('filament-tables::table.sorting.fields.direction.label')); ?>
-
                                 </span>
 
                                 <?php $inputWrapperArguments = ['attributes' => new ComponentAttributeBag([])];
@@ -256,15 +244,13 @@ trait CanRenderContent
                         ob_start(); ?>
                                         <option value="asc">
                                             <?= e(__('filament-tables::table.sorting.fields.direction.options.asc')); ?>
-
                                         </option>
 
                                         <option value="desc">
                                             <?= e(__('filament-tables::table.sorting.fields.direction.options.desc')); ?>
-
                                         </option>
-                                     <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
-                                 <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                    <?= $this->generateInputSelectHtml(...$inputSelectArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
+                                <?= $this->generateInputWrapperHtml(...$inputWrapperArguments, slot: new ComponentSlot(trim(ob_get_clean()))); ?>
                             </label>
                         </div>
                     <?php } ?>
@@ -282,10 +268,10 @@ trait CanRenderContent
         $records = $this->isLoaded() ? $this->getRecords() : null;
 
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>            <?php if (($records !== null) && ! count($records)) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if (($records !== null) && ! count($records)) { ?>
             <?php if ($emptyState = $this->getEmptyState()) { ?>
                 <?= e($emptyState); ?>
-
             <?php } else { ?>
                 <div class="fi-ta-empty-state" role="status">
                     <div class="fi-ta-empty-state-content">
@@ -299,25 +285,21 @@ trait CanRenderContent
                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => implode(',', Table::LOADING_TARGETS),
                             ])), size: IconSize::Large)); ?>
-
                         </div>
 
                         <<?= e($this->getHeadingTag($this->getHeading() ? 1 : 0)); ?>
-
                             class="fi-ta-empty-state-heading"
                         >
                             <?= e($this->getEmptyStateHeading()); ?>
-
                         </<?= e($this->getHeadingTag($this->getHeading() ? 1 : 0)); ?>>
 
-                        <?= $this->renderMorphMarkerHtml(); ?>
+                        <?= $this->generateMorphMarkerHtml(); ?>
                         <?php if (filled($emptyStateDescription = $this->getEmptyStateDescription())) { ?>
                             <p class="fi-ta-empty-state-description">
                                 <?= e($emptyStateDescription); ?>
-
                             </p>
                         <?php } ?>
-                        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                         <?php if ($emptyStateActions = array_filter(
                             $this->getEmptyStateActions(),
@@ -326,16 +308,16 @@ trait CanRenderContent
                             <div
                                 class="fi-ta-actions fi-align-center fi-wrapped"
                             >
-                                <?php foreach ($this->iterateRenderLoop($emptyStateActions) as $action) {  ?>
+                                <?php foreach ($this->iterateRenderLoop($emptyStateActions) as $action) { ?>
                                     <?= e($action); ?>
-
-                                <?php }  ?>
+                                <?php } ?>
                             </div>
                         <?php } ?>
                     </div>
                 </div>
             <?php } ?>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -347,10 +329,9 @@ trait CanRenderContent
         $records = $this->isLoaded() ? $this->getRecords() : null;
 
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>
-        <?php if ($this->hasRenderPagination()) { ?>
-            <?php
-                $hasExtremePaginationLinks = $this->hasExtremePaginationLinks();
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($this->hasRenderPagination()) {
+            $hasExtremePaginationLinks = $this->hasExtremePaginationLinks();
             $paginationPageOptions = $this->getPaginationPageOptions();
             ?>
 
@@ -371,7 +352,7 @@ trait CanRenderContent
                     'attributes' => new ComponentAttributeBag,
                 ])->render(); ?>
         <?php } ?>
-        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 }

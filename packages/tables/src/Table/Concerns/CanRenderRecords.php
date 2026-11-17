@@ -57,18 +57,16 @@ trait CanRenderRecords
                     'fi-ta-content-grid' => $contentGrid,
                     'fi-ta-content-grouped' => $livewire->getTableGrouping(),
                 ])); ?>
-
         >
-            <?php
-                $previousRecord = null;
+        <?php
+        $previousRecord = null;
         $previousRecordGroupKey = null;
         $previousRecordGroupTitle = null;
         ?>
 
             <?php foreach ($this->iterateRenderLoop($records) as $record) {
-                $loop = $viewFactory->getLastLoop(); ?>
-                <?php
-                        $recordKey = $this->getRecordKey($record);
+                $loop = $viewFactory->getLastLoop();
+                $recordKey = $this->getRecordKey($record);
                 $recordUrl = $this->getRecordUrl($record);
                 $recordAction = $recordUrl ? null : $this->getRecordAction($record);
                 $openRecordUrlInNewTab = $this->shouldOpenRecordUrlInNewTab($record);
@@ -100,9 +98,7 @@ trait CanRenderRecords
                                 ]); ?>"
                             >
                                 <tbody>
-                                    <?php
-                                        $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
-                        ?>
+                                    <?php $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord); ?>
 
                                     <?= $this->generateSummaryRowHtml(
                                         columns: $this->getVisibleColumns(),
@@ -118,8 +114,7 @@ trait CanRenderRecords
                         </div>
                     <?php } ?>
 
-        <?= $this->generateGridGroupHeaderHtml($record, $recordGroupTitle, $isRecordGroupCollapsible, $recordGroupKey); ?>
-
+                    <?= $this->generateGridGroupHeaderHtml($record, $recordGroupTitle, $isRecordGroupCollapsible, $recordGroupKey); ?>
                 <?php } ?>
 
                 <?= $this->generateGridRecordHtml(
@@ -137,11 +132,10 @@ trait CanRenderRecords
                 ); ?>
 
                 <?php
-                    $previousRecordGroupKey = $recordGroupKey;
+                $previousRecordGroupKey = $recordGroupKey;
                 $previousRecordGroupTitle = $recordGroupTitle;
                 $previousRecord = $record;
-                ?>
-            <?php } $loop = $viewFactory->getLastLoop(); ?>
+            } $loop = $viewFactory->getLastLoop(); ?>
 
             <?php if ((! $this->isReordering()) && filled($previousRecordGroupTitle) && $this->hasRenderSummary() && $livewire->shouldRenderTrailingGroupedTableSummary($previousRecord)) { ?>
                 <div
@@ -158,9 +152,7 @@ trait CanRenderRecords
                         ]); ?>"
                     >
                         <tbody>
-                            <?php
-                                $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
-                ?>
+                            <?php $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord); ?>
 
                             <?= $this->generateSummaryRowHtml(
                                 columns: $this->getVisibleColumns(),
@@ -209,7 +201,8 @@ trait CanRenderRecords
                 x-on:expand-all-table-rows.window="isCollapsed = false"
             <?php } ?>
             role="listitem"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey) . ''); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.records.<?= e($recordKey); ?>"
+            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey) . ''); ?>
+            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.records.<?= e($recordKey); ?>"
             <?php if ($this->isReordering()) { ?>
                 x-sortable-item="<?= e($recordKey); ?>"
                 x-sortable-handle
@@ -223,33 +216,29 @@ trait CanRenderRecords
             ]); ?>"
             x-bind:class="{
                 <?= e($hasCollapsibleColumnsLayout ? '\'fi-ta-record-collapsed\': isCollapsed,' : ''); ?>
-
                 <?= e($this->getGrouping()?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . Js::from($recordGroupTitle) . '),' : ''); ?>
-
                 'fi-selected': <?= Js::from($recordIsSelectable)->toHtml() ?> && isRecordSelected(<?= Js::from($recordKey)->toHtml() ?>),
             }"
         >
-            <?php
-                $hasItemBeforeRecordContent = $this->isReordering() || $recordIsSelectable;
+        <?php
+        $hasItemBeforeRecordContent = $this->isReordering() || $recordIsSelectable;
         $hasItemAfterRecordContent = $hasCollapsibleColumnsLayout && (! $this->isReordering());
         ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                                        <?php if ($this->isReordering()) { ?>
+            <?= $this->generateMorphMarkerHtml(); ?>
+            <?php if ($this->isReordering()) { ?>
                 <?= $this->generateRecordReorderControlsHtml($record, $recordKey, $loop); ?>
-
             <?php } elseif ($recordIsSelectable) { ?>
                 <?= $this->generateRecordCheckboxHtml($recordKey, $recordGroupKey); ?>
-
-            <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+            <?php } ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
             <div class="fi-ta-record-content-ctn">
                 <div>
                     <?php if ($recordUrl) { ?>
                         <a
                             <?= e(\Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab, hasNestedClickEventHandler: true)); ?>
-
                             <?= e($this->getExtraRecordLinkAttributeBag($record)->class(['fi-ta-record-content'])); ?>
-
                         >
                             <?php foreach ($this->iterateRenderLoop($this->getColumnsLayout()) as $columnsLayoutComponent) {
                                 $loop = $viewFactory->getLastLoop(); ?>
@@ -258,14 +247,12 @@ trait CanRenderRecords
                                     ->recordKey($recordKey)
                                     ->rowLoop($loop)
                                     ->renderInLayout()); ?>
-
                             <?php } $loop = $viewFactory->getLastLoop(); ?>
                         </a>
-                    <?php } elseif ($recordAction) { ?>
-                        <?php
-                                $recordWireClickAction = $this->getRecordAction($record)
-                                    ? "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')'
-                                    : $recordWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
+                    <?php } elseif ($recordAction) {
+                        $recordWireClickAction = $this->getRecordAction($record)
+                            ? "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')'
+                            : $recordWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                         ?>
 
                         <button
@@ -282,7 +269,6 @@ trait CanRenderRecords
                                     ->recordKey($recordKey)
                                     ->rowLoop($loop)
                                     ->renderInLayout()); ?>
-
                             <?php } $loop = $viewFactory->getLastLoop(); ?>
                         </button>
                     <?php } else { ?>
@@ -296,7 +282,6 @@ trait CanRenderRecords
                                     ->recordKey($recordKey)
                                     ->rowLoop($loop)
                                     ->renderInLayout()); ?>
-
                             <?php } $loop = $viewFactory->getLastLoop(); ?>
                         </div>
                     <?php } ?>
@@ -308,7 +293,6 @@ trait CanRenderRecords
                             class="fi-ta-record-content fi-collapsible"
                         >
                             <?= e($this->getCollapsibleColumnsLayout()); ?>
-
                         </div>
                     <?php } ?>
                 </div>
@@ -330,7 +314,6 @@ trait CanRenderRecords
                         <?php foreach ($this->iterateRenderLoop($recordActions) as $action) {
                             $loop = $viewFactory->getLastLoop(); ?>
                             <?= e($action); ?>
-
                         <?php } $loop = $viewFactory->getLastLoop(); ?>
                     </div>
                 <?php } ?>
@@ -345,7 +328,6 @@ trait CanRenderRecords
                     class="fi-ta-record-collapse-btn fi-icon-btn"
                 >
                     <?= e(\Filament\Support\generate_icon_html(Heroicon::ChevronDown, alias: TablesIconAlias::COLUMNS_COLLAPSE_BUTTON)); ?>
-
                 </button>
             <?php } ?>
         </div>
@@ -371,7 +353,7 @@ trait CanRenderRecords
         >
             <?= $this->generateTableHeaderHtml($sortableColumns); ?>
 
-        <?= $this->generateColumnSearchesHtml(); ?>
+            <?= $this->generateColumnSearchesHtml(); ?>
 
             <?= $this->generateRecordsHtml(); ?>
 
@@ -382,7 +364,6 @@ trait CanRenderRecords
                             'columns' => $this->getVisibleColumns(),
                             'records' => $records,
                         ]); ?>
-
                     </tr>
                 </tfoot>
             <?php } ?>
@@ -415,18 +396,17 @@ trait CanRenderRecords
                     wire:target="<?= e(implode(',', Table::LOADING_TARGETS)); ?>"
                 <?php } ?>
             >
-                <?php
-                    $isRecordRowStriped = false;
+            <?php
+            $isRecordRowStriped = false;
             $previousRecord = null;
             $previousRecordGroupKey = null;
             $previousRecordGroupTitle = null;
             ?>
 
-                <?= $this->renderMorphMarkerHtml(); ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
                 <?php foreach ($this->iterateRenderLoop($records) as $record) {
-                    $loop = $viewFactory->getLastLoop(); ?>
-                    <?php
-                            $recordKey = $this->getRecordKey($record);
+                    $loop = $viewFactory->getLastLoop();
+                    $recordKey = $this->getRecordKey($record);
                     $recordUrl = $this->getRecordUrl($record);
                     $recordAction = $recordUrl ? null : $this->getRecordAction($record);
                     $openRecordUrlInNewTab = $this->shouldOpenRecordUrlInNewTab($record);
@@ -438,9 +418,8 @@ trait CanRenderRecords
                     ?>
 
                     <?php if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle) { ?>
-                        <?php if ((! $this->isReordering()) && filled($previousRecordGroupTitle) && $this->hasRenderSummary()) { ?>
-                            <?php
-                                $groupColumn = $this->getGrouping()->getColumn();
+                        <?php if ((! $this->isReordering()) && filled($previousRecordGroupTitle) && $this->hasRenderSummary()) {
+                            $groupColumn = $this->getGrouping()->getColumn();
                             $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
                             $groupSummaryKey = $livewire->getId() . '.table.groups.' . md5(json_encode([$this->getGrouping()->getId(), $previousRecordGroupKey])) . '.summary';
                             $this->setRenderKey($groupSummaryKey);
@@ -463,10 +442,8 @@ trait CanRenderRecords
 
                         <?= $this->generateTableGroupHeaderHtml($record, $recordGroupTitle, $recordGroupKey); ?>
 
-                        <?php
-                            $isRecordRowStriped = false;
-                        ?>
-                    <?php } ?>
+                        <?php $isRecordRowStriped = false;
+                    } ?>
 
                     <?= $this->generateRecordHtml(
                         $recordKey,
@@ -483,16 +460,14 @@ trait CanRenderRecords
                     ); ?>
 
                     <?php
-                        $isRecordRowStriped = ! $isRecordRowStriped;
+                    $isRecordRowStriped = ! $isRecordRowStriped;
                     $previousRecord = $record;
                     $previousRecordGroupKey = $recordGroupKey;
                     $previousRecordGroupTitle = $recordGroupTitle;
-                    ?>
-                <?php } $loop = $viewFactory->getLastLoop(); ?>
+                } $loop = $viewFactory->getLastLoop(); ?>
 
-                <?php if ((! $this->isReordering()) && filled($previousRecordGroupTitle) && $this->hasRenderSummary() && $livewire->shouldRenderTrailingGroupedTableSummary($previousRecord)) { ?>
-                    <?php
-                        $groupColumn = $this->getGrouping()->getColumn();
+                <?php if ((! $this->isReordering()) && filled($previousRecordGroupTitle) && $this->hasRenderSummary() && $livewire->shouldRenderTrailingGroupedTableSummary($previousRecord)) {
+                    $groupColumn = $this->getGrouping()->getColumn();
                     $groupScopedAllTableSummaryQuery = $this->getGrouping()->scopeQuery($livewire->getAllTableSummaryQuery(), $previousRecord);
                     $groupSummaryKey = $livewire->getId() . '.table.groups.' . md5(json_encode([$this->getGrouping()->getId(), $previousRecordGroupKey])) . '.summary';
                     $this->setRenderKey($groupSummaryKey);
@@ -511,11 +486,11 @@ trait CanRenderRecords
                         recordCheckboxPosition: $this->getRecordCheckboxPosition(),
                         attributes: new ComponentAttributeBag(['wire:key' => $groupSummaryKey]),
                     ); ?>
-                <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                <?php if ((! $this->isReordering()) && $this->hasRenderSummary()) { ?>
-                    <?php
-                $groupColumn = $this->getGrouping()?->getColumn();
+                <?php if ((! $this->isReordering()) && $this->hasRenderSummary()) {
+                    $groupColumn = $this->getGrouping()?->getColumn();
                     ?>
 
                     <?= $this->generateSummaryHtml(
@@ -562,16 +537,14 @@ trait CanRenderRecords
         ob_start(); ?>
         <?php if (! $this->isRenderGroupsOnly()) { ?>
             <tr
-                <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey) . ''); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.records.<?= e($recordKey); ?>"
+                <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey) . ''); ?>
+                wire:key="<?= e($this->getLivewire()->getId()); ?>.table.records.<?= e($recordKey); ?>"
                 <?= e($this->isReordering() ? 'x-sortable-handle' : null); ?>
-
                 <?= $this->isReordering() ? 'x-sortable-item="' . e($recordKey) . '"' : null; ?>
-
                 x-bind:class="{
-                        <?= e($this->getGrouping()?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . Js::from($recordGroupTitle) . '),' : ''); ?>
-
-                        'fi-selected': <?= Js::from($recordIsSelectable)->toHtml() ?> && isRecordSelected(<?= Js::from($recordKey)->toHtml() ?>),
-                    }"
+                    <?= e($this->getGrouping()?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . Js::from($recordGroupTitle) . '),' : ''); ?>
+                    'fi-selected': <?= Js::from($recordIsSelectable)->toHtml() ?> && isRecordSelected(<?= Js::from($recordKey)->toHtml() ?>),
+                }"
                 class="<?= Arr::toCssClasses([
                     'fi-ta-row',
                     'fi-clickable' => $recordAction || $recordUrl,
@@ -579,70 +552,72 @@ trait CanRenderRecords
                     ...$this->getRecordClasses($record),
                 ]); ?>"
             >
-                <?= $this->renderMorphMarkerHtml(); ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
                 <?php if ($this->isReordering()) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordReorderControlsHtml($record, $recordKey, $loop); ?>
-
                     </td>
                 <?php } ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                                                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeCells && (! $this->isReordering())) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeCells && (! $this->isReordering())) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
-
                     </td>
-                <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                                                <?php if ($this->isRenderSelectionEnabled() && ($this->getRecordCheckboxPosition() === RecordCheckboxPosition::BeforeCells) && (! $this->isReordering())) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php if ($this->isRenderSelectionEnabled() && ($this->getRecordCheckboxPosition() === RecordCheckboxPosition::BeforeCells) && (! $this->isReordering())) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
                     >
                         <?php if ($recordIsSelectable) { ?>
                             <?= $this->generateRecordCheckboxHtml($recordKey, $recordGroupKey); ?>
-
                         <?php } ?>
                     </td>
-                <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                                                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeColumns && (! $this->isReordering())) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::BeforeColumns && (! $this->isReordering())) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
-
                     </td>
-                <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                <?= $this->renderMorphMarkerHtml(); ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
                 <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $column) {
                     $loop = $viewFactory->getLastLoop(); ?>
                     <?= $this->generateRecordCellHtml($column, $record, $loop, $recordKey, $recordUrl, $recordAction, $openRecordUrlInNewTab); ?>
-
                 <?php } $loop = $viewFactory->getLastLoop(); ?>
-                <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                                                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterColumns && (! $this->isReordering())) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterColumns && (! $this->isReordering())) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
-
                     </td>
-                <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-        <?= $this->renderMorphMarkerHtml(); ?>                                                <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::AfterCells && (! $this->isReordering())) { ?>
+                <?= $this->generateMorphMarkerHtml(); ?>
+                <?php if ($this->isRenderSelectionEnabled() && $this->getRecordCheckboxPosition() === RecordCheckboxPosition::AfterCells && (! $this->isReordering())) { ?>
                     <td
                         class="fi-ta-cell fi-ta-selection-cell"
                     >
                         <?php if ($recordIsSelectable) { ?>
                             <?= $this->generateRecordCheckboxHtml($recordKey, $recordGroupKey); ?>
-
                         <?php } ?>
                     </td>
-                <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                <?php } ?>
+                <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                 <?php if ($this->hasRenderRecordActions() && $this->getRecordActionsPosition() === RecordActionsPosition::AfterCells && (! $this->isReordering())) { ?>
                     <td class="fi-ta-cell">
                         <?= $this->generateRecordActionsHtml($recordActions); ?>
-
                     </td>
                 <?php } ?>
             </tr>

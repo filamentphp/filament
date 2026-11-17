@@ -24,19 +24,17 @@ trait CanRenderColumnManager
      */
     protected function generateColumnManagerTriggerHtml(): string
     {
-        ob_start(); ?>
-        <?php if ($this->hasColumnManager()) { ?>
-            <?php
-                $columnManagerMaxHeight = $this->getColumnManagerMaxHeight();
+        ob_start();
+
+        if ($this->hasColumnManager()) {
+            $columnManagerMaxHeight = $this->getColumnManagerMaxHeight();
             $columnManagerWidth = $this->getColumnManagerWidth();
             $columnManagerColumns = $this->getColumnManagerColumns();
             $columnManagerApplyAction = $this->getColumnManagerApplyAction();
             $columnManagerTriggerAction = $this->getColumnManagerTriggerAction();
-            ?>
 
-            <?php if (($this->getColumnManagerLayout() === ColumnManagerLayout::Modal) || $columnManagerTriggerAction->isModalSlideOver()) { ?>
-                <?php
-                    $columnManagerTriggerActionModalAlignment = $columnManagerTriggerAction->getModalAlignment();
+            if (($this->getColumnManagerLayout() === ColumnManagerLayout::Modal) || $columnManagerTriggerAction->isModalSlideOver()) {
+                $columnManagerTriggerActionModalAlignment = $columnManagerTriggerAction->getModalAlignment();
                 $columnManagerTriggerActionIsModalAutofocused = $columnManagerTriggerAction->isModalAutofocused();
                 $columnManagerTriggerActionIsModalClickThrough = $columnManagerTriggerAction->isModalClickThrough();
                 $columnManagerTriggerActionHasModalCloseButton = $columnManagerTriggerAction->hasModalCloseButton();
@@ -55,9 +53,8 @@ trait CanRenderColumnManager
                 $columnManagerTriggerActionModalSlideOverPosition = $columnManagerTriggerAction->getModalSlideOverPosition();
                 $columnManagerTriggerActionIsModalFooterSticky = $columnManagerTriggerAction->isModalFooterSticky();
                 $columnManagerTriggerActionIsModalHeaderSticky = $columnManagerTriggerAction->isModalHeaderSticky();
-                ?>
 
-                <?php $modalArguments = [
+                $modalArguments = [
                     'alignment' => $columnManagerTriggerActionModalAlignment,
                     'autofocus' => $columnManagerTriggerActionIsModalAutofocused,
                     'clickThrough' => $columnManagerTriggerActionIsModalClickThrough,
@@ -83,16 +80,17 @@ trait CanRenderColumnManager
                         'class' => 'fi-ta-col-manager-modal',
                     ]),
                 ];
+                $this->setRenderKey($modalArguments['attributes']->get('wire:key'));
                 ob_start(); ?>
-                     <?php $modalTrigger = new ComponentSlot(trim(e($columnManagerTriggerAction))); ?>
+                    <?php $modalTrigger = new ComponentSlot(trim(e($columnManagerTriggerAction))); ?>
 
                     <?= e($columnManagerTriggerAction->getModalContent()); ?>
 
                     <div
                         x-data="filamentTableColumnManager({
-                                    columns: $wire.entangle('tableColumns'),
-                                    isLive: <?= e($columnManagerApplyAction->isVisible() ? 'false' : 'true'); ?>,
-                                })"
+                            columns: $wire.entangle('tableColumns'),
+                            isLive: <?= e($columnManagerApplyAction->isVisible() ? 'false' : 'true'); ?>,
+                        })"
                         x-on:apply-table-column-manager.window="applyTableColumnManager()"
                         x-on:reset-table-column-manager.window="resetDeferredColumns()"
                         class="fi-ta-col-manager"
@@ -108,7 +106,7 @@ trait CanRenderColumnManager
 
                     <?= e($columnManagerTriggerAction->getModalContentFooter()); ?>
 
-                 <?= $this->generateModalHtml(...$modalArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $modalTrigger, livewireId: $this->getLivewire()->getId()); ?>
+                <?= $this->generateModalHtml(...$modalArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $modalTrigger, livewireId: $this->getLivewire()->getId()); ?>
             <?php } else { ?>
                 <?php $dropdownArguments = [
                     'menu' => false,
@@ -122,8 +120,9 @@ trait CanRenderColumnManager
                         'class' => 'fi-ta-col-manager-dropdown',
                     ]),
                 ];
+                $this->setRenderKey($dropdownArguments['attributes']->get('wire:key'));
                 ob_start(); ?>
-                     <?php $dropdownTrigger = new ComponentSlot(trim(e($columnManagerTriggerAction))); ?>
+                    <?php $dropdownTrigger = new ComponentSlot(trim(e($columnManagerTriggerAction))); ?>
 
                     <?= $this->generateColumnManagerHtml(
                         applyAction: $columnManagerApplyAction,
@@ -135,7 +134,7 @@ trait CanRenderColumnManager
                         resetActionPosition: $this->getColumnManagerResetActionPosition(),
                         attributes: new ComponentAttributeBag([]),
                     ); ?>
-                 <?= $this->generateDropdownHtml(...$dropdownArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $dropdownTrigger); ?>
+                <?= $this->generateDropdownHtml(...$dropdownArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $dropdownTrigger); ?>
             <?php } ?>
         <?php } ?>
         <?php return ob_get_clean();
@@ -204,13 +203,13 @@ trait CanRenderColumnManager
 
         if ($isApplyActionVisible || ($resetActionPosition === ColumnManagerResetActionPosition::Footer)) {
             $html .= '<div class="fi-ta-col-manager-actions-ctn">';
-            $html .= $this->renderMorphMarkerHtml();
+            $html .= $this->generateMorphMarkerHtml();
 
             if ($isApplyActionVisible) {
                 $html .= e($applyAction);
             }
 
-            $html .= $this->renderMorphMarkerHtml(isEnd: true);
+            $html .= $this->generateMorphMarkerHtml(isEnd: true);
 
             if ($resetActionPosition === ColumnManagerResetActionPosition::Footer) {
                 $html .= $this->generateButtonHtml(

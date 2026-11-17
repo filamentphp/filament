@@ -67,7 +67,8 @@ trait CanRenderFilters
     protected function generateFiltersBeforeContentHtml(): string
     {
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>        <?php if ($this->hasRenderFiltersInLayout(FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible)) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($this->hasRenderFiltersInLayout(FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible)) { ?>
             <div
                 wire:ignore.self
                 x-ref="filtersContentContainer"
@@ -89,7 +90,8 @@ trait CanRenderFilters
                     attributes: new ComponentAttributeBag(['class' => 'fi-ta-filters-before-content']),
                 ); ?>
             </div>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -99,7 +101,8 @@ trait CanRenderFilters
     protected function generateFiltersAboveContentHtml(): string
     {
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>                <?php if ($this->hasRenderFiltersInLayout(FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible)) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($this->hasRenderFiltersInLayout(FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible)) { ?>
             <div
                 <?php if ($this->hasRenderCollapsibleFilters()) { ?>
                     x-bind:class="{ 'fi-open': areFiltersOpen }"
@@ -123,11 +126,11 @@ trait CanRenderFilters
                         class="fi-ta-filters-trigger-action-ctn"
                     >
                         <?= e($this->getFiltersTriggerAction()->badge((string) $this->getActiveFiltersCount())); ?>
-
                     </span>
                 <?php } ?>
             </div>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -140,9 +143,8 @@ trait CanRenderFilters
 
         ob_start(); ?>
         <?php if ($this->hasRenderFiltersInLayout(FiltersLayout::Dropdown, FiltersLayout::Modal)) { ?>
-            <?php if (($this->getFiltersLayout() === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver()) { ?>
-                <?php
-                    $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
+            <?php if (($this->getFiltersLayout() === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver()) {
+                $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
                 $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
                 $filtersTriggerActionIsModalClickThrough = $filtersTriggerAction->isModalClickThrough();
                 $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
@@ -161,9 +163,8 @@ trait CanRenderFilters
                 $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
                 $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
                 $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
-                ?>
 
-                <?php $modalArguments = [
+                $modalArguments = [
                     'alignment' => $filtersTriggerActionModalAlignment,
                     'autofocus' => $filtersTriggerActionIsModalAutofocused,
                     'clickThrough' => $filtersTriggerActionIsModalClickThrough,
@@ -186,8 +187,9 @@ trait CanRenderFilters
                     'width' => $this->getRenderFiltersFormWidth(),
                     'attributes' => new ComponentAttributeBag(['wire:key' => BladeCompiler::sanitizeComponentAttribute($this->getLivewire()->getId() . '.table.filters'), 'class' => 'fi-ta-filters-modal']),
                 ];
+                $this->setRenderKey($modalArguments['attributes']->get('wire:key'));
                 ob_start(); ?>
-                     <?php $modalTrigger = new ComponentSlot(trim(e($filtersTriggerAction->badge((string) $this->getActiveFiltersCount())))); ?>
+                    <?php $modalTrigger = new ComponentSlot(trim(e($filtersTriggerAction->badge((string) $this->getActiveFiltersCount())))); ?>
 
                     <?= e($filtersTriggerAction->getModalContent()); ?>
 
@@ -195,7 +197,7 @@ trait CanRenderFilters
 
                     <?= e($filtersTriggerAction->getModalContentFooter()); ?>
 
-                 <?= $this->generateModalHtml(...$modalArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $modalTrigger, livewireId: $this->getLivewire()->getId()); ?>
+                <?= $this->generateModalHtml(...$modalArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $modalTrigger, livewireId: $this->getLivewire()->getId()); ?>
             <?php } else { ?>
                 <?php $dropdownArguments = [
                     'menu' => false,
@@ -206,8 +208,9 @@ trait CanRenderFilters
                     'width' => $this->getRenderFiltersFormWidth() ?? Width::ExtraSmall,
                     'attributes' => new ComponentAttributeBag(['wire:key' => BladeCompiler::sanitizeComponentAttribute($this->getLivewire()->getId() . '.table.filters'), 'class' => 'fi-ta-filters-dropdown']),
                 ];
+                $this->setRenderKey($dropdownArguments['attributes']->get('wire:key'));
                 ob_start(); ?>
-                     <?php $dropdownTrigger = new ComponentSlot(trim(e($filtersTriggerAction->badge((string) $this->getActiveFiltersCount())))); ?>
+                    <?php $dropdownTrigger = new ComponentSlot(trim(e($filtersTriggerAction->badge((string) $this->getActiveFiltersCount())))); ?>
 
                     <?= $this->generateFiltersHtml(
                         applyAction: $this->getFiltersApplyAction(),
@@ -217,7 +220,7 @@ trait CanRenderFilters
                         resetActionPosition: $this->getFiltersResetActionPosition(),
                         attributes: new ComponentAttributeBag(['x-data' => 'filamentTableFilters', 'x-on:click' => 'handleActionClick($event)', 'tabindex' => '-1']),
                     ); ?>
-                 <?= $this->generateDropdownHtml(...$dropdownArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $dropdownTrigger); ?>
+                <?= $this->generateDropdownHtml(...$dropdownArguments, slot: new ComponentSlot(trim(ob_get_clean())), trigger: $dropdownTrigger); ?>
             <?php } ?>
         <?php } elseif ($this->hasRenderFiltersInLayout(FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContent, FiltersLayout::AfterContentCollapsible)) { ?>
             <span
@@ -229,7 +232,6 @@ trait CanRenderFilters
                 ]); ?>"
             >
                 <?= e($filtersTriggerAction->badge((string) $this->getActiveFiltersCount())); ?>
-
             </span>
         <?php } ?>
         <?php return ob_get_clean();
@@ -244,7 +246,7 @@ trait CanRenderFilters
         $filterIndicators = $this->getFilterIndicators();
 
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
         <?php if ($filterIndicators) { ?>
             <?php if (filled($filterIndicatorsView = FilamentView::renderHook(TablesRenderHook::FILTER_INDICATORS, scopes: $livewire::class, data: ['filterIndicators' => $filterIndicators]))) { ?>
                 <?= e($filterIndicatorsView); ?>
@@ -253,7 +255,6 @@ trait CanRenderFilters
                     <div>
                         <span class="fi-ta-filter-indicators-label">
                             <?= e(__('filament-tables::table.filters.indicator')); ?>
-
                         </span>
 
                         <div
@@ -272,7 +273,7 @@ trait CanRenderFilters
                 </div>
             <?php } ?>
         <?php } ?>
-        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 
@@ -396,13 +397,13 @@ trait CanRenderFilters
 
         if ($isApplyActionVisible || (($resetActionPosition === FiltersResetActionPosition::Footer) && $isResetActionVisible)) {
             $html .= '<div class="fi-ta-filters-actions-ctn">';
-            $html .= $this->renderMorphMarkerHtml();
+            $html .= $this->generateMorphMarkerHtml();
 
             if ($isApplyActionVisible) {
                 $html .= e($applyAction);
             }
 
-            $html .= $this->renderMorphMarkerHtml(isEnd: true);
+            $html .= $this->generateMorphMarkerHtml(isEnd: true);
 
             if (($resetActionPosition === FiltersResetActionPosition::Footer) && $isResetActionVisible) {
                 $html .= e($resetAction);

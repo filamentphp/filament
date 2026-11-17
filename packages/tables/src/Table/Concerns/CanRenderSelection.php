@@ -60,7 +60,8 @@ trait CanRenderSelection
             aria-atomic="true"
             x-bind:hidden="! getSelectedRecordsCount()"
             x-show="getSelectedRecordsCount()"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.selection.indicator'); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.selection.indicator"
+            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.selection.indicator'); ?>
+            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.selection.indicator"
             class="fi-ta-selection-indicator"
         >
             <div>
@@ -78,7 +79,7 @@ trait CanRenderSelection
                     <?= e(FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: $livewire::class)); ?>
 
                     <div class="fi-ta-selection-indicator-actions-ctn">
-                        <?= $this->renderMorphMarkerHtml(); ?>
+                        <?= $this->generateMorphMarkerHtml(); ?>
                         <?php if (! $this->selectsGroupsOnly()) { ?>
                             <?php $linkArguments = [
                                 'color' => 'primary',
@@ -92,19 +93,18 @@ trait CanRenderSelection
                             ob_start(); ?>
                                 <?= e(trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $this->getRenderAllSelectableRecordsCount(), ['count' => Number::format($this->getRenderAllSelectableRecordsCount(), locale: app()->getLocale())])); ?>
 
-                             <?= $this->generateLinkHtml(...$linkArguments, label: new ComponentSlot(trim(ob_get_clean())), shouldCheckForPublishedView: true); ?>
+                            <?= $this->generateLinkHtml(...$linkArguments, label: new ComponentSlot(trim(ob_get_clean())), shouldCheckForPublishedView: true); ?>
                         <?php } ?>
-                        <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
                         <?php $linkArguments = ['color' => 'danger', 'tag' => 'button', 'attributes' => new ComponentAttributeBag(['x-on:click' => 'deselectAllRecords'])];
                 ob_start(); ?>
                             <?= e(__('filament-tables::table.selection_indicator.actions.deselect_all.label')); ?>
 
-                         <?= $this->generateLinkHtml(...$linkArguments, label: new ComponentSlot(trim(ob_get_clean())), shouldCheckForPublishedView: true); ?>
+                        <?= $this->generateLinkHtml(...$linkArguments, label: new ComponentSlot(trim(ob_get_clean())), shouldCheckForPublishedView: true); ?>
                     </div>
 
                     <?= e(FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER, scopes: $livewire::class)); ?>
-
                 </div>
             <?php } ?>
         </div>
@@ -127,8 +127,8 @@ trait CanRenderSelection
             <?php } ?>
             x-bind:checked="syncSelectRecordsOnPageCheckbox($el)"
             x-on:click="toggleSelectRecordsOnPage"
-
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.bulk-select-page.checkbox.' . ($isStacked ? 'stacked.' : '') . e(Str::random()) . ''); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.bulk-select-page.checkbox.<?= $isStacked ? 'stacked.' : ''; ?><?= e(Str::random()); ?>"
+            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.bulk-select-page.checkbox.' . ($isStacked ? 'stacked.' : '') . e(Str::random()) . ''); ?>
+            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.bulk-select-page.checkbox.<?= $isStacked ? 'stacked.' : ''; ?><?= e(Str::random()); ?>"
             wire:loading.attr="disabled"
             wire:target="<?= e(implode(',', Table::LOADING_TARGETS)); ?>"
             class="fi-ta-page-checkbox fi-checkbox-input"
@@ -145,23 +145,24 @@ trait CanRenderSelection
 
         ob_start(); ?>
         <input
-                    aria-label="<?= e(__('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle])); ?>"
-                    type="checkbox"
-                    data-group-selectable-record-keys="<?= e(json_encode($livewire->getGroupedSelectableTableRecordKeys($recordGroupKey))); ?>"
-                    <?php if ($this->isSelectionDisabled()) { ?>
-                        disabled
-                    <?php } else { ?>
-                        x-on:click="toggleSelectGroupRecords($el)"
-                        <?php if ($this->getMaxSelectableRecords()) { ?>
-                            x-bind:disabled="shouldDisableSelectGroupRecordsCheckbox($el)"
-                        <?php } ?>
-                    <?php } ?>
-                    x-bind:checked="syncSelectGroupRecordsCheckbox($el)"
-                    <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.bulk_select_group.checkbox.' . e($livewire->getTablePage()) . ''); ?>wire:key="<?= e($this->getLivewire()->getId()); ?>.table.bulk_select_group.checkbox.<?= e($livewire->getTablePage()); ?>"
-                    wire:loading.attr="disabled"
-                    wire:target="<?= e(implode(',', Table::LOADING_TARGETS)); ?>"
-                    class="fi-ta-group-checkbox fi-checkbox-input"
-                />
+            aria-label="<?= e(__('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle])); ?>"
+            type="checkbox"
+            data-group-selectable-record-keys="<?= e(json_encode($livewire->getGroupedSelectableTableRecordKeys($recordGroupKey))); ?>"
+            <?php if ($this->isSelectionDisabled()) { ?>
+                disabled
+            <?php } else { ?>
+                x-on:click="toggleSelectGroupRecords($el)"
+                <?php if ($this->getMaxSelectableRecords()) { ?>
+                    x-bind:disabled="shouldDisableSelectGroupRecordsCheckbox($el)"
+                <?php } ?>
+            <?php } ?>
+            x-bind:checked="syncSelectGroupRecordsCheckbox($el)"
+            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.bulk_select_group.checkbox.' . e($livewire->getTablePage()) . ''); ?>
+            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.bulk_select_group.checkbox.<?= e($livewire->getTablePage()); ?>"
+            wire:loading.attr="disabled"
+            wire:target="<?= e(implode(',', Table::LOADING_TARGETS)); ?>"
+            class="fi-ta-group-checkbox fi-checkbox-input"
+        />
         <?php return ob_get_clean();
     }
 

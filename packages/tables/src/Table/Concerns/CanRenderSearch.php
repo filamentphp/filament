@@ -21,10 +21,10 @@ trait CanRenderSearch
      */
     protected function generateGlobalSearchHtml(): string
     {
-        ob_start(); ?>
-        <?php if ($this->isSearchable()) { ?>
-            <?php
-                $searchPlaceholder = $this->getSearchPlaceholder();
+        ob_start();
+
+        if ($this->isSearchable()) {
+            $searchPlaceholder = $this->getSearchPlaceholder();
             ?>
 
             <?= $this->generateSearchFieldHtml(
@@ -45,17 +45,18 @@ trait CanRenderSearch
         $records = $this->getRecords();
 
         ob_start(); ?>
-        <?= $this->renderMorphMarkerHtml(); ?>                            <?php if ($this->isSearchableByColumn()) { ?>
+        <?= $this->generateMorphMarkerHtml(); ?>
+        <?php if ($this->isSearchableByColumn()) { ?>
             <tbody>
-                <?php
-                    $breakpointOrder = [
-                        'base' => 0,
-                        'sm' => 1,
-                        'md' => 2,
-                        'lg' => 3,
-                        'xl' => 4,
-                        '2xl' => 5,
-                    ];
+            <?php
+            $breakpointOrder = [
+                'base' => 0,
+                'sm' => 1,
+                'md' => 2,
+                'lg' => 3,
+                'xl' => 4,
+                '2xl' => 5,
+            ];
             $responsiveBreakpointOrder = array_diff_key($breakpointOrder, ['base' => true]);
             $individualSearchHiddenAt = [];
 
@@ -97,10 +98,12 @@ trait CanRenderSearch
             ?>
 
                 <tr
-                    <?php if (filled($individualSearchHiddenAt)) { ?> data-search-hidden-at="<?= e(implode(' ', $individualSearchHiddenAt)); ?>" <?php } ?>
+                    <?php if (filled($individualSearchHiddenAt)) { ?>
+                        data-search-hidden-at="<?= e(implode(' ', $individualSearchHiddenAt)); ?>"
+                    <?php } ?>
                     class="fi-ta-row fi-ta-row-not-reorderable fi-ta-individual-search-row"
                 >
-                    <?= $this->renderMorphMarkerHtml(); ?>
+                    <?= $this->generateMorphMarkerHtml(); ?>
                     <?php if (count($records)) { ?>
                         <?php if ($this->isReordering()) { ?>
                             <td></td>
@@ -114,10 +117,9 @@ trait CanRenderSearch
                             <?php } ?>
                         <?php } ?>
                     <?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                    <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $columnKey => $column) {  ?>
-                        <?php
+                    <?php foreach ($this->iterateRenderLoop($this->getVisibleColumns()) as $columnKey => $column) {
                         $columnName = $column->getName();
                         $columnState = $individualSearchColumnStates[$columnKey];
                         $isIndividuallySearchable = $columnState['isIndividuallySearchable'];
@@ -145,7 +147,7 @@ trait CanRenderSearch
                                 ); ?>
                             <?php } ?>
                         </td>
-                    <?php }  ?>
+                    <?php } ?>
 
                     <?php if ((! $this->isReordering()) && count($records)) { ?>
                         <?php if ($this->hasRenderRecordActions() && in_array($this->getRecordActionsPosition(), [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells])) { ?>
@@ -158,7 +160,8 @@ trait CanRenderSearch
                     <?php } ?>
                 </tr>
             </tbody>
-        <?php } ?><?= $this->renderMorphMarkerHtml(isEnd: true); ?>
+        <?php } ?>
+        <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
         <?php return ob_get_clean();
     }
 

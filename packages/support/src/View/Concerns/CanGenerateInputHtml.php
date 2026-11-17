@@ -28,6 +28,10 @@ trait CanGenerateInputHtml
         $attributes ??= new ComponentAttributeBag;
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.input.index')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.input.index', [...get_defined_vars(), 'slot' => new ComponentSlot])->render();
         }
 
@@ -47,6 +51,10 @@ trait CanGenerateInputHtml
         $slot = $slot instanceof ComponentSlot ? $slot : new ComponentSlot(e($slot));
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.input.select')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.input.select', get_defined_vars())->render();
         }
 
@@ -87,6 +95,10 @@ trait CanGenerateInputHtml
         $slot = $slot instanceof ComponentSlot ? $slot : new ComponentSlot(e($slot));
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.input.wrapper')) {
+            if ($attributes->has('wire:key')) {
+                $this->setRenderKey($attributes->get('wire:key'));
+            }
+
             return view('filament::components.input.wrapper', get_defined_vars())->render();
         }
 
@@ -111,31 +123,31 @@ trait CanGenerateInputHtml
                 'wire:target' => $loadingIndicatorTarget,
             ], escape: false)->class(['fi-input-wrp', 'fi-disabled' => (! $hasAlpineDisabledClasses) && $disabled, 'fi-invalid' => (! $hasAlpineValidClasses) && (! $valid)]) ?>
         >
-            <?= $this->renderMorphMarkerHtml() ?>
+            <?= $this->generateMorphMarkerHtml() ?>
             <?php if ($hasPrefix || $hasLoadingIndicator) { ?>
                 <div
                     <?php if (($prefixIconHtml !== null) || filled($prefix)) { ?> x-on:click="! $event.target.closest('.fi-input-wrp-actions') && $dispatch('focus-input')" <?php } ?>
                     <?= (new ComponentAttributeBag)->class(['fi-input-wrp-prefix', 'fi-input-wrp-prefix-has-content' => $hasPrefix, 'fi-inline' => $inlinePrefix, 'fi-input-wrp-prefix-has-label' => filled($prefix)]) ?>
                 >
-                    <?= $this->renderMorphMarkerHtml() ?>
+                    <?= $this->generateMorphMarkerHtml() ?>
                     <?php if (count($prefixActions)) { ?>
                         <div class="fi-input-wrp-actions"><?php foreach ($this->iterateRenderLoop($prefixActions) as $prefixAction) {
                             echo e($prefixAction);
                         } ?></div>
                     <?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-                    <?= $this->renderMorphMarkerHtml() ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+                    <?= $this->generateMorphMarkerHtml() ?>
                     <?= e($prefixIconHtml) ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-                    <?= $this->renderMorphMarkerHtml() ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+                    <?= $this->generateMorphMarkerHtml() ?>
                     <?php if ($hasLoadingIndicator) {
                         echo e(generate_loading_indicator_html((new ComponentAttributeBag)->color(IconComponent::class, 'gray')));
                     } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                     <?php if (filled($prefix)) { ?><span class="fi-input-wrp-label"><?= e($prefix) ?></span><?php } ?>
                 </div>
             <?php } ?>
-            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+            <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
             <div
                 <?= (new ComponentAttributeBag)->class(['fi-input-wrp-content-ctn', 'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix]) ?>
             ><?= e($slot) ?></div>
@@ -144,12 +156,12 @@ trait CanGenerateInputHtml
                     <?php if (($suffixIconHtml !== null) || filled($suffix)) { ?> x-on:click="! $event.target.closest('.fi-input-wrp-actions') && $dispatch('focus-input')" <?php } ?>
                     <?= (new ComponentAttributeBag)->class(['fi-input-wrp-suffix', 'fi-inline' => $inlineSuffix, 'fi-input-wrp-suffix-has-label' => filled($suffix)]) ?>
                 >
-                    <?= $this->renderMorphMarkerHtml() ?>
+                    <?= $this->generateMorphMarkerHtml() ?>
                     <?php if (filled($suffix)) { ?><span class="fi-input-wrp-label"><?= e($suffix) ?></span><?php } ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
-                    <?= $this->renderMorphMarkerHtml() ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
+                    <?= $this->generateMorphMarkerHtml() ?>
                     <?= e($suffixIconHtml) ?>
-                    <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
+                    <?= $this->generateMorphMarkerHtml(isEnd: true) ?>
                     <?php if (count($suffixActions)) { ?><div class="fi-input-wrp-actions"><?php foreach ($this->iterateRenderLoop($suffixActions) as $suffixAction) {
                         echo e($suffixAction);
                     } ?></div><?php } ?>
