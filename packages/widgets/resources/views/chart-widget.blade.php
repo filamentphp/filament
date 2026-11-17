@@ -32,7 +32,7 @@
         :heading="$heading"
         :collapsible="$isCollapsible"
     >
-        @if ($filters || method_exists($this, 'getFiltersSchema'))
+        @if ($filters || method_exists($this, 'getFiltersForm'))
             <x-slot name="afterHeader">
                 @if ($filters)
                     <x-filament::input.wrapper
@@ -54,7 +54,7 @@
                     </x-filament::input.wrapper>
                 @endif
 
-                @if (method_exists($this, 'getFiltersSchema'))
+                @if (method_exists($this, 'getFiltersForm'))
                     <x-filament::dropdown
                         :menu="false"
                         placement="bottom-end"
@@ -67,7 +67,7 @@
                         </x-slot>
 
                         <div class="fi-wi-chart-filter-content">
-                            {{ $this->getFiltersSchema() }}
+                            {{ $this->getFiltersForm() }}
 
                             @if (method_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters())
                                 <div
@@ -85,6 +85,11 @@
         @endif
 
         <div
+            x-data="{ isLoading: true }"
+            x-on:async-component-ready.stop="isLoading = false"
+            x-bind:data-loading="isLoading"
+            data-loading="true"
+            class="fi-async-component"
             @if ($pollingInterval = $this->getPollingInterval())
                 wire:poll.{{ $pollingInterval }}="updateChartData"
             @endif
@@ -93,7 +98,28 @@
             @endif
         >
             <div
-                class="fi-wi-chart-image"
+                x-show="isLoading"
+                role="status"
+                aria-live="polite"
+                aria-busy="true"
+                x-bind:aria-busy="isLoading ? 'true' : 'false'"
+                class="fi-async-component-loading"
+            >
+                <span class="fi-sr-only">
+                    {{ __('filament::loading.label') }}
+                </span>
+
+                <div aria-hidden="true" class="fi-loading-placeholder-content">
+                    {{ $this->getLoadingPlaceholder() ?? view('filament::components.loading-placeholder') }}
+                </div>
+            </div>
+
+            <div
+                x-bind:inert="isLoading"
+                x-bind:aria-hidden="isLoading"
+                inert
+                aria-hidden="true"
+                class="fi-wi-chart-image fi-async-component-content"
                 @if (filled($chartAccessibleLabel))
                     role="img"
                     aria-label="{{ $chartAccessibleLabel }}"

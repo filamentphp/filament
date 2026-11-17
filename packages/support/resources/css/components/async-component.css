@@ -1,0 +1,17 @@
+.fi-async-component {
+    @apply grid w-full min-w-0;
+
+    & > .fi-async-component-loading,
+    & > .fi-async-component-content {
+        grid-area: 1 / 1;
+        @apply min-w-0;
+    }
+
+    & > .fi-async-component-loading {
+        @apply grid min-h-9 place-items-center;
+    }
+
+    &[data-loading='true'] > .fi-async-component-content {
+        @apply pointer-events-none opacity-0;
+    }
+}

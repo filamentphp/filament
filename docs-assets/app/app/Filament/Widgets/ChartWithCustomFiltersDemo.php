@@ -5,11 +5,11 @@ namespace App\Filament\Widgets;
 use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class ChartWithCustomFiltersDemo extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 
     protected static ?bool $isLazyLoaded = false;
 
@@ -19,7 +19,7 @@ class ChartWithCustomFiltersDemo extends ChartWidget
 
     protected bool $hasDeferredFilters = true;
 
-    public function filtersSchema(Schema $schema): Schema
+    public function filtersForm(Schema $schema): Schema
     {
         return $schema->components([
             DatePicker::make('startDate')

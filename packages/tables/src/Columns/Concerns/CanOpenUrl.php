@@ -11,6 +11,8 @@ trait CanOpenUrl
 
     protected string | Closure | null $url = null;
 
+    protected ?bool $cachedHasStateBasedUrls = null;
+
     public function openUrlInNewTab(bool | Closure $condition = true): static
     {
         $this->shouldOpenUrlInNewTab = $condition;
@@ -29,6 +31,7 @@ trait CanOpenUrl
         }
 
         $this->url = $url;
+        $this->cachedHasStateBasedUrls = null;
 
         return $this;
     }
@@ -49,8 +52,10 @@ trait CanOpenUrl
 
     public function hasStateBasedUrls(): bool
     {
-        return $this->evaluationValueIsFunctionAndHasParameter($this->url, 'state')
-            || $this->evaluationValueIsFunctionAndHasParameter($this->url, 'relatedRecord');
+        return $this->cachedHasStateBasedUrls ??= (
+            $this->evaluationValueIsFunctionAndHasParameter($this->url, 'state')
+            || $this->evaluationValueIsFunctionAndHasParameter($this->url, 'relatedRecord')
+        );
     }
 
     public function shouldOpenUrlInNewTab(): bool

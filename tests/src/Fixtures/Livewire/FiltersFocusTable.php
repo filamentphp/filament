@@ -30,7 +30,7 @@ class FiltersFocusTable extends Component implements HasActions, HasSchemas, Tab
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')
-                    ->schema([
+                    ->form([
                         Toggle::make('isActive')
                             ->label('Published')
                             ->extraAttributes(['data-testid' => 'published-filter']),

@@ -33,9 +33,8 @@ ImageColumn::make('avatar')
 
 If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
 
-<Aside variant="warning">
-    When an image [links to a URL](overview#opening-urls), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
-</Aside>
+> [!WARNING]
+> When an image [links to a URL](overview#opening-urls), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
 
 ## Managing the image disk
 
@@ -52,7 +51,12 @@ ImageColumn::make('header_image')
 
 ## Public images
 
-By default, Filament will generate temporary URLs to images in the filesystem, unless the [disk](#managing-the-image-disk) is set to `public`. If your images are stored in a public disk, you can set the `visibility()` to `public`:
+By default, images use `private` visibility unless the [disk](#managing-the-image-disk) is named `public`. Filament attempts to generate temporary URLs for private images if the disk supports them, falling back to permanent URLs if it cannot. The default visibility depends on the disk's name, not its filesystem configuration.
+
+> [!NOTE]
+> If your application uses the `local` disk, you may need to [enable local temporary URLs](https://laravel.com/docs/filesystem#enabling-local-temporary-urls) by adding `'serve' => true` to the disk's configuration in `config/filesystems.php`.
+
+If your images are already publicly accessible, you can set `visibility('public')` to use permanent URLs. This does not change the disk or make private files publicly accessible:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
@@ -197,7 +201,7 @@ ImageColumn::make('colleagues.avatar')
 
 ### Customizing the stacked overlap
 
-The default overlap is `4`, but you may customize it to be from `0` to `8`:
+The default overlap is `2`, but you may customize it to be from `0` to `8`:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
@@ -206,7 +210,7 @@ ImageColumn::make('colleagues.avatar')
     ->imageHeight(40)
     ->circular()
     ->stacked()
-    ->overlap(2)
+    ->overlap(4)
 ```
 
 <AutoScreenshot name="tables/columns/image/stacked-overlap" alt="Image column with stacked overlap" />
@@ -281,6 +285,25 @@ ImageColumn::make('colleagues.avatar')
 
 <UtilityInjection set="tableColumns">As well as allowing a static value, the `limitedRemainingText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+#### Adding a tooltip to the remaining images count
+
+You can add a tooltip to the `+N` count using `limitedRemainingTextTooltip()`. This is separate from `tooltip()`, which applies to each visible image:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+    ->limitedRemainingText()
+    ->limitedRemainingTextTooltip('More colleagues')
+```
+
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `limitedRemainingTextTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters. The `$state` contains the full column state, including images hidden by the limit.</UtilityInjection>
+
+The tooltip is only displayed when the remaining images count is visible. Pass `null` to disable it.
+
 ## Prevent file existence checks
 
 When the schema is loaded, it will automatically detect whether the images exist to prevent errors for missing files. This is all done on the backend. When using remote storage with many images, this can be time-consuming. You can use the `checkFileExistence(false)` method to disable this feature:
@@ -307,9 +330,8 @@ ImageColumn::make('colleagues.avatar')
     ->wrap()
 ```
 
-<Aside variant="tip">
-    The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
-</Aside>
+> [!TIP]
+> The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
 
 ## Adding extra HTML attributes to the image
 

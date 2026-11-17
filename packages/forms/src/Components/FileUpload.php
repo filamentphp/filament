@@ -22,6 +22,7 @@ use function Filament\Support\generate_icon_html;
 class FileUpload extends BaseFileUpload implements HasEmbeddedView
 {
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasLoadingPlaceholder;
     use Concerns\HasPlaceholder;
     use HasAlignment;
     use HasExtraAlpineAttributes;
@@ -66,7 +67,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     protected bool | Closure $canEditSvgs = true;
 
-    protected bool | Closure $isSvgEditingConfirmed = false;
+    protected bool | Closure $shouldConfirmSvgEditing = false;
 
     protected bool | Closure $shouldAutomaticallyOpenImageEditorForAspectRatio = false;
 
@@ -480,7 +481,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function confirmSvgEditing(bool | Closure $condition = true): static
     {
-        $this->isSvgEditingConfirmed = $condition;
+        $this->shouldConfirmSvgEditing = $condition;
 
         return $this;
     }
@@ -631,9 +632,17 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return (bool) $this->evaluate($this->canEditSvgs);
     }
 
+    public function shouldConfirmSvgEditing(): bool
+    {
+        return (bool) $this->evaluate($this->shouldConfirmSvgEditing);
+    }
+
+    /**
+     * @deprecated Use `shouldConfirmSvgEditing()` instead.
+     */
     public function isSvgEditingConfirmed(): bool
     {
-        return (bool) $this->evaluate($this->isSvgEditingConfirmed);
+        return $this->shouldConfirmSvgEditing();
     }
 
     public function shouldAutomaticallyOpenImageEditorForAspectRatio(): bool
@@ -878,7 +887,11 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
-        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled, $isDisabled ? $placeholder : null])), 0, 64);
+        $wireKey = $livewireKey . '.' . substr(md5(serialize([
+            $isDisabled,
+            $isDisabled ? $placeholder : null,
+            $isDisabled && ($placeholder === '') && blank($this->getState()),
+        ])), 0, 64);
 
         $outerAttributes = $this->getExtraAttributeBag()
             ->merge([
@@ -889,6 +902,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             ->merge($this->getExtraAlpineAttributes(), escape: false)
             ->class([
                 'fi-fo-file-upload',
+                'fi-async-component-content',
                 'fi-fo-file-upload-avatar' => $isAvatar,
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ]);
@@ -915,6 +929,10 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             <?= $inputAttributes->only(['aria-describedby', 'aria-invalid'])->toHtml() ?>
         ></div>
         <div
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"
             x-data="fileUploadFormComponent({
@@ -944,7 +962,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         isPasteable: <?= Js::from($this->isPasteable()) ?>,
                         isPreviewable: <?= Js::from($this->isPreviewable()) ?>,
                         isReorderable: <?= Js::from($this->isReorderable()) ?>,
-                        isSvgEditingConfirmed: <?= Js::from($this->isSvgEditingConfirmed()) ?>,
+                        isSvgEditingConfirmed: <?= Js::from($this->shouldConfirmSvgEditing()) ?>,
                         itemPanelAspectRatio: <?= Js::from($this->getItemPanelAspectRatio()) ?>,
                         loadingIndicatorPosition: <?= Js::from($this->getLoadingIndicatorPosition()) ?>,
                         locale: <?= Js::from(app()->getLocale()) ?>,
@@ -1196,6 +1214,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
+        <?php return $this->wrapEmbeddedHtml(
+            $this->wrapAsyncComponentHtml(ob_get_clean(), key: $wireKey),
+            labelTag: 'div',
+        );
     }
 }

@@ -34,9 +34,9 @@ class Stat extends Component
      */
     protected string | array | null $chartColor = null;
 
-    protected string | BackedEnum | null $icon = null;
+    protected string | BackedEnum | Htmlable | null $icon = null;
 
-    protected string | BackedEnum | null $descriptionIcon = null;
+    protected string | BackedEnum | Htmlable | null $descriptionIcon = null;
 
     protected IconPosition | string | null $descriptionIconPosition = null;
 
@@ -80,7 +80,7 @@ class Stat extends Component
         return $this;
     }
 
-    public function icon(string | BackedEnum | null $icon): static
+    public function icon(string | BackedEnum | Htmlable | null $icon): static
     {
         $this->icon = $icon;
 
@@ -97,7 +97,7 @@ class Stat extends Component
         return $this;
     }
 
-    public function descriptionIcon(string | BackedEnum | null $icon, IconPosition | string | null $position = null): static
+    public function descriptionIcon(string | BackedEnum | Htmlable | null $icon, IconPosition | string | null $position = null): static
     {
         $this->descriptionIcon = $icon;
         $this->descriptionIconPosition = $position;

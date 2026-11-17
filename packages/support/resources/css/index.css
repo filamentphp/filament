@@ -3,6 +3,7 @@
 @import './utilities.css' layer(utilities);
 
 @import '../../dist/index.css' layer(components);
+@import './components/async-component.css' layer(components);
 @import './components/avatar.css' layer(components);
 @import './components/badge.css' layer(components);
 @import './components/breadcrumbs.css' layer(components);
@@ -25,6 +26,7 @@
 @import './components/input/wrapper.css' layer(components);
 @import './components/link.css' layer(components);
 @import './components/loading-indicator.css' layer(components);
+@import './components/loading-placeholder.css' layer(components);
 @import './components/loading-section.css' layer(components);
 @import './components/modal.css' layer(components);
 @import './components/pagination.css' layer(components);

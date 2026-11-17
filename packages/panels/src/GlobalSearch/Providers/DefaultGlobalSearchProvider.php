@@ -15,7 +15,7 @@ class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
 
         usort(
             $resources,
-            fn (string $a, string $b): int => ($a::getGlobalSearchSort() ?? 0) <=> ($b::getGlobalSearchSort() ?? 0),
+            fn (string $firstResource, string $secondResource): int => ($firstResource::getGlobalSearchSort() ?? 0) <=> ($secondResource::getGlobalSearchSort() ?? 0),
         );
 
         foreach ($resources as $resource) {

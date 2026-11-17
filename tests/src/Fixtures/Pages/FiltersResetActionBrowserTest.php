@@ -44,14 +44,14 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
     {
         $publishedFilter = Tables\Filters\Filter::make('is_published')
             ->query(static fn (Builder $query): Builder => $query->where('is_published', true))
-            ->schema([
+            ->form([
                 Toggle::make('isActive')
                     ->label('Published')
                     ->extraAttributes(['data-testid' => 'published-filter']),
             ]);
 
         $detailsFilter = Tables\Filters\Filter::make('details')
-            ->schema([
+            ->form([
                 Select::make('status')
                     ->options([
                         'draft' => 'Draft',
@@ -68,7 +68,7 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
             ]);
 
         $dateFilter = Tables\Filters\Filter::make('date')
-            ->schema([
+            ->form([
                 DatePicker::make('published_at')
                     ->native(false)
                     ->extraAttributes(['data-testid' => 'published-at-filter']),
@@ -82,7 +82,7 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
             ->filters(match ($this->focusScenario) {
                 'disabled' => [
                     Tables\Filters\Filter::make('disabled')
-                        ->schema([
+                        ->form([
                             Select::make('value')
                                 ->native(false)
                                 ->disabled(),
@@ -90,7 +90,7 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
                 ],
                 'disabledFirst' => [
                     Tables\Filters\Filter::make('disabled')
-                        ->schema([
+                        ->form([
                             TextInput::make('value')
                                 ->disabled()
                                 ->extraInputAttributes(['tabindex' => 0]),
@@ -99,14 +99,14 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
                 ],
                 'hiddenFirst' => [
                     Tables\Filters\Filter::make('hidden')
-                        ->schema([
+                        ->form([
                             TextInput::make('value')
                                 ->extraInputAttributes(['style' => 'visibility: hidden']),
                         ]),
                     $publishedFilter,
                 ],
                 'dateFirst' => [$dateFilter, $publishedFilter],
-                'empty' => [Tables\Filters\Filter::make('empty')->schema([])],
+                'empty' => [Tables\Filters\Filter::make('empty')->form([])],
                 'selectFirst' => [$detailsFilter, $publishedFilter],
                 default => $this->hasFocusLifecycleFilters ? [$publishedFilter, $detailsFilter] : [$publishedFilter],
             })

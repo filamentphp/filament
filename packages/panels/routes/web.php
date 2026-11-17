@@ -41,7 +41,7 @@ Route::name('filament.')
 
                             if ($panel->hasPasswordReset()) {
                                 Route::name('password-reset.')
-                                    ->prefix($panel->getResetPasswordRoutePrefix())
+                                    ->prefix($panel->getPasswordResetRoutePrefix())
                                     ->group(function () use ($panel): void {
                                         Route::get($panel->getRequestPasswordResetRouteSlug(), $panel->getRequestPasswordResetRouteAction())
                                             ->name('request');

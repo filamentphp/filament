@@ -3,7 +3,7 @@
 namespace Filament\Widgets;
 
 use Filament\Support\Components\Attributes\Unexposed;
-use Filament\Support\Concerns\CanBeLazy;
+use Filament\Support\Concerns\CanBeLazyLoaded;
 use Filament\Widgets\Concerns\CanAuthorizeAccess;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -11,7 +11,7 @@ use Livewire\Component;
 abstract class Widget extends Component
 {
     use CanAuthorizeAccess;
-    use CanBeLazy;
+    use CanBeLazyLoaded;
 
     protected static bool $isDiscovered = true;
 

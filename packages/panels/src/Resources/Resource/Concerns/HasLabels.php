@@ -2,9 +2,13 @@
 
 namespace Filament\Resources\Resource\Concerns;
 
+use BackedEnum;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
@@ -104,7 +108,20 @@ trait HasLabels
      */
     public static function getRecordTitle(?Model $record): string | Htmlable | null
     {
-        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();
+        $title = $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();
+
+        if (! $title instanceof UnitEnum) {
+            return $title;
+        }
+
+        $title = match (true) {
+            $title instanceof Htmlable => $title,
+            $title instanceof HasLabel => $title->getLabel() ?? static::getModelLabel(),
+            $title instanceof BackedEnum => (string) $title->value,
+            default => $title,
+        };
+
+        return $title instanceof Htmlable ? new HtmlString($title->toHtml()) : $title;
     }
 
     public static function hasRecordTitle(): bool

@@ -66,9 +66,8 @@ You may also remove the Testing directories and files, but we'll leave them in f
 
 Now that we have our plugin cleaned up, we can start adding our code. The boilerplate in the `src/ClockWidgetServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
 
-<Aside variant="info">
-    Register this [asynchronous Alpine component](../advanced/assets#asynchronous-alpinejs-components) in `packageBooted()`, since it only loads where the widget is used. For assets that should load on every page of a particular panel, use [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel) in a plugin object's `register()` method instead. Registering those assets globally would load them in panels that do not use your plugin.
-</Aside>
+> [!NOTE]
+> Register this [asynchronous Alpine component](../advanced/assets#asynchronous-alpinejs-components) in `packageBooted()`, since it only loads where the widget is used. For assets that should load on every page of a particular panel, use [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel) in a plugin object's `register()` method instead. Registering those assets globally would load them in panels that do not use your plugin.
 
 We need to be able to register our Widget with the panel and load our Alpine component when the widget is used. To do this, we'll need to add the following to the `packageBooted` method in our service provider. This will register our widget component with Livewire and our Alpine component with the Filament Asset Manager.
 

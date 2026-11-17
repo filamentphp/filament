@@ -1,6 +1,6 @@
 {
     "name": "filament/actions",
-    "description": "Easily add beautiful action modals to any Livewire component.",
+    "description": "Encapsulate user interactions and business logic in reusable actions for Livewire.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

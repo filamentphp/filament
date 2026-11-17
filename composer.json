@@ -1,6 +1,6 @@
 {
     "name": "filament/filament",
-    "description": "A collection of full-stack components for accelerated Laravel development.",
+    "description": "An open-source framework for building polished, maintainable business software with Laravel.",
     "license": "MIT",
     "require": {
         "php": "^8.2",

@@ -106,7 +106,7 @@ class EditRecord extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
+        static::getResource()::authorizeEdit($this->getRecord());
     }
 
     #[Unexposed]

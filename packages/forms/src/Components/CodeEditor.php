@@ -13,20 +13,21 @@ use Illuminate\Support\Js;
 class CodeEditor extends Field implements HasEmbeddedView
 {
     use CanWrap;
+    use Concerns\HasLoadingPlaceholder;
     use HasExtraAlpineAttributes;
 
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.code-editor';
 
-    protected Language | Closure | null $language = null;
+    protected Language | string | Closure | null $language = null;
 
-    public function language(Language | Closure | null $language): static
+    public function language(Language | string | Closure | null $language): static
     {
         $this->language = $language;
 
         return $this;
     }
 
-    public function getLanguage(): ?Language
+    public function getLanguage(): Language | string | null
     {
         return $this->evaluate($this->language);
     }
@@ -41,6 +42,7 @@ class CodeEditor extends Field implements HasEmbeddedView
         $label = $this->getLabel();
         $liveDebounce = $this->getLiveDebounce();
         $language = $this->getLanguage();
+        $language = ($language instanceof Language) ? $language->value : $language;
         $statePath = $this->getStatePath();
         $livewireKey = $this->getLivewireKey();
 
@@ -59,6 +61,10 @@ class CodeEditor extends Field implements HasEmbeddedView
             aria-labelledby="<?= e($id) ?>-label"
             id="<?= e($id) ?>"
             role="group"
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms')) ?>"
             x-data="codeEditorFormComponent({
@@ -69,17 +75,20 @@ class CodeEditor extends Field implements HasEmbeddedView
                         isLiveOnBlur: <?= Js::from($isLiveOnBlur) ?>,
                         label: <?= Js::from($label) ?>,
                         liveDebounce: <?= Js::from($liveDebounce) ?>,
-                        language: <?= Js::from($language?->value) ?>,
+                        language: <?= Js::from($language) ?>,
                         state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) ?>,
                     })"
             wire:ignore
-            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $language?->value])), 0, 64) ?>"
-            <?= $extraAlpineAttributeBag->toHtml() ?>
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $language])), 0, 64) ?>"
+            <?= $extraAlpineAttributeBag->class(['fi-async-component-content'])->toHtml() ?>
         >
             <div x-ref="editor" x-cloak></div>
         </div>
 
-        <?php $slotHtml = ob_get_clean();
+        <?php $slotHtml = $this->wrapAsyncComponentHtml(
+            ob_get_clean(),
+            key: $livewireKey . '.' . md5(serialize([$isDisabled, $language])),
+        );
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

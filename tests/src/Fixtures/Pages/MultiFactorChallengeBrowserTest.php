@@ -25,11 +25,14 @@ class MultiFactorChallengeBrowserTest extends Page
 
     public bool $isVerified = false;
 
-    public bool $shouldSeparateChallengeSchemaComponents = false;
+    public bool $shouldSeparateChallengeFormComponents = false;
 
-    public function mount(bool $shouldSeparateChallengeSchemaComponents = false): void
+    public bool $shouldUseLegacyComponentMethods = false;
+
+    public function mount(bool $shouldSeparateChallengeFormComponents = false, bool $shouldUseLegacyComponentMethods = false): void
     {
-        $this->shouldSeparateChallengeSchemaComponents = $shouldSeparateChallengeSchemaComponents;
+        $this->shouldSeparateChallengeFormComponents = $shouldSeparateChallengeFormComponents;
+        $this->shouldUseLegacyComponentMethods = $shouldUseLegacyComponentMethods;
 
         $user = $this->getAuthenticatedUser();
         $multiFactorChallenge = MultiFactorChallenge::make();
@@ -46,17 +49,23 @@ class MultiFactorChallengeBrowserTest extends Page
         $multiFactorChallenge = MultiFactorChallenge::make();
         $user = $this->getAuthenticatedUser();
 
-        if ($this->shouldSeparateChallengeSchemaComponents) {
+        if ($this->shouldSeparateChallengeFormComponents) {
             return $schema
                 ->components([
-                    Group::make(Arr::wrap($multiFactorChallenge->getProviderPickerSchemaComponent($user))),
-                    Group::make($multiFactorChallenge->getChallengeSchemaComponents($user)),
+                    Group::make(Arr::wrap($this->shouldUseLegacyComponentMethods
+                        ? $multiFactorChallenge->getProviderPickerSchemaComponent($user)
+                        : $multiFactorChallenge->getProviderPickerFormComponent($user))),
+                    Group::make($this->shouldUseLegacyComponentMethods
+                        ? $multiFactorChallenge->getChallengeSchemaComponents($user)
+                        : $multiFactorChallenge->getChallengeFormComponents($user)),
                 ])
                 ->statePath('data');
         }
 
         return $schema
-            ->components($multiFactorChallenge->getSchemaComponents($user))
+            ->components($this->shouldUseLegacyComponentMethods
+                ? $multiFactorChallenge->getSchemaComponents($user)
+                : $multiFactorChallenge->getFormComponents($user))
             ->statePath('data');
     }
 

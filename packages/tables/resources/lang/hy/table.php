@@ -4,12 +4,36 @@ return [
 
     'column_manager' => [
 
-        'heading' => 'Սյուներ',
+        'heading' => 'Սյունակներ',
+
+        'position' => 'Դիրք :position՝ :count-ից։',
+
+        'position_in_group' => 'Դիրք :position՝ :count-ից, :group խմբում։',
+
+        'reordered' => ':column սյունակը տեղափոխվեց :position դիրք՝ :count-ից։',
+
+        'reordered_deferred' => ':column սյունակը տեղափոխվեց :position դիրք՝ :count-ից։ Փոփոխությունները պահպանելու համար կիրառեք սյունակները։',
+
+        'reordered_in_group' => ':column սյունակը տեղափոխվեց :position դիրք՝ :count-ից, :group խմբում։',
+
+        'reordered_in_group_deferred' => ':column սյունակը տեղափոխվեց :position դիրք՝ :count-ից, :group խմբում։ Փոփոխությունները պահպանելու համար կիրառեք սյունակները։',
 
         'actions' => [
 
             'apply' => [
-                'label' => 'Կիրառել սյուները',
+                'label' => 'Կիրառել սյունակները',
+            ],
+
+            'move_up' => [
+                'label' => 'Բարձրացնել :column սյունակը',
+            ],
+
+            'move_down' => [
+                'label' => 'Իջացնել :column սյունակը',
+            ],
+
+            'reorder' => [
+                'label' => 'Վերադասավորել սյունակը',
             ],
 
             'reset' => [
@@ -26,21 +50,43 @@ return [
             'label' => 'Գործողություն|Գործողություններ',
         ],
 
+        'editable' => [
+            'saving' => 'Փոփոխությունը պահպանվում է...',
+            'saved' => 'Փոփոխությունը պահպանվեց։',
+            'failure' => 'Պահպանումը հնարավոր չեղավ հաստատել։ Կրկին փորձելուց առաջ թարմացրեք էջը։',
+            'unavailable' => 'Այս տարրն այլևս հնարավոր չէ խմբագրել։',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Այո',
+                'false' => 'Ոչ',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Բեռնում...',
+
+            'no_options_message' => 'Տարբերակներ չկան',
+
             'no_search_results_message' => 'Ոչ մի տարբերակ չի համապատասխանում ձեր որոնմանը։',
+
             'placeholder' => 'Ընտրեք տարբերակ',
+
             'searching_message' => 'Որոնում...',
-            'search_prompt' => 'Մուտքագրեք որոնման համար...',
+
+            'search_prompt' => 'Սկսեք մուտքագրել որոնման համար',
 
         ],
 
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Ցույց տալ :count-ով քիչ',
-                'expand_list' => 'Ցույց տալ :count-ով ավելին',
+                'collapse_list' => 'Ցույց տալ :count-ով պակաս',
+                'expand_list' => 'Ցույց տալ ևս :count',
             ],
 
             'more_list_items' => 'և ևս :count',
@@ -52,15 +98,15 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Ընտրել/հեռացնել բոլոր տարրերը խմբային գործողությունների համար։',
+            'label' => 'Ընտրել/ապանշել բոլոր տարրերը խմբային գործողությունների համար։',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Ընտրել/հեռացնել :key տարրը խմբային գործողությունների համար։',
+            'label' => 'Ընտրել/ապանշել :key տարրը խմբային գործողությունների համար։',
         ],
 
         'bulk_select_group' => [
-            'label' => 'Ընտրել/հեռացնել :title խումբը խմբային գործողությունների համար։',
+            'label' => 'Ընտրել/ապանշել :title խումբը խմբային գործողությունների համար։',
         ],
 
         'search' => [
@@ -109,8 +155,20 @@ return [
             'label' => 'Վերադասավորել գրառումները',
         ],
 
+        'reorder_record' => [
+            'label' => 'Վերադասավորել :key տարրը',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Բարձրացնել :label',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Իջացնել :label',
+        ],
+
         'filter' => [
-            'label' => 'Ֆիլտր',
+            'label' => 'Զտել',
         ],
 
         'group' => [
@@ -122,14 +180,18 @@ return [
         ],
 
         'column_manager' => [
-            'label' => 'Սյուների կառավարիչ',
+            'label' => 'Սյունակների կառավարիչ',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Ընդարձակել/ծալել :key տարրը',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'Ոչ մի :model',
+        'heading' => ':model չկան',
 
         'description' => 'Սկսելու համար ստեղծեք :model։',
 
@@ -140,16 +202,16 @@ return [
         'actions' => [
 
             'apply' => [
-                'label' => 'Կիրառել ֆիլտրերը',
+                'label' => 'Կիրառել զտիչները',
             ],
 
             'remove' => [
-                'label' => 'Հեռացնել ֆիլտրը',
+                'label' => 'Հեռացնել զտիչը',
             ],
 
             'remove_all' => [
-                'label' => 'Հեռացնել բոլոր ֆիլտրերը',
-                'tooltip' => 'Հեռացնել բոլոր ֆիլտրերը',
+                'label' => 'Հեռացնել բոլոր զտիչները',
+                'tooltip' => 'Հեռացնել բոլոր զտիչները',
             ],
 
             'reset' => [
@@ -158,9 +220,9 @@ return [
 
         ],
 
-        'heading' => 'Ֆիլտրեր',
+        'heading' => 'Զտիչներ',
 
-        'indicator' => 'Ակտիվ ֆիլտրեր',
+        'indicator' => 'Ակտիվ զտիչներ',
 
         'multi_select' => [
             'placeholder' => 'Բոլորը',
@@ -181,7 +243,9 @@ return [
             'label' => 'Ջնջված գրառումներ',
 
             'only_trashed' => 'Միայն ջնջված գրառումները',
+
             'with_trashed' => 'Ջնջվածներով',
+
             'without_trashed' => 'Առանց ջնջվածների',
 
         ],
@@ -211,7 +275,16 @@ return [
 
     ],
 
+    'loading' => 'Բեռնում...',
+
     'reorder_indicator' => 'Քաշեք և գցեք գրառումները՝ դասավորելու համար։',
+
+    'reordering' => [
+        'position' => ':label, դիրք :position՝ :count-ից։',
+        'moved' => ':label տեղափոխվեց :position դիրք՝ :count-ից։',
+    ],
+
+    'result_count' => '{0} Արդյունքներ չկան|{1} :count արդյունք|[2,*] :count արդյունք',
 
     'selection_indicator' => [
 
@@ -224,7 +297,7 @@ return [
             ],
 
             'deselect_all' => [
-                'label' => 'Չընտրել բոլորն',
+                'label' => 'Ապանշել բոլորը',
             ],
 
         ],
@@ -254,6 +327,6 @@ return [
 
     ],
 
-    'default_model_label' => 'տվյալ',
+    'default_model_label' => 'գրառում',
 
 ];

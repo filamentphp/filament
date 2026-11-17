@@ -2,14 +2,13 @@
 title: Rendering a table in a Blade view
 ---
 
-<Aside variant="warning">
-    Before proceeding, make sure `filament/tables` is installed in your project. You can check by running:
-
-    ```bash
-    composer show filament/tables
-    ```
-    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
-</Aside>
+> [!WARNING]
+> Before proceeding, make sure `filament/tables` is installed in your project. You can check by running:
+>
+> ```bash
+> composer show filament/tables
+> ```
+> If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
 
 ## Setting up the Livewire component
 
@@ -102,19 +101,18 @@ Finally, in your Livewire component's view, render the table:
 
 Visit your Livewire component in the browser, and you should see the table.
 
-<Aside variant="info">
-
-    `filament/tables` also includes the following packages:
-    
-    - `filament/actions`
-    - `filament/forms`
-    - `filament/support`
-    
-    These packages allow you to use their components within Livewire components.
-    For example, if your table uses [Actions](action#setting-up-the-livewire-component), remember to implement the `HasActions` interface and include the `InteractsWithActions` trait.
-    
-    If you are using any other [Filament components](overview#package-components) in your table, make sure to install and integrate the corresponding package as well.
-</Aside>
+> [!NOTE]
+>
+> `filament/tables` also includes the following packages:
+>
+> - `filament/actions`
+> - `filament/forms`
+> - `filament/support`
+>
+> These packages allow you to use their components within Livewire components.
+> For example, if your table uses [Actions](action#setting-up-the-livewire-component), remember to implement the `HasActions` interface and include the `InteractsWithActions` trait.
+>
+> If you are using any other [Filament components](overview#package-components) in your table, make sure to install and integrate the corresponding package as well.
 
 ## Building a table for an Eloquent relationship
 
@@ -139,9 +137,8 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="warning">
-    `$category` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the category before using it to build the relationship, including any tenant or ownership restrictions your application requires. Authorize operations that modify the relationship or its records separately. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
-</Aside>
+> [!WARNING]
+> `$category` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the category before using it to build the relationship, including any tenant or ownership restrictions your application requires. Authorize operations that modify the relationship or its records separately. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 In this example, we have a `$category` property which holds a `Category` model instance. The category has a relationship named `products`. We use a function to return the relationship instance. This is a many-to-many relationship, so the inverse relationship is called `categories`, and is defined on the `Product` model. We just need to pass the name of this relationship to the `inverseRelationship()` method, not the whole instance.
 

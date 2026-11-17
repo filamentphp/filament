@@ -7,9 +7,12 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use LogicException;
+use Stringable;
+use UnitEnum;
 
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
@@ -194,6 +197,10 @@ trait InteractsWithRecord
     {
         if ($title instanceof HasLabel) {
             $title = $title->getLabel();
+
+            if (($title instanceof Htmlable) && (! $title instanceof Stringable)) {
+                $title = $title->toHtml();
+            }
         } elseif ($title instanceof BackedEnum) {
             $title = $title->value;
         }
@@ -246,7 +253,7 @@ trait InteractsWithRecord
         );
 
         if (filled($title)) {
-            return $title;
+            return $title instanceof UnitEnum ? $this->formatRecordTitle($title) : $title;
         }
 
         $titleAttribute = $this->getCustomRecordTitleAttribute();
@@ -259,7 +266,9 @@ trait InteractsWithRecord
             $titleAttribute = str_replace('->', '.', $titleAttribute);
         }
 
-        return data_get($record, $titleAttribute);
+        $title = data_get($record, $titleAttribute);
+
+        return $title instanceof UnitEnum ? $this->formatRecordTitle($title) : $title;
     }
 
     public function getRecordTitleAttribute(): ?string

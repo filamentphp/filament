@@ -6,10 +6,12 @@ return [
 
         'heading' => 'Ծանուցումներ',
 
+        'unread_label' => 'Չկարդացված ծանուցում',
+
         'actions' => [
 
             'clear' => [
-                'label' => 'Ջնջել',
+                'label' => 'Մաքրել',
             ],
 
             'mark_all_as_read' => [
@@ -19,7 +21,7 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Ոչ մի ծանուցում',
+            'heading' => 'Ծանուցումներ չկան',
             'description' => 'Խնդրում ենք ավելի ուշ կրկին ստուգել։',
         ],
 

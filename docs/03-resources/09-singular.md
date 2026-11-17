@@ -28,9 +28,8 @@ This creates a page class and a Blade view in your panel's configured page direc
 
 The example below loads the homepage or uses form defaults if it does not exist.
 
-<Aside variant="warning">
-    Custom pages do not automatically apply resource policies. Authorize access to the page and the create or update operation, and apply any tenant or ownership restrictions your application requires to the query.
-</Aside>
+> [!WARNING]
+> Custom pages do not automatically apply resource policies. Authorize access to the page and the create or update operation, and apply any tenant or ownership restrictions your application requires to the query.
 
 ```php
 namespace App\Filament\Pages;

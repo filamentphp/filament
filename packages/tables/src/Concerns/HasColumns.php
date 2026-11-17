@@ -5,11 +5,16 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\Factory as ViewFactory;
+use InvalidArgumentException;
 use Livewire\Attributes\Renderless;
 use ReflectionAttribute;
 use ReflectionMethod;
@@ -82,7 +87,122 @@ trait HasColumns
         $column->clearCachedState();
         $this->flushCachedTableRecords();
 
+        $this->partiallyRenderTableColumnsAfterStateUpdated($column, $record);
+
         return $response;
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    protected function partiallyRenderTableColumnsAfterStateUpdated(Column $column, Model | array $record): void
+    {
+        if (
+            (! method_exists($column, 'getColumnsToPartiallyRenderAfterStateUpdated')) ||
+            (! method_exists($column, 'getPartiallyRenderableColumnNamesAfterStateUpdated')) ||
+            (! method_exists($column, 'isPartiallyRenderedAfterStateUpdated'))
+        ) {
+            return;
+        }
+
+        if (blank($column->getPartiallyRenderableColumnNamesAfterStateUpdated())) {
+            return;
+        }
+
+        $table = $this->getTable();
+
+        // Content layouts have no replaceable cells, and save hooks may affect any summary in the table.
+        if ($table->getContent() || $table->hasColumnsLayout() || $table->hasSummary(null)) {
+            return;
+        }
+
+        $recordKey = $this->getTableRecordKey($record);
+
+        $getRecordWithRowLoop = function () use ($recordKey): array {
+            $records = $this->getTableRecords();
+            $viewFactory = app(ViewFactory::class);
+            $viewFactory->addLoop($records);
+
+            try {
+                foreach ($records as $record) {
+                    $viewFactory->incrementLoopIndices();
+
+                    if ($this->getTableRecordKey($record) === $recordKey) {
+                        return [$record, $viewFactory->getLastLoop()];
+                    }
+                }
+            } finally {
+                $viewFactory->popLoop();
+            }
+
+            return [null, null];
+        };
+
+        [$record, $rowLoop] = $getRecordWithRowLoop();
+
+        if (! $record) {
+            return;
+        }
+
+        $column->record($record)->recordKey($recordKey)->rowLoop($rowLoop);
+        $columnNames = $column->getColumnsToPartiallyRenderAfterStateUpdated();
+
+        if (blank($columnNames) && (! $column->isPartiallyRenderedAfterStateUpdated())) {
+            return;
+        }
+
+        $columnNames = array_unique([$column->getName(), ...$columnNames]);
+
+        foreach ($columnNames as $columnName) {
+            if (! $table->getColumn($columnName)) {
+                throw new InvalidArgumentException("Could not find column [{$columnName}] to partially render.");
+            }
+        }
+
+        app(PartialsComponentHook::class)->renderPartial($this, function () use ($columnNames, $recordKey, $getRecordWithRowLoop): array {
+            [$record, $rowLoop] = $getRecordWithRowLoop();
+
+            if (! $record) {
+                return [];
+            }
+
+            $table = $this->getTable();
+            $visibleColumns = $table->getVisibleColumns();
+            $isReordering = $table->isReordering();
+            $isStackedOnMobile = $table->isStackedOnMobile();
+
+            $recordAction = $table->getRecordAction($record);
+            $recordUrl = $table->getRecordUrl($record);
+            $shouldOpenRecordUrlInNewTab = $table->shouldOpenRecordUrlInNewTab($record);
+
+            $partials = [];
+
+            foreach ($columnNames as $columnName) {
+                $column = $visibleColumns[$columnName] ?? null;
+
+                if (! $column) {
+                    continue;
+                }
+
+                $column->recordKey($recordKey);
+
+                $partials[$column->getTableCellPartialName()] = function () use ($column, $record, $recordKey, $rowLoop, $recordAction, $recordUrl, $shouldOpenRecordUrlInNewTab, $isReordering, $isStackedOnMobile): HtmlString {
+                    $column->record($record)->recordKey($recordKey)->rowLoop($rowLoop);
+                    $column->clearCachedState();
+
+                    return $column->renderInTableCell(
+                        recordAction: $recordAction,
+                        recordUrl: $recordUrl,
+                        shouldOpenRecordUrlInNewTab: $shouldOpenRecordUrlInNewTab,
+                        isPartiallyRenderable: true,
+                        isReordering: $isReordering,
+                        isStackedOnMobile: $isStackedOnMobile,
+                    );
+                };
+            }
+
+            return $partials;
+        });
     }
 
     /**

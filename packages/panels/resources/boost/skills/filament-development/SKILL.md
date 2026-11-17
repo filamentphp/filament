@@ -8,7 +8,7 @@ description:
 
 # Filament Development
 
-- Filament is a Laravel UI framework built on Livewire, Alpine.js, and Tailwind CSS. UIs are defined in PHP via fluent, chainable components. Follow existing conventions in this app.
+- Filament is an open-source framework for building polished, maintainable business software with Laravel. Built on Livewire, Alpine.js, and Tailwind CSS, it uses fluent, chainable PHP components to define interfaces and connect them to application behavior. Follow existing conventions in this app.
 - Use the `search-docs` tool for official documentation on Artisan commands, code examples, testing, relationships, and idiomatic practices. If `search-docs` is unavailable, refer to https://filamentphp.com/docs.
 
 ## Artisan

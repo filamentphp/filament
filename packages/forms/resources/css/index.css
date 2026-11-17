@@ -18,3 +18,15 @@
 @import './components/text-input.css' layer(components);
 @import './components/textarea.css' layer(components);
 @import './components/toggle-buttons.css' layer(components);
+
+@layer utilities {
+    .fi-fo-rich-editor .tiptap {
+        &
+            p
+            [data-resize-container][data-node='image']:where(
+                :not(.fi-not-prose, .fi-not-prose *)
+            ) {
+            margin-top: 0;
+        }
+    }
+}
