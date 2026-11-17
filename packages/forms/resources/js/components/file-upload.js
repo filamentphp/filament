@@ -1128,6 +1128,7 @@ export default function fileUploadFormComponent({
 
             if (this.pond) {
                 this.pond.destroy()
+                FilePond.destroy(this.pond.element)
                 this.pond = null
             }
         },
