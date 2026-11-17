@@ -293,6 +293,33 @@ The offset accepts a CSS length value. Pass `null` to restore the automatic offs
 
 <UtilityInjection set="formFields">As well as allowing static values, the `stickyToolbar()`, `stickyPanels()`, and `stickyOffset()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
+## Customizing the loading placeholder
+
+The rich editor displays a loading placeholder while its JavaScript is loaded and initialized, including when the editor is disabled. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->loadingPlaceholder(fn () => view('forms.rich-editor-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all rich editors, use [`RichEditor::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::configureUsing(function (RichEditor $richEditor): void {
+    $richEditor->loadingPlaceholder(fn () => view('forms.rich-editor-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual rich editor to restore the default loading placeholder.
+
 ## Customizing text colors
 
 The rich editor includes a text color tool for styling inline text. By default, it uses the [Tailwind CSS color palette](https://tailwindcss.com/docs/colors). In light mode, the 600 shades are applied to text, and in dark mode, the 400 shades are used.

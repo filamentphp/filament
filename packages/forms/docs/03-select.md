@@ -41,6 +41,40 @@ Select::make('status')
 
 <AutoScreenshot name="forms/fields/select/javascript" alt="JavaScript select" />
 
+### Customizing the loading placeholder
+
+The JavaScript select displays a loading placeholder while its JavaScript is loaded and initialized. Native selects do not display this placeholder. You may customize it using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'published' => 'Published',
+    ])
+    ->native(false)
+    ->loadingPlaceholder(fn () => view('forms.select-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+This placeholder is separate from the [`loadingMessage()`](#setting-a-custom-loading-message) shown while the select's options are loading.
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all JavaScript selects, use [`Select::configureUsing()`](overview#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::configureUsing(function (Select $select): void {
+    $select->loadingPlaceholder(fn () => view('forms.select-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual select to restore the default loading placeholder.
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
