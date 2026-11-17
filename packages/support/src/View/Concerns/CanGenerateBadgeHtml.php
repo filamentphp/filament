@@ -134,8 +134,8 @@ trait CanGenerateBadgeHtml
             <?= $attributes->toHtml() ?>
         >
             <?php if ($iconPosition === IconPosition::Before) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
             <?php } ?>
 
             <span class="fi-badge-label-ctn">
@@ -145,8 +145,8 @@ trait CanGenerateBadgeHtml
             </span>
 
             <?php if ($iconPosition === IconPosition::After) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
             <?php } ?>
         </<?= ($tag === 'form') ? 'button' : $tag ?>>
 

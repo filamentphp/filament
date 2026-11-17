@@ -5,11 +5,9 @@
         @apply hidden!;
     }
 
-    &.fi-loading,
-    &:has(> .fi-loading-indicator.fi-loading) {
-        & > .fi-icon:not(.fi-loading-indicator) {
-            @apply hidden!;
-        }
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    & > .fi-loading-indicator.fi-loading + .fi-icon:not(.fi-loading-indicator) {
+        @apply hidden!;
     }
 
     /* Pinning the link's baseline to the label keeps it aligned with surrounding text, even when the loading indicator is the first flex item. */

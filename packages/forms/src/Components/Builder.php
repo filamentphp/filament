@@ -1628,11 +1628,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                 ?>
 
                             <button <?= $itemAttributes->toHtml() ?>>
+                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))->toHtml() ?>
+
                                 <?php if (filled($blockIcon)) { ?>
                                     <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))?->toHtml() ?>
                                 <?php } ?>
-
-                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))->toHtml() ?>
 
                                 <span class="fi-dropdown-list-item-label">
                                     <?= e($blockLabel) ?>

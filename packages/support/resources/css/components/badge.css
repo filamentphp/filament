@@ -5,11 +5,9 @@
         @apply hidden!;
     }
 
-    &.fi-loading,
-    &:has(> .fi-loading-indicator.fi-loading) {
-        & > .fi-icon:not(.fi-loading-indicator) {
-            @apply hidden!;
-        }
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    & > .fi-loading-indicator.fi-loading + .fi-icon:not(.fi-loading-indicator) {
+        @apply hidden!;
     }
 
     &:not(.fi-wrapped) {
@@ -76,11 +74,9 @@
             @apply hidden!;
         }
 
-        &.fi-loading,
-        &:has(> .fi-loading-indicator.fi-loading) {
-            & > .fi-badge-delete-btn-icon {
-                @apply hidden!;
-            }
+        &.fi-loading > .fi-badge-delete-btn-icon,
+        & > .fi-loading-indicator.fi-loading + .fi-badge-delete-btn-icon {
+            @apply hidden!;
         }
 
         &.fi-disabled {

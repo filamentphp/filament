@@ -5,12 +5,11 @@
         @apply hidden!;
     }
 
-    &.fi-loading,
-    &:has(> .fi-loading-indicator.fi-loading) {
-        & > .fi-icon:not(.fi-loading-indicator),
-        & > .fi-dropdown-list-item-image {
-            @apply hidden!;
-        }
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    &.fi-loading > .fi-dropdown-list-item-image,
+    & > .fi-loading-indicator.fi-loading + .fi-icon:not(.fi-loading-indicator),
+    & > .fi-loading-indicator.fi-loading ~ .fi-dropdown-list-item-image {
+        @apply hidden!;
     }
 
     &:not(.fi-disabled):not([disabled]) {

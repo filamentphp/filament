@@ -103,12 +103,6 @@
     }}
 >
     @if ($iconPosition === IconPosition::Before)
-        @if ($icon || $iconAlias)
-            {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize ?? IconSize::Small)
-            }}
-        @endif
-
         @if ($hasLoadingIndicator)
             {{
                 \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
@@ -116,6 +110,10 @@
                     'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
                 ]), size: $iconSize ?? IconSize::Small)
             }}
+        @endif
+
+        @if ($icon || $iconAlias)
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize ?? IconSize::Small) }}
         @endif
     @endif
 
@@ -155,8 +153,6 @@
                     ])
             }}
         >
-            <span aria-hidden="true" class="fi-badge-delete-btn-icon"></span>
-
             @if ($deleteButtonHasLoadingIndicator)
                 {{
                     \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
@@ -166,17 +162,13 @@
                 }}
             @endif
 
+            <span aria-hidden="true" class="fi-badge-delete-btn-icon"></span>
+
             <span class="fi-sr-only">
                 {{ filled($label = $deleteButton->attributes->get('label')) ? $label : __('filament::components/badge.actions.delete.label') }}
             </span>
         </button>
     @elseif ($iconPosition === IconPosition::After)
-        @if ($icon || $iconAlias)
-            {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize ?? IconSize::Small)
-            }}
-        @endif
-
         @if ($hasLoadingIndicator)
             {{
                 \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
@@ -184,6 +176,10 @@
                     'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
                 ]), size: $iconSize ?? IconSize::Small)
             }}
+        @endif
+
+        @if ($icon || $iconAlias)
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize ?? IconSize::Small) }}
         @endif
     @endif
 </{{ $tag }}>

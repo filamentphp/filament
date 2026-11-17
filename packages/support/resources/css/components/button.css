@@ -7,13 +7,11 @@
         @apply hidden!;
     }
 
-    &.fi-loading,
-    &:has(
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    &
         > .fi-loading-indicator:not(.fi-btn-processing-indicator).fi-loading
-    ) {
-        & > .fi-icon:not(.fi-loading-indicator) {
-            @apply hidden!;
-        }
+        + .fi-icon:not(.fi-loading-indicator) {
+        @apply hidden!;
     }
 
     &.fi-force-enabled,

@@ -208,8 +208,8 @@ trait CanGenerateButtonHtml
             <?= $buttonAttributes->toHtml() ?>
         >
             <?php if ($iconPosition === IconPosition::Before) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
                 <?= $formProcessingLoadingIndicatorHtml ?>
             <?php } ?>
 
@@ -232,8 +232,8 @@ trait CanGenerateButtonHtml
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
                 <?= $formProcessingLoadingIndicatorHtml ?>
             <?php } ?>
 

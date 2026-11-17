@@ -108,19 +108,6 @@
             ->color(ItemComponent::class, $color)
     }}
 >
-    @if ($icon || $iconAlias)
-        {{
-            \Filament\Support\generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag)->color(IconComponent::class, $iconColor), size: $iconSize)
-        }}
-    @endif
-
-    @if ($image)
-        <div
-            class="fi-dropdown-list-item-image"
-            style="background-image: url('{{ $image }}')"
-        ></div>
-    @endif
-
     @if ($hasLoadingIndicator)
         {{
             \Filament\Support\generate_loading_indicator_html((new FilamentComponentAttributeBag([
@@ -128,6 +115,17 @@
                 'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
+    @endif
+
+    @if ($icon || $iconAlias)
+        {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag)->color(IconComponent::class, $iconColor), size: $iconSize) }}
+    @endif
+
+    @if ($image)
+        <div
+            class="fi-dropdown-list-item-image"
+            style="background-image: url('{{ $image }}')"
+        ></div>
     @endif
 
     <span class="fi-dropdown-list-item-label">

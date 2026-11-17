@@ -161,8 +161,8 @@ trait CanGenerateLinkHtml
             <?= $attributes->toHtml() ?>
         >
             <?php if ($iconPosition === IconPosition::Before) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
             <?php } ?>
 
             <?php if (! $isLabelSrOnly) { ?>
@@ -172,8 +172,8 @@ trait CanGenerateLinkHtml
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>
-                <?= $iconHtml ?>
                 <?= $loadingIndicatorHtml ?>
+                <?= $iconHtml ?>
             <?php } ?>
 
             <?php if (filled($badge)) { ?>

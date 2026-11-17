@@ -128,12 +128,6 @@
     }}
 >
     @if ($iconPosition === IconPosition::Before)
-        @if ($icon || $iconAlias)
-            {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize)
-            }}
-        @endif
-
         @if ($hasLoadingIndicator)
             {{
                 \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
@@ -141,6 +135,10 @@
                     'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
                 ]), size: $iconSize)
             }}
+        @endif
+
+        @if ($icon || $iconAlias)
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize) }}
         @endif
     @endif
 
@@ -151,12 +149,6 @@
     @endif
 
     @if ($iconPosition === IconPosition::After)
-        @if ($icon || $iconAlias)
-            {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize)
-            }}
-        @endif
-
         @if ($hasLoadingIndicator)
             {{
                 \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
@@ -164,6 +156,10 @@
                     'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
                 ]), size: $iconSize)
             }}
+        @endif
+
+        @if ($icon || $iconAlias)
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize) }}
         @endif
     @endif
 

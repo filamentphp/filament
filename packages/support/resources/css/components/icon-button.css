@@ -5,11 +5,9 @@
         @apply hidden!;
     }
 
-    &.fi-loading,
-    &:has(> .fi-loading-indicator.fi-loading) {
-        & > .fi-icon:not(.fi-loading-indicator) {
-            @apply hidden!;
-        }
+    &.fi-loading > .fi-icon:not(.fi-loading-indicator),
+    & > .fi-loading-indicator.fi-loading + .fi-icon:not(.fi-loading-indicator) {
+        @apply hidden!;
     }
 
     &.fi-force-enabled,

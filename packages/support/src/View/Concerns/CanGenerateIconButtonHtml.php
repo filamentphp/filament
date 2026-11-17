@@ -142,11 +142,11 @@ trait CanGenerateIconButtonHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, size: $iconSize)?->toHtml() ?? '' : '' ?>
             <?= $hasLoadingIndicator ? generate_loading_indicator_html(new FilamentComponentAttributeBag([
                 'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
                 'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
             ]), size: $iconSize)->toHtml() : '' ?>
+            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, size: $iconSize)?->toHtml() ?? '' : '' ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-icon-btn-badge-ctn">

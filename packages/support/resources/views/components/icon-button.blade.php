@@ -114,10 +114,6 @@
             ->color(IconButtonComponent::class, $color)
     }}
 >
-    {{
-        \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize)
-    }}
-
     @if ($hasLoadingIndicator)
         {{
             \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
@@ -126,6 +122,8 @@
             ]), size: $iconSize)
         }}
     @endif
+
+    {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: $iconSize) }}
 
     @if (filled($badge))
         <div class="fi-icon-btn-badge-ctn">
