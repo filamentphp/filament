@@ -575,6 +575,22 @@ To disable this behavior, you may override the `$isLazyLoaded` property on the w
 protected static ?bool $isLazyLoaded = false;
 ```
 
+### Customizing the loading placeholder
+
+You may override `getLoadingPlaceholder()` to return a Blade view or an `Htmlable` instance. This placeholder is used during server-side lazy loading and again while the chart's JavaScript is loaded and initialized in the browser, even when `$isLazyLoaded` is `false`:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
+
+public function getLoadingPlaceholder(): View | Htmlable | null
+{
+    return view('widgets.charts.loading-placeholder');
+}
+```
+
+Return `null` to use the default loading placeholder. Keep your placeholder HTML decorative and noninteractive: Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the chart's JavaScript fails to load or initialize, the placeholder remains visible.
+
 ## Making the chart collapsible
 
 You may allow the chart to be collapsible by setting the `$isCollapsible` property on the widget class to be `true`:

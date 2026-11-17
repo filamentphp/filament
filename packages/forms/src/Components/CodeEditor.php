@@ -13,6 +13,7 @@ use Illuminate\Support\Js;
 class CodeEditor extends Field implements HasEmbeddedView
 {
     use CanWrap;
+    use Concerns\HasLoadingPlaceholder;
     use HasExtraAlpineAttributes;
 
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.code-editor';
@@ -60,6 +61,10 @@ class CodeEditor extends Field implements HasEmbeddedView
             aria-labelledby="<?= e($id) ?>-label"
             id="<?= e($id) ?>"
             role="group"
+            x-bind:inert="isLoading"
+            x-bind:aria-hidden="isLoading"
+            inert
+            aria-hidden="true"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms')) ?>"
             x-data="codeEditorFormComponent({
@@ -75,12 +80,15 @@ class CodeEditor extends Field implements HasEmbeddedView
                     })"
             wire:ignore
             wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $language])), 0, 64) ?>"
-            <?= $extraAlpineAttributeBag->toHtml() ?>
+            <?= $extraAlpineAttributeBag->class(['fi-async-component-content'])->toHtml() ?>
         >
             <div x-ref="editor" x-cloak></div>
         </div>
 
-        <?php $slotHtml = ob_get_clean();
+        <?php $slotHtml = $this->wrapAsyncComponentHtml(
+            ob_get_clean(),
+            key: $livewireKey . '.' . md5(serialize([$isDisabled, $language])),
+        );
 
         return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(

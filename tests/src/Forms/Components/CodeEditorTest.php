@@ -252,6 +252,24 @@ it('preserves disabled behavior with a custom `language()` module', function ():
         ->assertNoAccessibilityIssues();
 });
 
+it('preserves edits when Livewire replaces a reconfigured async control', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/code-editor-browser-test')
+        ->assertAttribute('[role="textbox"]', 'contenteditable', 'true')
+        ->type('[role="textbox"]', 'Existing code')
+        ->click('Toggle disabled')
+        ->assertAttribute('[role="textbox"]', 'contenteditable', 'false')
+        ->assertSeeIn('[role="textbox"]', 'Existing code')
+        ->click('Toggle disabled')
+        ->assertAttribute('[role="textbox"]', 'contenteditable', 'true')
+        ->keys('[role="textbox"]', 'End')
+        ->typeSlowly('[role="textbox"]', ' edited', 0)
+        ->click('Save')
+        ->assertSeeIn('[data-testid="saved-code"]', 'Existing code edited')
+        ->assertNoSmoke();
+});
+
 class TestComponentWithCodeEditor extends Livewire
 {
     public function form(Schema $form): Schema

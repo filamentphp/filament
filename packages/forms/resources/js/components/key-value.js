@@ -47,6 +47,8 @@ export default function keyValueFormComponent({ state, reordering = {} }) {
 
                 this.updateRows()
             })
+
+            this.$dispatch('async-component-ready')
         },
 
         addRow() {

@@ -11,6 +11,16 @@ export default function tagsInputFormComponent({
 
         liveRegionClearTimeout: null,
 
+        init() {
+            this.$dispatch('async-component-ready')
+
+            this.$nextTick(() => {
+                if (this.$el.isConnected) {
+                    this.$el.querySelector('input[autofocus]:enabled')?.focus()
+                }
+            })
+        },
+
         announce(message) {
             // A published pre-change view override has no `liveRegion` ref, so bail out
             // instead of throwing and breaking tag entry for those users.
