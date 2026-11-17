@@ -24,6 +24,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\LazyLoadedRepeatableEntryBrowserTest;
 use Filament\Tests\TestCase;
 use Generator;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Livewire\Component;
@@ -806,7 +807,7 @@ class TestRelationshipRepeatableEntry extends Component implements HasSchemas
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->record($this->user)
+            ->record($this->user->loadMissing(['posts' => static fn (HasMany $query): HasMany => $query->orderBy('posts.id')]))
             ->components([
                 TextEntry::make('name'),
                 RepeatableEntry::make('posts')
@@ -840,7 +841,7 @@ class TestRelationshipRepeatableEntryInSection extends Component implements HasS
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->record($this->user)
+            ->record($this->user->loadMissing(['posts' => static fn (HasMany $query): HasMany => $query->orderBy('posts.id')]))
             ->components([
                 Section::make('User Details')
                     ->schema([
@@ -881,7 +882,7 @@ class TestRelationshipRepeatableEntryWithDeleteAction extends Component implemen
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->record($this->user)
+            ->record($this->user->loadMissing(['posts' => static fn (HasMany $query): HasMany => $query->orderBy('posts.id')]))
             ->components([
                 RepeatableEntry::make('posts')
                     ->schema([
