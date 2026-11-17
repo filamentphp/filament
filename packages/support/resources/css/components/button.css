@@ -34,6 +34,10 @@
         }
     }
 
+    &.fi-processing:enabled {
+        @apply cursor-wait opacity-70;
+    }
+
     & > .fi-icon {
         @apply text-gray-400 transition duration-75 dark:text-gray-500;
     }
@@ -210,10 +214,6 @@
 
         &:not(:nth-last-child(1 of .fi-btn)) {
             @apply me-px;
-        }
-
-        &.fi-processing:enabled {
-            @apply cursor-wait opacity-70;
         }
 
         &:not(.fi-outlined) {

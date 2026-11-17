@@ -123,6 +123,7 @@
     @if ($hasFormProcessingLoadingIndicator)
         x-data="filamentFormButton"
         x-bind:class="{ 'fi-processing': isProcessing }"
+        x-bind:aria-busy="isProcessing"
     @endif
     {{
         $attributes
@@ -134,11 +135,11 @@
                 'form' => $formId,
                 'tabindex' => (($tag === 'a') && $disabled && $hasTooltip) ? '0' : null,
                 'type' => $tag === 'button' ? $type : null,
-                'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
+                'wire:loading.attr' => $tag === 'button' ? ($hasFormProcessingLoadingIndicator ? 'data-loading' : 'aria-disabled') : null,
                 'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
                 'wire:loading.class.delay.' . $loadingDelay => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
+                'x-bind:aria-disabled' => $hasFormProcessingLoadingIndicator ? ('isProcessing || isLoading || ' . Js::from($disabled || in_array($attributes->get('aria-disabled'), [true, 'true'], true))) : null,
                 'x-bind:aria-label' => ($labelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags($slot->toHtml())))) : null,
             ], escape: false)
             ->when(

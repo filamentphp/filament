@@ -91,6 +91,7 @@ trait CanGenerateButtonHtml
         $hasTooltip = filled($tooltip);
 
         $formAttributes = $attributes->only(['action', 'method', 'wire:submit']);
+        $iconButtonAttributes = $attributes;
 
         $attributes = $attributes
             ->when(
@@ -109,11 +110,11 @@ trait CanGenerateButtonHtml
                     'form' => 'submit',
                     default => null,
                 },
-                'wire:loading.attr' => $tag === 'button' ? 'aria-disabled' : null,
+                'wire:loading.attr' => $tag === 'button' ? ($hasFormProcessingLoadingIndicator ? 'data-loading' : 'aria-disabled') : null,
                 'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
                 'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
+                'x-bind:aria-disabled' => $hasFormProcessingLoadingIndicator ? ('isProcessing || isLoading || ' . Js::from($isDisabled || in_array($attributes->get('aria-disabled'), [true, 'true'], true))) : null,
                 'x-bind:aria-label' => ($isLabelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))))) : null,
             ], escape: false)
             ->when(
@@ -135,10 +136,8 @@ trait CanGenerateButtonHtml
             ])
             ->color($buttonComponent, $color);
 
-        $iconButtonAttributes = $attributes;
-
-        if ($labeledFromBreakpoint && filled($wireKey = $attributes->get('wire:key'))) {
-            $iconButtonAttributes = $attributes
+        if ($labeledFromBreakpoint && filled($wireKey = $iconButtonAttributes->get('wire:key'))) {
+            $iconButtonAttributes = $iconButtonAttributes
                 ->except(['wire:key'])
                 ->merge(['wire:key' => "{$wireKey}.icon-button"], escape: false);
         }
@@ -204,6 +203,7 @@ trait CanGenerateButtonHtml
             <?php if ($hasFormProcessingLoadingIndicator) { ?>
                 x-data="filamentFormButton"
                 x-bind:class="{ 'fi-processing': isProcessing }"
+                x-bind:aria-busy="isProcessing"
             <?php } ?>
             <?= $buttonAttributes->toHtml() ?>
         >
