@@ -274,16 +274,6 @@ class Column extends ViewComponent
     }
 
     /**
-     * @deprecated Use `getCachedCellAttributesHtml()` instead.
-     *
-     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
-     */
-    public function getCachedCellAttributeHtml(): string
-    {
-        return $this->getCachedCellAttributesHtml();
-    }
-
-    /**
      * @return array<string, mixed>
      */
     public function getExtraViewData(): array
