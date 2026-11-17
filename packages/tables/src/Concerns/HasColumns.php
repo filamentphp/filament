@@ -166,6 +166,8 @@ trait HasColumns
 
             $table = $this->getTable();
             $visibleColumns = $table->getVisibleColumns();
+            $isReordering = $table->isReordering();
+            $isStackedOnMobile = $table->isStackedOnMobile();
 
             $recordAction = $table->getRecordAction($record);
             $recordUrl = $table->getRecordUrl($record);
@@ -182,7 +184,7 @@ trait HasColumns
 
                 $column->recordKey($recordKey);
 
-                $partials[$column->getTableCellPartialName()] = function () use ($column, $record, $recordKey, $rowLoop, $recordAction, $recordUrl, $shouldOpenRecordUrlInNewTab): HtmlString {
+                $partials[$column->getTableCellPartialName()] = function () use ($column, $record, $recordKey, $rowLoop, $recordAction, $recordUrl, $shouldOpenRecordUrlInNewTab, $isReordering, $isStackedOnMobile): HtmlString {
                     $column->record($record)->recordKey($recordKey)->rowLoop($rowLoop);
                     $column->clearCachedState();
 
@@ -191,6 +193,8 @@ trait HasColumns
                         recordUrl: $recordUrl,
                         shouldOpenRecordUrlInNewTab: $shouldOpenRecordUrlInNewTab,
                         isPartiallyRenderable: true,
+                        isReordering: $isReordering,
+                        isStackedOnMobile: $isStackedOnMobile,
                     );
                 };
             }

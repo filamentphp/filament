@@ -2567,6 +2567,8 @@
                                                             recordUrl: $recordUrl,
                                                             shouldOpenRecordUrlInNewTab: $openRecordUrlInNewTab,
                                                             isPartiallyRenderable: array_key_exists($column->getName(), $partiallyRenderableColumnNames),
+                                                            isReordering: $isReordering,
+                                                            isStackedOnMobile: $isStackedOnMobile,
                                                         )
                                                     }}
                                                 @endforeach

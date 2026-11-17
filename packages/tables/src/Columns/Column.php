@@ -202,7 +202,10 @@ class Column extends ViewComponent
         <?php return new HtmlString(ob_get_clean());
     }
 
-    public function renderInTableCell(?string $recordAction = null, ?string $recordUrl = null, bool $shouldOpenRecordUrlInNewTab = false, bool $isPartiallyRenderable = false): HtmlString
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    public function renderInTableCell(?string $recordAction = null, ?string $recordUrl = null, bool $shouldOpenRecordUrlInNewTab = false, bool $isPartiallyRenderable = false, ?bool $isReordering = null, ?bool $isStackedOnMobile = null): HtmlString
     {
         $table = $this->getTable();
         $livewire = $this->getLivewire();
@@ -211,8 +214,8 @@ class Column extends ViewComponent
         $action = $this->getAction();
         $url = $this->getUrl();
         $hasStateBasedUrls = $this->hasStateBasedUrls();
-        $isClickDisabled = $this->isClickDisabled() || $table->isReordering();
-        $isStackedOnMobile = $table->isStackedOnMobile();
+        $isClickDisabled = $this->isClickDisabled() || ($isReordering ?? $table->isReordering());
+        $isStackedOnMobile ??= $table->isStackedOnMobile();
 
         $wrapperTag = match (true) {
             ($url || ($recordUrl && $action === null)) && (! $hasStateBasedUrls) && (! $isClickDisabled) => 'a',
@@ -278,6 +281,9 @@ class Column extends ViewComponent
         return 'table.record.' . $encodeSegment((string) $this->getRecordKey()) . '.column.' . $encodeSegment($this->getName());
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getCellAttributeHtml(): string
     {
         $columnAlignment = $this->getAlignment();
@@ -293,6 +299,9 @@ class Column extends ViewComponent
         ])->toHtml();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     public function getCachedCellAttributeHtml(): string
     {
         if ($this->cachedCellAttributeHtml !== null) {
