@@ -3,6 +3,7 @@
 @import './utilities.css' layer(utilities);
 
 @import '../../dist/index.css' layer(components);
+@import './components/async-component.css' layer(components);
 @import './components/avatar.css' layer(components);
 @import './components/badge.css' layer(components);
 @import './components/breadcrumbs.css' layer(components);

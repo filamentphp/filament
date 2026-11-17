@@ -1784,6 +1784,35 @@ Group::make()
 > [!WARNING]
 > Combining `saveRelationshipsWhenHidden()` with a `condition` that returns `false` while the component is hidden will cause any existing related record to be deleted when the form is submitted. If you only want to skip saving when the component is hidden, omit `saveRelationshipsWhenHidden()` and rely on the default behavior instead.
 
+## Customizing loading placeholders
+
+The [code editor](code-editor), [color picker](color-picker), [non-native date-time picker](date-time-picker), [file upload](file-upload), [key-value field](key-value), editable [Markdown editor](markdown-editor), [rich editor](rich-editor), [non-native select](select#enabling-the-javascript-select), [slider](slider), and [tags input](tags-input) display a loading placeholder while their JavaScript is loaded and initialized. Native selects, native date-time pickers, and disabled Markdown editors rendered as static content do not need a loading placeholder.
+
+You may customize the placeholder using `loadingPlaceholder()`, passing a Blade view or an `Htmlable` instance, such as an `HtmlString` containing trusted HTML:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->loadingPlaceholder(fn () => view('forms.editor-loading-placeholder'))
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `loadingPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Keep your placeholder HTML decorative and noninteractive. Filament hides it from assistive technologies and supplies an accessible loading status in the surrounding wrapper. If the JavaScript fails to load or initialize, the placeholder remains visible.
+
+To customize the placeholder for all instances of a supported field, use [`configureUsing()`](#global-settings) in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::configureUsing(function (RichEditor $richEditor): void {
+    $richEditor->loadingPlaceholder(fn () => view('forms.editor-loading-placeholder'));
+});
+```
+
+You may call `loadingPlaceholder(null)` on an individual field to restore the default loading placeholder.
+
 ## Global settings
 
 If you wish to change the default behavior of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method or a middleware. Pass a closure which is able to modify the component. For example, if you wish to make all [checkboxes `inline(false)`](checkbox#positioning-the-label-above), you can do it like so:

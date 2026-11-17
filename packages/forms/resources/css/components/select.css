@@ -5,6 +5,13 @@
 }
 
 .fi-fo-select-wrp {
+    &
+        .fi-async-component-loading
+        > .fi-loading-placeholder-content
+        > .fi-loading-placeholder {
+        @apply justify-self-start ps-3 pe-8 leading-6;
+    }
+
     &.fi-fo-field-has-inline-label {
         & .fi-fo-field-label-col {
             @apply sm:pt-1.5;
