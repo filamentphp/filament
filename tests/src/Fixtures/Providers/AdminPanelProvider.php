@@ -35,7 +35,6 @@ use Filament\Tests\Fixtures\Pages\ColorPickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnManagerBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnManagerReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
-use Filament\Tests\Fixtures\Pages\ControlLoadingIndicatorBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerBrowserTest;
@@ -163,7 +162,6 @@ class AdminPanelProvider extends PanelProvider
                 ColumnManagerBrowserTest::class,
                 ColumnManagerReorderingBrowserTest::class,
                 ColumnsBrowserTest::class,
-                ControlLoadingIndicatorBrowserTest::class,
                 CheckboxBrowserTest::class,
                 ColorPickerBrowserTest::class,
                 DatabaseNotificationsBrowserTest::class,
