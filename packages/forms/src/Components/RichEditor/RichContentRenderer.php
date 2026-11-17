@@ -689,8 +689,6 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
-     *
      * @param  array<string, mixed>  $configuration
      */
     public function getCustomBlockHtml(string $id, array $configuration): ?string
