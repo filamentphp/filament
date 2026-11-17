@@ -9,7 +9,9 @@ Use the repository's existing tests and supported public behavior to verify chan
 
 ## Choosing coverage
 
-Introduce new tests only for actual frontend or backend behavior changes. Styling changes and bug fixes that restore existing intended behavior should not introduce new tests. Verify those fixes using existing tests and, for styling, visual inspection.
+Introduce new tests only for actual frontend or backend behavior changes, including bug fixes. Do not introduce new tests for styling-only changes, behavior-preserving refactors, documentation, or other non-behavior changes. Verify those changes using existing tests and, for styling, visual inspection.
+
+For bug fixes, add or retain a regression test when it covers supported behavior missed by existing tests and fails without the fix. Restoring intended behavior is a reason for regression coverage, not a reason to remove it. Prefer extending existing tests over adding duplicate coverage.
 
 - Keep inexpensive non-browser coverage of supported configuration and rendering paths, including setters, getters, `Closure` evaluation, and successful rendering.
 - For frontend behavior changes, add browser tests using Pest Browser with `visit()`.

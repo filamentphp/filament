@@ -12,7 +12,7 @@ Load the relevant skill before doing its work. If your agent cannot load skills,
 
 ## Testing and Documentation Requirements
 
-**Introduce new tests only for actual frontend or backend behavior changes.** Styling changes and bug fixes that restore existing intended behavior should not introduce new tests. Verify those fixes using existing tests and, for styling, visual inspection. For frontend behavior changes, add browser tests using Pest Browser. Load `testing-filament` before planning or performing verification.
+**Introduce new tests only for actual frontend or backend behavior changes, including bug fixes.** Do not introduce new tests for styling-only changes, behavior-preserving refactors, documentation, or other non-behavior changes. Verify those changes using existing tests and, for styling, visual inspection. Retain regression tests that cover supported behavior missed by existing tests and fail without the fix, even when the fix restores intended behavior. For frontend behavior changes, add browser tests using Pest Browser. Load `testing-filament` before planning or performing verification.
 
 **Update documentation for developer-facing features and changes to supported usage** in the owning page under `docs/` or `packages/{package}/docs/`. Automatic styling, layout, interaction changes, fixes restoring intended behavior, and implementation details need documentation only when they change how developers configure, use, extend, or integrate Filament, or introduce consequential compatibility or accessibility limitations. A change visible to end users alone does not require documentation.
 

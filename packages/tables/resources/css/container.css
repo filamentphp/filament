@@ -209,7 +209,7 @@
     }
 
     & .fi-ta-table-loading-ctn {
-        @apply flex h-32 items-center justify-center;
+        @apply flex min-h-32 items-center justify-center;
     }
 
     & .fi-ta-main {

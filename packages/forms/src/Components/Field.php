@@ -337,8 +337,6 @@ class Field extends Component implements Contracts\HasValidationRules
     }
 
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
-     *
      * @param  array<string, mixed>  $extraWrapperAttributes
      */
     public function wrapEmbeddedHtml(
@@ -599,7 +597,7 @@ class Field extends Component implements Contracts\HasValidationRules
     }
 
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
     protected function wrapInputHtml(
         string $html,
