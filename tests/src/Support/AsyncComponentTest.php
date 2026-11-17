@@ -63,10 +63,17 @@ it('keeps enhanced fields inaccessible until their JavaScript has initialized', 
 
     $page->script('window.releaseAsyncDownload()');
 
-    $page->assertVisible($readySelector)
-        ->assertMissing('[data-testid="async-region"] [aria-busy="true"]')
+    $page->assertMissing('[data-testid="async-region"] [aria-busy="true"]')
         ->assertNotPresent('[data-testid="async-region"] [inert]')
-        ->assertNoJavaScriptErrors()
+        ->assertPresent($readySelector)
+        ->assertEnabled($readySelector);
+
+    // FilePond visually hides its native file input after initialization.
+    if ($control !== 'file-upload') {
+        $page->assertVisible($readySelector);
+    }
+
+    $page->assertNoJavaScriptErrors()
         ->assertNoAccessibilityIssues();
 
     if ($control === 'tags-input') {
