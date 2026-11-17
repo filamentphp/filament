@@ -6,6 +6,7 @@ import createJsRenderer, {
 
 function fixture(renderer) {
     const events = []
+    const readiness = []
     const source = { config: { caption: 'Initial café', enabled: true } }
     const lifecycle = createJsRenderer({
         renderer,
@@ -17,17 +18,27 @@ function fixture(renderer) {
         getProps: () => snapshot(source),
         onError: (phase, error) => events.push([phase, error.message]),
         onFailure: () => events.push('failure'),
+        onReady: () => readiness.push(true),
         onDestroy: () => events.push('stop'),
     })
-    return { lifecycle, source, events }
+    return { lifecycle, source, events, readiness }
 }
+
+test('loading completes for synchronous mounts and intentionally empty renderers', async () => {
+    for (const renderer of [null, () => ({ update() {}, destroy() {} })]) {
+        const { lifecycle, readiness } = fixture(renderer)
+        await lifecycle.init()
+        assert.deepEqual(readiness, [true])
+        lifecycle.destroy()
+    }
+})
 
 test('removal during import never constructs context or reports a late import rejection', async () => {
     for (const source of [
         'export default () => { throw new Error("Must not mount") }',
         'throw new Error("Late import failure")',
     ]) {
-        const { lifecycle, events } = fixture(
+        const { lifecycle, events, readiness } = fixture(
             `data:text/javascript,${encodeURIComponent(source)}`,
         )
         const initialization = lifecycle.init()
@@ -35,6 +46,7 @@ test('removal during import never constructs context or reports a late import re
         await initialization
         lifecycle.destroy()
         assert.deepEqual(events, ['stop'])
+        assert.deepEqual(readiness, [])
     }
 })
 
@@ -42,7 +54,7 @@ test('late mounts are disposed once, while late mount rejections leave the remov
     for (const rejects of [false, true]) {
         let resolveMount, rejectMount
         let disposals = 0
-        const { lifecycle, events } = fixture(
+        const { lifecycle, events, readiness } = fixture(
             () =>
                 new Promise((resolve, reject) => {
                     resolveMount = resolve
@@ -64,6 +76,7 @@ test('late mounts are disposed once, while late mount rejections leave the remov
         lifecycle.destroy()
         assert.equal(disposals, rejects ? 0 : 1)
         assert.deepEqual(events, ['context', 'stop'])
+        assert.deepEqual(readiness, [])
     }
 })
 
@@ -71,7 +84,7 @@ test('async mounts receive the latest props without sharing mutable snapshots', 
     let resolveMount
     let initialProps
     const updates = []
-    const { lifecycle, source } = fixture(({ props }) => {
+    const { lifecycle, source, readiness } = fixture(({ props }) => {
         initialProps = props
         return new Promise((resolve) => {
             resolveMount = resolve
@@ -80,8 +93,10 @@ test('async mounts receive the latest props without sharing mutable snapshots', 
     const initialization = lifecycle.init()
     source.config = { caption: 'Replacement', enabled: false }
     lifecycle.update()
+    assert.deepEqual(readiness, [])
     resolveMount({ update: (props) => updates.push(props), destroy() {} })
     await initialization
+    assert.deepEqual(readiness, [true])
     assert.deepEqual(initialProps.config, {
         caption: 'Initial café',
         enabled: true,
@@ -155,7 +170,7 @@ for (const [name, phase, renderer] of [
     ['invalid instance', 'mount', () => ({})],
 ]) {
     test(`${name} stops the renderer and reports its failure once`, async () => {
-        const { lifecycle, events } = fixture(renderer)
+        const { lifecycle, events, readiness } = fixture(renderer)
         await lifecycle.init()
         lifecycle.update()
         lifecycle.destroy()
@@ -165,8 +180,21 @@ for (const [name, phase, renderer] of [
         )
         assert.equal(events.filter((event) => event === 'stop').length, 1)
         assert.equal(events.at(-1), 'failure')
+        assert.deepEqual(readiness, [])
     })
 }
+
+test('a synchronous initial update failure never reports successful readiness', async () => {
+    const { lifecycle, readiness, events } = fixture(() => ({
+        update() {
+            throw new Error('Initial update failed')
+        },
+        destroy() {},
+    }))
+    await lifecycle.init()
+    assert.deepEqual(readiness, [])
+    assert.equal(events.at(-1), 'failure')
+})
 
 for (const phase of ['update', 'cleanup']) {
     for (const asynchronous of [false, true]) {

@@ -38,9 +38,11 @@ export default function jsWidgetComponent({
                 getContext: () => this.getRendererContext(),
                 getProps: props,
                 onError: (phase, error) => this.reportError(phase, error),
+                onReady: () => this.$dispatch('async-component-ready'),
                 onFailure: () => {
                     this.$refs.host.replaceChildren()
                     this.hasError = true
+                    this.$dispatch('async-component-ready')
                 },
                 onDestroy: () => {
                     destroyed = true

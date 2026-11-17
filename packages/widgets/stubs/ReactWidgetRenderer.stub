@@ -1,4 +1,5 @@
 import React from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 
 function {{ componentIdentifier }}({ configuration }) {
@@ -8,7 +9,13 @@ function {{ componentIdentifier }}({ configuration }) {
 export default function mount{{ componentName }}({ host, props: initialProps }) {
     const root = createRoot(host)
     const update = (props) => root.render(<{{ componentIdentifier }} {...props} />)
-    update(initialProps)
+
+    try {
+        flushSync(() => update(initialProps))
+    } catch (error) {
+        root.unmount()
+        throw error
+    }
 
     return { update, destroy: () => root.unmount() }
 }

@@ -64,9 +64,11 @@ export default function jsFieldFormComponent({
                 getProps: () =>
                     this.state === undefined ? undefined : props(this.state),
                 onError: (phase, error) => this.reportError(phase, error),
+                onReady: () => this.$dispatch('async-component-ready'),
                 onFailure: () => {
                     this.$refs.host.replaceChildren()
                     this.hasError = true
+                    this.$dispatch('async-component-ready')
                 },
                 onDestroy: () => {
                     destroyed = true

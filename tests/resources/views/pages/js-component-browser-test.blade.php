@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+    @include('renderer-readiness')
+
     <div>
         <x-filament::button wire:click="$toggle('mounted')">
             Toggle mounted
@@ -12,6 +14,8 @@
     </div>
 
     @if ($mounted)
+        <output data-testid="server-caption">{{ $data['caption'] }}</output>
+
         {{ $this->form }}
     @endif
 </x-filament-panels::page>

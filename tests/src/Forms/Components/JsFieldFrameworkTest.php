@@ -7,6 +7,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 
 // Publishes assets into the same public directory used by other browser tests.
 uses(TestCase::class)->group('serial');
@@ -22,6 +23,8 @@ beforeAll(function (): void {
 });
 
 beforeEach(function (): void {
+    Route::get('/pending-js-renderer.js', static fn () => response(file_get_contents(__DIR__ . '/../../../resources/js/pending-js-renderer.js'), headers: ['Content-Type' => 'text/javascript']));
+
     foreach (['js-field-renderers' => 'tests/js-fields', 'js-renderer-starters' => 'tests/js-field-starters'] as $directory => $package) {
         foreach (File::allFiles(dirname(__DIR__, 4) . '/build/' . $directory) as $file) {
             $id = str_replace('\\', '/', $file->getRelativePathname());
@@ -43,6 +46,7 @@ it('binds generated field templates and preserves callbacks after updates', func
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
 
     $browser->assertValue('[id="form.live"]', 'Original café')
+        ->assertScript('window.rendererReadiness.length >= 2 && window.rendererReadiness.every(Boolean)', true)
         ->assertNoAccessibilityIssues()
         ->fill('[id="form.live"]', 'Edited café')
         ->assertScript("{$state}.live", 'Edited café')
@@ -80,6 +84,24 @@ it('binds generated field templates and preserves callbacks after updates', func
         ->assertAttribute('[id="form.live"]', 'aria-invalid', 'true')
         ->assertNoAccessibilityIssues();
 })->with(['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts']);
+
+it('keeps custom field placeholders through renderer import and asynchronous mounting', function (): void {
+    $page = visit('/js-field-framework-test?scenario=generated&framework=pending');
+    $page->assertScript('typeof window.releaseRendererImport', 'function')
+        ->assertVisible('[data-testid=custom-loading-placeholder]')
+        ->assertPresent('[inert][aria-hidden=true]');
+    $page->script('window.releaseRendererImport()');
+    $page->assertScript('typeof window.releaseRendererMount', 'function')
+        ->assertVisible('[data-testid=custom-loading-placeholder]')
+        ->assertPresent('[id="form.live"][inert], [inert] [id="form.live"]')
+        ->assertNoAccessibilityIssues();
+    $page->script('window.releaseRendererMount()');
+    $page->assertVisible('[id="form.live"]')
+        ->assertValue('[id="form.live"]', 'Original café')
+        ->assertMissing('[data-testid=custom-loading-placeholder]')
+        ->assertNotPresent('[inert] [id="form.live"]')
+        ->assertNoSmoke();
+});
 
 it('calls exposed field methods and the owning `$wire` across nested instances and remounts', function (string $framework): void {
     $page = visit('/js-field-framework-test?framework=' . $framework);

@@ -150,6 +150,7 @@ export default function mountRevenueOverview({ host, props: initialProps }) {
 
 ```jsx
 import React from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 
 function RevenueOverview({ configuration }) {
@@ -159,7 +160,13 @@ function RevenueOverview({ configuration }) {
 export default function mountRevenueOverview({ host, props: initialProps }) {
     const root = createRoot(host)
     const update = (props) => root.render(<RevenueOverview {...props} />)
-    update(initialProps)
+
+    try {
+        flushSync(() => update(initialProps))
+    } catch (error) {
+        root.unmount()
+        throw error
+    }
 
     return { update, destroy: () => root.unmount() }
 }
@@ -290,7 +297,28 @@ Livewire does not manage the contents of `host`. Use `update()` to apply PHP con
 
 Mounting may be asynchronous: Filament delivers the latest props when it completes, or disposes the instance if the widget was removed. Changing `getRenderer()` replaces the renderer; changing `getRendererConfiguration()` updates it in place.
 
+Filament awaits your mount function before revealing the renderer. Ensure your initial UI exists at that handoff. The React example flushes the initial render before returning; later updates retain their normal asynchronous scheduling. Filament does not wait for all effects, asynchronous descendants, data fetching, or Suspense to finish: a rendered fallback counts as initial UI. You own resources created before returning lifecycle methods, including cleanup if initialization fails.
+
 Use `destroy()` to unmount your framework and release listeners, observers, timers, and subscriptions. Stop DOM work immediately: Filament does not wait for asynchronous cleanup before remounting. Cancel or order overlapping asynchronous updates in your renderer.
+
+#### Customizing loading placeholders
+
+Widgets using `HasJsRenderer` display a server-rendered loading placeholder while Async Alpine downloads, the renderer module imports, and the mount function completes. Override the existing `getLoadingPlaceholder()` method in your widget class to return a Blade view or an `Htmlable` instance containing trusted HTML. Return `null` to use the default placeholder:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
+
+// Inside your widget class:
+public function getLoadingPlaceholder(): View | Htmlable | null
+{
+    return view('filament.widgets.revenue-overview-loading');
+}
+```
+
+This content is separate from the full Livewire lazy-loading view returned by `placeholder()`. Overriding `placeholder()` does not replace the renderer's loading UI; use `getLoadingPlaceholder()` to customize that content independently.
+
+Keep placeholder HTML decorative and noninteractive. Filament renders it outside the Livewire-ignored `host`, hides it from assistive technologies, and supplies an accessible loading status. Pending renderer content remains measurable but inert and hidden from assistive technologies until mounting completes. Successful mounting removes the loading UI; renderer import, mount, or update failures show the [accessible error](#handling-renderer-errors) instead. If the Async Alpine download fails, the placeholder remains visible.
 
 #### Handling renderer errors
 
