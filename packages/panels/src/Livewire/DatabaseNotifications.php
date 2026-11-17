@@ -32,7 +32,7 @@ class DatabaseNotifications extends BaseComponent
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
     #[Unexposed]
-    public function getTrigger(): ?View
+    public function renderTrigger(): ?View
     {
         return (($this->position ?? filament()->getDatabaseNotificationsPosition()) === DatabaseNotificationsPosition::Topbar)
             ? view('filament-panels::components.topbar.database-notifications-trigger')

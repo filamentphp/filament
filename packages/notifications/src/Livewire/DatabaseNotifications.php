@@ -158,7 +158,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
      * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      */
     #[Unexposed]
-    public function getTrigger(): ?View
+    public function renderTrigger(): ?View
     {
         $viewPath = static::$trigger;
 
@@ -261,6 +261,6 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[Unexposed]
     public function placeholder(): string
     {
-        return '<div>' . $this->getTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()])->render() . '</div>';
+        return '<div>' . $this->renderTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()])->render() . '</div>';
     }
 }

@@ -51,7 +51,7 @@
             ])
         "
     >
-        @if ($trigger = $this->getTrigger())
+        @if ($trigger = $this->renderTrigger())
             <x-slot name="trigger">
                 {{ $trigger->with(['unreadNotificationsCount' => $unreadNotificationsCount]) }}
             </x-slot>

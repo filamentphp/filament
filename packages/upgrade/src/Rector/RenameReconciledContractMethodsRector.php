@@ -5,6 +5,8 @@ namespace Filament\Upgrade\Rector;
 use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
+use Filament\Livewire\DatabaseNotifications as PanelDatabaseNotifications;
+use Filament\Notifications\Livewire\DatabaseNotifications;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Concerns\CanBeLazyLoaded;
 use Filament\Support\Contracts\TranslatableContentDriver;
@@ -45,6 +47,7 @@ class RenameReconciledContractMethodsRector extends AbstractRector
         'islazy' => ['isLazyLoaded', [Widget::class, RelationManager::class]],
         'isbadgedeferred' => ['isBadgeLazyLoaded', [RelationManager::class]],
         'configuretopreviewmethod' => ['configureToPreviewHtmlMethod', [RichContentCustomBlockClassGenerator::class]],
+        'gettrigger' => ['renderTrigger', [DatabaseNotifications::class]],
     ];
 
     /**
@@ -60,6 +63,8 @@ class RenameReconciledContractMethodsRector extends AbstractRector
         CanBeLazyLoaded::class,
         RelationManager::class,
         RichContentCustomBlockClassGenerator::class,
+        DatabaseNotifications::class,
+        PanelDatabaseNotifications::class,
     ];
 
     public function __construct(
@@ -116,7 +121,7 @@ class RenameReconciledContractMethodsRector extends AbstractRector
             }
         }
 
-        $isContextualHookCall = in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod'], true)
+        $isContextualHookCall = in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod', 'renderTrigger'], true)
             && $context && (! $node instanceof ClassMethod)
             && ((($node instanceof StaticCall) && ($node->class instanceof Name) && $this->isNames($node->class, ['parent', 'self', 'static']))
                 || ((! $node instanceof StaticCall) && ($node->var instanceof Variable) && ($node->var->name === 'this')));
@@ -216,7 +221,7 @@ class RenameReconciledContractMethodsRector extends AbstractRector
             $method = $class->getNativeMethod($oldName);
             $trait = method_exists($method, 'getDeclaringTrait') ? $method->getDeclaringTrait() : null;
 
-            if ($trait && ((! in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod'], true)) || (! in_array($trait->getName(), self::CANONICAL_METHOD_OWNERS, true)))) {
+            if ($trait && ((! in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod', 'renderTrigger'], true)) || (! in_array($trait->getName(), self::CANONICAL_METHOD_OWNERS, true)))) {
                 return $this->supportsClass($trait, $owners, $oldName, $newName);
             }
         }
@@ -234,7 +239,7 @@ class RenameReconciledContractMethodsRector extends AbstractRector
             return false;
         }
 
-        $isOverrideHook = in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod'], true);
+        $isOverrideHook = in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod', 'renderTrigger'], true);
         $classes = $isOverrideHook
             ? $this->traitConsumerResolver->getRelatedClasses($class, $oldName, $this->getFile()->getFilePath())
             : [$class->getName() => $class, ...$this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath())];
