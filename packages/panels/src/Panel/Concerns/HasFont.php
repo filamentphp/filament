@@ -114,7 +114,7 @@ trait HasFont
      */
     public function getFontPreloadHtml(): Htmlable
     {
-        return $this->getPreloadHtml($this->getFontPreload());
+        return $this->generatePreloadHtml($this->getFontPreload());
     }
 
     /**
@@ -177,7 +177,7 @@ trait HasFont
      */
     public function getMonoFontPreloadHtml(): Htmlable
     {
-        return $this->getPreloadHtml($this->getMonoFontPreload());
+        return $this->generatePreloadHtml($this->getMonoFontPreload());
     }
 
     /**
@@ -240,7 +240,7 @@ trait HasFont
      */
     public function getSerifFontPreloadHtml(): Htmlable
     {
-        return $this->getPreloadHtml($this->getSerifFontPreload());
+        return $this->generatePreloadHtml($this->getSerifFontPreload());
     }
 
     /**
@@ -278,7 +278,7 @@ trait HasFont
      *
      * @param  array<string>  $urls
      */
-    protected function getPreloadHtml(array $urls): Htmlable
+    protected function generatePreloadHtml(array $urls): Htmlable
     {
         if ($urls === []) {
             return new HtmlString('');

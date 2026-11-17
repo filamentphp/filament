@@ -2588,7 +2588,7 @@
 
                                                     <td
                                                         wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                                        {!! $column->getCachedCellAttributeHtml() !!}
+                                                        {!! $column->getCachedCellAttributesHtml() !!}
                                                     >
                                                         {!! $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' !!}
                                                         <{{ $columnWrapperTag }}

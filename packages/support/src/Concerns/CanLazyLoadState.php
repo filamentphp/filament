@@ -72,7 +72,7 @@ trait CanLazyLoadState
      * @param  array<string, mixed>  $target
      * @param  array<mixed>  $arguments
      */
-    protected function getLazyLoadedStatePlaceholderHtml(string $method, array $target, array $arguments = []): string
+    protected function generateLazyLoadedStatePlaceholderHtml(string $method, array $target, array $arguments = []): string
     {
         $identifier = (string) Str::uuid();
         $configuration = Js::from([
