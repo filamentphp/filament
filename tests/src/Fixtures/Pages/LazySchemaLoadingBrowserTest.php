@@ -31,6 +31,9 @@ class LazySchemaLoadingBrowserTest extends Page
     #[Url]
     public bool $shouldFailLoading = false;
 
+    #[Url]
+    public bool $hasCustomLoadingPlaceholder = false;
+
     public function mount(): void
     {
         $this->form->fill();
@@ -54,6 +57,9 @@ class LazySchemaLoadingBrowserTest extends Page
                                         ? throw new RuntimeException('Simulated schema loading failure.')
                                         : 'Concealed lazy-loaded name'),
                             ])
+                            ->loadingPlaceholder(fn () => $this->hasCustomLoadingPlaceholder
+                                ? view('loading-placeholder', ['label' => 'Preparing customer details'])
+                                : null)
                             ->lazyLoaded(),
                     ),
                 Text::make('Scroll to load the lazy-loaded schema.')

@@ -8,17 +8,17 @@ return [
 
         'filter' => [
 
-            'label' => 'Ֆիլտր',
+            'label' => 'Զտել',
 
             'modal' => [
 
-                'heading' => 'Ֆիլտր',
+                'heading' => 'Զտել',
 
                 'actions' => [
 
                     'apply' => [
 
-                        'label' => 'Հաստատել',
+                        'label' => 'Կիրառել',
 
                     ],
 

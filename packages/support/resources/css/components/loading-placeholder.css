@@ -1,0 +1,11 @@
+.fi-loading-placeholder {
+    @apply inline-flex items-center gap-x-1.5 text-sm text-gray-500 dark:text-gray-400;
+
+    & > .fi-icon {
+        @apply shrink-0;
+    }
+}
+
+.fi-loading-placeholder-content {
+    @apply grid w-full place-items-center;
+}
