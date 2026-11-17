@@ -5,7 +5,6 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Enums\PaginationMode;
-use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Illuminate\Support\Arr;
 
 trait CanPaginateRecords
@@ -16,7 +15,9 @@ trait CanPaginateRecords
 
     protected bool | Closure $isPaginatedWhileReordering = false;
 
-    protected bool | Closure $shouldPersistRecordsPerPage = true;
+    protected bool | Closure $shouldPersistRecordsPerPageInSession = true;
+
+    protected bool | Closure $shouldPersistRecordsPerPageInStore = false;
 
     protected TablePersistenceStore | Closure | null $recordsPerPagePersistenceStore = null;
 
@@ -88,12 +89,14 @@ trait CanPaginateRecords
 
     public function persistRecordsPerPageInSession(bool | Closure $condition = true): static
     {
-        return $this->persistRecordsPerPageInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+        $this->shouldPersistRecordsPerPageInSession = $condition;
+
+        return $this;
     }
 
     public function persistRecordsPerPageInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
     {
-        $this->shouldPersistRecordsPerPage = $condition;
+        $this->shouldPersistRecordsPerPageInStore = $condition;
         $this->recordsPerPagePersistenceStore = $persistenceStore;
         unset($this->persistenceStoreCache['recordsPerPage']);
 
@@ -166,17 +169,22 @@ trait CanPaginateRecords
 
     public function persistsRecordsPerPageInSession(): bool
     {
-        return $this->shouldPersistRecordsPerPage() && ($this->getRecordsPerPagePersistenceStore() instanceof SessionTablePersistenceStore);
+        return (bool) $this->evaluate($this->shouldPersistRecordsPerPageInSession);
     }
 
     public function shouldPersistRecordsPerPage(): bool
     {
-        return (bool) $this->evaluate($this->shouldPersistRecordsPerPage);
+        return $this->persistsRecordsPerPageInSession() || $this->shouldPersistRecordsPerPageInStore();
+    }
+
+    public function shouldPersistRecordsPerPageInStore(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistRecordsPerPageInStore);
     }
 
     public function getRecordsPerPagePersistenceStore(): TablePersistenceStore
     {
-        return $this->resolvePersistenceStore('recordsPerPage', $this->recordsPerPagePersistenceStore);
+        return $this->resolvePersistenceStore('recordsPerPage', $this->recordsPerPagePersistenceStore, $this->persistsRecordsPerPageInSession(), $this->shouldPersistRecordsPerPageInStore());
     }
 
     public function hasExtremePaginationLinks(): bool

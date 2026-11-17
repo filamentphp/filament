@@ -759,9 +759,9 @@ When using Filament tenancy, persisted filters, global searches, and individual 
 
 In existing applications that use tenancy, persisted searches will start fresh for each tenant after upgrading. Existing search state remains available when no tenant is active. Other existing state keeps its current tenant-sharing behavior.
 
-### Storing the persisted table state somewhere other than the session
+### Using a custom persistence store
 
-You can use a custom persistence store to save table preferences outside the session, for example in a database or cache. Set the default store with `persistenceStore()`, then choose which features use it:
+You can use a custom persistence store to save table preferences in a database or cache, either alongside session persistence or instead of it. Set the default store with `persistenceStore()`, then choose which features use it:
 
 ```php
 use App\Tables\CacheTablePersistenceStore;
@@ -771,6 +771,7 @@ public function table(Table $table): Table
 {
     return $table
         ->persistenceStore(app(CacheTablePersistenceStore::class))
+        ->persistSearchInSession()
         ->persistSearchInStore()
         ->persistFiltersInStore()
         ->persistSortInSession();
@@ -782,11 +783,14 @@ The available methods are `persistSearchInStore()`, `persistColumnSearchesInStor
 ```php
 $table
     ->persistenceStore(app(CacheTablePersistenceStore::class))
+    ->persistInSession(false)
     ->persistInStore()
     ->persistColumnsInStore(false);
 ```
 
-Setting `persistenceStore()` alone does not enable persistence or move existing session preferences. Columns and records per page continue to use the session by default until you opt them into the store. Methods ending in `InSession()` always select session storage, regardless of the configured default store.
+Session and custom-store persistence are independent. In the first example, search is saved to both destinations, filters only to the custom store, and sorting only to the session. Setting `persistenceStore()` alone does not enable custom-store persistence or change session settings. Columns and records per page continue to use the session by default, even after enabling their custom-store persistence. To use only the custom store, disable session persistence with `persistInSession(false)` or the relevant feature's `persist*InSession(false)` method.
+
+When both destinations are enabled, an existing session value takes precedence over the custom store. If the session key is missing, Filament reads the custom store instead. A stored `null`, empty string, or empty array is still an existing value and does not fall through. Updates are written to both enabled destinations. This lets a new session restore shared preferences while an existing session keeps its current state. Existing session state may overwrite different custom-store state when the table saves its preferences.
 
 #### Overriding the store for a feature
 
@@ -802,7 +806,7 @@ $table->persistFiltersInStore(
 
 Without an override, a feature uses the table's `persistenceStore()`. If no store is configured, it uses the session store. Passing `null`, or returning `null` from a store closure, restores that fallback. Store closures support the table's usual utility injections and are resolved once per table configuration; changing the configuration invalidates the resolved stores.
 
-The last persistence method called for a feature determines whether and where it is persisted. For example, `persistSearchInStore()->persistSearchInSession()` persists search only in the session. Passing `false` to either method disables search persistence without deleting previously saved preferences. Conditions also accept closures.
+Each destination has its own condition, which also accepts a closure. For example, `persistSearchInStore()->persistSearchInSession()` and the reversed order both enable search persistence in both destinations. Passing `false` to `persistSearchInSession()` disables only session persistence; passing `false` to `persistSearchInStore()` disables only custom-store persistence. Repeated calls for the same destination use the last condition. Disabling a destination stops its reads and writes without deleting its saved preferences or changing the other destination.
 
 To configure defaults across your application, use `Table::configureUsing()` in a service provider's `boot()` method. Individual tables can override those defaults:
 
@@ -890,7 +894,7 @@ class CacheTablePersistenceStore implements TablePersistenceStore
 
 This example scopes cache entries to the current authentication guard, user class, and user identifier, and falls back to the session for guests. Your store is responsible for isolating preferences between users. Filament supplies the same table keys as session persistence, including the existing tenant scoping described above; it does not automatically tenant-scope every feature or provide authorization for a custom store. Cache entries may be evicted, so use a durable store if preferences must survive cache clearing.
 
-Each feature has one effective store. If you need to write to several backends, implement that behavior in a custom store and define which backend supplies reads and how partial failures are handled.
+Each feature can use the session and one custom store independently. If you need additional backends or a different read policy, implement that behavior in a custom store. To let your store control session precedence too, disable the feature's built-in session persistence and include session storage in your custom store. Writes across destinations are not transactional: exceptions propagate, and an earlier destination may already have been updated when a later write fails. Your store is responsible for any additional failure recovery it needs.
 
 ## Styling table rows
 

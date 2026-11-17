@@ -7,7 +7,6 @@ use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasLoadingPlaceholder;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Persistence\SessionTablePersistenceStore;
 
 class Table extends ViewComponent
 {
@@ -97,9 +96,6 @@ class Table extends ViewComponent
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->columnsPersistenceStore = static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class);
-        $this->recordsPerPagePersistenceStore = static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class);
 
         $this->emptyStateDescription(function (Table $table): ?string {
             if (! $table->hasAction('create')) {

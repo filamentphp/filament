@@ -16,7 +16,6 @@ use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -42,7 +41,9 @@ trait HasFilters
 
     protected ?Closure $modifyFiltersTriggerActionUsing = null;
 
-    protected bool | Closure | null $shouldPersistFilters = false;
+    protected bool | Closure | null $shouldPersistFiltersInSession = false;
+
+    protected bool | Closure $shouldPersistFiltersInStore = false;
 
     protected TablePersistenceStore | Closure | null $filtersPersistenceStore = null;
 
@@ -179,12 +180,14 @@ trait HasFilters
 
     public function persistFiltersInSession(bool | Closure $condition = true): static
     {
-        return $this->persistFiltersInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+        $this->shouldPersistFiltersInSession = $condition;
+
+        return $this;
     }
 
     public function persistFiltersInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
     {
-        $this->shouldPersistFilters = $condition;
+        $this->shouldPersistFiltersInStore = $condition;
         $this->filtersPersistenceStore = $persistenceStore;
         unset($this->persistenceStoreCache['filters']);
 
@@ -410,17 +413,22 @@ trait HasFilters
 
     public function persistsFiltersInSession(): bool
     {
-        return $this->shouldPersistFilters() && ($this->getFiltersPersistenceStore() instanceof SessionTablePersistenceStore);
+        return (bool) $this->evaluate($this->shouldPersistFiltersInSession);
     }
 
     public function shouldPersistFilters(): bool
     {
-        return (bool) $this->evaluate($this->shouldPersistFilters);
+        return $this->persistsFiltersInSession() || $this->shouldPersistFiltersInStore();
+    }
+
+    public function shouldPersistFiltersInStore(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistFiltersInStore);
     }
 
     public function getFiltersPersistenceStore(): TablePersistenceStore
     {
-        return $this->resolvePersistenceStore('filters', $this->filtersPersistenceStore);
+        return $this->resolvePersistenceStore('filters', $this->filtersPersistenceStore, $this->persistsFiltersInSession(), $this->shouldPersistFiltersInStore());
     }
 
     public function shouldDeselectAllRecordsWhenFiltered(): bool

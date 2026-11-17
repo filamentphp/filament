@@ -201,7 +201,7 @@ trait HasColumnManager
             return $this->getDefaultTableColumnState();
         }
 
-        return $this->getTable()->getColumnsPersistenceStore()->get(
+        return $this->getTable()->getSessionPersistenceStore()->get(
             $this->getTableColumnsPersistenceKey(),
             $this->getDefaultTableColumnState(),
         );
@@ -216,7 +216,13 @@ trait HasColumnManager
             return $this->getDefaultTableColumnState();
         }
 
-        if ($this->getTable()->persistsColumnsInSession()) {
+        if (
+            $this->getTable()->persistsColumnsInSession() &&
+            (
+                (! $this->getTable()->shouldPersistColumnsInStore()) ||
+                $this->getTable()->getSessionPersistenceStore()->exists($this->getTableColumnsPersistenceKey())
+            )
+        ) {
             return $this->loadTableColumnsFromSession();
         }
 

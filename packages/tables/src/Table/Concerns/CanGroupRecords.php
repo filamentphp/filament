@@ -8,7 +8,6 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Grouping\Group;
-use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Support\Str;
 
@@ -30,7 +29,9 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupsOnly = false;
 
-    protected bool | Closure | null $shouldPersistGroup = false;
+    protected bool | Closure | null $shouldPersistGroupInSession = false;
+
+    protected bool | Closure $shouldPersistGroupInStore = false;
 
     protected TablePersistenceStore | Closure | null $groupPersistenceStore = null;
 
@@ -116,12 +117,14 @@ trait CanGroupRecords
 
     public function persistGroupInSession(bool | Closure $condition = true): static
     {
-        return $this->persistGroupInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+        $this->shouldPersistGroupInSession = $condition;
+
+        return $this;
     }
 
     public function persistGroupInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
     {
-        $this->shouldPersistGroup = $condition;
+        $this->shouldPersistGroupInStore = $condition;
         $this->groupPersistenceStore = $persistenceStore;
         unset($this->persistenceStoreCache['group']);
 
@@ -245,16 +248,21 @@ trait CanGroupRecords
 
     public function persistsGroupInSession(): bool
     {
-        return $this->shouldPersistGroup() && ($this->getGroupPersistenceStore() instanceof SessionTablePersistenceStore);
+        return (bool) $this->evaluate($this->shouldPersistGroupInSession);
     }
 
     public function shouldPersistGroup(): bool
     {
-        return (bool) $this->evaluate($this->shouldPersistGroup);
+        return $this->persistsGroupInSession() || $this->shouldPersistGroupInStore();
+    }
+
+    public function shouldPersistGroupInStore(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistGroupInStore);
     }
 
     public function getGroupPersistenceStore(): TablePersistenceStore
     {
-        return $this->resolvePersistenceStore('group', $this->groupPersistenceStore);
+        return $this->resolvePersistenceStore('group', $this->groupPersistenceStore, $this->persistsGroupInSession(), $this->shouldPersistGroupInStore());
     }
 }

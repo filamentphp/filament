@@ -5,7 +5,6 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\TablePersistenceStore;
-use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -16,7 +15,9 @@ trait CanSortRecords
 
     protected string | Closure | null $defaultSortDirection = null;
 
-    protected bool | Closure | null $shouldPersistSort = false;
+    protected bool | Closure | null $shouldPersistSortInSession = false;
+
+    protected bool | Closure $shouldPersistSortInStore = false;
 
     protected TablePersistenceStore | Closure | null $sortPersistenceStore = null;
 
@@ -34,12 +35,14 @@ trait CanSortRecords
 
     public function persistSortInSession(bool | Closure $condition = true): static
     {
-        return $this->persistSortInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+        $this->shouldPersistSortInSession = $condition;
+
+        return $this;
     }
 
     public function persistSortInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
     {
-        $this->shouldPersistSort = $condition;
+        $this->shouldPersistSortInStore = $condition;
         $this->sortPersistenceStore = $persistenceStore;
         unset($this->persistenceStoreCache['sort']);
 
@@ -134,17 +137,22 @@ trait CanSortRecords
 
     public function persistsSortInSession(): bool
     {
-        return $this->shouldPersistSort() && ($this->getSortPersistenceStore() instanceof SessionTablePersistenceStore);
+        return (bool) $this->evaluate($this->shouldPersistSortInSession);
     }
 
     public function shouldPersistSort(): bool
     {
-        return (bool) $this->evaluate($this->shouldPersistSort);
+        return $this->persistsSortInSession() || $this->shouldPersistSortInStore();
+    }
+
+    public function shouldPersistSortInStore(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistSortInStore);
     }
 
     public function getSortPersistenceStore(): TablePersistenceStore
     {
-        return $this->resolvePersistenceStore('sort', $this->sortPersistenceStore);
+        return $this->resolvePersistenceStore('sort', $this->sortPersistenceStore, $this->persistsSortInSession(), $this->shouldPersistSortInStore());
     }
 
     public function getDefaultSortOptionLabel(): string | Htmlable | null

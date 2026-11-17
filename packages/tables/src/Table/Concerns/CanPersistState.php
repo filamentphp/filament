@@ -4,11 +4,14 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Contracts\TablePersistenceStore;
+use Filament\Tables\Persistence\CompositeTablePersistenceStore;
 use Filament\Tables\Persistence\SessionTablePersistenceStore;
 
 trait CanPersistState
 {
     protected TablePersistenceStore | Closure | null $persistenceStore = null;
+
+    protected ?SessionTablePersistenceStore $cachedSessionPersistenceStore = null;
 
     /**
      * @var array<string, TablePersistenceStore>
@@ -25,12 +28,33 @@ trait CanPersistState
 
     public function getPersistenceStore(): TablePersistenceStore
     {
-        return $this->persistenceStoreCache['default'] ??= $this->evaluate($this->persistenceStore) ?? app(SessionTablePersistenceStore::class);
+        return $this->persistenceStoreCache['default'] ??= $this->evaluate($this->persistenceStore) ?? $this->getSessionPersistenceStore();
     }
 
-    protected function resolvePersistenceStore(string $feature, TablePersistenceStore | Closure | null $persistenceStore): TablePersistenceStore
+    public function getSessionPersistenceStore(): SessionTablePersistenceStore
     {
-        return $this->persistenceStoreCache[$feature] ??= $this->evaluate($persistenceStore) ?? $this->getPersistenceStore();
+        return $this->cachedSessionPersistenceStore ??= app(SessionTablePersistenceStore::class);
+    }
+
+    protected function resolvePersistenceStore(string $feature, TablePersistenceStore | Closure | null $persistenceStore, bool $shouldPersistInSession, bool $shouldPersistInStore): TablePersistenceStore
+    {
+        if (! $shouldPersistInStore) {
+            return $this->getSessionPersistenceStore();
+        }
+
+        $persistenceStore = $this->persistenceStoreCache[$feature] ??= $this->evaluate($persistenceStore) ?? $this->getPersistenceStore();
+
+        if (! $shouldPersistInSession) {
+            return $persistenceStore;
+        }
+
+        $sessionPersistenceStore = $this->getSessionPersistenceStore();
+
+        if ($persistenceStore === $sessionPersistenceStore) {
+            return $persistenceStore;
+        }
+
+        return app(CompositeTablePersistenceStore::class, ['stores' => [$sessionPersistenceStore, $persistenceStore]]);
     }
 
     public function persistInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static

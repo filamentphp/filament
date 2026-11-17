@@ -10,7 +10,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\TablePersistenceStore;
 use Filament\Tables\Enums\ColumnManagerLayout;
 use Filament\Tables\Enums\ColumnManagerResetActionPosition;
-use Filament\Tables\Persistence\SessionTablePersistenceStore;
 use Filament\Tables\View\TablesIconAlias;
 
 trait HasColumnManager
@@ -38,7 +37,9 @@ trait HasColumnManager
 
     protected ?Closure $modifyColumnManagerApplyActionUsing = null;
 
-    protected bool | Closure $shouldPersistColumns = true;
+    protected bool | Closure $shouldPersistColumnsInSession = true;
+
+    protected bool | Closure $shouldPersistColumnsInStore = false;
 
     protected TablePersistenceStore | Closure | null $columnsPersistenceStore = null;
 
@@ -93,12 +94,14 @@ trait HasColumnManager
 
     public function persistColumnsInSession(bool | Closure $condition = true): static
     {
-        return $this->persistColumnsInStore($condition, static fn (): SessionTablePersistenceStore => app(SessionTablePersistenceStore::class));
+        $this->shouldPersistColumnsInSession = $condition;
+
+        return $this;
     }
 
     public function persistColumnsInStore(bool | Closure $condition = true, TablePersistenceStore | Closure | null $persistenceStore = null): static
     {
-        $this->shouldPersistColumns = $condition;
+        $this->shouldPersistColumnsInStore = $condition;
         $this->columnsPersistenceStore = $persistenceStore;
         unset($this->persistenceStoreCache['columns']);
 
@@ -126,17 +129,22 @@ trait HasColumnManager
 
     public function persistsColumnsInSession(): bool
     {
-        return $this->shouldPersistColumns() && ($this->getColumnsPersistenceStore() instanceof SessionTablePersistenceStore);
+        return (bool) $this->evaluate($this->shouldPersistColumnsInSession);
     }
 
     public function shouldPersistColumns(): bool
     {
-        return (bool) $this->evaluate($this->shouldPersistColumns);
+        return $this->persistsColumnsInSession() || $this->shouldPersistColumnsInStore();
+    }
+
+    public function shouldPersistColumnsInStore(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPersistColumnsInStore);
     }
 
     public function getColumnsPersistenceStore(): TablePersistenceStore
     {
-        return $this->resolvePersistenceStore('columns', $this->columnsPersistenceStore);
+        return $this->resolvePersistenceStore('columns', $this->columnsPersistenceStore, $this->persistsColumnsInSession(), $this->shouldPersistColumnsInStore());
     }
 
     public function getColumnManagerResetActionPosition(): ColumnManagerResetActionPosition

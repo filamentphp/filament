@@ -116,6 +116,8 @@ describe('configuring table persistence', function (): void {
         $setter = "persist{$feature}InStore";
         $getter = "get{$feature}PersistenceStore";
 
+        $table->persistInSession(false);
+
         if ($setsDefaultFirst) {
             $table->persistenceStore($store)->{$setter}();
         } else {
@@ -132,7 +134,8 @@ describe('configuring table persistence', function (): void {
         $table->persistenceStore(null);
 
         expect($table->{$getter}())->toBeInstanceOf(SessionTablePersistenceStore::class)
-            ->and($table->{"persists{$feature}InSession"}())->toBeTrue();
+            ->and($table->{"persists{$feature}InSession"}())->toBeFalse()
+            ->and($table->{"shouldPersist{$feature}InStore"}())->toBeTrue();
     })->with(['Search', 'ColumnSearches', 'Filters', 'Sort', 'Group', 'Columns', 'RecordsPerPage'])->with([true, false]);
 
     it('lets `null` feature overrides inherit the table store', function (string $feature, bool $usesClosure): void {
@@ -141,7 +144,8 @@ describe('configuring table persistence', function (): void {
         $setter = "persist{$feature}InStore";
         $getter = "get{$feature}PersistenceStore";
 
-        $table->persistenceStore($store)
+        $table->persistInSession(false)
+            ->persistenceStore($store)
             ->{$setter}(persistenceStore: new ArrayTablePersistenceStoreForTesting)
             ->{$setter}(persistenceStore: $usesClosure ? static fn (): ?TablePersistenceStore => null : null);
 
@@ -153,7 +157,7 @@ describe('configuring table persistence', function (): void {
         expect($table->{$getter}())->toBe($replacementStore);
     })->with(['Search', 'ColumnSearches', 'Filters', 'Sort', 'Group', 'Columns', 'RecordsPerPage'])->with([true, false]);
 
-    it('keeps explicit feature stores and session pins when the default changes', function (string $feature): void {
+    it('keeps explicit feature stores independent of session settings and default changes', function (string $feature): void {
         $table = livewire(PersistenceStoreTableTestComponent::class)->instance()->getTable();
         $store = PersistenceStoreTableTestComponent::$store;
         $storeSetter = "persist{$feature}InStore";
@@ -161,7 +165,8 @@ describe('configuring table persistence', function (): void {
         $getter = "get{$feature}PersistenceStore";
         $sessionPredicate = "persists{$feature}InSession";
 
-        $table->{$storeSetter}(persistenceStore: $store)
+        $table->persistInSession(false)
+            ->{$storeSetter}(persistenceStore: $store)
             ->persistenceStore(new ArrayTablePersistenceStoreForTesting);
 
         expect($table->{$getter}())->toBe($store)
@@ -169,11 +174,15 @@ describe('configuring table persistence', function (): void {
 
         $table->{$sessionSetter}()->persistenceStore($store);
 
-        expect($table->{$getter}())->toBeInstanceOf(SessionTablePersistenceStore::class)
-            ->and($table->{$sessionPredicate}())->toBeTrue();
+        expect($table->{$sessionPredicate}())->toBeTrue()
+            ->and($table->{"shouldPersist{$feature}InStore"}())->toBeTrue();
+
+        $table->{$sessionSetter}(false);
+
+        expect($table->{$getter}())->toBe($store);
     })->with(['Search', 'ColumnSearches', 'Filters', 'Sort', 'Group', 'Columns', 'RecordsPerPage']);
 
-    it('lets the last route win, including evaluated `false` without reviving the older route', function (string $feature, bool $sessionLast, bool $enabled): void {
+    it('keeps destinations independent in either setter order with last call winning only within each destination', function (string $feature, bool $sessionLast, bool $sessionEnabled, bool $storeEnabled): void {
         $table = livewire(PersistenceStoreTableTestComponent::class)->instance()->getTable();
         $store = PersistenceStoreTableTestComponent::$store;
         $storeSetter = "persist{$feature}InStore";
@@ -182,27 +191,38 @@ describe('configuring table persistence', function (): void {
         $sessionPredicate = "persists{$feature}InSession";
         $getter = "get{$feature}PersistenceStore";
 
+        $table->{$sessionSetter}(! $sessionEnabled)
+            ->{$storeSetter}(! $storeEnabled, new ArrayTablePersistenceStoreForTesting);
+
         if ($sessionLast) {
-            $table->{$storeSetter}(persistenceStore: $store)
-                ->{$sessionSetter}(static fn (): bool => $enabled);
+            $table->{$storeSetter}(static fn (): bool => $storeEnabled, $store)
+                ->{$sessionSetter}(static fn (): bool => $sessionEnabled);
         } else {
-            $table->{$sessionSetter}()
-                ->{$storeSetter}(static fn (): bool => $enabled, $store);
+            $table->{$sessionSetter}(static fn (): bool => $sessionEnabled)
+                ->{$storeSetter}(static fn (): bool => $storeEnabled, $store);
         }
 
-        expect($table->{$predicate}())->toBe($enabled)
-            ->and($table->{$sessionPredicate}())->toBe($enabled && $sessionLast);
+        expect($table->{$predicate}())->toBe($sessionEnabled || $storeEnabled)
+            ->and($table->{$sessionPredicate}())->toBe($sessionEnabled)
+            ->and($table->{"shouldPersist{$feature}InStore"}())->toBe($storeEnabled);
 
-        if ($enabled) {
-            if ($sessionLast) {
-                expect($table->{$getter}())->toBeInstanceOf(SessionTablePersistenceStore::class);
-            } else {
-                expect($table->{$getter}())->toBe($store);
-            }
+        if ($storeEnabled && ! $sessionEnabled) {
+            expect($table->{$getter}())->toBe($store);
+        } elseif ($sessionEnabled && ! $storeEnabled) {
+            expect($table->{$getter}())->toBeInstanceOf(SessionTablePersistenceStore::class);
         }
-    })->with(['Search', 'ColumnSearches', 'Filters', 'Sort', 'Group', 'Columns', 'RecordsPerPage'])->with([true, false])->with([true, false]);
+    })->with(['Search', 'ColumnSearches', 'Filters', 'Sort', 'Group', 'Columns', 'RecordsPerPage'])->with([true, false])->with([true, false])->with([true, false]);
 
-    it('retains session-backed column and page-size defaults until explicitly opted into a store', function (): void {
+    it('defaults custom persistence off independently of session defaults', function (string $feature): void {
+        $table = livewire(PersistenceStoreTableTestComponent::class)->instance()->getTable();
+        $sessionEnabled = in_array($feature, ['Columns', 'RecordsPerPage']);
+
+        expect($table->{"shouldPersist{$feature}InStore"}())->toBeFalse()
+            ->and($table->{"persists{$feature}InSession"}())->toBe($sessionEnabled)
+            ->and($table->{"shouldPersist{$feature}"}())->toBe($sessionEnabled);
+    })->with(['Search', 'ColumnSearches', 'Filters', 'Sort', 'Group', 'Columns', 'RecordsPerPage']);
+
+    it('retains session-backed column and page-size defaults when custom persistence is enabled', function (): void {
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
             ->persistenceStore(PersistenceStoreTableTestComponent::$store);
 
@@ -228,17 +248,18 @@ describe('configuring table persistence', function (): void {
             ->persistRecordsPerPageInStore();
 
         livewire(PersistenceStoreTableTestComponent::class)
-            ->assertSet('tableRecordsPerPage', 10)
+            ->assertSet('tableRecordsPerPage', 5)
             ->set('tableRecordsPerPage', 5);
 
-        expect(PersistenceStoreTableTestComponent::$store->get($instance->getTablePerPageSessionKey()))->toBe(5);
+        expect(PersistenceStoreTableTestComponent::$store->get($instance->getTablePerPageSessionKey()))->toBe(5)
+            ->and(session()->get($instance->getTablePerPageSessionKey()))->toBe(5);
     });
 
-    it('does not resolve any store or access persisted data for disabled features', function (): void {
+    it('never resolves disabled custom stores whether session persistence is enabled or not', function (bool $sessionEnabled): void {
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
             ->persistenceStore(static fn (): TablePersistenceStore => throw new LogicException('Disabled table store was resolved.'))
-            ->persistInSession()
-            ->persistInStore(false, static fn (): TablePersistenceStore => throw new LogicException('Disabled feature store was resolved.'));
+            ->persistInSession($sessionEnabled)
+            ->persistInStore(static fn (): bool => false, static fn (): TablePersistenceStore => throw new LogicException('Disabled feature store was resolved.'));
 
         $component = livewire(PersistenceStoreTableTestComponent::class);
         $defaultColumns = $component->get('tableColumns');
@@ -252,16 +273,16 @@ describe('configuring table persistence', function (): void {
             ->call('applyTableColumnManager', $columns, true);
 
         livewire(PersistenceStoreTableTestComponent::class)
-            ->assertSet('tableSearch', '')
-            ->assertSet('tableColumnSearches', [])
-            ->assertSet('tableSort', null)
-            ->assertSet('tableGrouping', null)
-            ->assertSet('tableFilters.is_published.isActive', false)
-            ->assertSet('tableRecordsPerPage', 10)
-            ->assertSet('tableColumns', $defaultColumns);
+            ->assertSet('tableSearch', $sessionEnabled ? 'search' : '')
+            ->assertSet('tableColumnSearches', $sessionEnabled ? ['title' => 'column search'] : [])
+            ->assertSet('tableSort', $sessionEnabled ? 'title:desc' : null)
+            ->assertSet('tableGrouping', $sessionEnabled ? 'title:desc' : null)
+            ->assertSet('tableFilters.is_published.isActive', $sessionEnabled)
+            ->assertSet('tableRecordsPerPage', $sessionEnabled ? 5 : 10)
+            ->assertSet('tableColumns', $sessionEnabled ? $columns : $defaultColumns);
 
         expect(PersistenceStoreTableTestComponent::$store->values)->toBe([]);
-    });
+    })->with([true, false]);
 
     it('coherently resolves closures for feature writes and invalidates them on setters', function (bool $inheritsStore): void {
         $resolveStore = static function ($livewire, Table $table): TablePersistenceStore {
@@ -270,6 +291,7 @@ describe('configuring table persistence', function (): void {
             return new ArrayTablePersistenceStoreForTesting;
         };
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
+            ->persistInSession(false)
             ->persistInStore(false)
             ->persistenceStore($inheritsStore ? $resolveStore : null)
             ->persistSearchInStore(persistenceStore: $inheritsStore ? null : $resolveStore);
@@ -297,9 +319,10 @@ describe('configuring table persistence', function (): void {
 });
 
 describe('persisting and reloading table features', function (): void {
-    it('roundtrips all seven features and retains existing key overrides', function (string $componentClass): void {
+    it('roundtrips all seven features through custom-only or both destinations and retains key overrides', function (string $componentClass, bool $sessionEnabled): void {
         Post::factory()->count(3)->create();
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
+            ->persistInSession($sessionEnabled)
             ->persistInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
 
         $component = livewire($componentClass);
@@ -326,8 +349,15 @@ describe('persisting and reloading table features', function (): void {
 
         foreach ($expectedValues as $key => $value) {
             expect(PersistenceStoreTableTestComponent::$store->get($key))->toBe($value)
-                ->and(session()->exists($key))->toBeFalse();
+                ->and(session()->exists($key))->toBe($sessionEnabled);
+
+            if ($sessionEnabled) {
+                expect(session()->get($key))->toBe($value);
+            }
         }
+
+        // A fresh session must still restore every feature from the custom store.
+        session()->forget(array_keys($expectedValues));
 
         livewire($componentClass)
             ->assertSet('tableRecordsPerPage', 5)
@@ -342,7 +372,66 @@ describe('persisting and reloading table features', function (): void {
         LegacyFeatureKeysPersistenceTableTestComponent::class,
         LegacySharedKeyPersistenceTableTestComponent::class,
         SharedPersistenceKeyTableTestComponent::class,
-    ]);
+    ])->with([true, false]);
+
+    it('prefers existing session values over conflicting custom values for all seven features', function (): void {
+        PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
+            ->persistInSession()
+            ->persistInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
+        $component = livewire(PersistenceStoreTableTestComponent::class);
+        $instance = $component->instance();
+        $columns = array_reverse($component->get('tableColumns'));
+        $values = [
+            $instance->getTableSearchSessionKey() => ['session search', 'custom search'],
+            $instance->getTableColumnSearchesSessionKey() => [['title' => 'session column'], ['title' => 'custom column']],
+            $instance->getTableSortSessionKey() => ['title:desc', 'title:asc'],
+            $instance->getTableGroupingSessionKey() => ['title:desc', 'title:asc'],
+            $instance->getTableFiltersSessionKey() => [['is_published' => ['isActive' => true]], ['is_published' => ['isActive' => false]]],
+            $instance->getTablePerPageSessionKey() => [5, 10],
+            $instance->getTableColumnsSessionKey() => [$columns, $component->get('tableColumns')],
+            $instance->getHasReorderedTableColumnsSessionKey() => [true, false],
+        ];
+
+        foreach ($values as $key => [$sessionValue, $customValue]) {
+            session()->put($key, $sessionValue);
+            PersistenceStoreTableTestComponent::$store->put($key, $customValue);
+        }
+
+        livewire(PersistenceStoreTableTestComponent::class)
+            ->assertSet('tableSearch', 'session search')
+            ->assertSet('tableColumnSearches.title', 'session column')
+            ->assertSet('tableSort', 'title:desc')
+            ->assertSet('tableGrouping', 'title:desc')
+            ->assertSet('tableFilters.is_published.isActive', true)
+            ->assertSet('tableRecordsPerPage', 5)
+            ->assertSet('tableColumns', $columns);
+    });
+
+    it('treats stored session `null` as present instead of falling back to custom state', function (): void {
+        PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
+            ->defaultGroup('title')
+            ->persistInSession()
+            ->persistInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
+        $instance = livewire(PersistenceStoreTableTestComponent::class)->instance();
+
+        foreach ([
+            $instance->getTableSearchSessionKey() => 'custom search',
+            $instance->getTableColumnSearchesSessionKey() => ['title' => 'custom column'],
+            $instance->getTableSortSessionKey() => 'title:desc',
+            $instance->getTableGroupingSessionKey() => 'title:desc',
+            $instance->getTableFiltersSessionKey() => ['is_published' => ['isActive' => true]],
+        ] as $key => $value) {
+            session()->put($key, null);
+            PersistenceStoreTableTestComponent::$store->put($key, $value);
+        }
+
+        livewire(PersistenceStoreTableTestComponent::class)
+            ->assertSet('tableSearch', '')
+            ->assertSet('tableColumnSearches', [])
+            ->assertSet('tableSort', null)
+            ->assertSet('tableGrouping', null)
+            ->assertSet('tableFilters.is_published.isActive', false);
+    });
 
     it('preserves the existing key bytes when reading preexisting state', function (): void {
         $namespace = 'filament.tables.' . hash('sha256', PersistenceStoreTableTestComponent::class) . '.';
@@ -370,9 +459,9 @@ describe('persisting and reloading table features', function (): void {
         livewire(PersistenceStoreTableTestComponent::class)->assertSet('tableColumns', $columns);
     });
 
-    it('honors the last search setter on writes and fresh Livewire mounts', function (bool $sessionLast, bool $enabled): void {
+    it('independently disables either search destination on writes and fresh mounts', function (bool $sessionLast, bool $enabled): void {
         PersistenceStoreTableTestComponent::$configure = static function (Table $table) use ($sessionLast, $enabled): Table {
-            $table->persistInStore(false)->persistenceStore(PersistenceStoreTableTestComponent::$store);
+            $table->persistInSession(false)->persistInStore(false)->persistenceStore(PersistenceStoreTableTestComponent::$store);
 
             return $sessionLast
                 ? $table->persistSearchInStore()->persistSearchInSession(static fn (): bool => $enabled)
@@ -385,23 +474,28 @@ describe('persisting and reloading table features', function (): void {
         $otherStore = $sessionLast ? PersistenceStoreTableTestComponent::$store : app(SessionTablePersistenceStore::class);
 
         expect($selectedStore->exists($key))->toBe($enabled)
-            ->and($otherStore->exists($key))->toBeFalse();
+            ->and($otherStore->get($key))->toBe('selected route');
 
         if ($enabled) {
             expect($selectedStore->get($key))->toBe('selected route');
         }
 
         livewire(PersistenceStoreTableTestComponent::class)
-            ->assertSet('tableSearch', $enabled ? 'selected route' : '');
+            ->assertSet('tableSearch', 'selected route');
     })->with([true, false])->with([true, false]);
 
     it('independently reads and writes mixed session and custom destinations', function (bool $searchInSession): void {
         PersistenceStoreTableTestComponent::$configure = static function (Table $table) use ($searchInSession): Table {
-            $table->persistenceStore(PersistenceStoreTableTestComponent::$store)->persistInStore();
+            $table->persistInSession(false)->persistenceStore(PersistenceStoreTableTestComponent::$store)->persistInStore();
 
             return $searchInSession
-                ? $table->persistSearchInSession()->persistColumnsInSession()->persistRecordsPerPageInSession()
-                : $table->persistColumnSearchesInSession()->persistFiltersInSession()->persistSortInSession()->persistGroupInSession();
+                ? $table->persistSearchInSession()->persistSearchInStore(false)
+                    ->persistColumnsInSession()->persistColumnsInStore(false)
+                    ->persistRecordsPerPageInSession()->persistRecordsPerPageInStore(false)
+                : $table->persistColumnSearchesInSession()->persistColumnSearchesInStore(false)
+                    ->persistFiltersInSession()->persistFiltersInStore(false)
+                    ->persistSortInSession()->persistSortInStore(false)
+                    ->persistGroupInSession()->persistGroupInStore(false);
         };
 
         $component = livewire(PersistenceStoreTableTestComponent::class);
@@ -457,10 +551,12 @@ describe('persisting and reloading table features', function (): void {
     it('keeps an explicit feature store separate from both the table default and session', function (): void {
         $searchStore = new ArrayTablePersistenceStoreForTesting;
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
+            ->persistInSession(false)
             ->persistenceStore(PersistenceStoreTableTestComponent::$store)
             ->persistInStore()
             ->persistSearchInStore(persistenceStore: $searchStore)
-            ->persistFiltersInSession();
+            ->persistFiltersInSession()
+            ->persistFiltersInStore(false);
         $component = livewire(PersistenceStoreTableTestComponent::class);
         $instance = $component->instance();
         $searchKey = $instance->getTableSearchSessionKey();
@@ -492,7 +588,7 @@ describe('persisting and reloading table features', function (): void {
     it('uses the neutral columns key for session and custom stores', function (bool $inSession): void {
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $inSession
             ? $table
-            : $table->persistColumnsInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
+            : $table->persistColumnsInSession(false)->persistColumnsInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
 
         $component = livewire(ColumnsPersistenceKeyTableTestComponent::class);
         $columns = array_reverse($component->get('tableColumns'));
@@ -508,7 +604,7 @@ describe('persisting and reloading table features', function (): void {
     it('retains neutral and legacy column-loading extension hooks', function (string $componentClass, bool $inSession): void {
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $inSession
             ? $table->persistInSession()
-            : $table->persistInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
+            : $table->persistInSession(false)->persistInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
 
         livewire($componentClass)
             ->assertSet('tableColumns.0.name', 'title')
@@ -539,7 +635,7 @@ describe('persisting and reloading table features', function (): void {
         PersistenceStoreTableTestComponent::$configure = static function (Table $table) use ($inSession): Table {
             $table->persistenceStore(PersistenceStoreTableTestComponent::$store);
 
-            return $inSession ? $table->persistInSession() : $table->persistInStore();
+            return $inSession ? $table->persistInSession() : $table->persistInSession(false)->persistInStore();
         };
         $key = livewire(PersistenceStoreTableTestComponent::class)->instance()->getTablePerPageSessionKey();
         $selectedStore = $inSession ? app(SessionTablePersistenceStore::class) : PersistenceStoreTableTestComponent::$store;
@@ -552,6 +648,20 @@ describe('persisting and reloading table features', function (): void {
         expect($selectedStore->exists($key))->toBeFalse()
             ->and($otherStore->get($key))->toBe(10);
     })->with([true, false]);
+
+    it('forgets invalid page sizes from both enabled destinations', function (): void {
+        PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
+            ->persistInSession()
+            ->persistInStore(persistenceStore: PersistenceStoreTableTestComponent::$store);
+        $key = livewire(PersistenceStoreTableTestComponent::class)->instance()->getTablePerPageSessionKey();
+        session()->put($key, 7);
+        PersistenceStoreTableTestComponent::$store->put($key, 10);
+
+        livewire(PersistenceStoreTableTestComponent::class)->assertSet('tableRecordsPerPage', 5);
+
+        expect(session()->exists($key))->toBeFalse()
+            ->and(PersistenceStoreTableTestComponent::$store->exists($key))->toBeFalse();
+    });
 
     it('falls back to empty state when nullable features hold `null`', function (): void {
         PersistenceStoreTableTestComponent::$configure = static fn (Table $table): Table => $table
