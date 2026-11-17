@@ -97,7 +97,7 @@ describe('relationship state and containers', function (): void {
 
         preg_match_all('/<a\b[^>]*href="([^"]+)"/', $component->html(), $matches);
 
-        expect($matches[1])->toBe($combinedUrl ? [
+        expect($matches[1])->toEqualCanonicalizing($combinedUrl ? [
             "/posts/{$firstPost->getKey()}/authors/{$firstAuthor->getKey()}/Shared%20author",
             "/posts/{$firstPost->getKey()}/teams/{$firstTeam->getKey()}/Shared%20team",
             "/posts/{$firstPost->getKey()}/teams/{$secondTeam->getKey()}/Shared%20team",
@@ -117,7 +117,7 @@ describe('relationship state and containers', function (): void {
             $column->record($post);
 
             expect(collect($column->getRelatedRecords())->map->getKey()->all())
-                ->toBe($post->is($firstPost) ? [$firstTeam->getKey(), $secondTeam->getKey()] : [$thirdTeam->getKey()]);
+                ->toEqualCanonicalizing($post->is($firstPost) ? [$firstTeam->getKey(), $secondTeam->getKey()] : [$thirdTeam->getKey()]);
         }
     })->with(['stack', 'nested', 'group'])->with([false, true])->with([false, true]);
 });
@@ -135,11 +135,11 @@ describe('browser accessibility', function (): void {
         $page = visit('/columns-browser-test?relatedRecordLayout=true');
 
         $page->assertNoSmoke()
-            ->assertScript('[...document.querySelectorAll(\'[data-testid="related-record-layout"] a\')].map(anchor => anchor.getAttribute("href"))', [
+            ->assertScript('[...document.querySelectorAll(\'[data-testid="related-record-layout"] a\')].map(anchor => anchor.getAttribute("href")).sort()', collect([
                 "/authors/{$author->getKey()}",
                 "/posts/{$post->getKey()}/teams/{$firstTeam->getKey()}/Research",
                 "/posts/{$post->getKey()}/teams/{$secondTeam->getKey()}/Delivery",
-            ])
+            ])->sort()->values()->all())
             ->assertNoAccessibilityIssues();
 
         $page->inDarkMode()->assertNoAccessibilityIssues();

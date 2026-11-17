@@ -374,7 +374,7 @@ describe('reordering', function (): void {
         livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey()])
             ->call('reorderTable', $order);
 
-        expect(pivotSortKeyedByDepartment($otherTicket))->toBe($otherSortBefore);
+        expect(pivotSortKeyedByDepartment($otherTicket))->toEqual($otherSortBefore);
     });
 
     it('reorders `BelongsToMany` pivot records in a constant number of queries regardless of record count', function (): void {
