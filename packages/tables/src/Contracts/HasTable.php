@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Contracts;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Support\Contracts\TranslatableContentDriver;
@@ -15,7 +16,15 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use Livewire\Component;
 
+/**
+ * @mixin Component
+ *
+ * @method array<string> getGroupedSelectableTableRecordKeys(?string $group)
+ * @method array<array-key, array<string, mixed>> getTableSummarySelectedState(?Builder $query = null, ?Closure $modifyQueryUsing = null)
+ * @method bool shouldRenderTrailingGroupedTableSummary(Model | array<string, mixed> | null $lastRecord)
+ */
 interface HasTable
 {
     public function callTableColumnAction(string $name, string $recordKey): mixed;

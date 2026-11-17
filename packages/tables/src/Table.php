@@ -2,17 +2,19 @@
 
 namespace Filament\Tables;
 
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Contracts\HasTable;
 
-class Table extends ViewComponent
+class Table extends ViewComponent implements HasEmbeddedView
 {
     use HasDefaultDataFormattingSettings;
     use HasExtraAttributes;
     use Table\Concerns\BelongsToLivewire;
     use Table\Concerns\CanBeLazyLoaded;
+    use Table\Concerns\CanBeRendered;
     use Table\Concerns\CanBeStackedOnMobile;
     use Table\Concerns\CanBeStriped;
     use Table\Concerns\CanGroupRecords;
@@ -46,10 +48,7 @@ class Table extends ViewComponent
     use Table\Concerns\HasRecordUrl;
     use Table\Concerns\HasToolbarActions;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::index';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-tables::index';
 
     protected string $viewIdentifier = 'table';
 

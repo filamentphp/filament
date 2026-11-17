@@ -3,6 +3,7 @@
 namespace Filament\Support\View\Concerns;
 
 use BackedEnum;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
@@ -13,6 +14,7 @@ use Filament\Support\View\Components\LinkComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -20,11 +22,14 @@ use function Filament\Support\generate_loading_indicator_html;
 
 trait CanGenerateLinkHtml
 {
+    use InteractsWithLivewireRendering;
+
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      *
      * @param  string | array<string> | null  $badgeColor,
      * @param  string | array<string> | null  $color,
+     * @param  string | array<string> | null  $iconAlias
      * @param  array<string>  $keyBindings
      */
     public function generateLinkHtml(
@@ -39,7 +44,7 @@ trait CanGenerateLinkHtml
         ?bool $hasSpaMode = null,
         ?string $href = null,
         string | BackedEnum | Htmlable | null $icon = null,
-        ?string $iconAlias = null,
+        string | array | null $iconAlias = null,
         ?IconPosition $iconPosition = IconPosition::Before,
         IconSize | string | null $iconSize = null,
         bool $isDisabled = false,
@@ -52,7 +57,37 @@ trait CanGenerateLinkHtml
         string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
         string | FontWeight | null $weight = null,
+        bool $shouldCheckForPublishedView = false,
     ): string {
+        if ($shouldCheckForPublishedView && ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.link')) {
+            return view('filament::components.link', [
+                'attributes' => $attributes,
+                'badge' => $badge,
+                'badgeColor' => $badgeColor,
+                'badgeSize' => $badgeSize,
+                'color' => $color,
+                'disabled' => $isDisabled,
+                'form' => $form,
+                'formId' => $formId,
+                'href' => $href,
+                'icon' => $icon,
+                'iconAlias' => $iconAlias,
+                'iconPosition' => $iconPosition,
+                'iconSize' => $iconSize,
+                'keyBindings' => $keyBindings,
+                'labelSrOnly' => $isLabelSrOnly,
+                'loadingIndicator' => $hasLoadingIndicator,
+                'size' => $size,
+                'slot' => $label instanceof ComponentSlot ? $label : new ComponentSlot(e($label)),
+                'spaMode' => $hasSpaMode,
+                'tag' => $tag,
+                'target' => $target,
+                'tooltip' => $tooltip,
+                'type' => $type,
+                'weight' => $weight,
+            ])->render();
+        }
+
         $badgeColor ??= 'primary';
         $color ??= 'primary';
 
@@ -164,30 +199,44 @@ trait CanGenerateLinkHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
+            <?= $this->renderMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::Before) { ?>
+                <?= $this->renderMorphMarkerHtml() ?>
                 <?= $iconHtml ?>
+                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
                 <?= $loadingIndicatorHtml ?>
             <?php } ?>
+            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
 
+            <?= $this->renderMorphMarkerHtml() ?>
             <?php if (! $isLabelSrOnly) { ?>
                 <span class="fi-link-label">
                     <?= e($label) ?>
                 </span>
             <?php } ?>
+            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
 
+            <?= $this->renderMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::After) { ?>
+                <?= $this->renderMorphMarkerHtml() ?>
                 <?= $iconHtml ?>
+                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
                 <?= $loadingIndicatorHtml ?>
             <?php } ?>
+            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-link-badge-ctn">
+                    <?php if ($badge instanceof ComponentSlot) { ?>
+                        <?= e($badge) ?>
+                    <?php } else { ?>
                     <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>
                         <?= e($badge) ?>
                     </span>
+                    <?php } ?>
                 </div>
             <?php } ?>
         </<?= ($tag === 'form') ? 'button' : $tag ?>>

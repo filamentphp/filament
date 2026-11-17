@@ -17,6 +17,8 @@ trait CanReorderRecords
 
     protected bool | Closure $isReorderAuthorized = true;
 
+    protected ?bool $cachedIsReorderAuthorized = null;
+
     protected string | Closure | null $reorderColumn = null;
 
     protected string | Closure | null $reorderDirection = null;
@@ -64,6 +66,7 @@ trait CanReorderRecords
     public function authorizeReorder(bool | Closure $condition = true): static
     {
         $this->isReorderAuthorized = $condition;
+        $this->cachedIsReorderAuthorized = null;
 
         return $this;
     }
@@ -113,7 +116,7 @@ trait CanReorderRecords
 
     public function isReorderAuthorized(): bool
     {
-        return (bool) $this->evaluate($this->isReorderAuthorized);
+        return $this->cachedIsReorderAuthorized ??= (bool) $this->evaluate($this->isReorderAuthorized);
     }
 
     /**

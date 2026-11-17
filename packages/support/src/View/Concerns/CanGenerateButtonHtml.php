@@ -3,6 +3,7 @@
 namespace Filament\Support\View\Concerns;
 
 use BackedEnum;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
@@ -12,6 +13,7 @@ use Filament\Support\View\Components\ButtonComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -19,11 +21,14 @@ use function Filament\Support\generate_loading_indicator_html;
 
 trait CanGenerateButtonHtml
 {
+    use InteractsWithLivewireRendering;
+
     /**
-     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
      *
      * @param  string | array<string> | null  $badgeColor,
      * @param  string | array<string> | null  $color,
+     * @param  string | array<string> | null  $iconAlias
      * @param  array<string>  $keyBindings
      */
     public function generateButtonHtml(
@@ -38,7 +43,7 @@ trait CanGenerateButtonHtml
         ?bool $hasSpaMode = null,
         ?string $href = null,
         string | BackedEnum | Htmlable | null $icon = null,
-        ?string $iconAlias = null,
+        string | array | null $iconAlias = null,
         ?IconPosition $iconPosition = IconPosition::Before,
         IconSize | string | null $iconSize = null,
         bool $isDisabled = false,
@@ -52,7 +57,38 @@ trait CanGenerateButtonHtml
         ?string $target = null,
         string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
+        bool $shouldCheckForPublishedView = false,
     ): string {
+        if ($shouldCheckForPublishedView && ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.button.index')) {
+            return view('filament::components.button.index', [
+                'attributes' => $attributes,
+                'badge' => $badge,
+                'badgeColor' => $badgeColor,
+                'badgeSize' => $badgeSize,
+                'color' => $color,
+                'disabled' => $isDisabled,
+                'form' => $form,
+                'formId' => $formId,
+                'href' => $href,
+                'icon' => $icon,
+                'iconAlias' => $iconAlias,
+                'iconPosition' => $iconPosition,
+                'iconSize' => $iconSize,
+                'keyBindings' => $keyBindings,
+                'labeledFrom' => $labeledFromBreakpoint,
+                'labelSrOnly' => $isLabelSrOnly,
+                'loadingIndicator' => $hasLoadingIndicator,
+                'outlined' => $isOutlined,
+                'size' => $size,
+                'slot' => $label instanceof ComponentSlot ? $label : new ComponentSlot(e($label)),
+                'spaMode' => $hasSpaMode,
+                'tag' => $tag,
+                'target' => $target,
+                'tooltip' => $tooltip,
+                'type' => $type,
+            ])->render();
+        }
+
         $badgeColor ??= 'primary';
         $color ??= 'primary';
 
@@ -161,6 +197,7 @@ trait CanGenerateButtonHtml
 
         ob_start(); ?>
 
+        <?= $this->renderMorphMarkerHtml() ?>
         <?php if ($labeledFromBreakpoint) { ?>
             <?= $this->generateIconButtonHtml(
                 attributes: $iconButtonAttributes,
@@ -184,8 +221,10 @@ trait CanGenerateButtonHtml
                 target: $target,
                 tooltip: $tooltip,
                 type: $type,
+                shouldCheckForPublishedView: $shouldCheckForPublishedView,
             ) ?>
         <?php } ?>
+        <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
 
         <?= ($tag === 'form') ? ('<form ' . $formAttributes->toHtml() . '>' . csrf_field()) : '' ?>
 
@@ -210,12 +249,17 @@ trait CanGenerateButtonHtml
             <?php } ?>
             <?= $buttonAttributes->toHtml() ?>
         >
+            <?= $this->renderMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::Before) { ?>
+                <?= $this->renderMorphMarkerHtml() ?>
                 <?= $iconHtml ?>
+                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
                 <?= $loadingIndicatorHtml ?>
                 <?= $formProcessingLoadingIndicatorHtml ?>
             <?php } ?>
+            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
 
+            <?= $this->renderMorphMarkerHtml() ?>
             <?php if (! $isLabelSrOnly) { ?>
                 <?php if ($hasFormProcessingLoadingIndicator) { ?>
                     <span x-show="! isProcessing">
@@ -233,21 +277,30 @@ trait CanGenerateButtonHtml
                     x-text="processingMessage"
                 ></span>
             <?php } ?>
+            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
 
+            <?= $this->renderMorphMarkerHtml() ?>
             <?php if ($iconPosition === IconPosition::After) { ?>
+                <?= $this->renderMorphMarkerHtml() ?>
                 <?= $iconHtml ?>
+                <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
                 <?= $loadingIndicatorHtml ?>
                 <?= $formProcessingLoadingIndicatorHtml ?>
             <?php } ?>
+            <?= $this->renderMorphMarkerHtml(isEnd: true) ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-btn-badge-ctn">
+                    <?php if ($badge instanceof ComponentSlot) { ?>
+                        <?= e($badge) ?>
+                    <?php } else { ?>
                     <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>
                         <?= e($badge) ?>
                     </span>
+                    <?php } ?>
                 </div>
             <?php } ?>
         </<?= ($tag === 'form') ? 'button' : $tag ?>>
