@@ -402,6 +402,8 @@ public function table(Table $table): Table
 
 The query also limits which records a bulk action receives. If you use both methods, a record must satisfy both to be selectable.
 
+The callback is scoped to a nested `where()` clause, so you may use `orWhere()` without overriding the table's existing constraints. Use it to add `where()` conditions or relationship constraints such as `whereHas()`, not to change the selected columns, joins, ordering, or pagination.
+
 ### Limiting the number of selectable records
 
 You may restrict how many records the user can select in total:

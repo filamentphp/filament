@@ -99,7 +99,7 @@ trait HasBulkActions
      */
     public function isRecordSelectable(Model | array $record): bool
     {
-        if (($record instanceof Model) && $this->hasSelectableRecordsQuery() && (! $this->getLivewire()->isTableRecordSelectableByQuery($record))) {
+        if (($record instanceof Model) && $this->hasSelectableRecordsQuery() && (! $this->getLivewire()->isTableRecordSelectableUsingQuery($record))) {
             return false;
         }
 
@@ -176,9 +176,11 @@ trait HasBulkActions
             return $query;
         }
 
-        return $this->evaluate($this->modifySelectableRecordsQueryUsing, [
-            'query' => $query,
-        ]) ?? $query;
+        return $query->where(function (Builder $query): void {
+            $this->evaluate($this->modifySelectableRecordsQueryUsing, [
+                'query' => $query,
+            ]);
+        });
     }
 
     public function recordCheckboxPosition(RecordCheckboxPosition | Closure | null $position = null): static

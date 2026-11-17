@@ -37,7 +37,7 @@ trait HasBulkActions
     /**
      * @var array<string, bool>
      */
-    protected array $cachedSelectableTableRecordKeys = [];
+    protected array $cachedTableRecordSelectabilityUsingQuery = [];
 
     /**
      * @deprecated Use the `callMountedAction()` method instead.
@@ -120,7 +120,7 @@ trait HasBulkActions
             $query = $this->applyPivotRecordKeyToTableQuery($query);
         }
 
-        if (! $this->shouldCheckEachTableRecordIsSelectable()) {
+        if (! $this->shouldCheckIndividualTableRecordSelectability()) {
             if (! $this->getTable()->hasQuery()) {
                 /** @phpstan-ignore-next-line */
                 return $this->getTableRecords()->keys()->all();
@@ -207,7 +207,7 @@ trait HasBulkActions
             $query = $this->applyPivotRecordKeyToTableQuery($query);
         }
 
-        if (! $this->shouldCheckEachTableRecordIsSelectable()) {
+        if (! $this->shouldCheckIndividualTableRecordSelectability()) {
             if ($this->getTable()->selectsCurrentPageOnly()) {
                 $records = $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group); /** @phpstan-ignore method.notFound */
@@ -246,7 +246,7 @@ trait HasBulkActions
     #[Unexposed]
     public function getAllSelectableTableRecordsCount(): int
     {
-        if ($this->shouldCheckEachTableRecordIsSelectable()) {
+        if ($this->shouldCheckIndividualTableRecordSelectability()) {
             /** @var Collection $records */
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords() :
@@ -264,7 +264,7 @@ trait HasBulkActions
         }
 
         if ($this->getTable()->hasSelectableRecordsQuery()) {
-            return $this->getTable()->modifySelectableRecordsQuery($this->getFilteredTableQuery())->count();
+            return $this->getTable()->modifySelectableRecordsQuery($this->getFilteredTableQuery())->toBase()->getCountForPagination();
         }
 
         if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
@@ -480,7 +480,7 @@ trait HasBulkActions
     }
 
     #[Unexposed]
-    public function isTableRecordSelectableByQuery(Model $record): bool
+    public function isTableRecordSelectableUsingQuery(Model $record): bool
     {
         $table = $this->getTable();
 
@@ -490,8 +490,8 @@ trait HasBulkActions
 
         $key = (string) $this->getTableRecordKey($record);
 
-        if (array_key_exists($key, $this->cachedSelectableTableRecordKeys)) {
-            return $this->cachedSelectableTableRecordKeys[$key];
+        if (array_key_exists($key, $this->cachedTableRecordSelectabilityUsingQuery)) {
+            return $this->cachedTableRecordSelectabilityUsingQuery[$key];
         }
 
         $keys = $this->cachedTableRecords?->map(fn (Model $record): string => (string) $this->getTableRecordKey($record))->values()->all() ?? [];
@@ -500,27 +500,41 @@ trait HasBulkActions
             $keys = [$key];
         }
 
-        $query = $table->getQuery();
+        $query = $table->withAppliedFiltersFormState(function () use ($table): Builder {
+            $query = $table->getQuery();
+
+            foreach ($table->getFilters() as $filter) {
+                $filter->applyToBaseQuery($query, $this->getTableFilterState($filter->getName()) ?? []);
+            }
+
+            return $query;
+        });
+
         $qualifiedKeyName = $table->hasPivotRecordKeys() ?
             $this->getQualifiedTablePivotKeyName() :
             $query->getModel()->getQualifiedKeyName();
 
         $query->whereIn($qualifiedKeyName, $keys);
 
-        $selectableKeys = array_flip($table->modifySelectableRecordsQuery($query)
+        $query = $table->modifySelectableRecordsQuery($query)->applyScopes()->withoutGlobalScopes();
+        $query->getQuery()->limit = null;
+        $query->getQuery()->offset = null;
+        $query->addSelect("{$qualifiedKeyName} as filament_selectable_record_key");
+
+        $selectableKeys = array_flip($query
             ->toBase()
-            ->pluck($qualifiedKeyName)
+            ->pluck('filament_selectable_record_key')
             ->map(fn ($key): string => (string) $key)
             ->all());
 
         foreach ($keys as $resolvedKey) {
-            $this->cachedSelectableTableRecordKeys[$resolvedKey] = array_key_exists($resolvedKey, $selectableKeys);
+            $this->cachedTableRecordSelectabilityUsingQuery[$resolvedKey] = array_key_exists($resolvedKey, $selectableKeys);
         }
 
-        return $this->cachedSelectableTableRecordKeys[$key];
+        return $this->cachedTableRecordSelectabilityUsingQuery[$key];
     }
 
-    protected function shouldCheckEachTableRecordIsSelectable(): bool
+    protected function shouldCheckIndividualTableRecordSelectability(): bool
     {
         $table = $this->getTable();
 
