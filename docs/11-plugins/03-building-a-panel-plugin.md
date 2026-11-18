@@ -6,7 +6,7 @@ title: Build a panel plugin
 
 In this walkthrough, you'll build a plugin that adds a clock widget to a panel.
 
-You can find the original plugin at [awcodes/clock-widget](https://github.com/awcodes/clock-widget). The examples below use Filament 4 APIs.
+You can find the original plugin at [awcodes/clock-widget](https://github.com/awcodes/clock-widget).
 
 ## Preface
 
