@@ -18,6 +18,7 @@
 @import './components/text-input.css' layer(components);
 @import './components/textarea.css' layer(components);
 @import './components/toggle-buttons.css' layer(components);
+@import './components/toggle.css' layer(components);
 
 @layer utilities {
     .fi-fo-rich-editor .tiptap {

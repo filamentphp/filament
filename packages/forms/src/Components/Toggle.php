@@ -124,7 +124,7 @@ class Toggle extends Field implements HasEmbeddedView
 
         return $this->wrapEmbeddedHtml(
             $toggleHtml,
-            inlineLabelVerticalAlignment: VerticalAlignment::Center,
+            extraWrapperAttributes: ['class' => 'fi-fo-toggle-wrp'],
         );
     }
 

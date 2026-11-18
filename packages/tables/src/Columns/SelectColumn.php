@@ -392,9 +392,17 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     #[Renderless]
     public function getOptionLabel(bool $withDefault = true): ?string
     {
+        return $this->resolveOptionLabel($withDefault);
+    }
+
+    /**
+     * @param  array<string | array<string>> | null  $options  The options when they're already evaluated for this record, so they aren't evaluated again.
+     */
+    protected function resolveOptionLabel(bool $withDefault = true, ?array $options = null): ?string
+    {
         if (! $this->getOptionLabelUsing) {
             $state = $this->getState();
-            $options = $this->getOptions();
+            $options ??= $this->getOptions();
 
             if ($state instanceof BackedEnum) {
                 $state = $state->value;
@@ -958,8 +966,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $recordKey = $this->getRecordKey();
         $state = $this->getState();
         $relatedRecord = $this->getRelatedRecord();
-        $optionLabel = $this->getOptionLabel();
-        $optionsForJs = $isNative ? [] : $this->getOptionsForJs();
+        // Reuse the options evaluated above: a closure, such as a query, would otherwise run 2 or 3 times for every cell.
+        $optionLabel = $this->resolveOptionLabel(options: $options);
+        $optionsForJs = $isNative ? [] : $this->transformOptionsForJs($options);
 
         if ((! $isNative) && filled($state)) {
             $value = (string) (($state instanceof BackedEnum) ? $state->value : $state);
