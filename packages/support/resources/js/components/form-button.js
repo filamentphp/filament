@@ -20,15 +20,15 @@ export default () => ({
 
         const { signal } = this.eventListenersController
 
-        this.isLoading = this.$el.hasAttribute('data-loading')
+        this.isLoading = this.$el.classList.contains('fi-disabled')
 
         this.loadingObserver = new MutationObserver(() => {
-            this.isLoading = this.$el.hasAttribute('data-loading')
+            this.isLoading = this.$el.classList.contains('fi-disabled')
         })
 
         this.loadingObserver.observe(this.$el, {
             attributes: true,
-            attributeFilter: ['data-loading'],
+            attributeFilter: ['class'],
         })
 
         this.form?.addEventListener(
