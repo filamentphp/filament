@@ -275,7 +275,7 @@ trait HasCellState
         } else {
             $name = $this->getName();
 
-            if (! str($name)->contains('.')) {
+            if (! str_contains($name, '.')) {
                 return null;
             }
 
