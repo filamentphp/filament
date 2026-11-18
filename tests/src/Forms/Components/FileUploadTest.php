@@ -2337,6 +2337,46 @@ describe('browser rendering', function (): void {
             },
         );
     });
+
+    it('prevents submitting while an asynchronously loaded avatar is still uploading', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $avatar = json_encode(base64_encode(UploadedFile::fake()->image('avatar.png', 400, 400)->getContent()));
+
+        $page = visit('/file-upload-browser-test');
+        $browser = $page->page();
+        $browser->context()->addInitScript(file_get_contents(__DIR__ . '/../../../resources/js/file-upload-processing.js'));
+        $browser->goto($browser->url());
+
+        try {
+            $page->assertPresent('[data-testid="avatar-upload"] input[type="file"]');
+            $page->script(<<<JS
+                const avatar = new File([Uint8Array.from(atob({$avatar}), character => character.charCodeAt(0))], 'avatar.png', { type: 'image/png' });
+                const selection = new DataTransfer();
+                selection.items.add(avatar);
+                const input = document.querySelector('[data-testid="avatar-upload"] input[type="file"]');
+                input.files = selection.files;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                JS);
+            $page->assertScript('window.uploadProcessingTest.admissionObserved && !!window.uploadProcessingTest.releaseAdmission');
+            $page->script('window.uploadProcessingTest.releaseAdmission()');
+            $page->assertScript('Object.keys(window.uploadProcessingTest.requests).length', 1);
+
+            // A forced pointer click bypasses Playwright's `aria-disabled` check, not the native submit guard.
+            $browser->locator('button[form="upload-form"]')->click(['force' => true]);
+            // Observe the outcome briefly; `aria-busy` also catches a missed start independently of response timing.
+            $page->script('new Promise(resolve => setTimeout(resolve, 500))');
+            $page->assertScript('document.querySelector("[data-testid=saved-data]").textContent', 'null');
+            $page->assertAttribute('button[form="upload-form"]', 'aria-busy', 'true');
+
+            $browser->locator('[data-testid="avatar-upload"]')->getByRole('button', ['name' => 'Cancel', 'exact' => true])->click();
+            $page->assertScript('Object.keys(window.uploadProcessingTest.requests).length', 0);
+            $page->press('Save');
+            $page->assertScript('JSON.parse(document.querySelector("[data-testid=saved-data]").textContent)?.attachment?.length', 0);
+        } finally {
+            $page->script('window.uploadProcessingTest.cleanup()');
+        }
+    });
 });
 
 class RenderFileUploadWithAvatar extends Livewire
