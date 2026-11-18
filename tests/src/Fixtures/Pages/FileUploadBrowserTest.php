@@ -19,8 +19,6 @@ class FileUploadBrowserTest extends Page
 
     public ?array $data = [];
 
-    public ?array $savedData = null;
-
     public function mount(): void
     {
         $this->form->fill();
@@ -45,16 +43,12 @@ class FileUploadBrowserTest extends Page
                             'url' => "https://cdn.example.com/{$file}?signature=" . Str::random(),
                         ];
                     }),
-                FileUpload::make('avatar')
-                    ->avatar()
-                    ->image()
-                    ->extraAttributes(['data-testid' => 'avatar-upload']),
             ])
             ->statePath('data');
     }
 
     public function save(): void
     {
-        $this->savedData = $this->form->getState();
+        $this->form->getState();
     }
 }

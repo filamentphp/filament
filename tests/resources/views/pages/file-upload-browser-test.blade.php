@@ -5,5 +5,4 @@
             Save
         </x-filament::button>
     </form>
-    <output data-testid="saved-data">{{ json_encode($savedData) }}</output>
 </x-filament-panels::page>
