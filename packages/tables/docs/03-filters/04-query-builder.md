@@ -194,6 +194,44 @@ DateConstraint::make('published_at')
     ->time()
 ```
 
+#### Filtering indexed date columns
+
+On MySQL, MariaDB, and PostgreSQL, the date-only `isAfter`, `isBefore`, `isDate`, and `isYear` operators, including their inverses, compare the column with date boundaries instead of extracting its date or year. This allows the database to use an ordinary index on the column. Date range queries are enabled by default. The `isMonth` operator still extracts the month, since it matches the same month across all years. Time-based comparisons enabled by `time()` are unchanged.
+
+Range comparisons expect valid dates in native date or datetime columns. For PostgreSQL timezone-aware columns, a UTC database connection timezone avoids ambiguous midnight boundaries. If filtering must follow a non-UTC connection timezone exactly, use date extraction as described below.
+
+> [!WARNING]
+> Range comparisons can return different results from date or year extraction for incomplete or invalid MySQL/MariaDB dates, such as `2024-00-00` or `2024-02-30`, which can exist in legacy data or databases using permissive SQL modes. PostgreSQL timezone-aware columns can also match different records around historical midnight timezone transitions when the database connection uses a non-UTC timezone.
+>
+> Normalize invalid stored dates and review your database connection timezone before relying on range comparisons. If your application needs the database's date extraction behavior for these cases, use `dateQueriesUsingRanges(false)`.
+
+SQLite and SQL Server continue to use date and year extraction, preserving their handling of stored timezone offsets. Other database connections, nonstandard search dates, and years outside the portable range also retain extraction rather than generating potentially invalid boundaries.
+
+##### Using date extraction
+
+You can disable date range queries using `dateQueriesUsingRanges(false)`. The affected operators then use Laravel's `whereDate()` and `whereYear()` methods, restoring the database's date and year extraction behavior:
+
+```php
+use Filament\QueryBuilder\Constraints\DateConstraint;
+
+DateConstraint::make('published_at')
+    ->dateQueriesUsingRanges(false)
+```
+
+This does not select or convert timezones. On PostgreSQL, date extraction from timezone-aware columns uses the database connection timezone. You may also pass a closure to `dateQueriesUsingRanges()` to determine whether to use ranges dynamically.
+
+To disable date range queries globally, call `configureUsing()` in your service provider's `boot()` method. You can enable ranges for an individual constraint using `dateQueriesUsingRanges()`:
+
+```php
+use Filament\QueryBuilder\Constraints\DateConstraint;
+
+DateConstraint::configureUsing(static function (DateConstraint $constraint): void {
+    $constraint->dateQueriesUsingRanges(false);
+});
+```
+
+Date extraction queries may require a matching expression or computed-column index instead of an ordinary column index. PostgreSQL supports expression indexes on date casts and year extraction for timestamps without timezones. A date cast of a timezone-aware timestamp depends on the connection timezone and cannot be indexed directly. A fixed-timezone expression can be indexed, but Laravel's `whereDate()` does not generate that expression automatically. If you already have an expression index for date extraction, either retain extraction with `dateQueriesUsingRanges(false)` or add an ordinary column index for range queries.
+
 ### Select constraints
 
 Select constraints allow you to filter fields using a select field. They can be used to filter any field, including via relationships.
