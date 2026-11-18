@@ -269,9 +269,9 @@ class Column extends ViewComponent
                     wire:target="<?= e($wireClickAction) ?>"
                 <?php } ?>
                 class="<?= Arr::toCssClasses([
-                        'fi-ta-col',
-                        'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
-                    ]) ?>"
+                    'fi-ta-col',
+                    'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
+                ]) ?>"
             >
                 <?= $this->toHtml() ?>
             </<?= $wrapperTag ?>>
