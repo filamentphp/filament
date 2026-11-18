@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint\DateUnit;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\Concerns\CanQueryDateRanges;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\FusedGroup;
@@ -18,6 +19,8 @@ use Illuminate\Support\Carbon;
 
 class IsAfterOperator extends Operator
 {
+    use CanQueryDateRanges;
+
     public function getName(): string
     {
         return 'isAfter';
@@ -200,7 +203,7 @@ class IsAfterOperator extends Operator
                 return $query->where($qualifiedColumn, $this->isInverse() ? '<' : '>=', $dateTime);
             }
 
-            return $query->whereDate($qualifiedColumn, $this->isInverse() ? '<' : '>=', $dateTime);
+            return $this->whereDateUsingRange($query, $qualifiedColumn, $this->isInverse() ? '<' : '>=', $dateTime);
         }
 
         $date = $this->getDateSetting('date');
@@ -214,7 +217,7 @@ class IsAfterOperator extends Operator
             return $query->where($qualifiedColumn, $this->isInverse() ? '<' : '>=', $date);
         }
 
-        return $query->whereDate($qualifiedColumn, $this->isInverse() ? '<' : '>=', $date);
+        return $this->whereDateUsingRange($query, $qualifiedColumn, $this->isInverse() ? '<' : '>=', $date);
     }
 
     /**

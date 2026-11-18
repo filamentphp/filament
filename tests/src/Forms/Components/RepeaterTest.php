@@ -1339,6 +1339,37 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
             ]);
     });
 
+    it('updates the disabled options when a sibling repeater item changes', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')
+                            ->options(['A' => 'A', 'B' => 'B', 'C' => 'C'])
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => 'A'], ['choice' => 'B']]]);
+
+        expect($schema->getComponentByStatePath('items.0.choice', withHidden: true)->getEnabledOptions())->toBe([
+            'A' => 'A',
+            'C' => 'C',
+        ]);
+
+        $schema->fill(['items' => [['choice' => 'A'], ['choice' => 'C'], ['choice' => null]]]);
+
+        expect($schema->getComponentByStatePath('items.0.choice', withHidden: true)->getEnabledOptions())->toBe([
+            'A' => 'A',
+            'B' => 'B',
+        ])
+            ->and($schema->getComponentByStatePath('items.2.choice', withHidden: true)->getEnabledOptions())->toBe([
+                'B' => 'B',
+            ]);
+    });
+
     it('can validate enum defaults for multiple fields', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
