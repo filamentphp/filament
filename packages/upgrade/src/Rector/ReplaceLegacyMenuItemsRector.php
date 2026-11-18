@@ -178,7 +178,10 @@ class ReplaceLegacyMenuItemsRector extends AbstractRector
                 'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                 default => $method,
             };
-            $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+            $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                'hidden', 'visible', 'openUrlInNewTab' => true,
+                default => null,
+            };
         }
     }
     return static function (ACTION_PARAMETER) use ($configuration): \Filament\Actions\Action {

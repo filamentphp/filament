@@ -70,7 +70,10 @@ function register(Panel $panel): void
                             'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                             default => $method,
                         };
-                        $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                        $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                            'hidden', 'visible', 'openUrlInNewTab' => true,
+                            default => null,
+                        };
                     }
                 }
                 return static function (Action $action) use ($configuration): Action {
@@ -96,7 +99,10 @@ function register(Panel $panel): void
                             'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                             default => $method,
                         };
-                        $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                        $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                            'hidden', 'visible', 'openUrlInNewTab' => true,
+                            default => null,
+                        };
                     }
                 }
                 return static function () use ($configuration): Action {
@@ -124,7 +130,10 @@ function register(Panel $panel): void
                             'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                             default => $method,
                         };
-                        $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                        $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                            'hidden', 'visible', 'openUrlInNewTab' => true,
+                            default => null,
+                        };
                     }
                 }
                 return static function () use ($configuration): Action {
@@ -150,7 +159,10 @@ function register(Panel $panel): void
                             'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                             default => $method,
                         };
-                        $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                        $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                            'hidden', 'visible', 'openUrlInNewTab' => true,
+                            default => null,
+                        };
                     }
                 }
                 return static function (Action $action) use ($configuration): Action {
@@ -179,7 +191,10 @@ function register(Panel $panel): void
                         'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                         default => $method,
                     };
-                    $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                    $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                        'hidden', 'visible', 'openUrlInNewTab' => true,
+                        default => null,
+                    };
                 }
             }
             return static function (Action $action) use ($configuration): Action {
@@ -205,7 +220,10 @@ function register(Panel $panel): void
                         'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                         default => $method,
                     };
-                    $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                    $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                        'hidden', 'visible', 'openUrlInNewTab' => true,
+                        default => null,
+                    };
                 }
             }
             return static function (Action $action) use ($configuration): Action {
@@ -242,7 +260,10 @@ function legacyRegistration(): void
                     'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                     default => $method,
                 };
-                $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                    'hidden', 'visible', 'openUrlInNewTab' => true,
+                    default => null,
+                };
             }
         }
         return static function () use ($configuration): Action {
@@ -273,7 +294,10 @@ function manual(Panel $panel, string $label): void
                         'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                         default => $method,
                     };
-                    $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                    $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                        'hidden', 'visible', 'openUrlInNewTab' => true,
+                        default => null,
+                    };
                 }
             }
             return static function () use ($configuration): Action {
@@ -299,7 +323,10 @@ function manual(Panel $panel, string $label): void
                         'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                         default => $method,
                     };
-                    $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                    $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                        'hidden', 'visible', 'openUrlInNewTab' => true,
+                        default => null,
+                    };
                 }
             }
             return static function () use ($configuration): Action {

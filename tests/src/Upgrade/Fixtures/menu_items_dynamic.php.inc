@@ -76,7 +76,10 @@ function register(Panel $panel, array &$events, bool &$hidden, string &$label): 
                         'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                         default => $method,
                     };
-                    $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                    $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                        'hidden', 'visible', 'openUrlInNewTab' => true,
+                        default => null,
+                    };
                 }
             }
             return static function (Action $action) use ($configuration): Action {
@@ -118,7 +121,10 @@ function register(Panel $panel, array &$events, bool &$hidden, string &$label): 
                         'hidden', 'visible', 'openUrlInNewTab' => 'condition',
                         default => $method,
                     };
-                    $configuration[$method] = $arguments[$parameter] ?? (in_array($method, ['hidden', 'visible', 'openUrlInNewTab'], true) ? true : null);
+                    $configuration[$method] = $arguments[$parameter] ?? match ($method) {
+                        'hidden', 'visible', 'openUrlInNewTab' => true,
+                        default => null,
+                    };
                 }
             }
             return static function () use ($configuration): Action {
