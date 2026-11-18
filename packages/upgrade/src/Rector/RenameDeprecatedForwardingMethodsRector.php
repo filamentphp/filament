@@ -85,7 +85,6 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassLike;
-use PhpParser\Node\UnionType;
 use PhpParser\NodeFinder;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -552,19 +551,18 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 if (TypeCombinator::union(new IntegerType, new FloatType)->isSuperTypeOf($argumentType)->yes()) {
                     $argument->value = new StringCast($argument->value);
                 } elseif (! TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($argumentType)->yes()) {
-                    // Match the legacy parameter's validation, evaluating mixed values once
-                    // and coercing only numbers without consuming closures or null resets.
-                    $argument->value = new FuncCall(new ArrowFunction([
+                    $value = $argument->value instanceof Variable ? $argument->value : new Variable('indicator');
+                    $converted = new Ternary(
+                        new BooleanOr(new FuncCall(new FullyQualified('is_int'), [new Arg($value)]), new FuncCall(new FullyQualified('is_float'), [new Arg($value)])),
+                        new StringCast($value),
+                        $value,
+                    );
+
+                    // Only capture expressions that would otherwise run repeatedly.
+                    $argument->value = $argument->value instanceof Variable ? $converted : new FuncCall(new ArrowFunction([
                         'static' => true,
-                        'params' => [new Param(new Variable('indicator'), type: new UnionType([
-                            new Identifier('string'), new Identifier('int'), new Identifier('float'), new FullyQualified(Closure::class), new Identifier('null'),
-                        ]))],
-                        'returnType' => new UnionType([new Identifier('string'), new FullyQualified(Closure::class), new Identifier('null')]),
-                        'expr' => new Ternary(
-                            new BooleanOr(new FuncCall(new FullyQualified('is_int'), [new Arg(new Variable('indicator'))]), new FuncCall(new FullyQualified('is_float'), [new Arg(new Variable('indicator'))])),
-                            new StringCast(new Variable('indicator')),
-                            new Variable('indicator'),
-                        ),
+                        'params' => [new Param($value)],
+                        'expr' => $converted,
                     ]), [new Arg($argument->value)]);
                 }
             }

@@ -7,11 +7,9 @@ use Filament\Actions\ExportBulkAction;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\ClosureUse;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
@@ -23,6 +21,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\Float_;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
@@ -75,23 +74,40 @@ class RemoveExportActionCsvDelimiterRector extends AbstractRector
         $isInert = $delimiter instanceof String_ || $delimiter instanceof Int_ || $delimiter instanceof Float_ || $delimiter instanceof ConstFetch || $delimiter instanceof Closure || $delimiter instanceof ArrowFunction || ($delimiter instanceof Variable && is_string($delimiter->name));
         $hasNullsafeReceiver = (new NodeFinder)->findFirst([$receiver], static fn (Node $expression): bool => $expression instanceof NullsafeMethodCall || $expression instanceof NullsafePropertyFetch) !== null;
 
-        if ($node instanceof NullsafeMethodCall || $hasNullsafeReceiver) {
-            // Keep native nullsafe short-circuiting for the rest of the fluent
-            // chain. `tap()` returns the action without configuring its exporter.
-            $callback = new ArrowFunction(['static' => true, 'expr' => new ConstFetch(new Name('null'))]);
-
-            if (! $isInert) {
-                $callback = new ArrayDimFetch(new Array_([new ArrayItem($delimiter), new ArrayItem($callback)]), new Int_(1));
-            }
-
-            return new NullsafeMethodCall($receiver, 'tap', [new Arg($callback)]);
+        if ($isInert && (! $node instanceof NullsafeMethodCall) && (! $hasNullsafeReceiver)) {
+            return $receiver;
         }
 
-        // Evaluate meaningful argument expressions once, after the receiver,
-        // without invoking a delimiter Closure that the old setter only stored.
-        return $isInert
-            ? $receiver
-            : new ArrayDimFetch(new Array_([new ArrayItem($receiver), new ArrayItem($delimiter)]), new Int_(0));
+        // Keep scope-sensitive expressions available for an explicit migration.
+        if ((! $isInert) && (new NodeFinder)->findFirst([$delimiter], static fn (Node $expression): bool => $expression instanceof Expr\Assign || $expression instanceof Expr\AssignRef || $expression instanceof Expr\AssignOp || $expression instanceof Expr\PreInc || $expression instanceof Expr\PostInc || $expression instanceof Expr\PreDec || $expression instanceof Expr\PostDec || $expression instanceof Expr\Yield_ || $expression instanceof Expr\YieldFrom || $expression instanceof Closure || $expression instanceof ArrowFunction) !== null) {
+            return null;
+        }
+
+        $callback = new ArrowFunction(['expr' => $isInert ? new ConstFetch(new Name('null')) : $delimiter]);
+
+        if (! $isInert) {
+            $uses = [];
+
+            foreach ((new NodeFinder)->findInstanceOf($delimiter, Variable::class) as $variable) {
+                if (! is_string($variable->name)) {
+                    return null;
+                }
+
+                if (! in_array($variable->name, ['this', 'GLOBALS', '_SERVER', '_GET', '_POST', '_FILES', '_COOKIE', '_SESSION', '_REQUEST', '_ENV'], true)) {
+                    $uses[$variable->name] = new ClosureUse($variable, byRef: true);
+                }
+            }
+
+            // The callback runs immediately. Reference captures also preserve
+            // mutations made by a delimiter factory's reference parameters.
+            if ($uses) {
+                $callback = new Closure(['uses' => array_values($uses), 'stmts' => [new Return_($delimiter)]]);
+            }
+        }
+
+        return ($node instanceof NullsafeMethodCall)
+            ? new NullsafeMethodCall($receiver, 'tap', [new Arg($callback)])
+            : new MethodCall($receiver, 'tap', [new Arg($callback)]);
     }
 
     private function receiverType(Expr $receiver): Type

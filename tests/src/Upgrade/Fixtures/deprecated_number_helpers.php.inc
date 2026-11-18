@@ -36,15 +36,15 @@ use function Filament\Support\format_number as decimal;
 function results(): array
 {
     return [
-        (string) Number::format(1234.5),
-        (string) Number::format(-1234.5),
-        (string) Number::format(+42),
-        (string) Number::currency(123450 / 100, 'USD'),
-        (string) Number::currency(-42.5, 'USD'),
-        (string) Number::currency(125, 'GBP'),
-        (string) Number::currency(125 / -100, 'EUR'),
-        (string) Number::currency(98765 / 100, 'USD'),
-        (string) Number::currency(12.5, ''),
-        (string) Number::currency(23, 'INVALID'),
+        Number::format(1234.5),
+        Number::format(-1234.5),
+        Number::format(+42),
+        Number::currency(123450 / 100, 'USD'),
+        Number::currency(-42.5, 'USD'),
+        Number::currency(125, 'GBP'),
+        Number::currency(125 / -100, 'EUR'),
+        Number::currency(98765 / 100, 'USD'),
+        Number::currency(12.5, ''),
+        Number::currency(23, 'INVALID'),
     ];
 }

@@ -24,5 +24,5 @@ use function Filament\Support\format_number;
 
 function format(int | float $amount, string $currency): array
 {
-    return [(string) Number::format($amount), (string) Number::currency($amount / -100, $currency), (string) Number::currency($amount, $currency)];
+    return [Number::format($amount), Number::currency($amount / -100, $currency), Number::currency($amount, $currency)];
 }

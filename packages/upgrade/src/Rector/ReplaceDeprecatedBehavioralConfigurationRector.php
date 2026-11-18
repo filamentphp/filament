@@ -18,46 +18,30 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrowFunction;
-use PhpParser\Node\Expr\BinaryOp\Coalesce;
-use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\ClassConstFetch;
-use PhpParser\Node\Expr\Closure as ClosureExpression;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
-use PhpParser\Node\Expr\NullsafePropertyFetch;
-use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
-use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\Node\UnionType;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\BooleanType;
-use PHPStan\Type\Constant\ConstantBooleanType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
 
 class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
 {
-    /** @var array<string, string> */
     private const NEGATIONS = [
         'disablepreview' => 'previewable',
         'disableitemcreation' => 'addable',
@@ -86,23 +70,13 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
     /** @param MethodCall | NullsafeMethodCall $node */
     public function refactor(Node $node): ?Node
     {
-        if ((! $node->name instanceof Identifier) || $node->isFirstClassCallable()) {
+        if ((! $node->name instanceof Identifier) || $node->isFirstClassCallable() || count($node->args) > 1) {
             return null;
         }
 
         $method = strtolower($node->name->toString());
-
-        $receiver = $node;
-        $hasNullsafeAccess = false;
-
-        while ($receiver instanceof MethodCall || $receiver instanceof NullsafeMethodCall || $receiver instanceof PropertyFetch || $receiver instanceof NullsafePropertyFetch) {
-            $hasNullsafeAccess = $hasNullsafeAccess || ($receiver instanceof NullsafeMethodCall) || ($receiver instanceof NullsafePropertyFetch);
-            $receiver = $receiver->var;
-        }
-
         $factory = $node->var;
 
-        // Follow ordinary fluent configuration back to its factory or typed owner.
         while ($factory instanceof MethodCall || $factory instanceof NullsafeMethodCall) {
             if ((! $factory->name instanceof Identifier) || $factory->isFirstClassCallable()) {
                 return null;
@@ -111,21 +85,10 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             $factory = $factory->var;
         }
 
-        if ($factory instanceof StaticCall && $factory->class instanceof Name && $this->isName($factory->name, 'make') && (! $factory->isFirstClassCallable())) {
-            $class = $this->getName($factory->class);
-        } else {
-            $type = TypeCombinator::removeNull($this->getType($factory));
-            $classes = $type->getObjectClassNames();
-
-            if (count($classes) !== 1) {
-                return null;
-            }
-
-            $class = $classes[0];
-        }
-
-        $receiverType = new ObjectType($class);
-        $configurationClass = null;
+        $type = ($factory instanceof StaticCall && $factory->class instanceof Name && $this->isName($factory->name, 'make'))
+            ? new ObjectType($this->getName($factory->class))
+            : TypeCombinator::removeNull($this->getType($factory));
+        $owner = null;
 
         foreach ([
             BaseFileUpload::class => ['disablepreview'],
@@ -141,263 +104,176 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             CreateAction::class => ['disablecreateanother'],
             AttachAction::class => ['disableattachanother'],
             AssociateAction::class => ['disableassociateanother'],
-        ] as $candidateClass => $methods) {
-            if (in_array($method, $methods, true) && (new ObjectType($candidateClass))->isSuperTypeOf($receiverType)->yes()) {
-                $configurationClass = $candidateClass;
+        ] as $class => $methods) {
+            if (in_array($method, $methods, true) && (new ObjectType($class))->isSuperTypeOf($type)->yes()) {
+                $owner = (new ObjectType($class))->getClassReflection();
 
                 break;
             }
         }
 
-        if ((! $configurationClass) || (count($node->args) > 1)) {
-            return null;
-        }
-
-        $replacementMethods = match ($method) {
-            'imagecropaspectratio' => ['imageAspectRatio', 'automaticallyCropImagesToAspectRatio'],
-            'icon' => ['suffixIcon'],
-            'centermodal' => ['modalAlignment'],
-            'inset' => ['tap'],
-            default => [self::NEGATIONS[$method]],
-        };
-
-        if ($hasNullsafeAccess && in_array($method, ['imagecropaspectratio', 'icon', 'disableplaceholderselection'], true)) {
-            $replacementMethods[] = 'tap';
-        }
-
-        $owner = (new ObjectType($configurationClass))->getClassReflection();
-
         if (! $owner) {
             return null;
         }
 
-        foreach ($receiverType->getObjectClassReflections() as $reflection) {
-            foreach ([$method, ...$replacementMethods] as $name) {
-                if (! $reflection->hasNativeMethod($name)) {
-                    continue;
-                }
+        $replacement = match ($method) {
+            'imagecropaspectratio' => 'imageAspectRatio',
+            'icon' => 'suffixIcon',
+            'centermodal' => 'modalAlignment',
+            'inset' => 'tap',
+            default => self::NEGATIONS[$method],
+        };
 
-                // Inherited built-in behavior is safe; application-owned methods are not aliases.
-                if ((! $owner->hasNativeMethod($name)) || ($reflection->getNativeMethod($name)->getDeclaringClass()->getName() !== $owner->getNativeMethod($name)->getDeclaringClass()->getName())) {
+        foreach ($type->getObjectClassReflections() as $reflection) {
+            foreach ([$method, $replacement] as $name) {
+                if ($reflection->hasNativeMethod($name) && ((! $owner->hasNativeMethod($name)) || ($reflection->getNativeMethod($name)->getDeclaringClass()->getName() !== $owner->getNativeMethod($name)->getDeclaringClass()->getName()))) {
                     return null;
                 }
             }
         }
 
+        $argument = $node->getArgs()[0] ?? null;
         $parameter = match ($method) {
             'imagecropaspectratio' => 'ratio',
             'icon' => 'icon',
             default => 'condition',
         };
-        $argument = $node->getArgs()[0] ?? null;
 
-        if (($method === 'disableplaceholderselection') && $argument?->unpack && $argument->value instanceof Array_) {
-            $items = $argument->value->items;
+        if ($argument && ($argument->unpack || $argument->byRef || ($argument->name && $argument->name->toString() !== $parameter))) {
+            return null;
+        }
 
-            if ($items === []) {
-                $argument = null;
-            } elseif (count($items) === 1) {
-                $item = $items[0];
+        $value = $argument->value ?? new ConstFetch(new Name($method === 'icon' ? 'null' : 'true'));
+        $literal = $value instanceof ConstFetch ? strtolower($value->name->toString()) : null;
+        $componentName = 'configurationComponent';
 
-                if ((! $item->unpack) && (! $item->byRef) && (($item->key === null) || ($item->key instanceof Int_) || (($item->key instanceof String_) && ($item->key->value === $parameter)))) {
-                    $argument = new Arg($item->value);
-                }
+        while (str_contains($this->getFile()->getFileContent(), '$' . $componentName)) {
+            $componentName .= 'Value';
+        }
+
+        $component = new Variable($componentName);
+
+        if (($method === 'inset') || (($method === 'icon') && ($literal === 'false')) || (($method === 'centermodal') && in_array($literal, ['false', 'null'], true))) {
+            if (($method === 'inset') && (! $value instanceof ConstFetch) && (! $value instanceof Variable) && (! $value instanceof Node\Expr\Closure) && (! $value instanceof ArrowFunction)) {
+                return null;
             }
-        }
 
-        if ($argument && ($argument->unpack || ($argument->name && ($argument->name->toString() !== $parameter)))) {
-            return null;
-        }
+            // Keep the nullsafe boundary for subsequent fluent calls.
+            if ($node instanceof NullsafeMethodCall) {
+                $node->name = new Identifier('tap');
+                $node->args = [new Arg(new ArrowFunction(['static' => true, 'expr' => new ConstFetch(new Name('null'))]))];
 
-        if ($method === 'inset') {
-            // The setter never invokes a Closure, but PHP still evaluates its argument.
-            return $this->callAdapter(new ArrowFunction([
-                'static' => true,
-                'params' => [
-                    new Param(new Variable('component')),
-                    new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)])),
-                ],
-                'expr' => new Variable('component'),
-            ]), $node, $argument->value ?? new ConstFetch(new Name('true')), true);
-        }
+                return $node;
+            }
 
-        if ($hasNullsafeAccess && ($method === 'centermodal')) {
-            return null;
+            return $node->var;
         }
-
-        $value = $argument->value ?? new ConstFetch(new Name(($method === 'icon') ? 'null' : 'true'));
-        $literal = ($value instanceof ConstFetch) ? strtolower($value->name->toString()) : null;
 
         if ($method === 'imagecropaspectratio') {
             if (! $argument) {
                 return null;
             }
 
-            if ($hasNullsafeAccess || ((! $value instanceof String_) && ($literal !== 'null'))) {
-                if (! TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
-                    return null;
-                }
+            if (($value instanceof String_) || ($literal === 'null')) {
+                $node->name = new Identifier('imageAspectRatio');
+                $node->args = [new Arg($value)];
 
-                $wrapper = new ArrowFunction([
-                    'static' => true,
-                    'params' => [
-                        new Param(new Variable('component'), type: new FullyQualified($class)),
-                        new Param(new Variable('ratio'), type: new UnionType([new Identifier('string'), new FullyQualified(Closure::class), new Identifier('null')])),
-                    ],
-                    'returnType' => new FullyQualified($class),
-                    'expr' => new MethodCall(new MethodCall(new Variable('component'), 'imageAspectRatio', [new Arg(new Variable('ratio'))]), 'automaticallyCropImagesToAspectRatio', [new Arg(new Ternary(
-                        new Instanceof_(new Variable('ratio'), new FullyQualified(Closure::class)),
-                        new Variable('ratio'),
-                        new FuncCall(new FullyQualified('filled'), [new Arg(new Variable('ratio'))]),
-                    ))]),
-                ]);
-
-                return $this->callAdapter($wrapper, $node, $value, $hasNullsafeAccess);
+                return new MethodCall($node, 'automaticallyCropImagesToAspectRatio', [new Arg(new ConstFetch(new Name(($value instanceof String_ && trim($value->value) !== '') ? 'true' : 'false')))]);
             }
 
-            $ratio = ($value instanceof String_) ? $value->value : null;
+            $node->name = new Identifier('imageAspectRatio');
+            $node->args = [new Arg($value)];
 
-            return new MethodCall(new MethodCall($node->var, 'imageAspectRatio', [new Arg($value)]), 'automaticallyCropImagesToAspectRatio', [new Arg(new ConstFetch(new Name((trim($ratio ?? '') !== '') ? 'true' : 'false')))]);
+            return new MethodCall($node, 'automaticallyCropImagesToAspectRatio', [new Arg(new ArrowFunction([
+                'params' => [new Param($component, type: new FullyQualified(FileUpload::class))],
+                'expr' => new FuncCall(new FullyQualified('filled'), [new Arg(new MethodCall($component, 'getImageAspectRatio'))]),
+            ]))]);
         }
 
         if ($method === 'icon') {
-            if (($literal === 'false') && (! $hasNullsafeAccess)) {
-                return $node->var;
+            // A runtime false means “do not change the existing icon”.
+            if (($literal !== 'null') && (! $this->getNativeType($value)->isString()->yes()) && (! (new ObjectType('BackedEnum'))->isSuperTypeOf($this->getNativeType($value))->yes()) && (! (new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes())) {
+                return null;
             }
 
-            if ($hasNullsafeAccess || ((! $value instanceof String_) && ($literal !== 'null'))) {
-                if ((! in_array($literal, ['false', 'null'], true)) && (! TypeCombinator::union(new StringType, new ObjectType('BackedEnum'), new ObjectType('Illuminate\\Contracts\\Support\\Htmlable'), new ObjectType(Closure::class), new ConstantBooleanType(false), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes())) {
-                    return null;
-                }
-
-                return $this->callAdapter(new ArrowFunction([
-                    'static' => true,
-                    'params' => [
-                        new Param(new Variable('component'), type: new FullyQualified($class)),
-                        new Param(new Variable('icon'), type: new UnionType([new Identifier('string'), new FullyQualified('BackedEnum'), new FullyQualified('Illuminate\\Contracts\\Support\\Htmlable'), new FullyQualified(Closure::class), new Identifier('bool'), new Identifier('null')])),
-                    ],
-                    'returnType' => new FullyQualified($class),
-                    'expr' => new Ternary(
-                        new Identical(new Variable('icon'), new ConstFetch(new Name('false'))),
-                        new Variable('component'),
-                        new MethodCall(new Variable('component'), 'suffixIcon', [
-                            new Arg(new Coalesce(new Variable('icon'), new ClassConstFetch(new FullyQualified('Filament\\Support\\Icons\\Heroicon'), 'Calendar'))),
-                            new Arg(new ConstFetch(new Name('true')), name: new Identifier('isInline')),
-                        ]),
-                    ),
-                ]), $node, $value, $hasNullsafeAccess);
-            }
-
-            return new MethodCall($node->var, 'suffixIcon', [
-                new Arg(($literal === 'null') ? new ClassConstFetch(new FullyQualified('Filament\\Support\\Icons\\Heroicon'), 'Calendar') : $value),
-                new Arg(new ConstFetch(new Name('true')), name: new Identifier('isInline')),
-            ]);
-        }
-
-        if (isset(self::NEGATIONS[$method]) && (! in_array($literal, ['true', 'false'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
-            // These legacy callbacks capture the configured component, even after cloning.
-            if (in_array($configurationClass, [Builder::class, Repeater::class, Select::class], true)) {
-                if ($hasNullsafeAccess && ($configurationClass !== Select::class)) {
-                    return null;
-                }
-
-                return $this->callAdapter(new ArrowFunction([
-                    'static' => true,
-                    'params' => [
-                        new Param(new Variable('component'), type: new FullyQualified($class)),
-                        new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)])),
-                    ],
-                    'returnType' => new FullyQualified($class),
-                    'expr' => new MethodCall(new Variable('component'), self::NEGATIONS[$method], [new Arg(new ArrowFunction([
-                        'static' => true,
-                        'returnType' => new Identifier('bool'),
-                        'expr' => new BooleanNot(new MethodCall(new Variable('component'), 'evaluate', [new Arg(new Variable('condition'))])),
-                    ]))]),
-                ]), $node, $value, $hasNullsafeAccess);
-            }
-
-            $isAction = in_array($configurationClass, [CreateAction::class, AttachAction::class, AssociateAction::class], true);
-            $isAutocomplete = in_array($method, ['disableautocomplete', 'disableautocapitalize'], true);
-            $owner = match (true) {
-                $isAutocomplete => 'Filament\\Forms\\Components\\Field',
-                $configurationClass === BaseFileUpload::class => BaseFileUpload::class,
-                $configurationClass === DateTimePicker::class => DateTimePicker::class,
-                default => $class,
-            };
-            $ownerVariable = $isAction ? 'action' : 'component';
-            $evaluation = new MethodCall(new Variable($ownerVariable), 'evaluate', [new Arg(new Variable('condition'))]);
-            $wrapper = new ArrowFunction([
-                'static' => true,
-                'params' => [new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)]))],
-                'returnType' => new FullyQualified(Closure::class),
-                'expr' => new ArrowFunction([
-                    'static' => true,
-                    'params' => [new Param(new Variable($ownerVariable), type: new FullyQualified($owner))],
-                    'returnType' => $isAutocomplete ? new NullableType(new Identifier('bool')) : new Identifier('bool'),
-                    'expr' => $isAutocomplete ? new Ternary($evaluation, new ConstFetch(new Name('false')), new ConstFetch(new Name('null'))) : new BooleanNot($evaluation),
-                ]),
-            ]);
-
-            $node->name = new Identifier(self::NEGATIONS[$method]);
-            $node->args = [new Arg(new FuncCall($wrapper, [new Arg($value)]))];
+            $node->name = new Identifier('suffixIcon');
+            $node->args = [new Arg($literal === 'null' ? new ClassConstFetch(new FullyQualified('Filament\\Support\\Icons\\Heroicon'), 'Calendar') : $value), new Arg(new ConstFetch(new Name('true')), name: new Identifier('isInline'))];
 
             return $node;
         }
 
-        if (($method === 'centermodal') && (! in_array($literal, ['true', 'false', 'null'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
-            return new FuncCall(new ClosureExpression([
-                'static' => true,
-                'params' => [
-                    new Param(new Variable('action'), type: new FullyQualified($class)),
-                    new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class), new Identifier('null')])),
-                ],
-                'returnType' => new FullyQualified($class),
-                'stmts' => [
-                    new If_(new MethodCall(new Variable('action'), 'evaluate', [new Arg(new Variable('condition'))]), ['stmts' => [new Expression(new MethodCall(new Variable('action'), 'modalAlignment', [new Arg(new ClassConstFetch(new FullyQualified('Filament\\Support\\Enums\\Alignment'), 'Center'))]))]]),
-                    new Return_(new Variable('action')),
-                ],
-            ]), [new Arg($node->var), new Arg($value)]);
+        if ($method === 'centermodal') {
+            $alignment = new ClassConstFetch(new FullyQualified('Filament\\Support\\Enums\\Alignment'), 'Center');
+
+            if ($literal !== 'true') {
+                if ((! $value instanceof Variable) && (! $value instanceof Node\Expr\Closure) && (! $value instanceof ArrowFunction)) {
+                    return null;
+                }
+
+                // The legacy condition was evaluated immediately, not when
+                // the modal opens. Preserve the existing alignment when false.
+                $node->name = new Identifier('tap');
+                $callback = new ArrowFunction([
+                    'params' => [new Param($component)],
+                    'expr' => new Ternary(new MethodCall($component, 'evaluate', [new Arg($value)]), new MethodCall($component, 'modalAlignment', [new Arg($alignment)]), $component),
+                ]);
+
+                if ($value instanceof Node\Expr\Closure) {
+                    $callback = new Node\Expr\Closure([
+                        'params' => $callback->params,
+                        'uses' => $value->uses,
+                        'stmts' => [new Return_($callback->expr)],
+                    ]);
+                }
+
+                $node->args = [new Arg($callback)];
+
+                return $node;
+            }
+
+            $node->name = new Identifier('modalAlignment');
+            $node->args = [new Arg($alignment)];
+
+            return $node;
         }
 
-        if ((! in_array($literal, ['true', 'false'], true)) && (($method !== 'centermodal') || ($literal !== 'null'))) {
+        $isAutocomplete = in_array($method, ['disableautocomplete', 'disableautocapitalize'], true);
+
+        if (in_array($literal, ['true', 'false'], true)) {
+            $condition = new ConstFetch(new Name(($literal === 'true') ? 'false' : ($isAutocomplete ? 'null' : 'true')));
+        } elseif ((new BooleanType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
+            $condition = $isAutocomplete ? new Ternary($value, new ConstFetch(new Name('false')), new ConstFetch(new Name('null'))) : new BooleanNot($value);
+        } elseif (($value instanceof ArrowFunction) || ($value instanceof Node\Expr\Closure)) {
+            $condition = clone $value;
+            $condition->returnType = null;
+
+            if ($condition instanceof ArrowFunction) {
+                $condition->expr = $isAutocomplete ? new Ternary($condition->expr, new ConstFetch(new Name('false')), new ConstFetch(new Name('null'))) : new BooleanNot($condition->expr);
+            } else {
+                $this->traverseNodesWithCallable($condition->stmts, static function (Node $statement) use ($isAutocomplete): ?int {
+                    if (($statement instanceof Node\FunctionLike) || ($statement instanceof Node\Stmt\ClassLike)) {
+                        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+                    }
+
+                    if (($statement instanceof Return_) && $statement->expr) {
+                        $statement->expr = $isAutocomplete ? new Ternary($statement->expr, new ConstFetch(new Name('false')), new ConstFetch(new Name('null'))) : new BooleanNot($statement->expr);
+                    }
+
+                    return null;
+                });
+            }
+        } elseif (($value instanceof Variable) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
+            $evaluation = new MethodCall($component, 'evaluate', [new Arg($value)]);
+            $condition = new ArrowFunction([
+                'params' => [new Param($component, type: new FullyQualified($owner->getName()))],
+                'expr' => $isAutocomplete ? new Ternary($evaluation, new ConstFetch(new Name('false')), new ConstFetch(new Name('null'))) : new BooleanNot($evaluation),
+            ]);
+        } else {
             return null;
         }
 
-        if ($method === 'centermodal') {
-            return ($literal === 'true')
-                ? new MethodCall($node->var, 'modalAlignment', [new Arg(new ClassConstFetch(new FullyQualified('Filament\\Support\\Enums\\Alignment'), 'Center'))])
-                : $node->var;
-        }
-
-        $replacement = self::NEGATIONS[$method];
-        $result = (($literal === 'false') && in_array($replacement, ['autocomplete', 'autocapitalize'], true)) ? 'null' : (($literal === 'true') ? 'false' : 'true');
-
         $node->name = new Identifier($replacement);
-        $node->args = [new Arg(new ConstFetch(new Name($result)))];
-
-        return $node;
-    }
-
-    private function callAdapter(ArrowFunction $adapter, MethodCall | NullsafeMethodCall $node, Expr $value, bool $preserveReceiverChain): Expr
-    {
-        if (! $preserveReceiverChain) {
-            return new FuncCall($adapter, [new Arg($node->var), new Arg($value)]);
-        }
-
-        // Keep receiver checks and argument evaluation in the original chain and scope.
-        // `tap()` supplies the receiver once, without changing fluent short-circuiting.
-        $node->name = new Identifier('tap');
-        $node->args = [new Arg(new FuncCall(new ArrowFunction([
-            'static' => true,
-            'params' => [$adapter->params[1]],
-            'returnType' => new FullyQualified(Closure::class),
-            'expr' => new ArrowFunction([
-                'static' => true,
-                'params' => [$adapter->params[0]],
-                'returnType' => $adapter->returnType,
-                'expr' => $adapter->expr,
-            ]),
-        ]), [new Arg($value)]))];
+        $node->args = [new Arg($condition)];
 
         return $node;
     }

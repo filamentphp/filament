@@ -70,6 +70,10 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->assertActionHalted('save');
     $testable->assertTableActionHalted('edit');
     $testable->assertTableBulkActionHalted('delete');
+    $testable->assertFormExists()->assertFormComponentExists('title')->assertFormSet(['title' => 'Changed']);
+    $testable->assertFormComponentActionExists('title', 'save')->assertHasNoFormComponentActionErrors();
+    Livewire::test('edit-post')->assertTableActionExists(['outer', 'inner'], record: 1);
+    $testable->assertTableActionExists('outer.inner', record: null);
 }
 
 function factories(TestsForms $forms, TestsActions $actions, TestsTableActions $tableActions, TestsBulkActions $bulkActions): void
@@ -85,7 +89,7 @@ function factories(TestsForms $forms, TestsActions $actions, TestsTableActions $
 
 namespace Filament\Tests\Upgrade\Fixtures\DeprecatedTestingAssertions;
 
-use Closure;
+use Filament\Actions\Testing\TestAction;
 use Filament\Actions\Testing\TestsActions;
 use Filament\Forms\Testing\TestsForms;
 use Filament\Tables\Testing\TestsActions as TestsTableActions;
@@ -100,10 +104,7 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->fillForm(state: ['title' => 'Changed'])->assertSchemaStateSet(state: ['title' => 'Changed'])->assertHasNoFormErrors();
     $testable->assertHasFormErrors(keys: ['title' => 'required']);
     $nullable?->fillForm([])->assertSchemaStateSet(state: []);
-    $callback = Closure::bind(function (array|Closure $data): static {
-        $this->assertSchemaStateSet($data);
-        return $this;
-    }, $testable, 'Livewire\Features\SupportTesting\Testable');
+    $callback = $testable->assertSchemaStateSet(...);
     $testable->assertFormFieldDisabled(key: 'title', form: 'editForm');
     $testable->assertFormFieldEnabled('title');
     $testable->assertFormFieldReadOnly('slug');
@@ -111,16 +112,8 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->assertFormFieldVisible('title');
     $testable->assertActionHalted(actions: 'save');
     $testable->assertActionHalted();
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke(actions: ['edit']);
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableBulkActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke(actions: 'delete');
+    $testable->assertActionMounted([TestAction::make('edit')->table()]);
+    $testable->assertActionMounted(TestAction::make('delete')->table()->bulk());
     $testable->assertTableRecordActionsExistInOrder(names: ['edit', 'delete']);
     $testable->assertTableRecordActionsExistInOrder(...$arguments);
     $nullable?->assertTableRecordActionsExistInOrder(['edit', 'delete']);
@@ -140,26 +133,10 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->fillForm(['title' => 'Hello'])->assertFormFieldEnabled('title');
     $testable->mountAction('save')->assertActionHalted('save');
     $testable->callAction('save')->assertActionHalted('save');
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable->mountTableAction('edit', 1), 'Livewire\Features\SupportTesting\Testable')->__invoke('edit');
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable->callTableAction('edit', 1), 'Livewire\Features\SupportTesting\Testable')->__invoke('edit');
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableBulkActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable->mountTableBulkAction('delete', [1]), 'Livewire\Features\SupportTesting\Testable')->__invoke('delete');
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableBulkActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable->callTableBulkAction('delete', [1]), 'Livewire\Features\SupportTesting\Testable')->__invoke('delete');
+    $testable->mountTableAction('edit', 1)->assertActionMounted(TestAction::make('edit')->table());
+    $testable->callTableAction('edit', 1)->assertActionMounted(TestAction::make('edit')->table());
+    $testable->mountTableBulkAction('delete', [1])->assertActionMounted(TestAction::make('delete')->table()->bulk());
+    $testable->callTableBulkAction('delete', [1])->assertActionMounted(TestAction::make('delete')->table()->bulk());
     $testable->callFormComponentAction('title', 'save')->assertHasFormErrors();
     $testable->mountFormComponentAction('title', 'save')->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
     $testable->callInfolistAction('title', 'save')->assertHasFormErrors();
@@ -168,16 +145,8 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->mountTableAction('edit', 1)->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
     $testable->callTableBulkAction('edit', [1])->assertHasFormErrors();
     $testable->mountTableBulkAction('edit', [1])->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
-    Closure::bind(function (string|array $actions, ?Closure $checkActionUsing = null, $record = null): static {
-        $actions = $this->parseNestedTableActions($actions, $record);
-        $this->assertActionExists($actions, $checkActionUsing);
-        return $this;
-    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke('replicate')->callTableAction('replicate', 1)->callMountedTableAction()->assertHasNoFormErrors();
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable->mountTableAction('edit', 1), 'Livewire\Features\SupportTesting\Testable')->__invoke('edit')->fillForm(state: []);
+    $testable->assertActionExists(TestAction::make('replicate')->table())->callTableAction('replicate', 1)->callMountedTableAction()->assertHasNoFormErrors();
+    $testable->mountTableAction('edit', 1)->assertActionMounted(TestAction::make('edit')->table())->fillForm(state: []);
     $testable->selectTableRecords([1])->mountTableBulkAction('edit', [1])->assertHasNoFormErrors();
     $testable->assertActionExists('edit')->assertHasNoFormErrors();
     livewire('edit-post')->assertFormFieldVisible('title');
@@ -187,16 +156,12 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $stored->assertFormFieldHidden('secret');
     $testable->assertFormFieldDisabled('title');
     $testable->assertActionHalted('save');
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke('edit');
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableBulkActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke('delete');
+    $testable->assertActionMounted(TestAction::make('edit')->table());
+    $testable->assertActionMounted(TestAction::make('delete')->table()->bulk());
+    $testable->assertSchemaExists('form')->assertSchemaComponentExists('title', 'form')->assertSchemaStateSet(['title' => 'Changed'], 'form');
+    $testable->assertActionExists(TestAction::make('save')->schemaComponent('title', 'form'))->assertHasNoFormErrors();
+    Livewire::test('edit-post')->assertActionExists([TestAction::make('outer')->table(1), TestAction::make('inner')->table()]);
+    $testable->assertActionExists([TestAction::make('outer')->table(), TestAction::make('inner')->table()]);
 }
 
 function factories(TestsForms $forms, TestsActions $actions, TestsTableActions $tableActions, TestsBulkActions $bulkActions): void

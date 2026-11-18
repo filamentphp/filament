@@ -17,13 +17,13 @@ function syntax(Testable $testable, ?Testable $nullable = null): array
 
         return $testable;
     };
-    $arguments = function () use (&$argumentCalls): array {
+    $component = function () use (&$argumentCalls): string {
         $argumentCalls++;
 
-        return ['components' => 'textInput', 'actions' => 'exists'];
+        return 'textInput';
     };
     $results = [
-        $receiver()->assertFormComponentActionExists(...$arguments())->assertFormExists(),
+        $receiver()->assertFormComponentActionExists($component(), 'exists')->assertFormExists(),
         $testable->assertFormComponentActionHasLabel(
             formName: 'form',
             label: 'From arguments',
@@ -33,25 +33,26 @@ function syntax(Testable $testable, ?Testable $nullable = null): array
         ),
         $testable->assertFormComponentExists('textInput', static fn ($component): bool => $component->getName() === 'textInput'),
     ];
-    $results[] = $nullable?->assertFormComponentActionExists(...$arguments())?->assertFormExists();
+    $results[] = $nullable?->assertFormComponentActionExists($component(), 'exists')?->assertFormExists();
     $nullable = $testable;
-    $results[] = $nullable?->assertFormComponentActionExists(...$arguments())?->assertFormExists();
-    $callback = $testable->assertFormComponentActionHasLabel(...);
-    $results[] = $callback(label: 'My Action', actions: 'hasLabel', components: 'textInput');
+    $results[] = $nullable?->assertFormComponentActionExists($component(), 'exists')?->assertFormExists();
+    $results[] = $testable->assertFormComponentActionHasLabel(label: 'My Action', actions: 'hasLabel', components: 'textInput');
 
     return [$results, $receiverCalls, $argumentCalls];
 }
 
 function tableSyntax(Testable $testable, $record): Testable
 {
-    $callback = $testable->assertTableActionExists(...);
-    $callback(record: $record, checkActionUsing: static fn (Action $action): bool => $action->getRecord()->is($record), actions: 'edit');
+    $testable->assertTableActionExists(record: $record, checkActionUsing: static fn (Action $action): bool => $action->getRecord()->is($record), actions: 'edit');
+    $testable->assertTableActionExists('parent.footer', record: $record)
+        ->assertTableActionExists(['parent', 'footer'], record: $record);
+    $testable->assertTableActionExists('exists', record: null);
 
-    return $testable->assertTableActionDoesNotExist(...[
-        'record' => $record->getKey(),
-        'actions' => 'edit',
-        'checkActionUsing' => static fn (Action $action): bool => ! $action->getRecord()->is($record),
-    ]);
+    return $testable->assertTableActionDoesNotExist(
+        record: $record->getKey(),
+        actions: 'edit',
+        checkActionUsing: static fn (Action $action): bool => ! $action->getRecord()->is($record),
+    );
 }
 
 function shortCircuit(?Testable $nullable): array
@@ -60,11 +61,4 @@ function shortCircuit(?Testable $nullable): array
         $nullable?->assertFormExists()->assertFormComponentExists(throw new LogicException('Skipped schema component argument was evaluated.')),
         $nullable?->fillForm([])->assertFormExists(name: throw new LogicException('Skipped schema argument was evaluated.')),
     ];
-}
-
-function weakCallback(Testable $testable): Testable
-{
-    $callback = $testable->assertFormExists(...);
-
-    return $callback(123);
 }

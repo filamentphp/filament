@@ -378,9 +378,7 @@ class IndirectSettings extends IntermediateSettings
     #[Unexposed]
     public function getSavedNotificationTitle(): ?string
     {
-        return (function (): ?string {
-            return null ?? 'Indirect settings saved';
-        })() ?? \__('filament-spatie-laravel-settings-plugin::pages/settings-page.notifications.saved.title');
+        return (null ?? 'Indirect settings saved') ?? \__('filament-spatie-laravel-settings-plugin::pages/settings-page.notifications.saved.title');
     }
 }
 

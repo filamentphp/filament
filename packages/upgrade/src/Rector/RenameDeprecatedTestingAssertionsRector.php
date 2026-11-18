@@ -3,6 +3,8 @@
 namespace Filament\Upgrade\Rector;
 
 use Closure;
+use Filament\Actions\BulkAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Actions\Testing\TestsActions;
 use Filament\Forms\Testing\TestsFormComponentActions;
 use Filament\Forms\Testing\TestsForms;
@@ -17,37 +19,26 @@ use Filament\Tables\Testing\TestsSummaries;
 use Livewire\Features\SupportTesting\Testable;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\ArrowFunction;
-use PhpParser\Node\Expr\BinaryOp\Identical;
-use PhpParser\Node\Expr\Closure as ClosureExpression;
-use PhpParser\Node\Expr\ConstFetch;
-use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\Foreach_;
-use PhpParser\Node\Stmt\Return_;
-use PhpParser\Node\UnionType;
-use PhpParser\ParserFactory;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
 
 class RenameDeprecatedTestingAssertionsRector extends AbstractRector
 {
-    private const TESTABLE_TYPE_ATTRIBUTE = 'filament_testing_assertion_type';
-
     private const FLUENT_TESTABLE_METHODS = ['set', 'call', 'assertDispatched', 'assertNotDispatched', 'assertDispatchedTo'];
 
     /** @var array<string, array{string, class-string}> */
@@ -95,13 +86,13 @@ class RenameDeprecatedTestingAssertionsRector extends AbstractRector
             return null;
         }
 
-        $callback = $this->getContextualAssertion($node->name->name);
+        $contextual = $this->getContextualAssertion($node->name->name);
 
-        if ((! $callback) && (! isset(self::ASSERTIONS[$node->name->name]))) {
+        if ((! $contextual) && (! isset(self::ASSERTIONS[$node->name->name]))) {
             return null;
         }
 
-        [$replacement, $mixin] = $callback ? ['', Testable::class] : self::ASSERTIONS[$node->name->name];
+        [$replacement, $mixin] = $contextual ? ['', Testable::class] : self::ASSERTIONS[$node->name->name];
         $testableType = $this->getTestableType($node->var);
 
         if ((! $testableType) && (! $this->isObjectType($node->var, new ObjectType($mixin)))) {
@@ -116,88 +107,28 @@ class RenameDeprecatedTestingAssertionsRector extends AbstractRector
             }
         }
 
-        if ($callback) {
-            if (($node instanceof MethodCall) && $this->hasNullsafeReceiver($node->var) && (! $this->canPropagateNullsafeReceiver($node->var))) {
-                return null;
-            }
-
-            $bind = new StaticCall(new FullyQualified(Closure::class), 'bind', [
-                new Arg($callback),
-                new Arg($node->var),
-                new Arg(new String_(Testable::class)),
-            ]);
-
-            if ($node->isFirstClassCallable()) {
-                return new FuncCall(new ArrowFunction([
-                    'static' => true,
-                    'params' => [new Param(new Variable('assertion'), type: new FullyQualified(Closure::class))],
-                    'expr' => new ArrowFunction([
-                        'static' => true,
-                        'params' => [new Param(new Variable('arguments'), variadic: true)],
-                        'expr' => new MethodCall(new Variable('assertion'), '__invoke', [new Arg(new Variable('arguments'), unpack: true)]),
-                    ]),
-                ]), [new Arg($bind)]);
-            }
-
-            if (($node instanceof NullsafeMethodCall) || $this->hasNullsafeReceiver($node->var)) {
-                $bind->args[1] = new Arg(new Variable('testable'));
-                $nullableCallback = new FuncCall(new ArrowFunction([
-                    'static' => true,
-                    'params' => [new Param(new Variable('testable'), type: new Node\NullableType(new FullyQualified(Testable::class)))],
-                    'expr' => new Ternary(
-                        new Identical(new Variable('testable'), new ConstFetch(new FullyQualified('null'))),
-                        new ConstFetch(new FullyQualified('null')),
-                        $bind,
-                    ),
-                ]), [new Arg($node->var)]);
-
-                $invocation = new NullsafeMethodCall($nullableCallback, '__invoke', $node->args);
-            } else {
-                $invocation = new MethodCall($bind, '__invoke', $node->args);
-            }
-
-            $invocation->setAttribute(self::TESTABLE_TYPE_ATTRIBUTE, $testableType);
-
-            return $invocation;
+        if ($contextual) {
+            return $this->migrateContextualAssertion($node, ...$contextual);
         }
 
         if (in_array($replacement, ['fillForm', 'assertSchemaStateSet'], strict: true)) {
-            if ($node->isFirstClassCallable()) {
-                return new StaticCall(new FullyQualified(Closure::class), 'bind', [
-                    new Arg(new ClosureExpression([
-                        'params' => [new Param(new Variable('data'), type: $replacement === 'fillForm'
-                            ? new Identifier('array')
-                            : new UnionType([new Identifier('array'), new FullyQualified(Closure::class)]))],
-                        'returnType' => new Identifier('static'),
-                        'stmts' => [
-                            new Expression(new MethodCall(new Variable('this'), $replacement, [new Arg(new Variable('data'))])),
-                            new Return_(new Variable('this')),
-                        ],
-                    ])),
-                    new Arg($node->var),
-                    new Arg(new String_(Testable::class)),
-                ]);
+            foreach ($node->isFirstClassCallable() ? [] : $node->getArgs() as $argument) {
+                if ($argument->unpack && (! $argument->value instanceof Array_)) {
+                    return null;
+                }
             }
 
-            foreach ($node->args as $argument) {
+            foreach ($node->isFirstClassCallable() ? [] : $node->getArgs() as $argument) {
                 if ($argument->name?->name === 'data') {
                     $argument->name = new Identifier('state');
                 }
 
-                if ($argument->unpack) {
-                    $argument->value = new FuncCall(new ClosureExpression([
-                        'static' => true,
-                        'params' => [new Param(new Variable('arguments'), type: new Identifier('iterable'))],
-                        'returnType' => new Identifier('iterable'),
-                        'stmts' => [new Foreach_(new Variable('arguments'), new Variable('value'), [
-                            'keyVar' => new Variable('key'),
-                            'stmts' => [new Expression(new Yield_(new Variable('value'), new Ternary(
-                                new Identical(new Variable('key'), new String_('data')),
-                                new String_('state'),
-                                new Variable('key'),
-                            )))],
-                        ])],
-                    ]), [new Arg($argument->value)]);
+                if ($argument->unpack && $argument->value instanceof Array_) {
+                    foreach ($argument->value->items as $item) {
+                        if ($item->key instanceof String_ && ($item->key->value === 'data')) {
+                            $item->key = new String_('state');
+                        }
+                    }
                 }
             }
         }
@@ -209,10 +140,6 @@ class RenameDeprecatedTestingAssertionsRector extends AbstractRector
 
     private function getTestableType(Expr $receiver): ?Type
     {
-        if (($generatedType = $receiver->getAttribute(self::TESTABLE_TYPE_ATTRIBUTE)) instanceof Type) {
-            return $generatedType;
-        }
-
         $type = TypeCombinator::removeNull($this->getType($receiver));
 
         if (($receiver instanceof MethodCall) || ($receiver instanceof NullsafeMethodCall)) {
@@ -255,146 +182,226 @@ class RenameDeprecatedTestingAssertionsRector extends AbstractRector
         return (new ObjectType(Testable::class))->isSuperTypeOf($type)->yes() ? $type : null;
     }
 
-    private function hasNullsafeReceiver(Expr $receiver): bool
+    /** @return array{string, list<string>, string} | null */
+    private function getContextualAssertion(string $method): ?array
     {
-        while (($receiver instanceof MethodCall) || ($receiver instanceof Expr\PropertyFetch) || ($receiver instanceof Expr\ArrayDimFetch)
-            || ($receiver instanceof NullsafeMethodCall) || ($receiver instanceof Expr\NullsafePropertyFetch)) {
-            if (($receiver instanceof NullsafeMethodCall) || ($receiver instanceof Expr\NullsafePropertyFetch)) {
-                return true;
-            }
-
-            $receiver = $receiver->var;
-        }
-
-        return false;
-    }
-
-    private function canPropagateNullsafeReceiver(Expr $receiver): bool
-    {
-        if ($receiver->getAttribute(self::TESTABLE_TYPE_ATTRIBUTE) instanceof Type) {
-            return true;
-        }
-
-        if ((! (($receiver instanceof MethodCall) || ($receiver instanceof NullsafeMethodCall))) || (! $receiver->name instanceof Identifier)) {
-            return false;
-        }
-
-        $ownerType = $this->getTestableType($receiver->var);
-
-        if ((! $ownerType) || (! $this->getTestableType($receiver))) {
-            return false;
-        }
-
-        foreach ($ownerType->getObjectClassReflections() as $class) {
-            if (! $class->hasNativeMethod($receiver->name->name)) {
-                continue;
-            }
-
-            $method = $class->getNativeMethod($receiver->name->name);
-
-            if (($method->getDeclaringClass()->getName() === Testable::class) && in_array($receiver->name->name, self::FLUENT_TESTABLE_METHODS, strict: true)) {
-                continue;
-            }
-
-            foreach ($method->getVariants() as $variant) {
-                if (! $variant->getReturnType()->isSuperTypeOf(new NullType)->no()) {
-                    return false;
-                }
-            }
-        }
-
-        return ($receiver instanceof NullsafeMethodCall) || $this->canPropagateNullsafeReceiver($receiver->var);
-    }
-
-    private function getContextualAssertion(string $method): ?ClosureExpression
-    {
-        $schemaAssertions = [
-            'assertFormSet' => 'function (array|\\Closure $state, string $form = "form"): static { $this->assertSchemaStateSet($state, $form); return $this; }',
-            'assertFormExists' => 'function (string $name = "form"): static { $this->assertSchemaExists($name); return $this; }',
-            'assertFormComponentExists' => 'function (string $componentKey, string|\\Closure $form = "form", ?\\Closure $checkComponentUsing = null): static { if ($form instanceof \\Closure) { $checkComponentUsing = $form; $form = "form"; } $this->assertSchemaComponentExists($componentKey, $form, $checkComponentUsing); return $this; }',
-            'assertFormComponentDoesNotExist' => 'function (string $componentKey, string $form = "form"): static { $this->assertSchemaComponentDoesNotExist($componentKey, $form); return $this; }',
-            'assertTableBulkActionsExistInOrder' => 'function (array $names): static { $this->assertActionListInOrder($names, $this->instance()->getTable()->getToolbarActions(), "table bulk", \\Filament\\Actions\\BulkAction::class); return $this; }',
+        $schemas = [
+            'assertFormSet' => ['assertSchemaStateSet', ['state', 'form'], 'schema'],
+            'assertFormExists' => ['assertSchemaExists', ['name'], 'schema'],
+            'assertFormComponentExists' => ['assertSchemaComponentExists', ['componentKey', 'form', 'checkComponentUsing'], 'schema'],
+            'assertFormComponentDoesNotExist' => ['assertSchemaComponentDoesNotExist', ['componentKey', 'form'], 'schema'],
+            'assertTableBulkActionsExistInOrder' => ['assertActionListInOrder', ['names'], 'bulkOrder'],
         ];
 
-        $code = $schemaAssertions[$method] ?? null;
-
-        if (! $code) {
-            $method = match ($method) {
-                'assertTableActionHeld' => 'assertTableActionHalted',
-                'assertTableBulkActionHeld' => 'assertTableBulkActionHalted',
-                default => $method,
-            };
-
-            if (! preg_match('/^assert(FormComponent|Infolist|TableBulk|Table)Action(Exists|DoesNotExist|Visible|Hidden|Enabled|Disabled|HasIcon|DoesNotHaveIcon|HasLabel|DoesNotHaveLabel|HasColor|DoesNotHaveColor|HasUrl|DoesNotHaveUrl|ShouldOpenUrlInNewTab|ShouldNotOpenUrlInNewTab|Mounted|NotMounted|Halted)$/', $method, $matches)) {
-                return null;
-            }
-
-            [, $family, $suffix] = $matches;
-
-            // Bulk actions never exposed the URL assertions.
-            if (($family === 'TableBulk') && str_contains($suffix, 'Url')) {
-                return null;
-            }
-
-            $value = match ($suffix) {
-                'HasIcon', 'DoesNotHaveIcon' => 'string|\\BackedEnum $icon',
-                'HasLabel', 'DoesNotHaveLabel' => 'string $label',
-                'HasColor', 'DoesNotHaveColor' => 'string|array $color',
-                'HasUrl', 'DoesNotHaveUrl' => 'string $url',
-                default => null,
-            };
-            $assertionArguments = '$actions';
-
-            if ($value) {
-                $assertionArguments .= ', $' . substr($value, strrpos($value, '$') + 1);
-            }
-
-            $simple = in_array($suffix, ['Exists', 'DoesNotExist', 'Mounted', 'NotMounted', 'Halted'], strict: true);
-            $parameters = [];
-
-            if ($family === 'FormComponent') {
-                $parameters = ['string|array $components', 'string|array $actions'];
-                if ($value) {
-                    $parameters[] = $value;
-                }
-                if (! $simple) {
-                    $parameters[] = 'array $arguments = []';
-                }
-                $parameters[] = 'string $formName = "form"';
-                $parse = '$this->parseNestedFormComponentActions($components, $actions, $formName' . ($simple ? '' : ', $arguments') . ')';
-            } elseif ($family === 'Infolist') {
-                $parameters = ['string $component', 'string|array $actions'];
-                if ($value) {
-                    $parameters[] = $value;
-                }
-                $parameters[] = 'string $schema = "infolist"';
-                $parse = '$this->parseNestedInfolistActions($component, $actions, $schema)';
-            } else {
-                $parameters[] = 'string|array $actions';
-                if ($value) {
-                    $parameters[] = $value;
-                }
-                if (($family === 'Table') && in_array($suffix, ['Exists', 'DoesNotExist'], strict: true)) {
-                    $parameters[] = '?\\Closure $checkActionUsing = null';
-                    $assertionArguments .= ', $checkActionUsing';
-                }
-                $hasRecord = ($family === 'Table') && (! in_array($suffix, ['Mounted', 'NotMounted', 'Halted'], strict: true));
-                if ($hasRecord) {
-                    $parameters[] = '$record = null';
-                }
-                $parse = ($family === 'TableBulk')
-                    ? '$this->parseNestedTableBulkActions($actions)'
-                    : '$this->parseNestedTableActions($actions' . ($hasRecord ? ', $record' : '') . ')';
-            }
-
-            $canonical = 'assertAction' . ($suffix === 'Halted' ? 'Mounted' : $suffix);
-            $code = 'function (' . implode(', ', $parameters) . '): static { $actions = ' . $parse . '; $this->' . $canonical . '(' . $assertionArguments . '); return $this; }';
+        if (isset($schemas[$method])) {
+            return $schemas[$method];
         }
 
-        /** @var Expression $statement */
-        $statement = (new ParserFactory)->createForNewestSupportedVersion()->parse('<?php ' . $code . ';')[0];
+        $method = match ($method) {
+            'assertTableActionHeld' => 'assertTableActionHalted',
+            'assertTableBulkActionHeld' => 'assertTableBulkActionHalted',
+            default => $method,
+        };
 
-        /** @var ClosureExpression */
-        return $statement->expr;
+        if (! preg_match('/^assert(FormComponent|Infolist|TableBulk|Table)Action(Exists|DoesNotExist|Visible|Hidden|Enabled|Disabled|HasIcon|DoesNotHaveIcon|HasLabel|DoesNotHaveLabel|HasColor|DoesNotHaveColor|HasUrl|DoesNotHaveUrl|ShouldOpenUrlInNewTab|ShouldNotOpenUrlInNewTab|Mounted|NotMounted|Halted)$/', $method, $matches)) {
+            return null;
+        }
+
+        [, $family, $suffix] = $matches;
+
+        if (($family === 'TableBulk') && str_contains($suffix, 'Url')) {
+            return null;
+        }
+
+        $parameters = match ($family) {
+            'FormComponent' => ['components', 'actions'],
+            'Infolist' => ['component', 'actions'],
+            default => ['actions'],
+        };
+        $value = match ($suffix) {
+            'HasIcon', 'DoesNotHaveIcon' => 'icon',
+            'HasLabel', 'DoesNotHaveLabel' => 'label',
+            'HasColor', 'DoesNotHaveColor' => 'color',
+            'HasUrl', 'DoesNotHaveUrl' => 'url',
+            default => null,
+        };
+
+        if ($value) {
+            $parameters[] = $value;
+        }
+
+        if (($family === 'FormComponent') && (! in_array($suffix, ['Exists', 'DoesNotExist', 'Mounted', 'NotMounted', 'Halted'], true))) {
+            $parameters[] = 'arguments';
+        }
+
+        if ($family === 'FormComponent') {
+            $parameters[] = 'formName';
+        } elseif ($family === 'Infolist') {
+            $parameters[] = 'schema';
+        } elseif ($family === 'Table') {
+            if (in_array($suffix, ['Exists', 'DoesNotExist'], true)) {
+                $parameters[] = 'checkActionUsing';
+            }
+
+            if (! in_array($suffix, ['Mounted', 'NotMounted', 'Halted'], true)) {
+                $parameters[] = 'record';
+            }
+        }
+
+        return ['assertAction' . ($suffix === 'Halted' ? 'Mounted' : $suffix), $parameters, $family];
+    }
+
+    /** @param list<string> $parameters */
+    private function migrateContextualAssertion(MethodCall | NullsafeMethodCall $node, string $replacement, array $parameters, string $family): ?Node
+    {
+        if ($node->isFirstClassCallable()) {
+            return null;
+        }
+
+        $arguments = [];
+
+        foreach ($node->getArgs() as $index => $argument) {
+            $name = $argument->name->name ?? $parameters[$index] ?? null;
+
+            if ($argument->unpack || (! $name) || (! in_array($name, $parameters, true))) {
+                return null;
+            }
+
+            $arguments[$name] = $argument->value;
+        }
+
+        if ($family === 'schema') {
+            if ($replacement === 'assertSchemaExists') {
+                $node->args = [new Arg($arguments['name'] ?? new String_('form'))];
+            } else {
+                $key = $arguments['state'] ?? $arguments['componentKey'] ?? null;
+
+                if (! $key) {
+                    return null;
+                }
+
+                $form = $arguments['form'] ?? new String_('form');
+                $check = $arguments['checkComponentUsing'] ?? null;
+
+                if (($replacement === 'assertSchemaComponentExists') && $this->isObjectType($form, new ObjectType(Closure::class))) {
+                    $check = $form;
+                    $form = new String_('form');
+                } elseif (($replacement === 'assertSchemaComponentExists') && (! (new StringType)->isSuperTypeOf($this->getType($form))->yes())) {
+                    return null;
+                }
+
+                $node->args = [new Arg($key), new Arg($form), ...($check ? [new Arg($check)] : [])];
+            }
+        } elseif ($family === 'bulkOrder') {
+            if ((! isset($arguments['names'])) || (! $node->var instanceof Variable)) {
+                return null;
+            }
+
+            $node->args = [
+                new Arg($arguments['names']),
+                new Arg(new MethodCall(new MethodCall(new MethodCall($node->var, 'instance'), 'getTable'), 'getToolbarActions')),
+                new Arg(new String_('table bulk')),
+                new Arg(new ClassConstFetch(new FullyQualified(BulkAction::class), 'class')),
+            ];
+        } else {
+            $actions = $arguments['actions'] ?? null;
+
+            if (! $actions) {
+                return null;
+            }
+
+            if ($descriptors = $this->createTestActions($actions, $arguments, $family)) {
+                $actions = $descriptors;
+            } else {
+                // Reuse the public nested-action parser for dynamic or nested lists.
+                // Only repeat a plain variable, never a factory or fluent receiver.
+                if (! $node->var instanceof Variable || ! is_string($node->var->name)) {
+                    return null;
+                }
+
+                $parse = match ($family) {
+                    'Table' => [$actions, $arguments['record'] ?? $this->nodeFactory->createNull()],
+                    'TableBulk' => [$actions],
+                    'FormComponent' => isset($arguments['components']) ? [$arguments['components'], $actions, $arguments['formName'] ?? new String_('form'), $arguments['arguments'] ?? new Array_] : null,
+                    'Infolist' => isset($arguments['component']) ? [$arguments['component'], $actions, $arguments['schema'] ?? new String_('infolist')] : null,
+                    default => null,
+                };
+
+                if (! $parse) {
+                    return null;
+                }
+
+                $actions = new MethodCall($node->var, 'parseNested' . $family . 'Actions', array_map(static fn (Expr $value): Arg => new Arg($value), $parse));
+            }
+
+            $node->args = [new Arg($actions)];
+
+            foreach (['icon', 'label', 'color', 'url', 'checkActionUsing'] as $name) {
+                if (isset($arguments[$name])) {
+                    $node->args[] = new Arg($arguments[$name], name: new Identifier($name));
+                }
+            }
+        }
+
+        $node->name = new Identifier($replacement);
+
+        return $node;
+    }
+
+    /** @param array<string, Expr> $arguments */
+    private function createTestActions(Expr $names, array $arguments, string $family): ?Expr
+    {
+        if ($names instanceof String_ && str_contains($names->value, '.')) {
+            $names = new Array_(array_map(static fn (string $name): ArrayItem => new ArrayItem(new String_($name)), explode('.', $names->value)));
+        }
+
+        $items = $names instanceof Array_ ? $names->items : [new ArrayItem($names)];
+        $actions = [];
+
+        if (isset($arguments['arguments'])) {
+            // The legacy parser also accepts arguments keyed by action name.
+            return null;
+        }
+
+        foreach ($items as $index => $item) {
+            if ($item->unpack || $item->key || ((! $item->value instanceof String_) && (! $item->value instanceof ClassConstFetch))) {
+                return null;
+            }
+
+            $action = new StaticCall(new FullyQualified(TestAction::class), 'make', [new Arg($item->value)]);
+
+            if (str_starts_with($family, 'Table')) {
+                $record = (! $index) ? ($arguments['record'] ?? null) : null;
+                $recordType = $record ? $this->getType($record) : null;
+                $action = new MethodCall($action, 'table', ($record && (! $recordType->isNull()->yes()))
+                    ? [new Arg($recordType->isNull()->no() ? $record : new Coalesce($record, $this->nodeFactory->createTrue()))]
+                    : []);
+
+                if ($family === 'TableBulk') {
+                    $action = new MethodCall($action, 'bulk');
+                }
+            } else {
+                $component = $arguments[$family === 'FormComponent' ? 'components' : 'component'] ?? null;
+
+                if (! $component) {
+                    return null;
+                }
+
+                if ((! $component instanceof Array_) && (! (new StringType)->isSuperTypeOf($this->getType($component))->yes())) {
+                    return null;
+                }
+
+                $component = $component instanceof Array_ ? (($component->items[$index] ?? null)?->value) : ($index ? null : $component);
+
+                if ($component) {
+                    $schema = $index ? new String_('') : ($arguments[$family === 'FormComponent' ? 'formName' : 'schema'] ?? new String_($family === 'FormComponent' ? 'form' : 'infolist'));
+                    $action = new MethodCall($action, 'schemaComponent', [new Arg($component), new Arg($schema)]);
+                }
+            }
+
+            $actions[] = new ArrayItem($action);
+        }
+
+        return $names instanceof Array_ ? new Array_($actions) : ($actions[0]->value ?? null);
     }
 }

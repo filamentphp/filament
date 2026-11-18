@@ -67,15 +67,21 @@ function stored(): Builder
 
     return $builder->disableItemCreation(fn (Builder $component): bool => $component->getLabel() === 'original');
 }
+
+function inlineClosure(bool &$condition, array &$events): FileUpload
+{
+    return FileUpload::make('inline')->disablePreview(function () use (&$condition, &$events): bool {
+        $events[] = 'inline';
+
+        return $condition;
+    });
+}
 -----
 <?php
 
 namespace Filament\Tests\Upgrade\Fixtures\BehavioralExpressions;
 
 use Closure;
-use Filament\Forms\Components\Field;
-use BackedEnum;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
@@ -105,29 +111,21 @@ function components(array &$events, bool &$condition): array
     };
 
     return [
-        FileUpload::make('preview')->image()->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))($preview)),
-        FileUpload::make('snapshot')->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))($condition)),
-        (static fn(FileUpload $component, string|Closure|null $ratio): FileUpload => $component->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : \filled($ratio)))(FileUpload::make('crop'), $ratio),
-        TextInput::make('autocomplete')->autocomplete((static fn(bool|Closure $condition): Closure => static fn(Field $component): ?bool => $component->evaluate($condition) ? false : null)(fn (): bool => $condition)),
-        (static fn(Builder $component, bool|Closure $condition): Builder => $component->addable(static fn(): bool => !$component->evaluate($condition)))(Builder::make('items')->schema([])->label('original'), fn (Builder $component): bool => $component->getLabel() === 'original'),
-        (static fn(Select $component, bool|Closure $condition): Select => $component->selectablePlaceholder(static fn(): bool => !$component->evaluate($condition)))(Select::make('status')->options([])->label('original'), fn (Select $component): bool => $component->getLabel() === 'original'),
-        (static function (Action $action, bool|Closure|null $condition): Action {
-            if ($action->evaluate($condition)) {
-                $action->modalAlignment(Alignment::Center);
-            }
-            return $action;
-        })(Action::make('eager')->modalAlignment(Alignment::End), function () use (&$events): bool { $events[] = 'eager'; return false; }),
-        CreateAction::make()->createAnother((static fn(bool|Closure $condition): Closure => static fn(CreateAction $action): bool => !$action->evaluate($condition))(fn (CreateAction $action): bool => $action->getName() === 'create')),
-        (static fn(DateTimePicker $component, string|BackedEnum|Htmlable|Closure|bool|null $icon): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))(DateTimePicker::make('date'), Heroicon::Clock),
-        Builder::make('inset')->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)(function () use (&$events): bool { $events[] = 'unused'; return true; })),
-        (static fn(Repeater $component, bool|Closure $condition): Repeater => $component->reorderable(static fn(): bool => !$component->evaluate($condition)))((static fn(Repeater $component, bool|Closure $condition): Repeater => $component->deletable(static fn(): bool => !$component->evaluate($condition)))((static fn(Repeater $component, bool|Closure $condition): Repeater => $component->addable(static fn(): bool => !$component->evaluate($condition)))(Repeater::make('repeated')->label('original'), fn (Repeater $component): bool => $component->getLabel() === 'original'), fn (Repeater $component): bool => $component->getLabel() === 'original'), fn (Repeater $component): bool => $component->getLabel() === 'original'),
-        (static function (EditAction $action, bool|Closure|null $condition): EditAction {
-            if ($action->evaluate($condition)) {
-                $action->modalAlignment(Alignment::Center);
-            }
-            return $action;
-        })(EditAction::make(), fn (EditAction $action): bool => $action->getName() === 'edit'),
-        KeyValue::make('metadata')->label('original')->editableKeys((static fn(bool|Closure $condition): Closure => static fn(KeyValue $component): bool => !$component->evaluate($condition))(fn (KeyValue $component): bool => $component->getLabel() === 'original')),
+        FileUpload::make('preview')->image()->previewable(fn(BaseFileUpload $configurationComponent) => !$configurationComponent->evaluate($preview)),
+        FileUpload::make('snapshot')->previewable(!$condition),
+        FileUpload::make('crop')->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio(fn(FileUpload $configurationComponent) => \filled($configurationComponent->getImageAspectRatio())),
+        TextInput::make('autocomplete')->autocomplete(fn () => $condition ? false : null),
+        Builder::make('items')->schema([])->label('original')->addable(fn (Builder $component) => !($component->getLabel() === 'original')),
+        Select::make('status')->options([])->label('original')->selectablePlaceholder(fn (Select $component) => !($component->getLabel() === 'original')),
+        Action::make('eager')->modalAlignment(Alignment::End)->tap(function ($configurationComponent) use (&$events) {
+            return $configurationComponent->evaluate(function () use (&$events): bool { $events[] = 'eager'; return false; }) ? $configurationComponent->modalAlignment(Alignment::Center) : $configurationComponent;
+        }),
+        CreateAction::make()->createAnother(fn (CreateAction $action) => !($action->getName() === 'create')),
+        DateTimePicker::make('date')->suffixIcon(Heroicon::Clock, isInline: true),
+        Builder::make('inset'),
+        Repeater::make('repeated')->label('original')->addable(fn (Repeater $component) => !($component->getLabel() === 'original'))->deletable(fn (Repeater $component) => !($component->getLabel() === 'original'))->reorderable(fn (Repeater $component) => !($component->getLabel() === 'original')),
+        EditAction::make()->tap(fn($configurationComponent) => $configurationComponent->evaluate(fn (EditAction $action): bool => $action->getName() === 'edit') ? $configurationComponent->modalAlignment(Alignment::Center) : $configurationComponent),
+        KeyValue::make('metadata')->label('original')->editableKeys(fn (KeyValue $component) => !($component->getLabel() === 'original')),
     ];
 }
 
@@ -140,7 +138,7 @@ function configureTyped(FileUpload $upload, Action $action): void
 function globallyConfigured(bool | Closure $condition): FileUpload
 {
     return FileUpload::configureUsing(
-        static fn (FileUpload $upload): FileUpload => $upload->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))($condition)),
+        static fn (FileUpload $upload): FileUpload => $upload->previewable(fn(BaseFileUpload $configurationComponent) => !$configurationComponent->evaluate($condition)),
         during: static fn (): FileUpload => FileUpload::make('global'),
     );
 }
@@ -149,5 +147,14 @@ function stored(): Builder
 {
     $builder = Builder::make('stored')->label('original');
 
-    return (static fn(Builder $component, bool|Closure $condition): Builder => $component->addable(static fn(): bool => !$component->evaluate($condition)))($builder, fn (Builder $component): bool => $component->getLabel() === 'original');
+    return $builder->addable(fn (Builder $component) => !($component->getLabel() === 'original'));
+}
+
+function inlineClosure(bool &$condition, array &$events): FileUpload
+{
+    return FileUpload::make('inline')->previewable(function () use (&$condition, &$events) {
+        $events[] = 'inline';
+
+        return !$condition;
+    });
 }

@@ -149,7 +149,7 @@ function numericIndicators(int $count, float $rating): array
 
 function unionIndicators(Action $action, ActionGroup $group, Tab $tab, string | int | float | Closure | null $indicator): array
 {
-    return [$action->badge(badge: (static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($indicator)), $group->badge((static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($indicator)), $tab->badge($indicator)];
+    return [$action->badge(badge: \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator), $group->badge(\is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator), $tab->badge($indicator)];
 }
 
 function unpackedIndicators(Action $action, ActionGroup $group): array
@@ -159,7 +159,7 @@ function unpackedIndicators(Action $action, ActionGroup $group): array
 
 function nullableIndicator(?Action $action, Closure $value): ?Action
 {
-    return $action?->badge((static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($value()));
+    return $action?->badge((static fn($indicator) => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($value()));
 }
 
 function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | OtherCustomAction $union): void

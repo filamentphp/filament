@@ -80,11 +80,7 @@ class ActionsPage extends Page
 
 namespace Filament\Tests\Upgrade\Fixtures\PanelIntegrationsManual;
 
-use Closure;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Exceptions\NoDefaultPanelSetException;
-use LogicException;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Pages\Page;
@@ -93,43 +89,17 @@ use Filament\Widgets\StatsOverviewWidget;
 
 function manual(FilamentManager $manager, string $method, array $arguments): void
 {
-    (static fn(?FilamentManager $manager) => $manager === null ? null : (\method_exists($manager, 'registerScriptData') ? Closure::fromCallable([$manager, 'registerScriptData']) : static function (array $data) use ($manager): void {
-        FilamentAsset::registerScriptData($data);
-    }))($manager)(['custom' => true]);
+    FilamentAsset::registerScriptData(['custom' => true]);
     Filament::$method(...$arguments);
     Filament::registerRenderHook(...$arguments);
     Filament::registerScriptData(['ignored' => true], 'ignored-package');
     Filament::renderHook('hook', 'ignored-scope');
     Filament::registerRenderHook('hook', fn () => 'html', 'ignored-scope');
     Filament::registerScriptData(...);
-    (static function (array $pages): void {
-        try {
-            Filament::getDefaultPanel()->pages($pages);
-        } catch (NoDefaultPanelSetException $exception) {
-            throw new LogicException('Please use the `pages()` method on the panel configuration to register pages.');
-        }
-    })([Page::class]);
-    (static function (array $resources): void {
-        try {
-            Filament::getDefaultPanel()->resources($resources);
-        } catch (NoDefaultPanelSetException $exception) {
-            throw new LogicException('Please use the `resources()` method on the panel configuration to register resources.');
-        }
-    })([Resource::class]);
-    (static function (array $widgets): void {
-        try {
-            Filament::getDefaultPanel()->widgets($widgets);
-        } catch (NoDefaultPanelSetException $exception) {
-            throw new LogicException('Please use the `widgets()` method on the panel configuration to register widgets.');
-        }
-    })([StatsOverviewWidget::class]);
-    (static function (string|Htmlable|null $theme): void {
-        try {
-            Filament::getDefaultPanel()->theme($theme);
-        } catch (NoDefaultPanelSetException $exception) {
-            throw new LogicException('Please use the `theme()` method on the panel configuration to register themes.');
-        }
-    })('theme.css');
+    Filament::getDefaultPanel()->pages([Page::class]);
+    Filament::getDefaultPanel()->resources([Resource::class]);
+    Filament::getDefaultPanel()->widgets([StatsOverviewWidget::class]);
+    Filament::getDefaultPanel()->theme('theme.css');
     Filament::registerScripts(['script.js']);
     Filament::registerStyles(['style.css']);
 }

@@ -106,11 +106,8 @@ function subclasses(CustomUpload $inherited, OverriddenUpload $legacy, Overridde
 namespace Filament\Tests\Upgrade\Fixtures\BehavioralConfigurationManual;
 
 use Filament\Forms\Components\BaseFileUpload;
-use BackedEnum;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Support\Icons\Heroicon;
 use Filament\Support\Enums\Alignment;
-use Filament\Forms\Components\Field;
+use Filament\Support\Icons\Heroicon;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -120,50 +117,45 @@ use Filament\Forms\Components\TextInput;
 
 function configure(?FileUpload $upload, bool | Closure $condition): ?FileUpload
 {
-    return $upload?->label('Configured')->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))($condition));
+    return $upload?->label('Configured')->previewable(fn(BaseFileUpload $configurationComponent) => !$configurationComponent->evaluate($condition));
 }
 
 function ratio(FileUpload $upload, string | Closure | null $ratio): FileUpload
 {
-    return (static fn(FileUpload $component, string|Closure|null $ratio): FileUpload => $component->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : \filled($ratio)))($upload, $ratio);
+    return $upload->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio(fn(FileUpload $configurationComponent) => \filled($configurationComponent->getImageAspectRatio()));
 }
 
 function icon(DateTimePicker $picker, string | false | null $icon): DateTimePicker
 {
-    return (static fn(DateTimePicker $component, string|BackedEnum|Htmlable|Closure|bool|null $icon): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))($picker, $icon);
+    return $picker->icon($icon);
 }
 
 function center(Action $action, bool | Closure | null $condition): Action
 {
-    return (static function (Action $action, bool|Closure|null $condition): Action {
-        if ($action->evaluate($condition)) {
-            $action->modalAlignment(Alignment::Center);
-        }
-        return $action;
-    })($action, $condition);
+    return $action->tap(fn($configurationComponent) => $configurationComponent->evaluate($condition) ? $configurationComponent->modalAlignment(Alignment::Center) : $configurationComponent);
 }
 
 function nullableConfiguration(?FileUpload $upload, ?DateTimePicker $picker, ?Action $action, string | null $ratio, string | false | null $icon, bool $condition): void
 {
-    $upload?->tap((static fn(string|Closure|null $ratio): Closure => static fn(FileUpload $component): FileUpload => $component->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : \filled($ratio)))($ratio));
-    $upload?->label('Photo')->tap((static fn(string|Closure|null $ratio): Closure => static fn(FileUpload $component): FileUpload => $component->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : \filled($ratio)))($ratio));
-    $picker?->tap((static fn(string|BackedEnum|Htmlable|Closure|bool|null $icon): Closure => static fn(DateTimePicker $component): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))($icon));
-    $picker?->label('Date')->tap((static fn(string|BackedEnum|Htmlable|Closure|bool|null $icon): Closure => static fn(DateTimePicker $component): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))($icon));
-    $picker?->tap((static fn(string|BackedEnum|Htmlable|Closure|bool|null $icon): Closure => static fn(DateTimePicker $component): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))(null))->label('Default');
-    $picker?->tap((static fn(string|BackedEnum|Htmlable|Closure|bool|null $icon): Closure => static fn(DateTimePicker $component): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))(false))->label('Unchanged');
-    $action?->centerModal($condition);
-    $action?->label('Edit')->centerModal($condition);
+    $upload?->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio(fn(FileUpload $configurationComponent) => \filled($configurationComponent->getImageAspectRatio()));
+    $upload?->label('Photo')->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio(fn(FileUpload $configurationComponent) => \filled($configurationComponent->getImageAspectRatio()));
+    $picker?->icon($icon);
+    $picker?->label('Date')->icon($icon);
+    $picker?->suffixIcon(Heroicon::Calendar, isInline: true)->label('Default');
+    $picker?->tap(static fn() => null)->label('Unchanged');
+    $action?->tap(fn($configurationComponent) => $configurationComponent->evaluate($condition) ? $configurationComponent->modalAlignment(Alignment::Center) : $configurationComponent);
+    $action?->label('Edit')->tap(fn($configurationComponent) => $configurationComponent->evaluate($condition) ? $configurationComponent->modalAlignment(Alignment::Center) : $configurationComponent);
 }
 
 function nullableSelect(?Select $select, bool | Closure $condition): array
 {
     return [
-        $select?->tap((static fn(bool|Closure $condition): Closure => static fn(Select $component): Select => $component->selectablePlaceholder(static fn(): bool => !$component->evaluate($condition)))($condition))->label('After'),
-        $select?->tap((static fn(bool|Closure $condition): Closure => static fn(Select $component): Select => $component->selectablePlaceholder(static fn(): bool => !$component->evaluate($condition)))($condition)),
-        $select?->tap((static fn(bool|Closure $condition): Closure => static fn(Select $component): Select => $component->selectablePlaceholder(static fn(): bool => !$component->evaluate($condition)))($condition)),
-        $select?->selectablePlaceholder(false),
-        $select?->selectablePlaceholder(true),
-        $select?->selectablePlaceholder(false),
+        $select?->selectablePlaceholder(fn(Select $configurationComponent) => !$configurationComponent->evaluate($condition))->label('After'),
+        $select?->disablePlaceholderSelection(...[$condition]),
+        $select?->disablePlaceholderSelection(...['condition' => $condition]),
+        $select?->disablePlaceholderSelection(...[]),
+        $select?->disablePlaceholderSelection(...[false]),
+        $select?->disablePlaceholderSelection(...['condition' => true]),
     ];
 }
 
@@ -176,14 +168,14 @@ class Configuration
 
 function nullableProperties(?Configuration $configuration, string $ratio, string $icon, bool $condition): void
 {
-    $configuration?->upload->tap((static fn(string|Closure|null $ratio): Closure => static fn(FileUpload $component): FileUpload => $component->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : \filled($ratio)))($ratio));
-    $configuration?->picker->label('Date')->tap((static fn(string|BackedEnum|Htmlable|Closure|bool|null $icon): Closure => static fn(DateTimePicker $component): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))($icon));
-    $configuration?->action->centerModal($condition);
+    $configuration?->upload->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio(fn(FileUpload $configurationComponent) => \filled($configurationComponent->getImageAspectRatio()));
+    $configuration?->picker->label('Date')->suffixIcon($icon, isInline: true);
+    $configuration?->action->tap(fn($configurationComponent) => $configurationComponent->evaluate($condition) ? $configurationComponent->modalAlignment(Alignment::Center) : $configurationComponent);
 }
 
 function autocomplete(TextInput $input, bool | Closure $condition): TextInput
 {
-    return $input->autocomplete((static fn(bool|Closure $condition): Closure => static fn(Field $component): ?bool => $component->evaluate($condition) ? false : null)($condition))->autocapitalize((static fn(bool|Closure $condition): Closure => static fn(Field $component): ?bool => $component->evaluate($condition) ? false : null)($condition));
+    return $input->autocomplete(fn(TextInput $configurationComponent) => $configurationComponent->evaluate($condition) ? false : null)->autocapitalize(fn(TextInput $configurationComponent) => $configurationComponent->evaluate($condition) ? false : null);
 }
 
 function unrelated(Other $component): void

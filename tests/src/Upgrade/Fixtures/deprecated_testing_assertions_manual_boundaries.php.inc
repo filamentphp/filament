@@ -92,11 +92,22 @@ function manual(CustomAssertions $custom, TestsActions $mixin, Testable $testabl
     // Macro lookup is case-sensitive.
     $testable->ASSERTACTIONHELD('save');
 }
+
+function dynamicAssertions(Testable $testable, array $arguments, string | array $actions, string | \Closure $schema): void
+{
+    $callback = $testable->assertFormExists(...);
+    $callback = $testable->assertTableActionVisible(...);
+    $testable->setActionData(...$arguments);
+    $testable->assertFormComponentActionExists(...$arguments);
+    $testable->assertFormComponentExists('title', $schema);
+    $testable->callAction('save')->assertTableActionExists($actions);
+}
 -----
 <?php
 
 namespace Filament\Tests\Upgrade\Fixtures\TestingAssertionBoundaries;
 
+use Filament\Actions\Testing\TestAction;
 use Closure;
 use Filament\Actions\Testing\TestsActions;
 use Filament\Forms\Testing\TestsFormComponentActions;
@@ -152,21 +163,11 @@ class RedirectingTestable extends Testable
 function nativeChains(CustomTestable $custom, RedirectingTestable $redirecting): void
 {
     $custom->mountAction('edit')->setTableActionData(data: []);
-    Closure::bind(function (string|array $actions): static {
-        $actions = $this->parseNestedTableActions($actions);
-        $this->assertActionMounted($actions);
-        return $this;
-    }, $custom->mountTableAction('edit'), 'Livewire\Features\SupportTesting\Testable')->__invoke('edit')->setTableActionData(data: []);
+    $custom->mountTableAction('edit')->assertActionMounted(TestAction::make('edit')->table())->setTableActionData(data: []);
     $custom->assertActionExists('edit')->assertHasInfolistActionErrors(keys: []);
     $custom->assertFormComponentActionVisible('field', 'save');
-    Closure::bind(function (string $name = "form"): static {
-        $this->assertSchemaExists($name);
-        return $this;
-    }, $custom, 'Livewire\Features\SupportTesting\Testable')->__invoke()->assertFormComponentActionVisible('field', 'save');
-    (static fn(?Testable $testable) => $testable === \null ? \null : Closure::bind(function (string $name = "form"): static {
-        $this->assertSchemaExists($name);
-        return $this;
-    }, $testable, 'Livewire\Features\SupportTesting\Testable'))($custom)?->__invoke()?->assertFormComponentActionVisible('field', 'save');
+    $custom->assertSchemaExists('form')->assertFormComponentActionVisible('field', 'save');
+    $custom?->assertSchemaExists('form')?->assertFormComponentActionVisible('field', 'save');
     $redirecting->mountAction('edit')->assertHasNoFormComponentActionErrors();
 }
 
@@ -197,4 +198,14 @@ function manual(CustomAssertions $custom, TestsActions $mixin, Testable $testabl
     $testable->get('property')->setActionData([]);
     // Macro lookup is case-sensitive.
     $testable->ASSERTACTIONHELD('save');
+}
+
+function dynamicAssertions(Testable $testable, array $arguments, string | array $actions, string | Closure $schema): void
+{
+    $callback = $testable->assertFormExists(...);
+    $callback = $testable->assertTableActionVisible(...);
+    $testable->setActionData(...$arguments);
+    $testable->assertFormComponentActionExists(...$arguments);
+    $testable->assertFormComponentExists('title', $schema);
+    $testable->callAction('save')->assertTableActionExists($actions);
 }

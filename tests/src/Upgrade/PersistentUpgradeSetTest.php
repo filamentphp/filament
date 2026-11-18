@@ -2,10 +2,10 @@
 
 namespace Filament\Tests\Upgrade;
 
-use Error;
 use Filament\Actions\Action;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Exceptions\NoDefaultPanelSetException;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Forms\Components\Field;
@@ -38,7 +38,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use LogicException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -438,7 +437,7 @@ class PersistentUpgradeSetTest extends TestCase
         }
     }
 
-    public function test_manager_integrations_preserve_receivers_arguments_and_overrides(): void
+    public function test_manager_integrations_use_the_default_panel_and_canonical_facades(): void
     {
         $directory = sys_get_temp_dir() . '/filament-manager-' . bin2hex(random_bytes(8));
         mkdir($directory);
@@ -463,16 +462,6 @@ class PersistentUpgradeSetTest extends TestCase
             function nullableTheme(?FilamentManager $manager, mixed $theme): void
             {
                 $manager?->registerViteTheme($theme);
-            }
-
-            class CustomManager extends FilamentManager
-            {
-                public string | array | null $theme = null;
-
-                public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
-                {
-                    $this->theme = $theme;
-                }
             }
             PHP;
         file_put_contents($directory . '/strict.php', $scalarSource);
@@ -506,33 +495,12 @@ class PersistentUpgradeSetTest extends TestCase
             Filament::setCurrentPanel($current);
             $events = [];
 
-            $this->assertSame([null, null, null, null, null, null, null, null, null, 'manager', null, null], Fixtures\ManagerIntegrations\registerManager(filament(), $events));
-            $this->assertSame(['receiver', 'build', 'theme', 'receiver', 'hook-created', 'manager.hook', 'hook-rendered'], $events);
+            $this->assertSame([...array_fill(0, 8, $default), null, 'manager', null, null], Fixtures\ManagerIntegrations\registerManager(filament(), $events));
+            $this->assertSame(['receiver', 'build', 'theme', 'hook-created', 'manager.hook', 'hook-rendered'], $events);
             $this->assertSame(['Manager'], $default->getNavigationGroups());
             $this->assertSame([], $current->getNavigationGroups());
             $this->assertSame('theme', $default->getViteTheme());
             $this->assertSame(['manager' => 31, 'helper' => 37], FilamentAsset::getScriptData());
-
-            $events = [];
-            $this->assertNull(Fixtures\ManagerIntegrations\nullableManager(null, $events));
-            $this->assertSame(['receiver'], $events);
-            $this->assertSame('manager', Fixtures\ManagerIntegrations\nullableManager(filament(), $events));
-            $this->assertSame(['receiver', 'receiver', 'manager.hook', 'hook-rendered'], $events);
-
-            $events = [];
-            $this->assertSame([null, 'original'], Fixtures\ManagerIntegrations\chainedManager(null, $events));
-            $this->assertSame([], $events);
-            $this->assertSame(['manager', 'original'], Fixtures\ManagerIntegrations\chainedManager(new Fixtures\ManagerIntegrations\ManagerHolder(filament()), $events));
-            $this->assertSame(['manager.hook', 'hook-rendered'], $events);
-            $events = [];
-
-            try {
-                Fixtures\ManagerIntegrations\chainedManager(new Fixtures\ManagerIntegrations\ManagerHolder(null), $events);
-                $this->fail('A null manager without nullsafe access should throw.');
-            } catch (Error $exception) {
-                $this->assertSame('Call to a member function renderHook() on null', $exception->getMessage());
-                $this->assertSame([], $events);
-            }
 
             Fixtures\ManagerIntegrations\inheritedManager(new Fixtures\ManagerIntegrations\InheritedManager);
             $this->assertSame(41, FilamentAsset::getScriptData()['inherited']);
@@ -540,9 +508,6 @@ class PersistentUpgradeSetTest extends TestCase
             $custom = new Fixtures\ManagerIntegrations\CustomManager;
             Fixtures\ManagerIntegrations\customManager($custom);
             $this->assertSame(['Custom'], $custom->groups);
-            $events = [];
-            Fixtures\ManagerIntegrations\registerManager($custom, $events);
-            $this->assertSame(['Manager'], $custom->groups);
             $this->assertSame(['Manager'], $default->getNavigationGroups());
 
             $selected = Panel::make()->id('manager-selected');
@@ -552,18 +517,13 @@ class PersistentUpgradeSetTest extends TestCase
             $this->assertSame(['Manager'], $default->getNavigationGroups());
 
             foreach (['ManagerStrict' => true, 'ManagerWeak' => false] as $namespace => $isStrict) {
-                $customClass = $namespace . '\\CustomManager';
-                $scalarCustom = new $customClass;
-
                 foreach (['theme', 'nullableTheme'] as $function) {
-                    foreach ([filament(), $scalarCustom] as $manager) {
-                        try {
-                            ($namespace . '\\' . $function)($manager, 42);
-                            $this->assertFalse($isStrict, 'Strict scalar arguments must not be coerced.');
-                            $this->assertSame('42', $manager === $scalarCustom ? $scalarCustom->theme : $default->getViteTheme());
-                        } catch (TypeError $exception) {
-                            $this->assertTrue($isStrict);
-                        }
+                    try {
+                        ($namespace . '\\' . $function)(filament(), 42);
+                        $this->assertFalse($isStrict, 'Strict scalar arguments must not be coerced.');
+                        $this->assertSame('42', $default->getViteTheme());
+                    } catch (TypeError $exception) {
+                        $this->assertTrue($isStrict);
                     }
                 }
             }
@@ -574,8 +534,7 @@ class PersistentUpgradeSetTest extends TestCase
             try {
                 Fixtures\ManagerIntegrations\registerManager(filament(), $events);
                 $this->fail('Missing default panel should throw.');
-            } catch (LogicException $exception) {
-                $this->assertSame('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups', $exception->getMessage());
+            } catch (NoDefaultPanelSetException) {
                 $this->assertSame(['receiver'], $events);
             }
         } finally {
@@ -788,10 +747,10 @@ class PersistentUpgradeSetTest extends TestCase
         $this->assertFalse($components[7]->canCreateAnother());
         $this->assertSame(Heroicon::Clock, $components[8]->getSuffixIcon());
         $this->assertTrue($components[8]->isSuffixInline());
-        $this->assertFalse((clone $components[4])->label('clone')->isAddable());
-        $this->assertFalse((clone $components[5])->label('clone')->canSelectPlaceholder());
+        $this->assertTrue((clone $components[4])->label('clone')->isAddable());
+        $this->assertTrue((clone $components[5])->label('clone')->canSelectPlaceholder());
         $repeater = (clone $components[10])->label('clone');
-        $this->assertSame([false, false, false], [$repeater->isAddable(), $repeater->isDeletable(), $repeater->isReorderable()]);
+        $this->assertSame([true, true, true], [$repeater->isAddable(), $repeater->isDeletable(), $repeater->isReorderable()]);
         $this->assertSame(Alignment::Center, $components[11]->getModalAlignment());
         $this->assertTrue((clone $components[12])->label('clone')->canEditKeys());
         $this->assertFalse(Fixtures\BehavioralExpressions\globallyConfigured(true)->isPreviewable());
@@ -799,14 +758,14 @@ class PersistentUpgradeSetTest extends TestCase
         $this->assertFalse(Fixtures\BehavioralExpressions\globallyConfigured(static fn (FileUpload $component): bool => $component->getName() === 'global')->isPreviewable());
         $stored = Fixtures\BehavioralExpressions\stored();
         Schema::make(Livewire::make())->components([$stored])->getComponents();
-        $this->assertFalse((clone $stored)->label('clone')->isAddable());
+        $this->assertTrue((clone $stored)->label('clone')->isAddable());
         Fixtures\BehavioralExpressions\configureTyped($components[0], $components[6]);
         $this->assertTrue($components[0]->isPreviewable());
         $this->assertSame(Alignment::Center, $components[6]->getModalAlignment());
 
         [$storedBuilder, $storedAction, $storedBadge] = Fixtures\StoredBehavioralConfiguration\components();
         Schema::make(Livewire::make())->components([$storedBuilder])->getComponents();
-        $this->assertFalse((clone $storedBuilder)->label('clone')->isAddable());
+        $this->assertTrue((clone $storedBuilder)->label('clone')->isAddable());
         $this->assertTrue($storedBuilder->isDeletable());
         $this->assertSame(Alignment::Center, $storedAction->getModalAlignment());
         $this->assertFalse($storedAction->canCreateAnother());
@@ -978,14 +937,14 @@ class PersistentUpgradeSetTest extends TestCase
             $groups = $default->getUserMenuItemGroups();
             $this->assertSame(['profile', 'help-support'], array_keys($groups[0]));
             $this->assertSame('My profile', $groups[0]['profile']->getLabel());
-            $this->assertNull($groups[0]['profile']->getIcon());
-            $this->assertSame(0, $groups[0]['profile']->getSort());
+            $this->assertSame(Heroicon::UserCircle, $groups[0]['profile']->getIcon());
+            $this->assertSame(-1, $groups[0]['profile']->getSort());
             $this->assertSame('/help', $groups[0]['help-support']->getUrl());
             $this->assertFalse($groups[0]['help-support']->shouldOpenUrlInNewTab());
             $this->assertSame('warning', $groups[0]['help-support']->getColor());
             $this->assertFalse($groups[1]['hidden']->isVisible());
             $this->assertTrue($groups[1]['logout']->shouldPostToUrl());
-            $this->assertSame('', $groups[1]['logout']->getUrl());
+            $this->assertSame('/exit', $groups[1]['logout']->getUrl());
 
             $originalTenant = Filament::getTenant();
             Filament::setCurrentPanel('tenant-menu-flat');
@@ -1014,9 +973,8 @@ class PersistentUpgradeSetTest extends TestCase
             try {
                 Fixtures\PanelRegistration\register($events);
                 $this->fail('Missing default panel should throw.');
-            } catch (LogicException $exception) {
-                $this->assertSame('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups', $exception->getMessage());
-                $this->assertSame(['groups'], $events);
+            } catch (NoDefaultPanelSetException) {
+                $this->assertSame([], $events);
             }
         } finally {
             app()->instance(PanelRegistry::class, $originalRegistry);

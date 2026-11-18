@@ -18,6 +18,7 @@ function configure(ExportAction $action, ?ExportBulkAction $nullable, ImportActi
     $unrelated->csvDelimiter(';');
     $action->csvDelimiter(...$arguments);
     $callback = $action->csvDelimiter(...);
+    $action->csvDelimiter($delimiter = makeDelimiter());
 }
 -----
 <?php
@@ -32,12 +33,13 @@ function configure(ExportAction $action, ?ExportBulkAction $nullable, ImportActi
 {
     $action->label('Export');
     ExportAction::make('export')->label('Export');
-    [$action, makeDelimiter()][0];
-    $nullable?->tap([makeDelimiter(), static fn() => null][1])->label('Export');
-    $nullable?->tap(static fn() => null)->label('Export');
+    $action->tap(fn() => makeDelimiter());
+    $nullable?->tap(fn() => makeDelimiter())->label('Export');
+    $nullable?->tap(fn() => null)->label('Export');
     $action;
     $import->csvDelimiter(';');
     $unrelated->csvDelimiter(';');
     $action->csvDelimiter(...$arguments);
     $callback = $action->csvDelimiter(...);
+    $action->csvDelimiter($delimiter = makeDelimiter());
 }

@@ -207,10 +207,8 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
             }
 
             if ($translation !== null) {
-                // Finish the original body (including local destruction and
-                // finally blocks) before resolving its translated fallback.
                 $method->stmts = [new Return_(new Coalesce(
-                    $value ?? $this->wrapBody($method),
+                    $value ?? $this->getReturnedValue($method),
                     new FuncCall(new FullyQualified('__'), [new Arg(new String_($translation))]),
                 ))];
 
@@ -680,7 +678,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
                     $class->stmts[] = clone $method;
                 }
 
-                $value = $hasLegacyChildHook ? new StaticCall(new Name('static'), $oldName) : $this->wrapBody($method);
+                $value = $hasLegacyChildHook ? new StaticCall(new Name('static'), $oldName) : $this->getReturnedValue($method);
                 $fallback = new StaticCall(new Name('parent'), $newName);
                 $method->stmts = [new Return_(
                     $oldName === 'getLabel' ? new Coalesce($value, $fallback) : new Ternary(
@@ -799,8 +797,14 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         return true;
     }
 
-    private function wrapBody(ClassMethod $method): FuncCall
+    private function getReturnedValue(ClassMethod $method): Expr
     {
+        if ((count($method->stmts ?? []) === 1) && ($method->stmts[0] instanceof Return_) && $method->stmts[0]->expr) {
+            return $method->stmts[0]->expr;
+        }
+
+        // A closure is only needed for a statement body, such as branches or
+        // `try` / `finally`, that must finish before the fallback is evaluated.
         return new FuncCall(new Expr\Closure([
             'static' => $method->isStatic(),
             'returnType' => $method->returnType,

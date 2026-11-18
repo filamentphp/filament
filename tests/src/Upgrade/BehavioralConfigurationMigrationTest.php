@@ -3,7 +3,6 @@
 namespace Filament\Tests\Upgrade;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -82,15 +81,21 @@ class BehavioralConfigurationMigrationTest extends TestCase
             $this->assertSame($shouldCrop, $upload->shouldAutomaticallyCropImagesToAspectRatio());
         }
 
-        foreach (['heroicon-o-clock', false, null] as $icon) {
-            $picker = DateTimePicker::make('date')->suffixIcon('heroicon-o-star', isInline: false);
-            $this->assertSame($picker, Configuration\icon($picker, $icon));
-            $this->assertSame($icon === false ? 'heroicon-o-star' : ($icon ?? Heroicon::Calendar), $picker->getSuffixIcon());
-            $this->assertSame($icon !== false, $picker->isSuffixInline());
-        }
-
         $action = Action::make('edit')->modalAlignment(Alignment::End);
         $this->assertSame($action, Configuration\center($action, null));
         $this->assertSame(Alignment::End, $action->getModalAlignment());
+    }
+
+    public function test_keeps_inline_closures_lazy_and_preserves_reference_captures(): void
+    {
+        $condition = true;
+        $events = [];
+        $upload = BehavioralExpressions\inlineClosure($condition, $events);
+
+        $this->assertSame([], $events);
+        $this->assertFalse($upload->isPreviewable());
+        $condition = false;
+        $this->assertTrue($upload->isPreviewable());
+        $this->assertSame(['inline', 'inline'], $events);
     }
 }

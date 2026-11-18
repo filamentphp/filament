@@ -35,13 +35,18 @@ function label(): string
     return 'Export';
 }
 
+function referenceDelimiter(array &$events): string
+{
+    $events[] = 'delimiter';
+
+    return ';';
+}
+
 function nullable(?ExportAction $action): void
 {
     $GLOBALS['events'] = [];
-    $value = null;
-    check($action?->csvDelimiter($value = delimiter())->label(label()) === $action);
+    check($action?->csvDelimiter(delimiter())->label(label()) === $action);
     check($GLOBALS['events'] === ($action ? ['argument', 'label'] : []));
-    check(($value instanceof Closure) === ($action !== null));
 }
 
 foreach ([new ExportAction('export'), new ExportBulkAction('export')] as $action) {
@@ -51,6 +56,9 @@ foreach ([new ExportAction('export'), new ExportBulkAction('export')] as $action
     check($action->getLabel() === 'Export');
     check($action->csvDelimiter(';')->label('After')->csvDelimiter(null) === $action);
     check($action->csvDelimiter(static fn () => throw new RuntimeException('Never invoked')) === $action);
+    $events = [];
+    check($action->csvDelimiter(referenceDelimiter($events)) === $action);
+    check($events === ['delimiter']);
 }
 nullable(new ExportAction('export'));
 nullable(null);

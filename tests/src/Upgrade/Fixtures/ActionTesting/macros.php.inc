@@ -35,14 +35,12 @@ function compatibilityAliases(Testable $testable, ?Testable $nullable = null): a
 
     $setData = $testable->setTableBulkActionData(...);
     $assertData = $testable->assertFormComponentActionDataSet(...);
-    $results[] = $setData(data: ['title' => 'Changed']);
-    $results[] = $assertData(data: static fn (array $state): array => ['title' => $state['title']]);
+    $results[] = $setData(['title' => 'Changed']);
+    $results[] = $assertData(static fn (array $state): array => ['title' => $state['title']]);
     $results[] = $testable->setInfolistActionData(...['data' => ['title' => 'Changed']]);
-    $results[] = $testable->assertTableActionDataSet(...(static function (): iterable {
-        yield 'data' => ['title' => 'Changed'];
-    })());
+    $results[] = $testable->assertTableActionDataSet(data: ['title' => 'Changed']);
 
-    $results[] = $nullable?->setTableActionData(...throw new \LogicException('Arguments must be skipped'))->assertHasNoTableActionErrors();
+    $results[] = $nullable?->setTableActionData(throw new \LogicException('Arguments must be skipped'))->assertHasNoTableActionErrors();
 
     return $results;
 }

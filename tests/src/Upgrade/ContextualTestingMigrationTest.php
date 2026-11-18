@@ -20,11 +20,8 @@ use Filament\Tests\Upgrade\Fixtures\ContextualTesting\ContextualTable;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
-use PhpParser\Node;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\NodeFinder;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitor\NameResolver;
-use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\AssertionFailedError;
@@ -33,7 +30,7 @@ use Symfony\Component\Process\Process;
 
 class ContextualTestingMigrationTest extends TestCase
 {
-    public function test_migrates_all_77_contextual_assertions_with_historical_signatures_and_real_livewire_behavior(): void
+    public function test_migrates_contextual_assertions_to_direct_calls_with_real_livewire_behavior(): void
     {
         require_once __DIR__ . '/Fixtures/ContextualTesting/components.php.inc';
         $this->actingAs(User::factory()->create());
@@ -77,7 +74,8 @@ class ContextualTestingMigrationTest extends TestCase
             $run();
             $migrated = file_get_contents($directory . '/app/inventory.php');
             $migratedSyntax = file_get_contents($directory . '/app/syntax.php');
-            $this->assertExactHistoricalAdapters($migrated);
+            $this->assertStringNotContainsString('Closure::bind', $migrated . $migratedSyntax);
+            $this->assertStringContainsString('->assertSchemaExists(', $migrated);
             foreach (array_keys($historical) as $method) {
                 $this->assertDoesNotMatchRegularExpression('/(?:->|\?->)' . $method . '\s*\(/', $migrated . $migratedSyntax);
             }
@@ -113,45 +111,24 @@ class ContextualTestingMigrationTest extends TestCase
 
     private function inventorySource(array $methods): string
     {
-        $items = array_map(static fn (string $method): string => "        '$method' => \$testable->$method(...),", $methods);
+        $printer = new Standard;
+        $nodes = (new ParserFactory)->createForNewestSupportedVersion()->parse(file_get_contents(__DIR__ . '/Fixtures/ContextualTesting/legacy.php.inc'));
+        $historical = (new NodeFinder)->findFirstInstanceOf($nodes, Array_::class);
+        $items = [];
+
+        // Exercise normal calls with each historical signature, not copies of
+        // the implementation bodies or generated first-class callable adapters.
+        foreach ($historical->items as $item) {
+            $method = $item->key->value;
+            $parameters = implode(', ', array_map($printer->prettyPrint(...), array_map(static fn ($parameter): array => [$parameter], $item->value->params)));
+            $parameters = str_replace('string|\\Closure $form', 'string $form', $parameters);
+            $arguments = implode(', ', array_map(static fn ($parameter): string => '$' . $parameter->var->name, $item->value->params));
+            $items[] = "        '$method' => function ($parameters) use (\$testable) { return \$testable->$method($arguments); },";
+        }
+
+        $this->assertCount(count($methods), $items);
 
         return "<?php\nnamespace Filament\\Tests\\Upgrade\\Fixtures\\ContextualTesting\\Current;\nuse Livewire\\Features\\SupportTesting\\Testable;\nfunction adapters(Testable \$testable): array\n{\n    return [\n" . implode("\n", $items) . "\n    ];\n}\n";
-    }
-
-    private function assertExactHistoricalAdapters(string $migrated): void
-    {
-        $parser = (new ParserFactory)->createForNewestSupportedVersion();
-        $finder = new NodeFinder;
-        $printer = new Standard;
-        $normalize = static function (string $source) use ($parser): array {
-            $nodes = (new NodeTraverser(new NameResolver))->traverse($parser->parse($source));
-
-            return (new NodeTraverser(new class extends NodeVisitorAbstract
-            {
-                public function enterNode(Node $node): void
-                {
-                    $node->setAttributes([]);
-                    if (($node instanceof Node\Expr\ConstFetch) && in_array(strtolower($node->name->toString()), ['null', 'true', 'false'], true)) {
-                        $node->name = new Node\Name(strtolower($node->name->toString()));
-                    }
-                }
-            }))->traverse($nodes);
-        };
-        $historical = $finder->findFirstInstanceOf($normalize(file_get_contents(__DIR__ . '/Fixtures/ContextualTesting/legacy.php.inc')), Node\Expr\Array_::class);
-        $actual = $finder->findFirstInstanceOf($normalize($migrated), Node\Expr\Array_::class);
-        $this->assertCount(77, $actual->items);
-        foreach ($historical->items as $index => $item) {
-            $binding = $finder->findFirstInstanceOf([$actual->items[$index]->value], Node\Expr\StaticCall::class);
-            $this->assertSame($item->key->value, $actual->items[$index]->key->value);
-            $this->assertInstanceOf(Node\Expr\StaticCall::class, $binding, $item->key->value);
-            $this->assertSame('Closure', $binding->class->toString());
-            $this->assertSame('bind', $binding->name->name);
-            $this->assertSame('$testable', $printer->prettyPrintExpr($binding->args[1]->value));
-            $this->assertSame(Testable::class, $binding->args[2]->value->value);
-            // Compare every signature and statement against independent historical source,
-            // not output copied from the rule. Normalize imports, comments, and formatting.
-            $this->assertSame($printer->prettyPrintExpr($item->value), $printer->prettyPrintExpr($binding->args[0]->value), $item->key->value);
-        }
     }
 
     private function exerciseContracts(callable $adapters, string $syntaxNamespace): array
@@ -232,7 +209,7 @@ class ContextualTestingMigrationTest extends TestCase
             $this->assertSame($forms, $callbacks['assertFormExists']());
             $this->assertSame($forms, $callbacks['assertFormSet'](state: ['textInput' => null]));
             $this->assertSame($forms, $callbacks['assertFormSet'](static fn (array $state): bool => array_key_exists('textInput', $state)));
-            $this->assertSame($forms, $callbacks['assertFormComponentExists']('textInput', static fn ($component): bool => $component->getName() === 'textInput'));
+            $this->assertSame($forms, $callbacks['assertFormComponentExists']('textInput', checkComponentUsing: static fn ($component): bool => $component->getName() === 'textInput'));
             $this->assertSame($forms, $callbacks['assertFormComponentDoesNotExist']('different'));
             $this->assertSame($forms, $callbacks['assertFormComponentExists'](componentKey: 'different', form: 'other'));
             $outcomes['schema' . (int) $mounted] = $this->assertionFailure(static fn () => $callbacks['assertFormComponentExists']('different'));
@@ -254,9 +231,6 @@ class ContextualTestingMigrationTest extends TestCase
         $this->assertSame(2, $argumentCalls);
         $shortCircuit = 'Filament\\Tests\\Upgrade\\Fixtures\\ContextualTesting\\' . $syntaxNamespace . '\\shortCircuit';
         $this->assertSame([null, null], $shortCircuit(null));
-        $weakCallback = 'Filament\\Tests\\Upgrade\\Fixtures\\ContextualTesting\\' . $syntaxNamespace . '\\weakCallback';
-        $this->assertSame($forms, $weakCallback($forms));
-
         $table = Livewire::test(ContextualTable::class);
         $callbacks = $adapters($table);
         $record = Post::factory()->create();

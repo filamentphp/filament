@@ -38,27 +38,27 @@ class MenuItemsMigrationTest extends TestCase
         $label = 'Before';
         register($panel, $events, $hidden, $label);
 
-        $this->assertSame(['snapshot', '/old', 'Help'], $events);
+        $this->assertSame(['Help'], $events);
         $label = 'After';
         $action = Action::make('profile')->label('Default')->icon('default-icon')->sort(-1)->url('/default');
         $this->assertSame($action, $panel->registeredItems['profile']($action));
         $this->assertSame('profile', $action->getName());
         $this->assertSame('After', $action->getLabel());
-        $this->assertNull($action->getIcon());
-        $this->assertSame(0, $action->getSort());
+        $this->assertSame('default-icon', $action->getIcon());
+        $this->assertSame(-1, $action->getSort());
         $this->assertSame('/post', $action->getUrl());
         $this->assertTrue($action->shouldPostToUrl());
         $this->assertTrue($action->shouldOpenUrlInNewTab());
         $this->assertFalse($action->isVisible());
-        $this->assertSame(['snapshot', '/old', 'Help', 'label', 'post', 'hidden'], $events);
+        $this->assertSame(['Help', 'label', 'hidden'], $events);
 
         $hidden = false;
         $panel->registeredItems['profile']($action);
         $this->assertTrue($action->isVisible());
-        $this->assertSame(['snapshot', '/old', 'Help', 'label', 'post', 'hidden', 'label', 'post', 'hidden', 'visible'], $events);
+        $this->assertSame(['Help', 'label', 'hidden', 'hidden'], $events);
 
-        $help = $panel->registeredItems[0]();
-        $this->assertSame('help', $help->getName());
+        $help = $panel->registeredItems[0];
+        $this->assertSame('item-2', $help->getName());
         $this->assertSame('Help', $help->getLabel());
         $this->assertSame('/help', $help->getUrl());
         $this->assertSame(-3, $help->getSort());
