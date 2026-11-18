@@ -22,7 +22,6 @@ use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag
 use Filament\Tables\Columns\Concerns\HasTooltip;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Livewire\Component;
@@ -301,10 +300,7 @@ class Column extends ViewComponent
                     wire:loading.attr="disabled"
                     wire:target="<?= e($wireClickAction) ?>"
                 <?php } ?>
-                class="<?= Arr::toCssClasses([
-                        'fi-ta-col',
-                        'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
-                    ]) ?>"
+                class="<?= (($wrapperTag === 'a') && filled($url)) ? 'fi-ta-col fi-ta-col-has-column-url' : 'fi-ta-col' ?>"
             >
                 <?= $this->toHtml() ?>
             </<?= $wrapperTag ?>>
