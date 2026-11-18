@@ -1,3 +1,5 @@
+{{-- @deprecated Use the `heading` slot of `<x-filament::section>` instead. --}}
+
 @props([
     'level' => 2,
 ])
