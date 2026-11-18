@@ -67,7 +67,7 @@ describe('component binding', function (): void {
             ->getComponent(fn (Component $component) => $component->getName() === $statePath)->toBe($input)
             ->getComponent('details.name')->toBe($nestedInput)
             ->getComponent('details.name', isAbsoluteKey: true)->toBe($nestedInput)
-            ->getComponent('details.name', skipComponentsChildContainersWhileSearching: [$input])->toBe($nestedInput);
+            ->getComponent('details.name', skipComponentsChildSchemasWhileSearching: [$input])->toBe($nestedInput);
     });
 });
 

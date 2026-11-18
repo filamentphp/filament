@@ -2016,7 +2016,7 @@ describe('rendering', function (): void {
 
     it('still returns dynamic options from `getOptionsForJs()` when they are not rendered inline', function (): void {
         livewire(RenderSearchableSelectWithClosureOptions::class)
-            ->assertFormComponentExists('category', function (Select $select): bool {
+            ->assertSchemaComponentExists('category', 'form', function (Select $select): bool {
                 return $select->getOptionsForJs() === [
                     ['label' => 'Electronics', 'value' => 'electronics', 'isDisabled' => false],
                     ['label' => 'Clothing', 'value' => 'clothing', 'isDisabled' => false],
