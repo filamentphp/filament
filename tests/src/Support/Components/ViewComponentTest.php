@@ -207,6 +207,7 @@ describe('published view override', function () use ($writePublishedOverride): v
         foreach ([
             resource_path('views/vendor/filament-forms/test-override.blade.php'),
             resource_path('views/vendor/filament-forms/test-text-input-override.blade.php'),
+            resource_path('views/vendor/test-package/package-override.blade.php'),
         ] as $path) {
             if (file_exists($path)) {
                 unlink($path);
@@ -216,6 +217,7 @@ describe('published view override', function () use ($writePublishedOverride): v
         foreach ([
             resource_path('views/vendor/filament-forms/components'),
             resource_path('views/vendor/filament-forms'),
+            resource_path('views/vendor/test-package'),
         ] as $directory) {
             if (is_dir($directory)) {
                 @rmdir($directory);
@@ -264,6 +266,27 @@ describe('published view override', function () use ($writePublishedOverride): v
 
     it('returns `false` from `hasPublishedEmbeddedViewOverride()` for a path without a namespace', function (): void {
         expect(ViewComponent::hasPublishedEmbeddedViewOverride('no-namespace.view'))->toBeFalse();
+    });
+
+    it('renders a package override registered with `prependNamespace()`', function () use ($writePublishedOverride): void {
+        $path = $writePublishedOverride('test-package/package-override.blade.php', 'PACKAGE OVERRIDE: {{ $message }}');
+        $this->app->booted(function () use ($path): void {
+            app('view')->prependNamespace('filament-forms', dirname($path));
+            app('view')->prependNamespace('filament-forms', resource_path('views/missing-package'));
+        });
+
+        $component = (new class extends EmbeddedViewComponent
+        {
+            protected ?string $publishedViewOverrideCheckPath = 'filament-forms::package-override';
+        })->viewData(['message' => 'rendered']);
+
+        expect($component->toHtml())->toBe('PACKAGE OVERRIDE: rendered');
+    });
+
+    it('does not treat Filament views as overrides when a prepended path has no matching view', function (): void {
+        app('view')->prependNamespace('filament', resource_path('views/missing-package'));
+
+        expect(ViewComponent::hasPublishedEmbeddedViewOverride('filament::components.button.index'))->toBeFalse();
     });
 
     it('honours a published override on a real form component (`TextInput`)', function () use ($writePublishedOverride): void {

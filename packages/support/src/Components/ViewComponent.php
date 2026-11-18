@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
+use Illuminate\View\FileViewFinder;
 use LogicException;
 
 abstract class ViewComponent extends Component implements Htmlable
@@ -163,7 +164,30 @@ abstract class ViewComponent extends Component implements Htmlable
 
         [$namespace, $name] = explode('::', $view, 2);
 
-        return file_exists(resource_path('views/vendor/' . $namespace . '/' . str_replace('.', '/', $name) . '.blade.php'));
+        $relativePath = str_replace('.', '/', $name) . '.blade.php';
+
+        if (file_exists(resource_path('views/vendor/' . $namespace . '/' . $relativePath))) {
+            return true;
+        }
+
+        $viewFinder = app('view')->getFinder();
+
+        if (! ($viewFinder instanceof FileViewFinder)) {
+            return false;
+        }
+
+        $paths = $viewFinder->getHints()[$namespace] ?? [];
+
+        // Laravel registers the package's own views after its override paths.
+        array_pop($paths);
+
+        foreach ($paths as $path) {
+            if (file_exists($path . '/' . $relativePath)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function toHtmlString(): ?HtmlString
