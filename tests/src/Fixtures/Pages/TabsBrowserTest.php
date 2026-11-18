@@ -3,8 +3,6 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Group;
@@ -49,8 +47,6 @@ class TabsBrowserTest extends Page
 
     public bool $hasNativeValidation = false;
 
-    public bool $showRepeater = false;
-
     public bool $isSaved = false;
 
     public function mount(): void
@@ -61,7 +57,6 @@ class TabsBrowserTest extends Page
         $this->isRightToLeft = request()->boolean('rtl');
         $this->hasDisabledProfileHeader = request()->boolean('disabled-profile');
         $this->hasNativeValidation = request()->boolean('native-validation');
-        $this->showRepeater = request()->boolean('repeater');
         $this->hasLazyLoadedBadges = request()->boolean('lazy-loaded-badges');
         $this->livewireTabs = request()->boolean('livewire');
         $this->form->fill();
@@ -99,14 +94,6 @@ class TabsBrowserTest extends Page
                                     ->label('Phone Number')
                                     ->tel()
                                     ->required(fn (): bool => $this->hasNativeValidation),
-                                Repeater::make('items')
-                                    ->visible(fn (): bool => $this->showRepeater)
-                                    ->default(array_map(static fn (int $number): array => ['name' => "Item {$number}"], range(1, 30)))
-                                    ->deleteAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'delete-item']))
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->extraInputAttributes(['data-testid' => 'item-name']),
-                                    ]),
                             ]),
                         Tab::make('Billing')->key('billing')->id('profile-billing')
                             ->visible(fn (): bool => $this->hasDisabledProfileHeader),
