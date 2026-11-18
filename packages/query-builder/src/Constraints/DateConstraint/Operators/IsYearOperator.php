@@ -5,12 +5,18 @@ namespace Filament\QueryBuilder\Constraints\DateConstraint\Operators;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
+use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\Concerns\CanQueryDateRanges;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\MySqlConnection;
+use Illuminate\Database\PostgresConnection;
 
 class IsYearOperator extends Operator
 {
+    use CanQueryDateRanges;
+
     public function getName(): string
     {
         return 'isYear';
@@ -60,7 +66,20 @@ class IsYearOperator extends Operator
             return $query;
         }
 
-        return $query->whereYear($qualifiedColumn, $this->isInverse() ? '!=' : '=', $year);
+        $constraint = $this->getConstraint();
+
+        if (($constraint instanceof DateConstraint) && (! $constraint->shouldQueryDatesUsingRanges())) {
+            return $query->whereYear($qualifiedColumn, $this->isInverse() ? '!=' : '=', $year);
+        }
+
+        // Keep extraction for offset-sensitive drivers and years outside the portable date range.
+        $databaseConnection = $query->getConnection();
+
+        if (((! ($databaseConnection instanceof MySqlConnection)) && (! ($databaseConnection instanceof PostgresConnection))) || ($year < 1000) || ($year > 9998)) {
+            return $query->whereYear($qualifiedColumn, $this->isInverse() ? '!=' : '=', $year);
+        }
+
+        return $this->whereBetweenDates($query, $qualifiedColumn, sprintf('%04d-01-01', $year), sprintf('%04d-01-01', $year + 1), isInverse: (bool) $this->isInverse());
     }
 
     protected function getYearSetting(): ?int
