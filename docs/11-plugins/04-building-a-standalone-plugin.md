@@ -6,7 +6,7 @@ title: Build a standalone plugin
 
 In this walkthrough, we'll build a simple plugin that adds a new form component that can be used in forms. This also means it will be available to users in their panels.
 
-You can find the original plugin at [awcodes/headings](https://github.com/awcodes/headings). The examples below use Filament 4 APIs.
+You can find the original plugin at [awcodes/headings](https://github.com/awcodes/headings).
 
 ## Preface
 

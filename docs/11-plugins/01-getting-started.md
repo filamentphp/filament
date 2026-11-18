@@ -56,7 +56,7 @@ Register [assets](../advanced/assets) shared by standalone components, including
 
 ## Upgrading existing plugins
 
-To update a plugin from Filament 3 to 4, follow the [upgrade guide](../upgrade-guide) for the packages your plugin uses. Update its Composer constraints and test it in a Filament 4 application, including any custom views, styles, and JavaScript.
+To update an existing plugin, follow the [upgrade guide](../upgrade-guide) for the packages your plugin uses. Update its Composer constraints and test it in an application using the target version of Filament, including any custom views, styles, and JavaScript.
 
 ### Helpful links
 
