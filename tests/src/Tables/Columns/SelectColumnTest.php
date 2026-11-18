@@ -136,6 +136,28 @@ describe('option loading', function (): void {
     it('can set `rememberOptions()` and get with `areOptionsRemembered()`', function (): void {
         expect(SelectColumn::make('status')->rememberOptions()->areOptionsRemembered())->toBeTrue();
     });
+
+    it('evaluates record-specific options once for each rendered cell', function (bool $isNative): void {
+        $posts = Post::factory()->count(2)->sequence(['rating' => 1], ['rating' => 2])->create();
+        $calls = 0;
+        $column = SelectColumn::make('rating')
+            ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
+            ->native($isNative)
+            ->options(static function (Post $record) use (&$calls): array {
+                $calls++;
+
+                return [$record->rating => "Rating {$record->rating} of post {$record->getKey()}"];
+            });
+
+        foreach ($posts as $post) {
+            expect($column->record($post)->toEmbeddedHtml())->toContain("Rating {$post->rating} of post {$post->getKey()}");
+        }
+
+        expect($calls)->toBe(2);
+    })->with([
+        'native' => true,
+        'not native' => false,
+    ]);
 });
 
 describe('option search fields and messages', function (): void {
