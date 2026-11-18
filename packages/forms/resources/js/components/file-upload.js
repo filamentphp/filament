@@ -317,6 +317,8 @@ export default function fileUploadFormComponent({
                         this.activeUploads++
                         this.shouldUpdateState = false
 
+                        const cancelUpload = this.$wire.cancelUpload
+
                         let fileKey = (
                             [1e7] +
                             -1e3 +
@@ -364,9 +366,7 @@ export default function fileUploadFormComponent({
                             abort: () => {
                                 finishUpload()
 
-                                this.$wire.cancelUpload(
-                                    `${statePath}.${fileKey}`,
-                                )
+                                cancelUpload(`${statePath}.${fileKey}`)
 
                                 abort()
                             },
