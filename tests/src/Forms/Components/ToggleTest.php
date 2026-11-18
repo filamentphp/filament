@@ -186,6 +186,24 @@ describe('rendering', function (): void {
     });
 });
 
+it('aligns an inline label to the top, level with the switch', function (): void {
+    Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            $toggle = Toggle::make('isActive')
+                ->inlineLabel()
+                ->helperText('Helper text below the switch'),
+        ])
+        ->fill();
+
+    $html = $toggle->toHtml();
+
+    expect($html)
+        ->toContain('fi-fo-toggle-wrp')
+        ->toContain('fi-vertical-align-start')
+        ->not->toContain('fi-vertical-align-center');
+});
+
 it('can toggle state by clicking in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 

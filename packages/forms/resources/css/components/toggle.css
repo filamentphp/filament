@@ -1,0 +1,7 @@
+.fi-fo-toggle-wrp {
+    &.fi-fo-field-has-inline-label {
+        & .fi-fo-field-label-col {
+            @apply sm:pt-0.5;
+        }
+    }
+}
