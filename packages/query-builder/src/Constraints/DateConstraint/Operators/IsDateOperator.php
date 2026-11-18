@@ -5,6 +5,7 @@ namespace Filament\QueryBuilder\Constraints\DateConstraint\Operators;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\Concerns\CanQueryDateRanges;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,6 +13,8 @@ use Illuminate\Support\Carbon;
 
 class IsDateOperator extends Operator
 {
+    use CanQueryDateRanges;
+
     public function getName(): string
     {
         return 'isDate';
@@ -60,6 +63,6 @@ class IsDateOperator extends Operator
             return $query;
         }
 
-        return $query->whereDate($qualifiedColumn, $this->isInverse() ? '!=' : '=', $date);
+        return $this->whereDateUsingRange($query, $qualifiedColumn, $this->isInverse() ? '!=' : '=', $date);
     }
 }
