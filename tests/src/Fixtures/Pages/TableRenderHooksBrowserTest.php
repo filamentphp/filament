@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Contracts\HasTable;
@@ -83,6 +84,14 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('editNote')
+                ->schema([
+                    TextInput::make('note')
+                        ->live()
+                        ->belowContent(static fn (Get $get): ?string => $get('note'))
+                        ->extraInputAttributes(['data-testid' => 'header-note']),
+                ])
+                ->extraAttributes(['data-testid' => 'edit-note']),
             Action::make('createPost')
                 ->action(fn () => Post::factory()->create([
                     'title' => 'Created by render hook test',
