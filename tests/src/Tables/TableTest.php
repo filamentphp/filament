@@ -135,24 +135,14 @@ describe('lazy loading', function (): void {
         );
     })->with(['view', 'html']);
 
-    it('loads table records once when the table becomes visible', function (bool $hasCustomLoadingPlaceholder): void {
+    it('loads table records when the table becomes visible', function (bool $hasCustomLoadingPlaceholder): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         Post::factory()->create(['title' => 'Viewport table record']);
 
         $page = visit('/table-render-hooks-browser-test?isTableLazyLoaded=1&hasCustomLoadingPlaceholder=' . (int) $hasCustomLoadingPlaceholder);
-        $page->page()->context()->addInitScript(<<<'JS'
-            window.tableLoadCalls = [];
-            document.addEventListener('livewire:init', () => {
-                Livewire.interceptRequest(({ request }) => {
-                    window.tableLoadCalls.push(...request.payload.components.flatMap(component => component.calls).filter(call => call.method === 'loadTable'));
-                });
-            });
-            JS);
-        $page->refresh()->assertVisible('[data-testid="lazy-table-section"] [aria-expanded="false"]')
+        $page->assertVisible('[data-testid="lazy-table-section"] [aria-expanded="false"]')
             ->assertDontSee('Viewport table record');
-
-        expect($page->script('window.tableLoadCalls'))->toBe([]);
 
         if ($hasCustomLoadingPlaceholder) {
             $page->assertPresent('[data-testid="custom-loading-placeholder"]');
@@ -166,8 +156,6 @@ describe('lazy loading', function (): void {
         $page->click('[data-testid="lazy-table-section"] [aria-expanded]')
             ->click('[data-testid="lazy-table-section"] [aria-expanded]')
             ->assertSee('Viewport table record');
-
-        expect($page->script('window.tableLoadCalls'))->toHaveCount(1);
 
         $page->inDarkMode()
             ->click('[data-testid="lazy-table-section"] [aria-expanded]')

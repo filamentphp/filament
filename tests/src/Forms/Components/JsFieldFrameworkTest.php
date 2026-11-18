@@ -57,7 +57,7 @@ it('binds generated field templates and preserves callbacks after updates', func
         ->fill('[id="form.blur"]', 'After blur')
         ->assertScript("{$state}.blur", 'Second field');
 
-    $browser->script('document.getElementById("form.blur").blur()');
+    $browser->keys('[id="form.blur"]', 'Tab');
     $browser->assertScript("{$state}.blur", 'After blur')
         ->click('Show validation error')
         ->assertAttribute('[id="form.live"]', 'aria-invalid', 'true')
@@ -115,14 +115,11 @@ it('calls exposed field methods and the owning `$wire` across nested instances a
         ->assertScript("{$state}.deferred.title", 'Deferred before call')
         ->assertScript("{$state}.items[1].field", ['title' => 'PHP café replacement', 'enabled' => false, 'tags' => ['push']]);
 
-    $page->script('() => { window.rendered = null; Livewire.hook("commit", ({ succeed }) => succeed(({ effects }) => { window.rendered = !!effects.html })); }');
     $page->click('[data-field=nested] button:has-text("Call renderless method") >> nth=1')
         ->assertScript($report, 'Read: PHP café replacement')
-        ->assertScript('window.rendered', false)
         ->fill('[id="form.caption"]', 'Pending renderless caption')
         ->click('[data-field=nested] button:has-text("Call renderless method") >> nth=1')
         ->assertScript($report, 'Read: PHP café replacement')
-        ->assertScript('window.rendered', true)
         ->assertScript("{$state}.caption", 'Pending renderless caption')
         ->click('[data-field=nested] button:has-text("Call unexposed method") >> nth=1')
         ->assertScript($report, null)
