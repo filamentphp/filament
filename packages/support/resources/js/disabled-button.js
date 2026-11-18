@@ -6,7 +6,7 @@ if (!window.filamentDisabledButtonClickListener) {
         const button =
             event.target instanceof Element
                 ? event.target.closest(
-                      'button:is(.fi-btn, .fi-icon-btn, .fi-badge, .fi-link, .fi-dropdown-list-item)[aria-disabled="true"], button.fi-btn:is(.fi-processing, [data-loading]), [data-prevent-disabled-clicks][aria-disabled="true"]',
+                      'button:is(.fi-btn, .fi-icon-btn, .fi-badge, .fi-link, .fi-dropdown-list-item)[aria-disabled="true"], button.fi-btn:is(.fi-processing, .fi-disabled), [data-prevent-disabled-clicks][aria-disabled="true"]',
                   )
                 : null
 
