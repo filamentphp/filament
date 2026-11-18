@@ -166,7 +166,30 @@ abstract class ViewComponent extends Component implements Htmlable
 
         [$namespace, $name] = explode('::', $view, 2);
 
-        return file_exists(resource_path('views/vendor/' . $namespace . '/' . str_replace('.', '/', $name) . '.blade.php'));
+        $relativePath = str_replace('.', '/', $name) . '.blade.php';
+
+        if (file_exists(resource_path('views/vendor/' . $namespace . '/' . $relativePath))) {
+            return true;
+        }
+
+        $viewFinder = app('view')->getFinder();
+
+        if (! ($viewFinder instanceof FileViewFinder)) {
+            return false;
+        }
+
+        $paths = $viewFinder->getHints()[$namespace] ?? [];
+
+        // Laravel registers the package's own views after its override paths.
+        array_pop($paths);
+
+        foreach ($paths as $path) {
+            if (file_exists($path . '/' . $relativePath)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected static function registerPublishedEmbeddedViewOverrideNamespace(string $view): void
