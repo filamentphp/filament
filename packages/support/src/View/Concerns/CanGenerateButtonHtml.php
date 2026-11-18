@@ -151,7 +151,7 @@ trait CanGenerateButtonHtml
                     'form' => 'submit',
                     default => null,
                 },
-                'wire:loading.attr' => ($tag === 'button' && $isDisabledDuringLoading) ? ($hasFormProcessingLoadingIndicator ? 'data-fi-loading' : 'aria-disabled') : null,
+                'wire:loading.attr' => ($tag === 'button' && $isDisabledDuringLoading && (! $hasFormProcessingLoadingIndicator)) ? 'aria-disabled' : null,
                 'wire:loading.class' => ($tag === 'button' && $isDisabledDuringLoading) ? $attributes->prepends('fi-disabled') : null,
                 'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,

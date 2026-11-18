@@ -20,16 +20,15 @@ export default () => ({
 
         const { signal } = this.eventListenersController
 
-        // Livewire also owns `data-loading`, independently of `wire:target`.
-        this.isLoading = this.$el.hasAttribute('data-fi-loading')
+        this.isLoading = this.$el.classList.contains('fi-disabled')
 
         this.loadingObserver = new MutationObserver(() => {
-            this.isLoading = this.$el.hasAttribute('data-fi-loading')
+            this.isLoading = this.$el.classList.contains('fi-disabled')
         })
 
         this.loadingObserver.observe(this.$el, {
             attributes: true,
-            attributeFilter: ['data-fi-loading'],
+            attributeFilter: ['class'],
         })
 
         this.form?.addEventListener(
