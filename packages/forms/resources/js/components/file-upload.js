@@ -544,7 +544,18 @@ export default function fileUploadFormComponent({
 
                 this.error = null
 
-                if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
+                handleFileProcessingStart(file)
+            })
+
+            const handleFileProcessingStart = (file) => {
+                if (isDestroyed) {
+                    return
+                }
+
+                if (
+                    file.status !== FilePond.FileStatus.PROCESSING_QUEUED &&
+                    file.status !== FilePond.FileStatus.PROCESSING
+                ) {
                     return
                 }
 
@@ -557,7 +568,9 @@ export default function fileUploadFormComponent({
                 this.dispatchFormEvent('form-processing-started', {
                     message: uploadingMessage,
                 })
-            })
+            }
+
+            this.pond.on('processfilestart', handleFileProcessingStart)
 
             const handleFileProcessing = async () => {
                 if (isDestroyed || !this.pond) {
