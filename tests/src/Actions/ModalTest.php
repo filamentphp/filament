@@ -70,6 +70,22 @@ describe('browser interactions', function (): void {
         $browser->assertNoSmoke();
     });
 
+    it('restores focus after editing and dismissing a table page header action modal', function (): void {
+        visit('/table-render-hooks-browser-test')
+            ->click('[data-testid="create-post"]')
+            ->assertSee('Created by render hook test')
+            ->keys('[data-testid="edit-note"]', 'Enter')
+            ->assertVisible('[data-testid="header-note"]')
+            ->assertPresent('[data-testid="header-note"]:focus')
+            ->fill('[data-testid="header-note"]', 'Unsaved header note')
+            ->assertSee('Unsaved header note')
+            ->keys(':focus', 'Tab')
+            ->keys(':focus', 'Escape')
+            ->assertMissing('[data-testid="header-note"]')
+            ->assertPresent('[data-testid="edit-note"]:focus')
+            ->assertNoSmoke();
+    });
+
     it('cancels `beforeunload` events only while actions that can contain unsaved changes are mounted', function (): void {
         $this->actingAs(User::factory()->create());
 

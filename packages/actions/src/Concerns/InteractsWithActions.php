@@ -326,8 +326,8 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         <div
             wire:partial="action-modals"
             x-data="filamentActionModals({
-                        livewireId: <?= Js::from($this->getId()) ?>,
-                    })"
+                    livewireId: <?= Js::from($this->getId()) ?>,
+                })"
             style="height: 0"
         >
             <?= $this->generateMorphMarkerHtml(); ?>
