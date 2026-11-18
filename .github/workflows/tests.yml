@@ -136,6 +136,9 @@ jobs:
       # Remove once https://github.com/pestphp/pest-plugin-browser/pull/226 is released and required.
       - name: Fix Pest Browser HTTP server port allocation
         run: git apply --directory=vendor/pestphp/pest-plugin-browser tests/patches/pest-browser-http-server.patch
+      # Backport https://github.com/pestphp/pest-plugin-browser/commit/e84a76d68f210c462520a08e6ce69604b114f094 until released and required on Pest Browser 4.x.
+      - name: Fix Pest Browser Playwright action timeouts
+        run: git apply --directory=vendor/pestphp/pest-plugin-browser tests/patches/pest-browser-playwright-timeout.patch
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
