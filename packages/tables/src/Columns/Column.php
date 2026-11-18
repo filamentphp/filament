@@ -210,34 +210,43 @@ class Column extends ViewComponent
         $table = $this->getTable();
         $livewire = $this->getLivewire();
         $recordKey = $this->getRecordKey();
+        $record = $this->getRecord();
+        $previousStateCacheKey = $this->cachedStateCacheKey;
 
-        $action = $this->getAction();
-        $url = $this->getUrl();
-        $hasStateBasedUrls = $this->hasStateBasedUrls();
-        $isClickDisabled = $this->isClickDisabled() || ($isReordering ?? $table->isReordering());
-        $isStackedOnMobile ??= $table->isStackedOnMobile();
+        // Reuse the renderer's identity only within this cell, preserving uncached state for unsaved models.
+        $this->cachedStateCacheKey = (($record instanceof Model) && blank($record->getKey()) && (! $table->hasPivotRecordKeys()))
+            ? null
+            : $recordKey;
 
-        $wrapperTag = match (true) {
-            ($url || ($recordUrl && $action === null)) && (! $hasStateBasedUrls) && (! $isClickDisabled) => 'a',
-            ($action || $recordAction) && (! $hasStateBasedUrls) && (! $isClickDisabled) => 'button',
-            default => 'div',
-        };
+        try {
 
-        $wireClickAction = null;
+            $action = $this->getAction();
+            $url = $this->getUrl();
+            $hasStateBasedUrls = $this->hasStateBasedUrls();
+            $isClickDisabled = $this->isClickDisabled() || ($isReordering ?? $table->isReordering());
+            $isStackedOnMobile ??= $table->isStackedOnMobile();
 
-        if ($wrapperTag === 'button') {
-            if ($action instanceof Action) {
-                $wireClickAction = "mountAction('{$action->getName()}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
-            } elseif ($action) {
-                $wireClickAction = "callTableColumnAction('{$this->getName()}', " . Js::from($recordKey) . ')';
-            } elseif ($table->getAction($recordAction)) {
-                $wireClickAction = "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
-            } else {
-                $wireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
+            $wrapperTag = match (true) {
+                ($url || ($recordUrl && $action === null)) && (! $hasStateBasedUrls) && (! $isClickDisabled) => 'a',
+                ($action || $recordAction) && (! $hasStateBasedUrls) && (! $isClickDisabled) => 'button',
+                default => 'div',
+            };
+
+            $wireClickAction = null;
+
+            if ($wrapperTag === 'button') {
+                if ($action instanceof Action) {
+                    $wireClickAction = "mountAction('{$action->getName()}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
+                } elseif ($action) {
+                    $wireClickAction = "callTableColumnAction('{$this->getName()}', " . Js::from($recordKey) . ')';
+                } elseif ($table->getAction($recordAction)) {
+                    $wireClickAction = "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
+                } else {
+                    $wireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
+                }
             }
-        }
 
-        ob_start(); ?>
+            ob_start(); ?>
 
         <td
             wire:key="<?= ($livewire instanceof Component) ? e($livewire->getId()) : '' ?>.table.record.<?= e($recordKey) ?>.column.<?= e($this->getName()) ?>"
@@ -260,9 +269,9 @@ class Column extends ViewComponent
                     wire:target="<?= e($wireClickAction) ?>"
                 <?php } ?>
                 class="<?= Arr::toCssClasses([
-                    'fi-ta-col',
-                    'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
-                ]) ?>"
+                        'fi-ta-col',
+                        'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
+                    ]) ?>"
             >
                 <?= $this->toHtml() ?>
             </<?= $wrapperTag ?>>
@@ -270,6 +279,11 @@ class Column extends ViewComponent
         </td>
 
         <?php return new HtmlString(ob_get_clean());
+        } finally {
+            $this->cachedStateCacheKey = (($this->getRecord() === $record) && ($this->getRecordKey() === $recordKey))
+                ? $previousStateCacheKey
+                : null;
+        }
     }
 
     public function getTableCellPartialName(): string
