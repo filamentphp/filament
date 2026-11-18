@@ -3,29 +3,42 @@
 namespace Filament\QueryBuilder\Constraints\DateConstraint\Operators\Concerns;
 
 use Carbon\Exceptions\InvalidFormatException;
+use Filament\QueryBuilder\Constraints\DateConstraint;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\MySqlConnection;
+use Illuminate\Database\PostgresConnection;
 use Illuminate\Support\Carbon;
 
-/**
- * Compares a column with whole days by comparing it with midnight, instead of
- * wrapping it in `whereDate()` or `whereYear()`. A wrapped column (`date(column)`,
- * `extract(year from column)`) can't use an index on it, so every query scanned the
- * table; a range can. The rows matched are the same.
- */
 trait CanQueryDateRanges
 {
     /**
-     * The same rows as `whereDate($column, $operator, $date)`.
-     *
      * @param  '=' | '!=' | '<' | '<=' | '>' | '>='  $operator
      */
     protected function whereDateUsingRange(Builder $query, string $column, string $operator, string $date): Builder
     {
+        $constraint = $this->getConstraint();
+
+        if (($constraint instanceof DateConstraint) && (! $constraint->shouldQueryDatesUsingRanges())) {
+            return $query->whereDate($column, $operator, $date);
+        }
+
+        // SQLite normalizes stored offsets to UTC; SQL Server preserves their local date.
+        // Neither is equivalent to comparing every column value with the same midnight.
+        $databaseConnection = $query->getConnection();
+
+        if ((! ($databaseConnection instanceof MySqlConnection)) && (! ($databaseConnection instanceof PostgresConnection))) {
+            return $query->whereDate($column, $operator, $date);
+        }
+
         try {
-            $day = Carbon::parse($date);
+            $day = Carbon::parse($date, 'UTC');
         } catch (InvalidFormatException) {
-            // Security: a tampered setting that isn't a date skips the constraint, as other invalid settings do.
-            return $query;
+            return $query->whereDate($column, $operator, $date);
+        }
+
+        // Preserve the database's interpretation of nonstandard dates and avoid overflowing its date range.
+        if (($day->toDateString() !== $date) || ($day->year < 1000) || ($day->year > 9998)) {
+            return $query->whereDate($column, $operator, $date);
         }
 
         $start = $day->toDateString();

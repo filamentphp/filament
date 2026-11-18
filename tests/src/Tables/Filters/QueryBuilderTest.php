@@ -38,7 +38,10 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Livewire\Features\SupportTesting\Testable;
 
 use function Filament\Tests\livewire;
@@ -679,7 +682,7 @@ describe('`DateConstraint` operators', function () use ($applyQueryBuilderFilter
             ->assertCanNotSeeTableRecords($otherPosts);
     });
 
-    it('matches whole days at the boundaries without wrapping the column in a date function', function (string $operatorClass, array $settings, bool $isInverse, array $expectedPosts): void {
+    it('matches whole days at the boundaries using the configured date query strategy', function (string $operatorClass, array $settings, bool $isInverse, array $expectedPosts, ?bool $dateQueriesUsingRanges, bool $isClosure): void {
         $posts = collect([
             'lastSecondOfPreviousYear' => '2023-12-31 23:59:59',
             'midnight' => '2024-03-15 00:00:00',
@@ -688,15 +691,25 @@ describe('`DateConstraint` operators', function () use ($applyQueryBuilderFilter
             'midnightOfNextYear' => '2025-01-01 00:00:00',
         ])->map(static fn (string $createdAt): Post => Post::factory()->create(['created_at' => $createdAt]));
 
+        $constraint = DateConstraint::make('created_at');
+
+        if ($dateQueriesUsingRanges !== null) {
+            $constraint->dateQueriesUsingRanges(false)->dateQueriesUsingRanges($isClosure ? static fn (): bool => $dateQueriesUsingRanges : $dateQueriesUsingRanges);
+        }
+
         $query = $operatorClass::make()
-            ->constraint(DateConstraint::make('created_at'))
+            ->constraint($constraint)
             ->settings($settings)
             ->inverse($isInverse)
             ->apply(Post::query(), 'posts.created_at');
 
-        // A column wrapped in a function, such as `date()` or `extract()`, can't use an index on it.
-        expect($query->toSql())->not->toMatch('/(strftime|date|year|extract|cast)\s*\(|::date/i')
-            ->and($query->pluck('id')->sort()->values()->all())->toBe($posts->only($expectedPosts)->pluck('id')->sort()->values()->all());
+        if (($dateQueriesUsingRanges !== false) && in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb', 'pgsql'], true)) {
+            expect($query->toSql())->not->toMatch('/(strftime|date|year|extract|cast)\s*\(|::date/i');
+        } else {
+            expect($query->toSql())->toMatch('/(strftime|date|year|extract|cast)\s*\(|::date/i');
+        }
+
+        expect($query->pluck('id')->sort()->values()->all())->toBe($posts->only($expectedPosts)->pluck('id')->sort()->values()->all());
     })->with([
         '`isAfter`' => [IsAfterOperator::class, ['date' => '2024-03-15'], false, ['midnight', 'lastSecondOfDay', 'midnightOfNextDay', 'midnightOfNextYear']],
         'inverse `isAfter`' => [IsAfterOperator::class, ['date' => '2024-03-15'], true, ['lastSecondOfPreviousYear']],
@@ -706,6 +719,152 @@ describe('`DateConstraint` operators', function () use ($applyQueryBuilderFilter
         'inverse `isDate`' => [IsDateOperator::class, ['date' => '2024-03-15'], true, ['lastSecondOfPreviousYear', 'midnightOfNextDay', 'midnightOfNextYear']],
         '`isYear`' => [IsYearOperator::class, ['year' => 2024], false, ['midnight', 'lastSecondOfDay', 'midnightOfNextDay']],
         'inverse `isYear`' => [IsYearOperator::class, ['year' => 2024], true, ['lastSecondOfPreviousYear', 'midnightOfNextYear']],
+    ])->with([
+        'default ranges' => [null, false],
+        'explicit ranges' => [true, false],
+        'extraction' => [false, false],
+        'ranges closure' => [true, true],
+        'extraction closure' => [false, true],
+    ]);
+
+    it('can use `dateQueriesUsingRanges()` to preserve PostgreSQL dates across ambiguous midnights', function (bool $dateQueriesUsingRanges, bool $isInverse, array $expectedPosts): void {
+        if (DB::connection()->getDriverName() !== 'pgsql') {
+            $this->markTestSkipped('Requires PostgreSQL timezone-aware timestamps.');
+        }
+
+        DatabaseSchema::table('posts', static function (Blueprint $table): void {
+            $table->dateTimeTz('offset_date')->nullable();
+        });
+
+        $posts = collect([
+            'firstMidnightHour' => '2024-11-03 00:30:00-04:00',
+            'secondMidnightHour' => '2024-11-03 00:30:00-05:00',
+            'nextDay' => '2024-11-04 00:30:00-05:00',
+            'nullDate' => null,
+        ])->map(static fn (?string $date): Post => Post::factory()->create(['offset_date' => $date]));
+
+        $originalTimezone = DB::selectOne('SHOW TIME ZONE')->TimeZone;
+
+        try {
+            DB::statement("SET TIME ZONE 'America/Havana'");
+
+            $query = IsDateOperator::make()
+                ->constraint(DateConstraint::make('offset_date')->dateQueriesUsingRanges($dateQueriesUsingRanges))
+                ->settings(['date' => '2024-11-03'])
+                ->inverse($isInverse)
+                ->apply(Post::query(), 'posts.offset_date');
+
+            expect($query->pluck('id')->sort()->values()->all())->toBe($posts->only($expectedPosts)->pluck('id')->sort()->values()->all());
+        } finally {
+            DB::select("SELECT set_config('TimeZone', ?, false)", [$originalTimezone]);
+        }
+    })->with([
+        'ranges' => [true, false, ['secondMidnightHour']],
+        'inverse ranges' => [true, true, ['firstMidnightHour', 'nextDay']],
+        'extraction' => [false, false, ['firstMidnightHour', 'secondMidnightHour']],
+        'inverse extraction' => [false, true, ['nextDay']],
+    ]);
+
+    it('preserves the database calendar date of offset timestamps in `DateConstraint` operators', function (string $operatorClass, array $settings, bool $isInverse, array $expectedPosts): void {
+        $driver = DB::connection()->getDriverName();
+
+        if (! in_array($driver, ['sqlite', 'sqlsrv', 'pgsql'], true)) {
+            $this->markTestSkipped('Requires support for storing timestamps with offsets.');
+        }
+
+        DatabaseSchema::table('posts', static function (Blueprint $table): void {
+            $table->dateTimeTz('offset_date')->nullable();
+        });
+
+        // SQLite and this PostgreSQL session use UTC; SQL Server preserves the stored offset.
+        $posts = collect([
+            'previousDay' => '2024-03-14 12:00:00+00:00',
+            'startOfDay' => $driver === 'sqlsrv' ? '2024-03-15 00:30:00+02:00' : '2024-03-14 23:30:00-02:00',
+            'endOfDay' => $driver === 'sqlsrv' ? '2024-03-15 23:30:00-02:00' : '2024-03-16 00:30:00+02:00',
+            'nextDay' => '2024-03-16 12:00:00+00:00',
+            'endOfYear' => $driver === 'sqlsrv' ? '2024-12-31 23:30:00-02:00' : '2025-01-01 00:30:00+02:00',
+            'nextYear' => '2025-01-01 12:00:00+00:00',
+            'nullDate' => null,
+        ])->map(static fn (?string $date): Post => Post::factory()->create(['offset_date' => $date]));
+
+        $query = $operatorClass::make()
+            ->constraint(DateConstraint::make('offset_date'))
+            ->settings($settings)
+            ->inverse($isInverse)
+            ->apply(Post::query(), 'posts.offset_date');
+
+        expect($query->pluck('id')->sort()->values()->all())->toBe($posts->only($expectedPosts)->pluck('id')->sort()->values()->all());
+    })->with([
+        '`isAfter`' => [IsAfterOperator::class, ['date' => '2024-03-15'], false, ['startOfDay', 'endOfDay', 'nextDay', 'endOfYear', 'nextYear']],
+        'inverse `isAfter`' => [IsAfterOperator::class, ['date' => '2024-03-15'], true, ['previousDay']],
+        '`isBefore`' => [IsBeforeOperator::class, ['date' => '2024-03-15'], false, ['previousDay', 'startOfDay', 'endOfDay']],
+        'inverse `isBefore`' => [IsBeforeOperator::class, ['date' => '2024-03-15'], true, ['nextDay', 'endOfYear', 'nextYear']],
+        '`isDate`' => [IsDateOperator::class, ['date' => '2024-03-15'], false, ['startOfDay', 'endOfDay']],
+        'inverse `isDate`' => [IsDateOperator::class, ['date' => '2024-03-15'], true, ['previousDay', 'nextDay', 'endOfYear', 'nextYear']],
+        '`isYear`' => [IsYearOperator::class, ['year' => 2024], false, ['previousDay', 'startOfDay', 'endOfDay', 'nextDay', 'endOfYear']],
+        'inverse `isYear`' => [IsYearOperator::class, ['year' => 2024], true, ['nextYear']],
+    ]);
+
+    it('can filter `datetime` columns by years outside their storage range', function (int $year, bool $isInverse): void {
+        $post = Post::factory()->create(['created_at' => '2024-03-15 12:00:00']);
+
+        $query = IsYearOperator::make()
+            ->constraint(DateConstraint::make('created_at'))
+            ->settings(['year' => $year])
+            ->inverse($isInverse)
+            ->apply(Post::query(), 'posts.created_at');
+
+        expect($query->pluck('id')->all())->toBe(($year === 2024) !== $isInverse ? [$post->id] : []);
+    })->with([1, 1752, 1753, 2024])->with([false, true]);
+
+    it('calculates `DateConstraint` calendar boundaries independently of the PHP timezone', function (): void {
+        Post::factory()->create(['published_at' => '2011-12-30 12:00:00']);
+
+        $originalTimezone = date_default_timezone_get();
+
+        try {
+            date_default_timezone_set('Pacific/Apia');
+
+            $query = IsDateOperator::make()
+                ->constraint(DateConstraint::make('published_at'))
+                ->settings(['date' => '2011-12-29'])
+                ->apply(Post::query(), 'posts.published_at');
+
+            expect($query->pluck('id')->all())->toBe([]);
+        } finally {
+            date_default_timezone_set($originalTimezone);
+        }
+    });
+
+    it('can filter the last supported calendar day without overflowing the database date range', function (string $operatorClass, array $settings, bool $isInverse, array $expectedPosts): void {
+        DatabaseSchema::table('posts', static function (Blueprint $table): void {
+            $table->dateTime('boundary_date')->nullable();
+        });
+
+        $posts = collect([
+            'previousDay' => '9999-12-30 12:00:00',
+            'lastDay' => '9999-12-31 12:00:00',
+            'nullDate' => null,
+        ])->map(static fn (?string $date): Post => Post::factory()->create(['boundary_date' => $date]));
+
+        $query = $operatorClass::make()
+            ->constraint(DateConstraint::make('boundary_date'))
+            ->settings($settings)
+            ->inverse($isInverse)
+            ->apply(Post::query(), 'posts.boundary_date');
+
+        expect($query->pluck('id')->sort()->values()->all())->toBe($posts->only($expectedPosts)->pluck('id')->sort()->values()->all());
+    })->with([
+        '`isAfter`' => [IsAfterOperator::class, ['date' => '9999-12-31'], false, ['lastDay']],
+        'inverse `isAfter`' => [IsAfterOperator::class, ['date' => '9999-12-31'], true, ['previousDay']],
+        '`isBefore`' => [IsBeforeOperator::class, ['date' => '9999-12-31'], false, ['previousDay', 'lastDay']],
+        'inverse `isBefore`' => [IsBeforeOperator::class, ['date' => '9999-12-31'], true, []],
+        '`isDate`' => [IsDateOperator::class, ['date' => '9999-12-31'], false, ['lastDay']],
+        'inverse `isDate`' => [IsDateOperator::class, ['date' => '9999-12-31'], true, ['previousDay']],
+        '`isYear` at 9999' => [IsYearOperator::class, ['year' => 9999], false, ['previousDay', 'lastDay']],
+        'inverse `isYear` at 9999' => [IsYearOperator::class, ['year' => 9999], true, []],
+        '`isYear` at 9998' => [IsYearOperator::class, ['year' => 9998], false, []],
+        'inverse `isYear` at 9998' => [IsYearOperator::class, ['year' => 9998], true, ['previousDay', 'lastDay']],
     ]);
 });
 

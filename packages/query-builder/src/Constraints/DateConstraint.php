@@ -19,6 +19,20 @@ class DateConstraint extends Constraint
 
     protected bool | Closure $hasTime = false;
 
+    protected bool | Closure $shouldQueryDatesUsingRanges = true;
+
+    public function dateQueriesUsingRanges(bool | Closure $condition = true): static
+    {
+        $this->shouldQueryDatesUsingRanges = $condition;
+
+        return $this;
+    }
+
+    public function shouldQueryDatesUsingRanges(): bool
+    {
+        return (bool) $this->evaluate($this->shouldQueryDatesUsingRanges);
+    }
+
     public function time(bool | Closure $condition = true): static
     {
         $this->hasTime = $condition;
