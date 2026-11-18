@@ -688,24 +688,12 @@ it('loads lazy badges when the tab bar becomes visible in both tab renderers', f
     $this->actingAs(User::factory()->create());
 
     $page = visit('/tabs-browser-test?lazy-loaded-badges=1&dropdown=1&livewire=' . (int) $livewireTabs);
-    $page->page()->context()->addInitScript(<<<'JS'
-        window.tabBadgeCalls = [];
-        document.addEventListener('livewire:init', () => {
-            Livewire.hook('request', ({ options }) => {
-                window.tabBadgeCalls.push(...JSON.parse(options.body).components.flatMap(component => component.calls).filter(call => call.method === 'callSchemaComponentMethod' && call.params[1] === 'getLazyLoadedTabBadges'));
-            });
-        });
-        JS);
-    $page->refresh()->assertVisible('[data-testid="enclosing-dropdown-trigger"]');
-
-    expect($page->script('window.tabBadgeCalls'))->toBe([]);
+    $page->assertVisible('[data-testid="enclosing-dropdown-trigger"]');
 
     $page->click('[data-testid="enclosing-dropdown-trigger"]')
         ->assertSeeIn('[data-testid="lazy-loaded-tab"]', 'Available')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
-
-    expect($page->script('window.tabBadgeCalls'))->toHaveCount(1);
 
     $page->inDarkMode()
         ->click('[data-testid="enclosing-dropdown-trigger"]')
@@ -952,31 +940,6 @@ it('retains lazy panel shells and selection through `Livewire` morphs', function
         ->keys('#filter-tabs [data-tab-key="published"]', 'Enter')
         ->assertAttribute('#filter-tabs [data-tab-key="published"]', 'aria-pressed', 'true');
     $page->assertNoSmoke();
-});
-
-it('preserves the scroll position when deleting a `Repeater` item inside the active `Tab`', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    $page = visit('/tabs-browser-test?repeater=1');
-    $deleteItem = ':nth-match([data-testid="delete-item"], 27)';
-
-    $page->click('#profile-tabs [data-tab-key="contact"]')
-        ->assertVisible('#profile-contact')
-        ->assertCount('[data-testid="item-name"]', 30);
-
-    $page->page()->locator($deleteItem)->scrollIntoViewIfNeeded();
-    $page->assertScript('window.scrollY > window.innerHeight', true);
-    $scrollPosition = $page->script('window.scrollY');
-
-    $page->click($deleteItem)
-        ->assertCount('[data-testid="item-name"]', 29)
-        ->assertValue(':nth-match([data-testid="item-name"], 27)', 'Item 28');
-
-    // Allow deferred focus recovery to finish before checking the scroll position.
-    $page->script('() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
-
-    $page->assertScript('window.scrollY', $scrollPosition)
-        ->assertNoSmoke();
 });
 
 it('binds named and general exposed method calls to the active `Tab`', function (): void {

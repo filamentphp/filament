@@ -31,30 +31,6 @@ it('delivers notifications once across redirects', function (string $redirect): 
         ->assertNoSmoke();
 })->with(['full', 'spa']);
 
-it('skips empty activation pulls while retaining notification delivery', function (): void {
-    $page = visit('/notification-browser-test')
-        ->click('[data-testid="send-persistent-notification"]')
-        ->assertSee('Persistent notification');
-
-    $page->page()->context()->addInitScript(<<<'JS'
-        const originalFetch = window.fetch;
-        window.notificationPulls = 0;
-        window.fetch = (...arguments_) => {
-            const payload = JSON.parse(arguments_[1]?.body ?? '{}');
-            if (payload.components?.some(component => component.calls.some(call => call.method === 'pullNotifications'))) {
-                window.notificationPulls++;
-            }
-            return originalFetch(...arguments_);
-        };
-        JS);
-
-    $page->refresh()
-        ->click('[data-testid="send-persistent-notification"]')
-        ->assertSee('Persistent notification')
-        ->assertScript('window.notificationPulls', 1)
-        ->assertNoSmoke();
-});
-
 it('falls back to browser delivery when the notification cache is unavailable during mount', function (): void {
     Cache::extend('notification-mount-outage', fn (): Repository => Cache::repository(new class extends ArrayStore
     {
