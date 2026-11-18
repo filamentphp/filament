@@ -17,9 +17,12 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -1065,6 +1068,54 @@ describe('relationship options and search', function (): void {
                 return true;
             });
     });
+
+    it('respects custom-driver `getOrders()` for relationship options and search', function (string $orderType, bool $isSearch): void {
+        foreach (['Alpha', 'Charlie', 'Bravo'] as $name) {
+            User::factory()->create(['name' => $name]);
+        }
+
+        $select = Select::make('author_id')->relationship('author', 'name', modifyQueryUsing: static function (Builder $query) use ($orderType): Builder {
+            $customQuery = new class($query->getQuery()) extends Builder
+            {
+                /** @var list<array<string, mixed>> */
+                public array $nativeOrders = [];
+
+                public function getConnection(): Connection
+                {
+                    return new Connection(null, config: ['driver' => 'custom']);
+                }
+
+                public function getOrders(): array
+                {
+                    return [...($this->getQuery()->orders ?? []), ...$this->nativeOrders];
+                }
+
+                public function toBase()
+                {
+                    $query = clone parent::toBase();
+                    $query->orders = $this->getOrders();
+
+                    return $query;
+                }
+            };
+            $customQuery->setModel($query->getModel());
+            $customQuery->nativeOrders = match ($orderType) {
+                'column' => [['column' => 'users.id', 'direction' => 'desc']],
+                'expression' => [['column' => new Expression('users.id'), 'direction' => 'desc']],
+                'raw' => [['type' => 'Raw', 'sql' => 'users.id desc']],
+                default => [],
+            };
+
+            return $customQuery;
+        });
+        Schema::make(Livewire::make())->model(Post::class)->components([$select])->getComponents();
+
+        $options = $isSearch ? $select->getSearchResults('') : $select->getOptions();
+
+        expect(array_values($options))->toBe($orderType === 'none'
+            ? ['Alpha', 'Bravo', 'Charlie']
+            : ['Bravo', 'Charlie', 'Alpha']);
+    })->with(['column', 'expression', 'raw', 'none'])->with([false, true]);
 
     it('can get `getSearchResults()` from `BelongsTo` relationship', function (): void {
         User::factory()->create(['name' => 'John Doe']);

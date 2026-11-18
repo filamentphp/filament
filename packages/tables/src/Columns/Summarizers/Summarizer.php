@@ -9,6 +9,9 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
+use LogicException;
+
+use function Filament\Support\is_database_driver_supported;
 
 class Summarizer extends ViewComponent implements HasEmbeddedView
 {
@@ -113,7 +116,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
                         return $relatedQuery;
                     },
                 );
-        } elseif ($query) {
+        } elseif ($query && is_database_driver_supported($query->getConnection())) {
             // https://github.com/filamentphp/filament/issues/12501
             // Handle pivot columns in `BelongsToMany` context.
             // This handles two cases:
@@ -146,16 +149,60 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
             }
         }
 
-        $asName = (string) str($query?->getModel()->getTable())->afterLast('.');
+        if ($query && (! is_database_driver_supported($query->getConnection()))) {
+            $baseQuery = $query->toBase();
 
-        $query = $query?->getModel()->resolveConnection($query->getModel()->getConnectionName())
-            ->table($query->toBase(), $asName);
+            if ($baseQuery->distinct || $baseQuery->groups || $baseQuery->havings || $baseQuery->unions) {
+                throw new LogicException('Native database summaries do not support distinct(), groupBy(), having(), union(), or unionAll() on the source query.');
+            }
+
+            $sourceQuery = $baseQuery;
+            $baseQuery = $baseQuery->cloneWithoutBindings(['where']);
+            $baseQuery->wheres = [];
+            $baseQuery->addNestedWhereQuery($sourceQuery);
+
+            if (($baseQuery->limit !== null) || $baseQuery->offset) {
+                if ($baseQuery->joins) {
+                    throw new LogicException('Native database summaries do not support joins on source queries with a limit or offset.');
+                }
+
+                $keyName = $query->getModel()->getQualifiedKeyName();
+                $keys = ($baseQuery->limit === 0) ? [] : $query->clone()->select([$keyName])->pluck($keyName);
+
+                // Native aggregates may apply pagination after aggregation rather than to its input rows.
+                $baseQuery->whereIn($keyName, $keys);
+                $baseQuery->limit = null;
+                $baseQuery->offset = null;
+            }
+
+            $query = $baseQuery->reorder();
+        } else {
+            $asName = (string) str($query?->getModel()->getTable())->afterLast('.');
+
+            $query = $query?->getModel()->resolveConnection($query->getModel()->getConnectionName())
+                ->table($query->toBase(), $asName);
+        }
 
         if ($this->hasQueryModificationCallback() && ! $hasRelationship) {
+            $sourceQuery = null;
+
+            if ($query && (! is_database_driver_supported($query->getConnection()))) {
+                $sourceQuery = $query;
+                $query = $query->cloneWithoutBindings(['where']);
+                $query->wheres = [];
+            }
+
             $query = $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
                 'query' => $query,
             ]) ?? $query;
+
+            if ($sourceQuery) {
+                $modifiedQuery = $query;
+                $query = $query->cloneWithoutBindings(['where']);
+                $query->wheres = [];
+                $query->addNestedWhereQuery($sourceQuery)->addNestedWhereQuery($modifiedQuery);
+            }
         }
 
         if ($this->using !== null) {

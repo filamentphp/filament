@@ -27,6 +27,7 @@ use Illuminate\Support\Str;
 use LogicException;
 
 use function Filament\Support\generate_icon_html;
+use function Filament\Support\get_query_orders;
 
 class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
@@ -255,7 +256,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (empty($relationshipQuery->getQuery()->orders)) {
+            if (blank(get_query_orders($relationshipQuery))) {
                 $relationshipOrderByAttribute = $relationshipTitleAttribute;
 
                 if (str_contains($relationshipOrderByAttribute, ' as ')) {

@@ -13,6 +13,8 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 use stdClass;
 
+use function Filament\Support\is_database_driver_supported;
+
 trait CanSummarizeRecords
 {
     /**
@@ -89,7 +91,7 @@ trait CanSummarizeRecords
     #[Unexposed]
     public function getTableSummarySelectedState(?Builder $query = null, ?Closure $modifyQueryUsing = null): array
     {
-        if (! $query) {
+        if ((! $query) || (! is_database_driver_supported($query->getConnection()))) {
             return [];
         }
 

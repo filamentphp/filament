@@ -79,7 +79,7 @@ class EndsWithOperator extends Operator
         return apply_search_constraint(
             $query,
             $qualifiedColumn,
-            generate_search_pattern($text, hasLeadingWildcard: true, hasTrailingWildcard: false),
+            generate_search_pattern($text, hasLeadingWildcard: true, hasTrailingWildcard: false, databaseConnection: $databaseConnection),
             isInverse: $this->isInverse(),
         );
     }
