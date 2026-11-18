@@ -11,14 +11,12 @@ use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\State\LazyLoadedStateGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Livewire\Attributes\Locked;
-use Livewire\Attributes\Renderless;
 use Livewire\Attributes\Url;
 
 class LazyLoadedStateBrowserTest extends Page implements HasTable
@@ -46,21 +44,12 @@ class LazyLoadedStateBrowserTest extends Page implements HasTable
                 ->action(function (): void {
                     $this->revision++;
                 }),
-            Action::make('advanceState')->action('advanceState'),
             Action::make('toggleValues')
                 ->visible(fn (): bool => $this->viewport)
                 ->action(function (): void {
                     $this->showViewportValues = ! $this->showViewportValues;
                 }),
         ];
-    }
-
-    #[Exposed]
-    #[Renderless]
-    public function advanceState(): void
-    {
-        $this->revision++;
-        $this->dispatch('lazy-loaded-state-advanced', revision: $this->revision);
     }
 
     public function table(Table $table): Table
@@ -87,11 +76,7 @@ class LazyLoadedStateBrowserTest extends Page implements HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('individual')
-                    ->state(function (array $record): string {
-                        $this->dispatch('lazy-loaded-state-resolved', name: $record['name'], revision: $this->revision);
-
-                        return "Individual {$record['name']} v{$this->revision}";
-                    })
+                    ->state(fn (array $record): string => "Individual {$record['name']} v{$this->revision}")
                     ->lazyLoadedState(),
                 TextColumn::make('column')
                     ->lazyLoadedState(group: $columnGroup, key: static fn (array $record): string => (string) $record['id']),
