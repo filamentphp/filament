@@ -988,7 +988,7 @@ Attributes you provide override Filament's accessibility defaults; an explicit `
 
 Keep a label for each field, using `hiddenLabel()` if it should be visually hidden. Use `required()` for validation and required-state semantics; `markAsRequired()` only controls the visual marker.
 
-If you replace a field wrapper, preserve the label, helper text, and error IDs in your custom markup. JavaScript-created controls synchronize independently of the wrapper. If you publish a control view, merge the field's `getAccessibilityAttributes()` array as defaults into the control's existing attribute bag. Preserve its hidden `data-field-accessibility` element immediately before the JavaScript component and outside `wire:ignore`, with the resolved description and invalid-state attributes. The plain wrapper used by `FusedGroup` suppresses child instructions and leaves error descriptions on the group.
+If you replace a field wrapper, preserve the label, helper text, and error IDs in your custom markup. JavaScript-created controls synchronize independently of the wrapper. The plain wrapper used by `FusedGroup` suppresses child instructions and leaves error descriptions on the group.
 
 Helper text, error, and required-description IDs append `-helper-text`, `-error`, or `-required` to the existing field ID; field and option IDs are unchanged. Keep explicit IDs unique on the page. Rendering multiple fields with the same state path in the same form at the same time is not supported. Fields with the same name in separate repeater items or nested groups should have distinct full state paths.
 
