@@ -709,7 +709,7 @@ trait HasFilters
         $attributes ??= new FilamentComponentAttributeBag;
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament-tables::components.filters')) {
-            return view('filament-tables::components.filters', [
+            return view('filament-tables::components.filters', [ // @phpstan-ignore argument.type (Published overrides only exist in consuming applications.)
                 'applyAction' => $applyAction,
                 'form' => $form,
                 'headingTag' => $headingTag,

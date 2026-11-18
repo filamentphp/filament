@@ -390,7 +390,7 @@ trait HasColumnManager
         $attributes ??= new FilamentComponentAttributeBag;
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament-tables::components.column-manager.index')) {
-            return view('filament-tables::components.column-manager.index', [
+            return view('filament-tables::components.column-manager.index', [ // @phpstan-ignore argument.type (Published overrides only exist in consuming applications.)
                 'applyAction' => $applyAction,
                 'columns' => $columns,
                 'hasReorderableColumns' => $hasReorderableColumns,
@@ -476,7 +476,7 @@ trait HasColumnManager
         $attributes ??= new FilamentComponentAttributeBag;
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament-tables::components.column-manager.content')) {
-            return view('filament-tables::components.column-manager.content', [
+            return view('filament-tables::components.column-manager.content', [ // @phpstan-ignore argument.type (Published overrides only exist in consuming applications.)
                 'columns' => $columns,
                 'hasReorderableColumns' => $hasReorderableColumns,
                 'hasToggleableColumns' => $hasToggleableColumns,

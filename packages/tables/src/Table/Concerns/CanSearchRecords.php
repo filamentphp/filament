@@ -483,7 +483,7 @@ trait CanSearchRecords
         $livewire = $this->getLivewire();
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament-tables::components.search-field')) {
-            return view('filament-tables::components.search-field', [
+            return view('filament-tables::components.search-field', [ // @phpstan-ignore argument.type (Published overrides only exist in consuming applications.)
                 'debounce' => $debounce,
                 'label' => $label,
                 'labelHidden' => $labelHidden,

@@ -120,7 +120,7 @@ trait CanSummarizeRecords
         $livewire = $this->getLivewire();
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament-tables::components.summary.index')) {
-            return view('filament-tables::components.summary.index', [
+            return view('filament-tables::components.summary.index', [ // @phpstan-ignore argument.type (Published overrides only exist in consuming applications.)
                 'actions' => $actions,
                 'actionsPosition' => $actionsPosition,
                 'allTableSummary' => $allTableSummary,
@@ -258,7 +258,7 @@ trait CanSummarizeRecords
         $attributes ??= new FilamentComponentAttributeBag;
 
         if (ViewComponent::hasPublishedEmbeddedViewOverride('filament-tables::components.summary.row')) {
-            return view('filament-tables::components.summary.row', [
+            return view('filament-tables::components.summary.row', [ // @phpstan-ignore argument.type (Published overrides only exist in consuming applications.)
                 'actions' => $actions,
                 'actionsPosition' => $actionsPosition,
                 'columns' => $columns,
