@@ -652,6 +652,10 @@ trait HasCellState
         }
 
         if ($this instanceof Column) {
+            if ($this->cachedStateCacheKey !== null) {
+                return $this->cachedStateCacheKey;
+            }
+
             if (
                 ($record instanceof Model) &&
                 blank($record->getKey()) &&
