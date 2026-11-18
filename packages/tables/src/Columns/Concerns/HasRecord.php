@@ -13,11 +13,14 @@ trait HasRecord
 
     protected ?string $recordKey = null;
 
+    protected ?string $cachedStateCacheKey = null;
+
     /**
      * @param  Model | array<string, mixed>  $record
      */
     public function record(Model | array $record): static
     {
+        $this->cachedStateCacheKey = null;
         $this->record = $record;
 
         return $this;
@@ -25,6 +28,7 @@ trait HasRecord
 
     public function recordKey(?string $recordKey): static
     {
+        $this->cachedStateCacheKey = null;
         $this->recordKey = $recordKey;
 
         return $this;
