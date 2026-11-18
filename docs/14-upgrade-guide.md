@@ -70,6 +70,29 @@ Check parent resources and traits. If calling the parent, use its matching respo
 
 Custom RTL icons no longer fall back to LTR registrations. Register RTL artwork for `Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL` / `PAGINATION_NEXT_BUTTON_RTL` and `Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` / `SIDEBAR_COLLAPSE_BUTTON_RTL` (also used in the topbar). Otherwise, built-in RTL icons are used.
 
+### Replacing removed Blade components
+
+The following deprecated Blade components and their backing views have been removed:
+
+- `<x-filament::modal.heading>`
+- `<x-filament::modal.description>`
+- `<x-filament::section.heading>`
+- `<x-filament::section.description>`
+- `<x-filament-tables::column-manager>`
+- `<x-filament-tables::column-manager.content>`
+- `<x-filament-tables::columns.layout>`
+- `<x-filament-tables::filters>`
+- `<x-filament-tables::search-field>`
+- `<x-filament-tables::summary>`
+- `<x-filament-tables::summary.row>`
+- `<x-filament-widgets::widgets>`
+
+Replace the standalone modal and section heading/description components with the `heading` and `description` slots of their parent [`<x-filament::modal>`](../components/modal#adding-a-heading-to-a-modal) or [`<x-filament::section>`](../components/section#adding-a-description-to-the-section) component.
+
+Built-in tables and page widget grids do not use these components and require no changes. If your custom views use any of the removed table components, copy the required markup from Filament 5 into your own views before upgrading, including any nested removed components, and update component tags and direct view references. The upgrade script does not migrate these usages. Existing published table view overrides are still honored, but you must also update any references they contain to removed components.
+
+Replace `<x-filament-widgets::widgets>` with a schema-based widget grid, or [render individual widgets using `@livewire`](../components/widget#adding-the-widget) in your own layout.
+
 ### Reviewing custom extensions
 
 The script handles common, statically identifiable PHP and Blade usage. Review anything left unchanged: overrides and `parent::` calls, shared traits, competing old/new configuration, dynamic calls, callable references, computed argument arrays, and published views. Update JavaScript/TypeScript manually. For nullsafe migrations, keep argument evaluation inside the null check.

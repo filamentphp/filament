@@ -1,11 +1,9 @@
 <?php
 
-use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersApplyAction;
@@ -16,7 +14,6 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Blade;
 
 use function Filament\Tests\livewire;
 
@@ -174,21 +171,6 @@ describe('action configuration and rendering', function (): void {
         livewire(PostsTableWithCustomFiltersApplyAction::class)
             ->assertSee('Apply filters');
     });
-
-    it('can render the filters component without a reset action', function (FiltersResetActionPosition $position): void {
-        $html = Blade::render(<<<'BLADE'
-        <x-filament-tables::filters
-            :apply-action="$applyAction"
-            form=""
-            :reset-action-position="$position"
-        />
-        BLADE, [
-            'applyAction' => Action::make('apply')->hidden(),
-            'position' => $position,
-        ]);
-
-        expect($html)->not->toContain('resetTableFiltersForm');
-    })->with(FiltersResetActionPosition::cases());
 
     it('can customize the `filtersResetAction()`', function (): void {
         $action = livewire(PostsTableWithCustomFiltersResetAction::class)

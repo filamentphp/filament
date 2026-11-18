@@ -297,12 +297,12 @@ describe('authorization', function (): void {
         }
     })->with([true, false])->with([true, false]);
 
-    it('enforces `canView()` when a standalone Blade view mounts a widget', function (string $template, bool $canView): void {
+    it('enforces `canView()` when a standalone Blade view mounts a widget', function (bool $canView): void {
         Filament::setCurrentPanel(null);
         AuthorizableTestWidget::$canViewFlag = $canView;
 
         Route::get('/widget-authorization-test', static fn (): string => Blade::render(
-            $template,
+            '@livewire($widget)',
             ['widget' => AuthorizableTestWidget::class],
         ));
 
@@ -317,11 +317,7 @@ describe('authorization', function (): void {
         } else {
             $response->assertForbidden()->assertDontSee('Private widget data');
         }
-    })->with([
-        'direct Livewire' => ['@livewire($widget)'],
-        'legacy widget grid' => ['<x-filament-widgets::widgets :widgets="[$widget]" />'],
-        'configured legacy widget grid' => ['<x-filament-widgets::widgets :widgets="[$widget::make()]" />'],
-    ])->with([true, false]);
+    })->with([true, false]);
 
     it('filters denied widgets before mounting them on dashboard and resource pages', function (string $page, bool $canView): void {
         $panel = Filament::getPanel('admin');
