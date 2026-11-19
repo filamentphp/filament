@@ -259,8 +259,10 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     }
 
     #[Unexposed]
-    public function placeholder(): string
+    public function placeholder(): View | string
     {
-        return '<div>' . $this->renderTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()])->render() . '</div>';
+        return view('filament-notifications::database-notifications-placeholder', [
+            'trigger' => $this->renderTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()]),
+        ]);
     }
 }
