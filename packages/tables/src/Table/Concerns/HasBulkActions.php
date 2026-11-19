@@ -278,7 +278,7 @@ trait HasBulkActions
             aria-atomic="true"
             x-bind:hidden="! getSelectedRecordsCount()"
             x-show="getSelectedRecordsCount()"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.selection.indicator'); ?>
+            <?php $this->setRenderKey(e($this->getLivewire()->getId()) . '.table.selection.indicator'); ?>
             wire:key="<?= e($this->getLivewire()->getId()); ?>.table.selection.indicator"
             class="fi-ta-selection-indicator"
         >
@@ -334,10 +334,13 @@ trait HasBulkActions
      */
     protected function generatePageCheckboxHtml(bool $isStacked = false): string
     {
+        $checkboxKey = e($this->getLivewire()->getId()) . '.table.bulk-select-page.checkbox.' . ($isStacked ? 'stacked.' : '') . e(Str::random());
+
         ob_start(); ?>
         <input
             aria-label="<?= e(__('filament-tables::table.fields.bulk_select_page.label')); ?>"
             type="checkbox"
+            autocomplete="off"
             <?php if ($this->isSelectionDisabled()) { ?>
                 disabled
             <?php } elseif ($this->getMaxSelectableRecords()) { ?>
@@ -345,8 +348,8 @@ trait HasBulkActions
             <?php } ?>
             x-bind:checked="syncSelectRecordsOnPageCheckbox($el)"
             x-on:click="toggleSelectRecordsOnPage"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.bulk-select-page.checkbox.' . ($isStacked ? 'stacked.' : '') . e(Str::random()) . ''); ?>
-            wire:key="<?= e($this->getLivewire()->getId()); ?>.table.bulk-select-page.checkbox.<?= $isStacked ? 'stacked.' : ''; ?><?= e(Str::random()); ?>"
+            <?php $this->setRenderKey($checkboxKey); ?>
+            wire:key="<?= $checkboxKey; ?>"
             wire:loading.attr="disabled"
             wire:target="<?= e(implode(',', Table::LOADING_TARGETS)); ?>"
             class="fi-ta-page-checkbox fi-checkbox-input"
@@ -365,6 +368,7 @@ trait HasBulkActions
         <input
             aria-label="<?= e(__('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle])); ?>"
             type="checkbox"
+            autocomplete="off"
             data-group-selectable-record-keys="<?= e(json_encode($livewire->getGroupedSelectableTableRecordKeys($recordGroupKey))); ?>"
             <?php if ($this->isSelectionDisabled()) { ?>
                 disabled
@@ -375,7 +379,7 @@ trait HasBulkActions
                 <?php } ?>
             <?php } ?>
             x-bind:checked="syncSelectGroupRecordsCheckbox($el)"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.bulk_select_group.checkbox.' . e($livewire->getTablePage()) . ''); ?>
+            <?php $this->setRenderKey(e($this->getLivewire()->getId()) . '.table.bulk_select_group.checkbox.' . e($livewire->getTablePage())); ?>
             wire:key="<?= e($this->getLivewire()->getId()); ?>.table.bulk_select_group.checkbox.<?= e($livewire->getTablePage()); ?>"
             wire:loading.attr="disabled"
             wire:target="<?= e(implode(',', Table::LOADING_TARGETS)); ?>"
@@ -393,6 +397,7 @@ trait HasBulkActions
         <input
             aria-label="<?= e(__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])); ?>"
             type="checkbox"
+            autocomplete="off"
             <?php if ($this->isSelectionDisabled()) { ?>
                 disabled
             <?php } elseif ($this->getMaxSelectableRecords() && ($this->getMaxSelectableRecords() !== 1)) { ?>
