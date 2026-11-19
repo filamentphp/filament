@@ -27,7 +27,7 @@ return [
 
         'password' => [
             'label' => 'Kata sandi',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'kata sandi',
         ],
 
         'password_confirmation' => [

@@ -462,7 +462,7 @@ return [
                     'inverse' => ':attribute bukan :values',
                     'values_glue' => [
                         ', ',
-                        'final' => ' or ',
+                        'final' => ' atau ',
                     ],
                 ],
 
