@@ -14,8 +14,8 @@ use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
@@ -27,6 +27,7 @@ use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTickets;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTicketsWithRelationshipInViewAction;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTicketsWithRelationshipSavedInViewAction;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTicketsWithRelationshipSaveOptInInViewAction;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
@@ -382,6 +383,7 @@ it('does not save relationships when a view-only user calls the `ViewAction`', f
 })->with([
     'default relationship saving' => ListTicketsWithRelationshipInViewAction::class,
     'relationship saving opted in while disabled' => ListTicketsWithRelationshipSaveOptInInViewAction::class,
+    'relationship saved explicitly' => ListTicketsWithRelationshipSavedInViewAction::class,
 ]);
 
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {

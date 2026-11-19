@@ -876,6 +876,58 @@ describe('dehydrating state', function (): void {
             ->getState()->toBe([]);
     });
 
+    test('components can be saved explicitly when their schema is disabled', function (): void {
+        $schema = StateTestLivewire::make()->getSchema('form')
+            ->statePath('data')
+            ->disabled()
+            ->components([
+                Field::make('saved')
+                    ->default('value')
+                    ->saved(),
+            ])
+            ->fill();
+
+        expect($schema)
+            ->getState()->toBe(['saved' => 'value']);
+    });
+
+    test('components are not saved when `disabled()` overrides `saved()` in a disabled schema', function (): void {
+        $schema = StateTestLivewire::make()->getSchema('form')
+            ->statePath('data')
+            ->disabled()
+            ->components([
+                Field::make('saved')
+                    ->default('value')
+                    ->saved()
+                    ->disabled(),
+            ])
+            ->fill();
+
+        expect($schema)
+            ->getState()->toBe([]);
+    });
+
+    test('components are saved when a disabled schema is enabled again', function (): void {
+        $isDisabled = true;
+
+        $schema = StateTestLivewire::make()->getSchema('form')
+            ->statePath('data')
+            ->disabled(static function () use (&$isDisabled): bool {
+                return $isDisabled;
+            })
+            ->components([
+                Field::make('title')
+                    ->default('value'),
+            ])
+            ->fill();
+
+        expect($schema->getState())->toBe([]);
+
+        $isDisabled = false;
+
+        expect($schema->getState())->toBe(['title' => 'value']);
+    });
+
     test('disabled components are excluded from state dehydration except if they are marked as dehydrated', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')
@@ -1257,6 +1309,11 @@ describe('component self-state access', function (): void {
 });
 
 describe('`saved()` and dehydration', function (): void {
+    test('unattached components retain their saved state', function (): void {
+        expect(Field::make('saved')->isSaved())->toBeTrue()
+            ->and(Field::make('unsaved')->saved(false)->isSaved())->toBeFalse();
+    });
+
     test('components can be excluded from state dehydration using `saved(false)`', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')

@@ -9,13 +9,21 @@ class ListTicketsWithRelationshipInViewAction extends ListTickets
 {
     protected bool $saveRelationshipsWhenDisabled = false;
 
+    protected bool $isRelationshipSaved = false;
+
     public function form(Schema $schema): Schema
     {
+        $relationship = Select::make('departments')
+            ->relationship('departments', 'name')
+            ->multiple()
+            ->saveRelationshipsWhenDisabled($this->saveRelationshipsWhenDisabled);
+
+        if ($this->isRelationshipSaved) {
+            $relationship->saved();
+        }
+
         return $schema->components([
-            Select::make('departments')
-                ->relationship('departments', 'name')
-                ->multiple()
-                ->saveRelationshipsWhenDisabled($this->saveRelationshipsWhenDisabled),
+            $relationship,
         ]);
     }
 
