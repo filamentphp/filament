@@ -212,18 +212,18 @@ it('binds a `tenantDomain()` page to its tenant host', function (): void {
     updatePanelRoute($this, $snapshot, 'example.test', [])->assertNotFound();
 });
 
-it('preserves the panel origin for newly mounted children', function (bool $isLazy): void {
+it('preserves the panel origin for newly mounted children', function (bool $isLazy, bool $isDeferred): void {
     $tenant = Team::factory()->create();
     $snapshot = panelRouteSnapshot($this, $tenant);
 
     $response = updatePanelRoute($this, $snapshot, 'app.example.test', [
-        ['method' => 'showChild', 'params' => [$isLazy]],
+        ['method' => 'showChild', 'params' => [$isLazy, $isDeferred]],
     ])->assertSuccessful();
 
     $html = $response->json('components.0.effects.html');
     $childSnapshot = Utils::extractAttributeDataFromHtml($html, 'wire:snapshot');
 
-    if ($isLazy) {
+    if ($isLazy || $isDeferred) {
         preg_match("/__lazyLoad\\('([^']+)'\\)/", html_entity_decode($html), $matches);
 
         expect($matches[1] ?? null)->not->toBeNull();
@@ -240,14 +240,18 @@ it('preserves the panel origin for newly mounted children', function (bool $isLa
 
     expect(PanelRouteProbe::$calls)->toBe(1)
         ->and(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey()]);
-})->with(['eager' => false, 'lazy' => true]);
+})->with([
+    'eager' => [false, false],
+    'lazy' => [true, false],
+    'deferred' => [false, true],
+]);
 
-it('rejects lazy mount parameters from a different origin context', function (bool $isPanelOuter): void {
+it('rejects lazy mount parameters from a different origin context', function (bool $isPanelOuter, string $loadingAttribute): void {
     Route::domain('app.example.test')
         ->middleware('panel:tenant-menu-grouping')
-        ->get('/panel-lazy-probe', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
+        ->get('/panel-lazy-probe', fn (): string => Blade::render("<livewire:panel-route-probe {$loadingAttribute} />"));
 
-    Route::get('/public-lazy-probe', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
+    Route::get('/public-lazy-probe', fn (): string => Blade::render("<livewire:panel-route-probe {$loadingAttribute} />"));
 
     $snapshots = [];
     $mountParameters = [];
@@ -270,7 +274,8 @@ it('rejects lazy mount parameters from a different origin context', function (bo
     ])->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
-})->with(['panel component' => true, 'public component' => false]);
+})->with(['panel component' => true, 'public component' => false])
+    ->with(['lazy', 'defer']);
 
 it('preserves each origin in bundled panel and non-panel updates', function (bool $isPanelFirst): void {
     $panelSnapshot = panelRouteSnapshot($this, Team::factory()->create());
@@ -363,10 +368,13 @@ class PanelRouteProbe extends Component
 
     public bool $isChildLazy = false;
 
-    public function showChild(bool $isLazy): void
+    public bool $isChildDeferred = false;
+
+    public function showChild(bool $isLazy, bool $isDeferred): void
     {
         $this->shouldShowChild = true;
         $this->isChildLazy = $isLazy;
+        $this->isChildDeferred = $isDeferred;
     }
 
     public function record(): void
@@ -377,7 +385,7 @@ class PanelRouteProbe extends Component
 
     public function render(): string
     {
-        return '<div>@if ($shouldShowChild)<livewire:panel-route-probe :lazy="$isChildLazy" />@endif</div>';
+        return '<div>@if ($shouldShowChild)<livewire:panel-route-probe :lazy="$isChildLazy" :defer="$isChildDeferred" />@endif</div>';
     }
 }
 
