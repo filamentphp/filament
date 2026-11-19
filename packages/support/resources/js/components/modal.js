@@ -217,6 +217,10 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
     },
 
     close() {
+        if (!this.isOpen) {
+            return
+        }
+
         this.closeQuietly()
 
         this.isTrapActive = false
