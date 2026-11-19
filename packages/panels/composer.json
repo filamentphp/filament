@@ -27,6 +27,7 @@
         "illuminate/session": "^10.45|^11.0|^12.0|^13.0",
         "illuminate/support": "^10.45|^11.0|^12.0|^13.0",
         "illuminate/view": "^10.45|^11.0|^12.0|^13.0",
+        "livewire/livewire": "^3.7",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

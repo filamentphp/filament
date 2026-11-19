@@ -18,6 +18,7 @@ use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
+use Filament\Livewire\ValidatePanelOrigin;
 use Filament\Navigation\NavigationManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
@@ -58,6 +59,8 @@ class FilamentServiceProvider extends PackageServiceProvider
             return new NavigationManager;
         });
 
+        $this->app->scoped(ValidatePanelOrigin::class);
+
         $this->app->bind(EmailVerificationResponseContract::class, EmailVerificationResponse::class);
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
@@ -69,6 +72,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        ValidatePanelOrigin::register();
+
         Blade::components([
             LegacyComponents\Page::class => 'filament::page',
             LegacyComponents\Widget::class => 'filament::widget',

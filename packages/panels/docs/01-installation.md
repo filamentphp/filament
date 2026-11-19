@@ -8,7 +8,7 @@ Filament requires the following to run:
 
 - PHP 8.1+
 - Laravel v10.0+
-- Livewire v3.0+
+- Livewire v3.7+
 
 ## Installation
 
