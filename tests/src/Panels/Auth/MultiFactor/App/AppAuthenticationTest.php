@@ -373,6 +373,45 @@ describe('validation', function (): void {
         $this->assertGuest();
     });
 
+    test('a `recoveryCode` trimmed to an empty value cannot bypass app authentication', function (): void {
+        TextInput::configureUsing(
+            static fn (TextInput $component): TextInput => $component->trim(),
+            during: function (): void {
+                $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+                $userToAuthenticate = User::factory()
+                    ->hasAppAuthentication($appAuthentication->generateRecoveryCodes())
+                    ->create();
+
+                livewire(Login::class)
+                    ->fillForm([
+                        'email' => $userToAuthenticate->email,
+                        'password' => 'password',
+                    ])
+                    ->call('authenticate')
+                    ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+                    ->assertNoRedirect()
+                    ->callAction(TestAction::make('useRecoveryCode')
+                        ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
+                    ->fillForm([
+                        $appAuthentication->getId() => [
+                            'recoveryCode' => "\u{200B}",
+                        ],
+                    ], 'multiFactorChallengeForm')
+                    ->call('authenticate')
+                    ->assertHasFormErrors([
+                        "{$appAuthentication->getId()}.recoveryCode" => 'required',
+                    ], 'multiFactorChallengeForm')
+                    ->assertNoRedirect();
+
+                $this->assertGuest();
+
+                expect($userToAuthenticate->fresh()->getAppAuthenticationRecoveryCodes())
+                    ->toHaveCount(8);
+            },
+        );
+    });
+
     test('challenge codes are required', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
