@@ -15,6 +15,7 @@ use Filament\Facades\Filament;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
@@ -25,6 +26,8 @@ use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithTabs;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTickets;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTicketsWithRelationshipInViewAction;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTicketsWithRelationshipSaveOptInInViewAction;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
@@ -357,6 +360,29 @@ it('re-authorizes resource access on Livewire updates when the policy returns a 
 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
+
+it('does not save relationships when a view-only user calls the `ViewAction`', function (string $pageClass): void {
+    $ticket = Ticket::factory()->create();
+    $originalDepartment = Department::factory()->create();
+    $forgedDepartment = Department::factory()->create();
+    $ticket->departments()->attach($originalDepartment);
+
+    app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
+    app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
+
+    expect(TicketResource::canView($ticket))->toBeTrue()
+        ->and(TicketResource::canEdit($ticket))->toBeFalse();
+
+    livewire($pageClass)
+        ->call('mountAction', 'view', [], ['table' => true, 'recordKey' => (string) $ticket->getKey()])
+        ->set('mountedActions.0.data.departments', [$forgedDepartment->getKey()])
+        ->callMountedAction();
+
+    expect($ticket->fresh()->departments()->pluck('departments.id')->all())->toBe([$originalDepartment->getKey()]);
+})->with([
+    'default relationship saving' => ListTicketsWithRelationshipInViewAction::class,
+    'relationship saving opted in while disabled' => ListTicketsWithRelationshipSaveOptInInViewAction::class,
+]);
 
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);

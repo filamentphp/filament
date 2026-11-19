@@ -197,6 +197,25 @@ describe('disabled fields', function (): void {
             ->toBe(0);
     });
 
+    test('fields do not save relationships if their schema is disabled', function (): void {
+        $numberOfRelationshipsSaved = 0;
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->disabled()
+            ->components([
+                (new Field('relationship'))
+                    ->saveRelationshipsUsing(function () use (&$numberOfRelationshipsSaved): void {
+                        $numberOfRelationshipsSaved++;
+                    }),
+            ])
+            ->model(Post::factory()->create());
+
+        $schema->saveRelationships();
+
+        expect($numberOfRelationshipsSaved)->toBe(0);
+    });
+
     test('disabled fields can save relationships when `saveRelationshipsWhenDisabled()` is called', function (): void {
         $numberOfRelationshipsSaved = 0;
 
