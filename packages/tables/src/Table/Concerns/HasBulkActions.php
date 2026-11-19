@@ -372,6 +372,7 @@ trait HasBulkActions
         <input
             aria-label="<?= e(__('filament-tables::table.fields.bulk_select_page.label')); ?>"
             type="checkbox"
+            autocomplete="off"
             <?php if ($this->isSelectionDisabled()) { ?>
                 disabled
             <?php } elseif ($this->getMaxSelectableRecords()) { ?>
@@ -399,6 +400,7 @@ trait HasBulkActions
         <input
             aria-label="<?= e(__('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle])); ?>"
             type="checkbox"
+            autocomplete="off"
             data-group-selectable-record-keys="<?= e(json_encode($livewire->getGroupedSelectableTableRecordKeys($recordGroupKey))); ?>"
             <?php if ($this->isSelectionDisabled()) { ?>
                 disabled
@@ -427,6 +429,7 @@ trait HasBulkActions
         <input
             aria-label="<?= e(__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])); ?>"
             type="checkbox"
+            autocomplete="off"
             <?php if ($this->isSelectionDisabled()) { ?>
                 disabled
             <?php } elseif ($this->getMaxSelectableRecords() && ($this->getMaxSelectableRecords() !== 1)) { ?>
