@@ -145,7 +145,7 @@ trait CanReorderRecords
             x-cloak
             role="status"
             aria-live="polite"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.reorder.indicator'); ?>
+            <?php $this->setRenderKey(e($this->getLivewire()->getId()) . '.table.reorder.indicator'); ?>
             wire:key="<?= e($this->getLivewire()->getId()); ?>.table.reorder.indicator"
             class="fi-ta-reorder-indicator"
         >
@@ -166,8 +166,6 @@ trait CanReorderRecords
      */
     protected function generateRecordReorderControlsHtml(Model | array $record, string $recordKey, \stdClass $loop): string
     {
-        $viewFactory = app('view');
-
         ob_start();
 
         $reorderLabel = ($record instanceof Model && ($this->hasCustomRecordTitle() || filled($this->getRecordTitleAttribute()))) ? $this->getRecordTitle($record) : $recordKey;
@@ -194,8 +192,7 @@ trait CanReorderRecords
         </span>
 
         <div class="fi-sr-only">
-            <?php foreach ($this->iterateRenderLoop(['up', 'down']) as $direction) {
-                $loop = $viewFactory->getLastLoop(); ?>
+            <?php foreach ($this->iterateRenderLoop(['up', 'down']) as $direction) { ?>
                 <button
                     type="button"
                     aria-describedby="<?= e($reorderDescriptionId); ?>"
@@ -209,7 +206,7 @@ trait CanReorderRecords
                 >
                     <?= e(__('filament-tables::table.actions.move_record_' . $direction . '.label', ['label' => $reorderLabel])); ?>
                 </button>
-            <?php } $loop = $viewFactory->getLastLoop(); ?>
+            <?php } ?>
         </div>
         <?php return ob_get_clean();
     }

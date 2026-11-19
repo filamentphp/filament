@@ -86,7 +86,7 @@ trait HasHeader
                 x-cloak
             <?php } ?>
             x-show="<?= Js::from($this->hasRenderHeader())->toHtml() ?> || <?= Js::from($this->hasRenderNonBulkToolbarAction())->toHtml() ?> || (getSelectedRecordsCount() && <?= Js::from(count($this->getRenderToolbarActions()))->toHtml() ?>)"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.header.' . e($this->getRenderHeaderVisibilityMode()) . ''); ?>
+            <?php $this->setRenderKey(e($this->getLivewire()->getId()) . '.table.header.' . e($this->getRenderHeaderVisibilityMode())); ?>
             wire:key="<?= e($this->getLivewire()->getId()); ?>.table.header.<?= e($this->getRenderHeaderVisibilityMode()); ?>"
             class="fi-ta-header-ctn"
         >

@@ -39,7 +39,7 @@ trait HasToolbar
                 x-cloak
             <?php } ?>
             x-show="<?= Js::from($this->hasRenderHeaderToolbar())->toHtml() ?> || <?= Js::from($this->hasRenderNonBulkToolbarAction())->toHtml() ?> || (getSelectedRecordsCount() && <?= Js::from(count($this->getRenderToolbarActions()))->toHtml() ?>)"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.header-toolbar.' . e($this->getRenderHeaderToolbarVisibilityMode()) . ''); ?>
+            <?php $this->setRenderKey(e($this->getLivewire()->getId()) . '.table.header-toolbar.' . e($this->getRenderHeaderToolbarVisibilityMode())); ?>
             wire:key="<?= e($this->getLivewire()->getId()); ?>.table.header-toolbar.<?= e($this->getRenderHeaderToolbarVisibilityMode()); ?>"
             class="fi-ta-header-toolbar"
         >
