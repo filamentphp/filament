@@ -3,6 +3,7 @@
 namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
+use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
 use Livewire\Mechanisms\HandleRequests\HandleRequests;
@@ -14,9 +15,11 @@ class ValidatePanelOrigin
     // Bundled updates verify one snapshot at a time, and newly mounted children inherit its origin.
     protected string | false | null $origin = null;
 
+    protected ?string $componentId = null;
+
     public static function register(): void
     {
-        Livewire::listen('dehydrate', static function ($component, ComponentContext $context): void {
+        Livewire::listen('dehydrate', static function (Component $component, ComponentContext $context): void {
             $context->addMemo('filamentOrigin', app(ValidatePanelOrigin::class)->getOrigin());
         });
 
@@ -24,9 +27,19 @@ class ValidatePanelOrigin
             app(ValidatePanelOrigin::class)->verifyOrigin($snapshot);
         });
 
+        Livewire::listen('destroy', static function (Component $component): void {
+            $validator = app(ValidatePanelOrigin::class);
+
+            if ($validator->componentId === $component->getId()) {
+                $validator->componentId = null;
+            }
+        });
+
         // Livewire test helpers flush state without ending the container scope.
         Livewire::listen('flush-state', static function (): void {
-            app(ValidatePanelOrigin::class)->origin = null;
+            $validator = app(ValidatePanelOrigin::class);
+            $validator->origin = null;
+            $validator->componentId = null;
         });
     }
 
@@ -68,6 +81,14 @@ class ValidatePanelOrigin
             abort_unless($origin === request()->getSchemeAndHttpHost(), 404);
         }
 
+        // Nested snapshots, such as lazy mount parameters, must keep the active component's origin.
+        if (filled($this->componentId)) {
+            abort_unless($origin === $this->origin, 404);
+
+            return;
+        }
+
         $this->origin = $origin;
+        $this->componentId = $snapshot['memo']['id'];
     }
 }

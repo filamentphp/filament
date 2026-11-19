@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Panels\Livewire;
 
+use Filament\Auth\Pages\Register;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\IdentifyTenant;
@@ -48,7 +49,7 @@ function updatePanelRoute(TestCase $test, array $snapshot, string $host, ?array 
 {
     return $test
         ->withHeaders(['X-Livewire' => true])
-        ->postJson("https://{$host}" . app('livewire')->getUpdateUri(), [
+        ->postJson("https://{$host}" . Livewire::getUpdateUri(), [
             'components' => [[
                 'snapshot' => json_encode($snapshot, JSON_THROW_ON_ERROR),
                 'updates' => [],
@@ -165,15 +166,19 @@ it('rechecks panel authorization before an update action', function (): void {
 it('binds the registration page of a domain-bound panel to its original host', function (): void {
     auth()->logout();
 
+    Route::domain('registration.example.test')
+        ->middleware(Filament::getPanel('single-domain')->getMiddleware())
+        ->get('/domain-bound-registration', Register::class);
+
     $response = $this
-        ->get('https://example3.com/register')
+        ->get('https://registration.example.test/domain-bound-registration')
         ->assertSuccessful();
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBe('https://example3.com');
+    expect($snapshot['memo']['filamentOrigin'])->toBe('https://registration.example.test');
 
-    updatePanelRoute($this, $snapshot, 'example3.com', [])->assertSuccessful();
+    updatePanelRoute($this, $snapshot, 'registration.example.test', [])->assertSuccessful();
     updatePanelRoute($this, $snapshot, 'other.example.test', [])->assertNotFound();
 });
 
@@ -206,6 +211,97 @@ it('binds a `tenantDomain()` page to its tenant host', function (): void {
     updatePanelRoute($this, $snapshot, $tenant->domain, [])->assertSuccessful();
     updatePanelRoute($this, $snapshot, 'example.test', [])->assertNotFound();
 });
+
+it('preserves the panel origin for newly mounted children', function (bool $isLazy): void {
+    $tenant = Team::factory()->create();
+    $snapshot = panelRouteSnapshot($this, $tenant);
+
+    $response = updatePanelRoute($this, $snapshot, 'app.example.test', [
+        ['method' => 'showChild', 'params' => [$isLazy]],
+    ])->assertSuccessful();
+
+    $html = $response->json('components.0.effects.html');
+    $childSnapshot = Utils::extractAttributeDataFromHtml($html, 'wire:snapshot');
+
+    if ($isLazy) {
+        preg_match("/__lazyLoad\\('([^']+)'\\)/", html_entity_decode($html), $matches);
+
+        expect($matches[1] ?? null)->not->toBeNull();
+
+        $response = updatePanelRoute($this, $childSnapshot, 'app.example.test', [
+            ['method' => '__lazyLoad', 'params' => [$matches[1]]],
+        ])->assertSuccessful();
+
+        $childSnapshot = json_decode($response->json('components.0.snapshot'), true, flags: JSON_THROW_ON_ERROR);
+    }
+
+    updatePanelRoute($this, $childSnapshot, 'app.example.test')->assertSuccessful();
+    updatePanelRoute($this, $childSnapshot, 'other.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(1)
+        ->and(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey()]);
+})->with(['eager' => false, 'lazy' => true]);
+
+it('rejects lazy mount parameters from a different origin context', function (bool $isPanelOuter): void {
+    Route::domain('app.example.test')
+        ->middleware('panel:tenant-menu-grouping')
+        ->get('/panel-lazy-probe', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
+
+    Route::get('/public-lazy-probe', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
+
+    $snapshots = [];
+    $mountParameters = [];
+
+    foreach (['panel', 'public'] as $context) {
+        $response = $this->get("https://app.example.test/{$context}-lazy-probe")->assertSuccessful();
+        $html = $response->getContent();
+        $snapshots[$context] = Utils::extractAttributeDataFromHtml($html, 'wire:snapshot');
+
+        preg_match("/__lazyLoad\\('([^']+)'\\)/", html_entity_decode($html), $matches);
+
+        expect($matches[1] ?? null)->not->toBeNull();
+
+        $mountParameters[$context] = $matches[1];
+    }
+
+    updatePanelRoute($this, $snapshots[$isPanelOuter ? 'panel' : 'public'], 'app.example.test', [
+        ['method' => '__lazyLoad', 'params' => [$mountParameters[$isPanelOuter ? 'public' : 'panel']]],
+        ['method' => 'record', 'params' => []],
+    ])->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+})->with(['panel component' => true, 'public component' => false]);
+
+it('preserves each origin in bundled panel and non-panel updates', function (bool $isPanelFirst): void {
+    $panelSnapshot = panelRouteSnapshot($this, Team::factory()->create());
+
+    Route::get('/public-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $response = $this
+        ->get('https://app.example.test/public-probe')
+        ->assertSuccessful();
+
+    $publicSnapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+    $snapshots = $isPanelFirst ? [$panelSnapshot, $publicSnapshot] : [$publicSnapshot, $panelSnapshot];
+
+    $response = $this
+        ->withHeaders(['X-Livewire' => true])
+        ->postJson('https://app.example.test' . Livewire::getUpdateUri(), [
+            'components' => array_map(static fn (array $snapshot): array => [
+                'snapshot' => json_encode($snapshot, JSON_THROW_ON_ERROR),
+                'updates' => [],
+                'calls' => [],
+            ], $snapshots),
+        ])->assertSuccessful();
+
+    $panelSnapshot = json_decode($response->json('components.' . ($isPanelFirst ? 0 : 1) . '.snapshot'), true, flags: JSON_THROW_ON_ERROR);
+    $publicSnapshot = json_decode($response->json('components.' . ($isPanelFirst ? 1 : 0) . '.snapshot'), true, flags: JSON_THROW_ON_ERROR);
+
+    updatePanelRoute($this, $publicSnapshot, 'other.example.test')->assertSuccessful();
+    updatePanelRoute($this, $panelSnapshot, 'other.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(1);
+})->with(['panel first' => true, 'non-panel first' => false]);
 
 it('leaves path-only panel updates working across hosts', function (): void {
     Route::middleware([
@@ -263,6 +359,16 @@ class PanelRouteProbe extends Component
     /** @var array<int | string> */
     public static array $tenantKeys = [];
 
+    public bool $shouldShowChild = false;
+
+    public bool $isChildLazy = false;
+
+    public function showChild(bool $isLazy): void
+    {
+        $this->shouldShowChild = true;
+        $this->isChildLazy = $isLazy;
+    }
+
     public function record(): void
     {
         static::$calls++;
@@ -271,7 +377,7 @@ class PanelRouteProbe extends Component
 
     public function render(): string
     {
-        return '<div>Panel route probe</div>';
+        return '<div>@if ($shouldShowChild)<livewire:panel-route-probe :lazy="$isChildLazy" />@endif</div>';
     }
 }
 
