@@ -20,6 +20,12 @@ trait CanBeHidden
 
     protected string | Closure | null $hiddenJs = null;
 
+    protected ?int $hiddenConditionCacheId = null;
+
+    protected ?int $visibleConditionCacheId = null;
+
+    protected static int $lastConditionCacheId = 0;
+
     protected static bool $isCachingVisibility = false;
 
     /**
@@ -30,6 +36,7 @@ trait CanBeHidden
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
+        $this->hiddenConditionCacheId = ++static::$lastConditionCacheId;
 
         return $this;
     }
@@ -114,6 +121,7 @@ trait CanBeHidden
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
+        $this->visibleConditionCacheId = ++static::$lastConditionCacheId;
 
         return $this;
     }
@@ -145,8 +153,9 @@ trait CanBeHidden
         if (static::isVisibilityCacheEnabled()) {
             $componentKey = $this->getKey() ?? spl_object_id($this);
 
+            // PHP 8.6 can reuse stateless closures, so closure identity alone cannot identify a visibility condition.
             if ($this->isHidden instanceof Closure) {
-                $hiddenClosureKey = $componentKey . '.hidden.' . spl_object_id($this->isHidden);
+                $hiddenClosureKey = $componentKey . '.hidden.' . ($this->hiddenConditionCacheId ??= ++static::$lastConditionCacheId) . '.' . spl_object_id($this->isHidden);
 
                 if (! static::hasVisibilityCacheKey($hiddenClosureKey)) {
                     static::setVisibilityCacheValue(
@@ -163,7 +172,7 @@ trait CanBeHidden
             }
 
             if ($this->isVisible instanceof Closure) {
-                $visibleClosureKey = $componentKey . '.visible.' . spl_object_id($this->isVisible);
+                $visibleClosureKey = $componentKey . '.visible.' . ($this->visibleConditionCacheId ??= ++static::$lastConditionCacheId) . '.' . spl_object_id($this->isVisible);
 
                 if (! static::hasVisibilityCacheKey($visibleClosureKey)) {
                     static::setVisibilityCacheValue(
