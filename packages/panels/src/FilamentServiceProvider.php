@@ -27,6 +27,7 @@ use Filament\Http\Middleware\IdentifyResourceConfiguration;
 use Filament\Http\Middleware\IdentifyTenant;
 use Filament\Http\Middleware\SetUpPanel;
 use Filament\Livewire\ScopedModelPropertiesComponentHook;
+use Filament\Livewire\ValidatePanelOrigin;
 use Filament\Navigation\NavigationManager;
 use Filament\Queue\Middleware\RestoreImportTenant;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -83,6 +84,8 @@ class FilamentServiceProvider extends PackageServiceProvider
             return new NavigationManager;
         });
 
+        $this->app->scoped(ValidatePanelOrigin::class);
+
         $this->app->bind(BlockEmailChangeVerificationResponseContract::class, BlockEmailChangeVerificationResponse::class);
         $this->app->bind(EmailChangeVerificationResponseContract::class, EmailChangeVerificationResponse::class);
         $this->app->bind(EmailVerificationResponseContract::class, EmailVerificationResponse::class);
@@ -119,6 +122,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        ValidatePanelOrigin::register();
+
         Livewire::listen('hydrate', static function (Component $component, array $memo): void {
             // Livewire skips lifecycle hooks for lazy components that have not mounted yet.
             if (($component instanceof RelationManager) && (($memo['lazyLoaded'] ?? null) === false)) {
