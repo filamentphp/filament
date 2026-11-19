@@ -474,7 +474,7 @@ trait HasRecords
                 x-on:expand-all-table-rows.window="isCollapsed = false"
             <?php } ?>
             role="listitem"
-            <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey) . ''); ?>
+            <?php $this->setRenderKey(e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey)); ?>
             wire:key="<?= e($this->getLivewire()->getId()); ?>.table.records.<?= e($recordKey); ?>"
             <?php if ($this->isReordering()) { ?>
                 x-sortable-item="<?= e($recordKey); ?>"
@@ -838,7 +838,7 @@ trait HasRecords
         ob_start(); ?>
         <?php if (! $isGroupsOnly) { ?>
             <tr
-                <?php $this->setRenderKey('' . e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey) . ''); ?>
+                <?php $this->setRenderKey(e($this->getLivewire()->getId()) . '.table.records.' . e($recordKey)); ?>
                 wire:key="<?= e($this->getLivewire()->getId()); ?>.table.records.<?= e($recordKey); ?>"
                 <?= e($isReordering ? 'x-sortable-handle' : null); ?>
                 <?= $isReordering ? 'x-sortable-item="' . e($recordKey) . '"' : null; ?>
