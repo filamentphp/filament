@@ -2,19 +2,25 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\PostMetadata;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ViewPost;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ViewPostWithCreateInInfolist;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithPreservation;
 use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
+use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithCreateAndMetadataRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithCreateAndPreserveRepeaterRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithCreateAndPreserveRepeaterWithDefaultRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -110,6 +116,64 @@ describe('creating records', function (): void {
             ->assertActionNotMounted();
 
         expect(Department::count())->toBe($initialCount);
+    });
+
+    it('does not save relationships to a table record denied `update()` when using `CreateAction`', function (): void {
+        Gate::policy(Post::class, CreateActionPostPolicy::class);
+
+        $user = User::factory()->create();
+        $post = Post::factory()->for($user, 'author')->create();
+        $metadata = PostMetadata::factory()->for($post)->create(['seo_title' => 'original']);
+
+        expect(Gate::allows('create', Post::class))->toBeTrue();
+        expect(Gate::allows('update', $post))->toBeFalse();
+
+        livewire(PostsWithCreateAndMetadataRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(EditAction::class)->table($post))
+            ->assertActionNotMounted();
+
+        livewire(PostsWithCreateAndMetadataRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(CreateAction::class)->table($post), [
+                'title' => $title = Str::random(),
+                'rating' => 5,
+                'metadata' => ['seo_title' => $seoTitle = Str::random()],
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($metadata->refresh()->seo_title)->toBe('original');
+        expect(Post::query()->where('title', $title)->first()?->metadata?->seo_title)->toBe($seoTitle);
+    });
+
+    it('does not save relationships to the page record when using `CreateAction`', function (): void {
+        $post = Post::factory()->create();
+        $metadata = PostMetadata::factory()->for($post)->create(['seo_title' => 'original']);
+
+        livewire(ViewPost::class, ['record' => $post->getKey()])
+            ->callAction('createWithMetadata', [
+                'title' => $title = Str::random(),
+                'rating' => 5,
+                'metadata' => ['seo_title' => $seoTitle = Str::random()],
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($metadata->refresh()->seo_title)->toBe('original');
+        expect(Post::query()->where('title', $title)->first()?->metadata?->seo_title)->toBe($seoTitle);
+    });
+
+    it('does not save relationships to a schema component record when using `CreateAction`', function (): void {
+        $post = Post::factory()->create();
+        $metadata = PostMetadata::factory()->for($post)->create(['seo_title' => 'original']);
+
+        livewire(ViewPostWithCreateInInfolist::class, ['record' => $post->getKey()])
+            ->callAction(TestAction::make('createFromInfolist')->schemaComponent('postSection', 'infolist'), [
+                'title' => $title = Str::random(),
+                'rating' => 5,
+                'metadata' => ['seo_title' => $seoTitle = Str::random()],
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($metadata->refresh()->seo_title)->toBe('original');
+        expect(Post::query()->where('title', $title)->first()?->metadata?->seo_title)->toBe($seoTitle);
     });
 });
 
@@ -363,3 +427,16 @@ it('can set `disableCreateAnother()` with a `Closure`', function (): void {
 
     expect($action->canCreateAnother())->toBeFalse();
 });
+
+class CreateActionPostPolicy
+{
+    public function create(User $user): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, Post $post): bool
+    {
+        return false;
+    }
+}

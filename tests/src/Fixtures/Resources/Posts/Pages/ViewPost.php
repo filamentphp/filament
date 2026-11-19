@@ -5,6 +5,7 @@ namespace Filament\Tests\Fixtures\Resources\Posts\Pages;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Group;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
@@ -18,6 +19,15 @@ class ViewPost extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\CreateAction::make('createWithMetadata')
+                ->modal()
+                ->schema([
+                    TextInput::make('title')->required(),
+                    TextInput::make('rating')->numeric()->required(),
+                    Group::make([
+                        TextInput::make('seo_title'),
+                    ])->relationship('metadata'),
+                ]),
             Actions\CreateAction::make('createUserWithModal')
                 ->modal()
                 ->model(User::class)
