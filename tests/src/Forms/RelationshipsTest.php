@@ -256,6 +256,43 @@ describe('disabled fields', function (): void {
         expect($numberOfRelationshipsSaved)->toBe(1);
     });
 
+    test('disabled schemas only save opted-in sections sharing a `relationship()`', function (string $saveMethod, bool $isSavedSectionFirst, bool $isProtectedSectionNested): void {
+        $user = User::factory()->create();
+        $profile = Profile::factory()->for($user)->create([
+            'bio' => 'Original biography',
+            'created_at' => '2026-01-01 12:00:00',
+        ]);
+
+        $protectedSection = Section::make('Protected')
+            ->relationship('profile')
+            ->schema([TextInput::make('bio')]);
+        $savedSection = Section::make('Saved')
+            ->relationship('profile')
+            ->{$saveMethod}()
+            ->schema([TextInput::make('created_at')]);
+
+        if ($isProtectedSectionNested) {
+            $protectedSection = Group::make([$protectedSection]);
+        }
+
+        $livewire = Livewire::make();
+        $schema = Schema::make($livewire)
+            ->statePath('data')
+            ->model($user)
+            ->disabled()
+            ->components($isSavedSectionFirst ? [$savedSection, $protectedSection] : [$protectedSection, $savedSection])
+            ->fill();
+
+        $livewire->data['profile']['bio'] = 'Forged biography';
+        $livewire->data['profile']['created_at'] = '2026-02-03 14:00:00';
+
+        $schema->saveRelationships();
+
+        expect($profile->fresh())
+            ->bio->toBe('Original biography')
+            ->created_at->format('Y-m-d H:i:s')->toBe('2026-02-03 14:00:00');
+    })->with(['saved', 'saveRelationshipsWhenDisabled'])->with([true, false])->with([false, true]);
+
     test('disabled fields can save relationships when `saveRelationshipsWhenDisabled()` is called', function (): void {
         $numberOfRelationshipsSaved = 0;
 
