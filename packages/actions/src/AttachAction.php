@@ -94,13 +94,7 @@ class AttachAction extends Action
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            if ($this->modifyRecordSelectOptionsQueryUsing) {
-                $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
-                    'query' => $relationshipQuery,
-                    'search' => null,
-                ]) ?? $relationshipQuery;
-            }
+            $relationshipQuery = $this->applyRecordSelectOptionsQuery($relationshipQuery, $relationship, $table);
 
             $isMultiple = is_array($data['recordId']);
 
@@ -229,13 +223,7 @@ class AttachAction extends Action
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            if ($this->modifyRecordSelectOptionsQueryUsing) {
-                $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
-                    'query' => $relationshipQuery,
-                    'search' => $search,
-                ]) ?? $relationshipQuery;
-            }
+            $relationshipQuery = $this->applyRecordSelectOptionsQuery($relationshipQuery, $relationship, $table, $search);
 
             if (! isset($relationshipQuery->getQuery()->limit)) {
                 $relationshipQuery->limit($optionsLimit);
@@ -274,23 +262,6 @@ class AttachAction extends Action
                 });
             }
 
-            $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
-
-            $relationshipQuery
-                ->when(
-                    ! $table->allowsDuplicates(),
-                    fn (Builder $query): Builder => $query->whereDoesntHave(
-                        $table->getInverseRelationshipName(),
-                        fn (Builder $query): Builder => $query->where(
-                            // https://github.com/filamentphp/filament/issues/8067
-                            $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
-                                "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
-                                $relationship->getParent()->getQualifiedKeyName(),
-                            $relationship->getParent()->getKey(),
-                        ),
-                    ),
-                );
-
             if (
                 filled($titleAttribute) &&
                 (! $this->hasCustomRecordTitle()) &&
@@ -321,32 +292,22 @@ class AttachAction extends Action
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(function ($value) use ($table): ?string {
+                /** @var BelongsToMany $relationship */
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                if ($this->modifyRecordSelectOptionsQueryUsing) {
-                    $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
-                        'query' => $relationshipQuery,
-                        'search' => null,
-                    ]) ?? $relationshipQuery;
-                }
+                $relationshipQuery = $this->applyRecordSelectOptionsQuery($relationshipQuery, $relationship, $table);
 
                 $record = $relationshipQuery->find($value);
 
                 return $record ? $this->getRecordTitle($record) : null;
             })
             ->getOptionLabelsUsing(function (array $values) use ($table): array {
+                /** @var BelongsToMany $relationship */
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                if ($this->modifyRecordSelectOptionsQueryUsing) {
-                    $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
-                        'query' => $relationshipQuery,
-                        'search' => null,
-                    ]) ?? $relationshipQuery;
-                }
+                $relationshipQuery = $this->applyRecordSelectOptionsQuery($relationshipQuery, $relationship, $table);
 
                 return $relationshipQuery->find($values)
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
@@ -391,5 +352,32 @@ class AttachAction extends Action
     public function isSearchForcedCaseInsensitive(): ?bool
     {
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
+    }
+
+    private function applyRecordSelectOptionsQuery(Builder $query, BelongsToMany $relationship, Table $table, ?string $search = null): Builder
+    {
+        if ($this->modifyRecordSelectOptionsQueryUsing) {
+            $query = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                'query' => $query,
+                'search' => $search,
+            ]) ?? $query;
+        }
+
+        if ($table->allowsDuplicates()) {
+            return $query;
+        }
+
+        $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
+
+        return $query->whereDoesntHave(
+            $table->getInverseRelationshipName(),
+            fn (Builder $query): Builder => $query->where(
+                // https://github.com/filamentphp/filament/issues/8067
+                $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
+                    "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
+                    $relationship->getParent()->getQualifiedKeyName(),
+                $relationship->getParent()->getKey(),
+            ),
+        );
     }
 }
