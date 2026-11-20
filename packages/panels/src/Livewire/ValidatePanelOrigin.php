@@ -3,6 +3,8 @@
 namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
+use Filament\Http\Middleware\SetUpPanel;
+use Illuminate\Routing\Route;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
@@ -84,7 +86,7 @@ class ValidatePanelOrigin
         if (
             (! $route)
             || (! $panel)
-            || (! in_array("panel:{$panel->getId()}", $route->gatherMiddleware(), true))
+            || (! $this->hasPanelMiddleware($route, $panel->getId()))
         ) {
             return false;
         }
@@ -132,6 +134,15 @@ class ValidatePanelOrigin
         $this->componentId = $snapshot['memo']['id'];
     }
 
+    protected function hasPanelMiddleware(Route $route, string $panelId): bool
+    {
+        return in_array(
+            SetUpPanel::class . ":{$panelId}",
+            app('router')->gatherRouteMiddleware($route),
+            true,
+        );
+    }
+
     /**
      * @param  array<string, mixed>  $snapshot
      * @param  array<string, mixed>  $routeContext
@@ -159,7 +170,7 @@ class ValidatePanelOrigin
         }
 
         abort_unless(
-            in_array("panel:{$panelId}", $route->gatherMiddleware(), true) &&
+            $this->hasPanelMiddleware($route, $panelId) &&
             ($routeContext === [
                 'panel' => $panelId,
                 'uri' => $route->uri(),

@@ -6,6 +6,7 @@ use Filament\Auth\Pages\Register;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\IdentifyTenant;
+use Filament\Http\Middleware\SetUpPanel;
 use Filament\Panel;
 use Filament\Tests\Fixtures\Models\DomainTeam;
 use Filament\Tests\Fixtures\Models\Team;
@@ -65,6 +66,45 @@ it('rejects replay of a panel snapshot on an unmatched host', function (): void 
     updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('recognizes panel routes using the setup middleware class', function (): void {
+    Route::domain('direct.example.test')
+        ->middleware([
+            SetUpPanel::class . ':tenant-menu-grouping',
+            Authenticate::class,
+            IdentifyTenant::class,
+        ])
+        ->get('/direct/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $user = new RevocablePanelUser;
+    $user->email = 'direct-panel@example.com';
+    $user->name = 'Direct panel';
+    $user->password = 'password';
+    $user->save();
+
+    $this->actingAs($user);
+
+    RevocablePanelUser::$canAccessPanel = true;
+
+    $tenant = Team::factory()->create();
+
+    $response = $this
+        ->get("https://direct.example.test/direct/{$tenant->getRouteKey()}")
+        ->assertSuccessful();
+
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+
+    expect($snapshot['memo']['filamentOrigin'])->toBe('https://direct.example.test');
+
+    updatePanelRoute($this, $snapshot, 'direct.example.test')->assertSuccessful();
+
+    auth()->logout();
+
+    updatePanelRoute($this, $snapshot, 'direct.example.test')->assertUnauthorized();
+    updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(1);
 });
 
 it('allows the original panel route and restores its tenant on an update', function (): void {
@@ -363,6 +403,36 @@ it('rejects a path-only panel update when its route no longer matches', function
 
     foreach (Route::getRoutes() as $route) {
         if ($route->uri() === 'path-only-removed') {
+            continue;
+        }
+
+        $remainingRoutes->add($route);
+    }
+
+    Route::setRoutes($remainingRoutes);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('rejects a path-only panel update when only a panel fallback route matches', function (): void {
+    Route::middleware('panel:tenant-menu-grouping')
+        ->get('/path-only-fallback', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $response = $this
+        ->get('https://app.example.test/path-only-fallback')
+        ->assertSuccessful();
+
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+
+    Route::fallback(fn (): string => 'Fallback')
+        ->middleware('panel:tenant-menu-grouping');
+
+    $remainingRoutes = new RouteCollection;
+
+    foreach (Route::getRoutes() as $route) {
+        if ($route->uri() === 'path-only-fallback') {
             continue;
         }
 
