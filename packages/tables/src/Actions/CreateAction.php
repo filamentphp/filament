@@ -135,4 +135,11 @@ class CreateAction extends Action
     {
         return (bool) $this->evaluate($this->canCreateAnother);
     }
+
+    public function getForm(Form $form): ?Form
+    {
+        $model = $this->getModel();
+
+        return parent::getForm($form->model($model))?->model($model);
+    }
 }

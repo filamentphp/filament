@@ -7,6 +7,7 @@ use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Enums\ActionsPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -123,13 +124,22 @@ trait HasActions
             $name = $firstName;
         }
 
-        $mountedRecord = $this->getLivewire()->getMountedTableActionRecord();
-
         $action = $this->getFlatActions()[$name] ?? null;
 
         if (! $action) {
             return null;
         }
+
+        if (
+            filled($this->getLivewire()->getMountedTableActionRecordKey()) &&
+            (! Arr::first($this->getActions(), static fn (Action | ActionGroup $recordAction): bool => ($recordAction === $action) ||
+                (($recordAction instanceof ActionGroup) && in_array($action, $recordAction->getFlatActions(), strict: true)))) &&
+            (! Arr::first($this->getColumns(), static fn (Column $column): bool => $column->getAction() === $action))
+        ) {
+            return null;
+        }
+
+        $mountedRecord = $this->getLivewire()->getMountedTableActionRecord();
 
         if (($actionGroup = $action->getRootGroup()) instanceof HasRecord) {
             $actionGroup->record($mountedRecord);

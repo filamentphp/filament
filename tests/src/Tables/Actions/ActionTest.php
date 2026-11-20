@@ -13,6 +13,122 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
+describe('table action registration context', function (): void {
+    it('does not mount non-record actions with a supplied record', function (string $name): void {
+        $post = Post::factory()->create();
+
+        livewire(PostsTable::class)
+            ->mountTableAction($name, $post)
+            ->assertTableActionNotMounted($name)
+            ->callMountedTableAction()
+            ->assertNotDispatched("{$name}-called");
+    })->with(['arguments', 'groupedHeader', 'empty', 'create']);
+
+    it('can call non-record actions without a supplied record', function (string $name): void {
+        livewire(PostsTable::class)
+            ->callTableAction($name)
+            ->assertDispatched("{$name}-called");
+    })->with(['arguments', 'groupedHeader', 'empty']);
+
+    it('can mount and submit a column action with its record', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(PostsTable::class)
+            ->mountTableAction('column-action-object', $post)
+            ->assertTableActionMounted('column-action-object')
+            ->callMountedTableAction()
+            ->assertDispatched('column-action-object-called', recordKey: $post->getKey());
+    });
+
+    it('can submit a nested grouped record action', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(PostsTable::class)
+            ->callTableAction('groupedWithVisibleGroupCondition.nested', $post)
+            ->assertDispatched('nested-called', recordKey: $post->getKey());
+    });
+
+    it('does not submit a header action after its record is changed', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(PostsTable::class)
+            ->mountTableAction('arguments')
+            ->set('mountedTableActionRecord', $post->getKey())
+            ->call('callMountedTableAction')
+            ->assertNotDispatched('arguments-called');
+    });
+
+    it('only submits a nested header action without a supplied record', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(PostsTable::class)
+            ->call('mountTableAction', 'arguments', $post->getKey())
+            ->call('mountTableAction', 'nested', $post->getKey())
+            ->call('callMountedTableAction')
+            ->assertNotDispatched('nested-called');
+
+        livewire(PostsTable::class)
+            ->callTableAction('arguments.nested')
+            ->assertDispatched('nested-called');
+    });
+
+    it('can create another header record after correcting validation errors', function (): void {
+        $post = Post::factory()->create();
+        $originalCount = Post::count();
+
+        $livewire = livewire(PostsTable::class)
+            ->mountTableAction('create')
+            ->callMountedTableAction()
+            ->assertHasTableActionErrors(['title' => 'required', 'author_id' => 'required'])
+            ->assertTableActionMounted('create')
+            ->setTableActionData([
+                'title' => $firstTitle = Str::random(),
+                'author_id' => $post->author_id,
+                'metadata' => ['seo_title' => 'First metadata'],
+            ])
+            ->callMountedTableAction(['another' => true])
+            ->assertHasNoTableActionErrors()
+            ->assertTableActionMounted('create')
+            ->assertTableActionDataSet(['title' => null, 'metadata' => ['seo_title' => null]]);
+
+        $firstPost = Post::query()->where('title', $firstTitle)->firstOrFail();
+
+        $livewire->assertDispatched('created', recordKey: $firstPost->getKey())
+            ->setTableActionData([
+                'title' => $secondTitle = Str::random(),
+                'author_id' => $post->author_id,
+                'metadata' => ['seo_title' => 'Second metadata'],
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors()
+            ->assertTableActionNotMounted('create');
+
+        $secondPost = Post::query()->where('title', $secondTitle)->firstOrFail();
+
+        $livewire->assertDispatched('created', recordKey: $secondPost->getKey());
+
+        expect(Post::count())->toBe($originalCount + 2)
+            ->and($firstPost->metadata?->seo_title)->toBe('First metadata')
+            ->and($secondPost->metadata?->seo_title)->toBe('Second metadata');
+    });
+
+    it('does not save create action relationships to the supplied table record', function (): void {
+        $post = Post::factory()->create();
+        $metadata = $post->metadata()->create(['seo_title' => 'Original metadata']);
+
+        livewire(PostsTable::class)
+            ->callTableAction('createFromRecord', $post, data: [
+                'title' => $title = Str::random(),
+                'author_id' => $post->author_id,
+                'metadata' => ['seo_title' => 'New table metadata'],
+            ])
+            ->assertHasNoTableActionErrors();
+
+        expect($metadata->refresh()->seo_title)->toBe('Original metadata')
+            ->and(Post::query()->where('title', $title)->firstOrFail()->metadata?->seo_title)->toBe('New table metadata');
+    });
+});
+
 it('can call action', function () {
     $post = Post::factory()->create();
 

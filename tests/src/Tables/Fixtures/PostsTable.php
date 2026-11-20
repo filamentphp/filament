@@ -3,9 +3,11 @@
 namespace Filament\Tests\Tables\Fixtures;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
@@ -41,7 +43,8 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->searchable()
                     ->action(
                         Tables\Actions\Action::make('column-action-object')
-                            ->action(fn () => $this->dispatch('column-action-object-called')),
+                            ->requiresConfirmation()
+                            ->action(fn (Post $record) => $this->dispatch('column-action-object-called', recordKey: $record->getKey())),
                     )
                     ->summarize([
                         Tables\Columns\Summarizers\Range::make('range'),
@@ -124,7 +127,12 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->requiresConfirmation()
                     ->action(function (array $arguments) {
                         $this->dispatch('arguments-called', arguments: $arguments);
-                    }),
+                    })
+                    ->extraModalFooterActions([
+                        Tables\Actions\Action::make('nested')
+                            ->requiresConfirmation()
+                            ->action(fn () => $this->dispatch('nested-called')),
+                    ]),
                 Tables\Actions\Action::make('halt')
                     ->requiresConfirmation()
                     ->action(function (Tables\Actions\Action $action) {
@@ -138,12 +146,19 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\Action::make('enabled'),
                 Tables\Actions\Action::make('disabled')
                     ->disabled(),
+                Tables\Actions\CreateAction::make()
+                    ->form([
+                        TextInput::make('title')->required(),
+                        TextInput::make('author_id')->required(),
+                        Group::make([
+                            TextInput::make('seo_title')->required(),
+                        ])->relationship('metadata'),
+                    ])
+                    ->after(fn (Post $record) => $this->dispatch('created', recordKey: $record->getKey())),
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('groupedWithVisibleGroupCondition'),
-                ])->visible(fn (?Model $record): bool => $record !== null),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('groupedWithHiddenGroupCondition'),
-                ])->hidden(fn (?Model $record): bool => $record !== null),
+                    Tables\Actions\Action::make('groupedHeader')
+                        ->action(fn () => $this->dispatch('groupedHeader-called')),
+                ]),
                 Tables\Actions\Action::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
                 Tables\Actions\Action::make('hasLabel')
@@ -163,6 +178,32 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->multiple(),
             ])
             ->actions([
+                Tables\Actions\CreateAction::make('createFromRecord')
+                    ->form(function (Form $form): Form {
+                        $form->schema([
+                            TextInput::make('title')->required(),
+                            TextInput::make('author_id')->required(),
+                            Group::make([
+                                TextInput::make('seo_title')->required(),
+                            ])->relationship('metadata'),
+                        ]);
+
+                        $form->getFlatFields();
+
+                        return $form;
+                    }),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('groupedWithVisibleGroupCondition')
+                        ->requiresConfirmation()
+                        ->extraModalFooterActions([
+                            Tables\Actions\Action::make('nested')
+                                ->requiresConfirmation()
+                                ->action(fn (Post $record) => $this->dispatch('nested-called', recordKey: $record->getKey())),
+                        ]),
+                ])->visible(fn (?Model $record): bool => $record !== null),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('groupedWithHiddenGroupCondition'),
+                ])->hidden(fn (?Model $record): bool => $record !== null),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
@@ -221,6 +262,8 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\BulkAction::make('existsInOrder'),
             ])
             ->emptyStateActions([
+                Tables\Actions\Action::make('empty')
+                    ->action(fn () => $this->dispatch('empty-called')),
                 Tables\Actions\Action::make('emptyExists'),
                 Tables\Actions\Action::make('emptyExistsInOrder'),
             ]);

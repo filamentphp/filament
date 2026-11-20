@@ -131,4 +131,11 @@ class CreateAction extends Action
     {
         return $this->evaluate($this->getRelationshipUsing);
     }
+
+    public function getForm(Form $form): ?Form
+    {
+        $model = $this->getModel();
+
+        return parent::getForm($form->model($model))?->model($model);
+    }
 }

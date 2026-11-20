@@ -3,6 +3,8 @@
 use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Models\Post;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ViewPost;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -13,6 +15,22 @@ it('can call an action', function () {
     livewire(Actions::class)
         ->callAction('simple')
         ->assertDispatched('simple-called');
+});
+
+it('does not save create action relationships to the existing page record', function (): void {
+    $post = Post::factory()->create();
+    $metadata = $post->metadata()->create(['seo_title' => 'Original metadata']);
+
+    livewire(ViewPost::class, ['record' => $post->getRouteKey()])
+        ->callAction('createWithMetadata', data: [
+            'title' => $title = Str::random(),
+            'author_id' => $post->author_id,
+            'metadata' => ['seo_title' => 'New page metadata'],
+        ])
+        ->assertHasNoActionErrors();
+
+    expect($metadata->refresh()->seo_title)->toBe('Original metadata')
+        ->and(Post::query()->where('title', $title)->firstOrFail()->metadata?->seo_title)->toBe('New page metadata');
 });
 
 it('can call an action with data', function () {
