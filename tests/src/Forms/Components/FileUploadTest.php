@@ -3101,6 +3101,7 @@ describe('`saveUploadedFile()` branches', function (): void {
             ->disabled($isFieldDisabled)
             ->saved();
         $schema = Schema::make(Livewire::make())
+            ->model(User::make(['document' => 'uploads/existing.txt']))
             ->statePath('data')
             ->disabled($isSchemaDisabled)
             ->components([
