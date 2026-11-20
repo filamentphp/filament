@@ -483,19 +483,17 @@ describe('disabled state', function (): void {
     it('defaults `isDisabled()` to `false`', function (): void {
         $schema = Schema::make(Livewire::make());
 
-        expect($schema->isDisabled())->toBeFalse()
-            ->and($schema->isDirectlyDisabled())->toBeFalse();
+        expect($schema->isDisabled())->toBeFalse();
     });
 
     it('can set `disabled()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->disabled();
 
-        expect($schema->isDisabled())->toBeTrue()
-            ->and($schema->isDirectlyDisabled())->toBeTrue();
+        expect($schema->isDisabled())->toBeTrue();
     });
 
-    it('can inherit `isDisabled()` from a parent component without being directly disabled', function (): void {
+    it('can inherit `isDisabled()` from a parent component', function (): void {
         $livewire = Livewire::make();
         $parentComponent = (new Component)
             ->container(Schema::make($livewire))
@@ -503,8 +501,7 @@ describe('disabled state', function (): void {
         $schema = Schema::make($livewire)
             ->parentComponent($parentComponent);
 
-        expect($schema->isDisabled())->toBeTrue()
-            ->and($schema->isDirectlyDisabled())->toBeFalse();
+        expect($schema->isDisabled())->toBeTrue();
     });
 });
 

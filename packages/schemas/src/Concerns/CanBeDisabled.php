@@ -15,14 +15,9 @@ trait CanBeDisabled
         return $this;
     }
 
-    public function isDirectlyDisabled(): bool
-    {
-        return (bool) $this->evaluate($this->isDisabled);
-    }
-
     public function isDisabled(): bool
     {
-        return $this->isDirectlyDisabled() || $this->getParentComponent()?->isDisabled();
+        return $this->evaluate($this->isDisabled) || $this->getParentComponent()?->isDisabled();
     }
 
     public function isEnabled(): bool

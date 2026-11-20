@@ -8,7 +8,6 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Actions\ViewAction;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -475,14 +474,12 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             $action->beginDatabaseTransaction();
 
             $schemaState = [];
-            // A `ViewAction` reads its schema without running persistence hooks.
-            $shouldCallHooksBefore = ! ($action instanceof ViewAction);
 
             if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
                 foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
                     $schemaState = [
                         ...$schemaState,
-                        ...$actionComponentChildSchema->getState(shouldCallHooksBefore: $shouldCallHooksBefore),
+                        ...$actionComponentChildSchema->getState(),
                     ];
                 }
             }
@@ -490,7 +487,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             if ($this->mountedActionHasSchema(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
-                $schema->getState(shouldCallHooksBefore: $shouldCallHooksBefore, afterValidate: function (array $state) use ($action, $schemaState): void {
+                $schema->getState(afterValidate: function (array $state) use ($action, $schemaState): void {
                     $action->callAfterFormValidated();
 
                     $action->data([

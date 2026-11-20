@@ -4,6 +4,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
@@ -14,8 +15,10 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Company;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Profile;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
@@ -197,66 +200,59 @@ describe('disabled fields', function (): void {
             ->toBe(0);
     });
 
-    test('fields do not save relationships if their schema is disabled', function (): void {
-        $numberOfRelationshipsSaved = 0;
+    test('`getState()` only saves relationships for enabled schemas, regardless of component opt-ins', function (?string $saveMethod, bool $isSchemaDisabled, bool $isDisabledInherited, bool $hasAfterValidate): void {
+        $ticket = Ticket::factory()->create();
+        $originalDepartment = Department::factory()->create();
+        $submittedDepartment = Department::factory()->create();
+        $ticket->departments()->attach($originalDepartment);
 
-        $schema = Schema::make(Livewire::make())
+        $select = Select::make('departments')
+            ->relationship('departments', 'name')
+            ->multiple();
+
+        if ($saveMethod !== null) {
+            $select->{$saveMethod}();
+        }
+
+        $components = [TextInput::make('name'), $select];
+
+        $livewire = Livewire::make();
+        $schema = Schema::make($livewire)
             ->statePath('data')
-            ->disabled()
-            ->components([
-                (new Field('relationship'))
-                    ->saveRelationshipsUsing(function () use (&$numberOfRelationshipsSaved): void {
-                        $numberOfRelationshipsSaved++;
-                    }),
-            ])
-            ->model(Post::factory()->create());
+            ->model($ticket);
 
-        $schema->saveRelationships();
+        if ($isDisabledInherited) {
+            $schema->components([
+                $parentComponent = Group::make($components)->disabled($isSchemaDisabled),
+            ])->fill();
 
-        expect($numberOfRelationshipsSaved)->toBe(0);
-    });
+            $schema = $parentComponent->getChildSchema();
+        } else {
+            $schema->disabled($isSchemaDisabled)->components($components)->fill();
+        }
 
-    test('fields can save relationships when explicitly saved in a disabled schema', function (): void {
-        $numberOfRelationshipsSaved = 0;
+        $livewire->data['name'] = 'Submitted name';
+        $livewire->data['departments'] = [$submittedDepartment->getKey()];
+        $hasCalledAfterValidate = false;
 
-        $schema = Schema::make(Livewire::make())
-            ->statePath('data')
-            ->disabled()
-            ->components([
-                (new Field('relationship'))
-                    ->saveRelationshipsUsing(function () use (&$numberOfRelationshipsSaved): void {
-                        $numberOfRelationshipsSaved++;
-                    })
-                    ->saved(),
-            ])
-            ->model(Post::factory()->create());
+        $state = $schema->getState(afterValidate: $hasAfterValidate ? static function () use (&$hasCalledAfterValidate): void {
+            $hasCalledAfterValidate = true;
+        } : null);
 
-        $schema->saveRelationships();
+        expect($ticket->departments()->pluck('departments.id')->all())
+            ->toBe([($isSchemaDisabled ? $originalDepartment : $submittedDepartment)->getKey()])
+            ->and($hasCalledAfterValidate)->toBe($hasAfterValidate)
+            ->and($state)->toBe(['name' => 'Submitted name']);
 
-        expect($numberOfRelationshipsSaved)->toBe(1);
-    });
+        if ($isSchemaDisabled) {
+            $schema->saveRelationships();
 
-    test('fields can save relationships when `saveRelationshipsWhenDisabled()` is called in a disabled schema', function (): void {
-        $numberOfRelationshipsSaved = 0;
+            expect($ticket->departments()->pluck('departments.id')->all())
+                ->toBe([$submittedDepartment->getKey()]);
+        }
+    })->with([null, 'saved', 'saveRelationshipsWhenDisabled'])->with([true, false])->with([false, true])->with([false, true]);
 
-        $schema = Schema::make(Livewire::make())
-            ->statePath('data')
-            ->disabled()
-            ->components([
-                (new Field('relationship'))
-                    ->saveRelationshipsUsing(function () use (&$numberOfRelationshipsSaved): void {
-                        $numberOfRelationshipsSaved++;
-                    })
-                    ->saveRelationshipsWhenDisabled(),
-            ])
-            ->model(Post::factory()->create());
-
-        $schema->saveRelationships();
-
-        expect($numberOfRelationshipsSaved)->toBe(1);
-    });
-
-    test('disabled schemas only save opted-in sections sharing a `relationship()`', function (string $saveMethod, bool $isSavedSectionFirst, bool $isProtectedSectionNested): void {
+    test('disabled sections sharing a `relationship()` only save when opted in', function (string $saveMethod, bool $isSavedSectionFirst, bool $isProtectedSectionNested): void {
         $user = User::factory()->create();
         $profile = Profile::factory()->for($user)->create([
             'bio' => 'Original biography',
@@ -265,9 +261,11 @@ describe('disabled fields', function (): void {
 
         $protectedSection = Section::make('Protected')
             ->relationship('profile')
+            ->disabled()
             ->schema([TextInput::make('bio')]);
         $savedSection = Section::make('Saved')
             ->relationship('profile')
+            ->disabled()
             ->{$saveMethod}()
             ->schema([TextInput::make('created_at')]);
 
@@ -279,7 +277,6 @@ describe('disabled fields', function (): void {
         $schema = Schema::make($livewire)
             ->statePath('data')
             ->model($user)
-            ->disabled()
             ->components($isSavedSectionFirst ? [$savedSection, $protectedSection] : [$protectedSection, $savedSection])
             ->fill();
 

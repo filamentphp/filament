@@ -23,8 +23,6 @@ trait CanBeDisabled
 
         $this->isDisabled = $condition;
         $this->saved(fn (Component $component): bool => ! $component->evaluate($condition));
-        // `disabled()` configures `saved()` implicitly, so only a later `saved()` call opts back in.
-        $this->isSavedExplicitlyConfigured = false;
 
         return $this;
     }

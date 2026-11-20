@@ -57,8 +57,6 @@ trait HasState
 
     protected bool | Closure $isSaved = true;
 
-    protected bool $isSavedExplicitlyConfigured = false;
-
     protected bool | Closure $isValidatedWhenNotDehydrated = true;
 
     protected ?string $statePath = null;
@@ -278,7 +276,6 @@ trait HasState
     public function saved(bool | Closure $condition = true): static
     {
         $this->isSaved = $condition;
-        $this->isSavedExplicitlyConfigured = true;
 
         return $this;
     }
@@ -824,10 +821,6 @@ trait HasState
 
     public function isSaved(): bool
     {
-        if ($this->hasContainer() && $this->getContainer()->isDirectlyDisabled() && (! $this->isSavedExplicitlyConfigured)) {
-            return false;
-        }
-
         return (bool) $this->evaluate($this->isSaved);
     }
 
