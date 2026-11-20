@@ -218,7 +218,9 @@ it('renders a custom loading `View` while an eager chart initializes in the brow
         }
     };
 
-    Livewire::test($widget::class)
+    Livewire::component('chart-with-loading-placeholder', $widget::class);
+
+    Livewire::test('chart-with-loading-placeholder')
         ->assertSeeHtml('data-testid="custom-loading-placeholder"')
         ->assertSeeHtml('Chart &lt;loading&gt;')
         ->assertDontSeeHtml('&lt;div data-testid=');

@@ -6,14 +6,13 @@ use Filament\Actions\Imports\ContentGenerators\CsvImportFailureContentGenerator;
 use Filament\Actions\Imports\Downloaders\Contracts\Downloader;
 use Filament\Actions\Imports\Models\Import;
 use League\Csv\Writer;
-use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CsvDownloader implements Downloader
 {
     public function __invoke(Import $import): StreamedResponse
     {
-        $csv = Writer::createFromFileObject(new SplTempFileObject);
+        $csv = Writer::fromString();
 
         app(CsvImportFailureContentGenerator::class)($import, $csv);
 

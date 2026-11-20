@@ -30,13 +30,13 @@ jobs:
         exclude:
           # Analyse PHP boundaries per Laravel, retaining every PHP on Laravel 13.
           - laravel: 12.*
-            php: 8.5
+            php: 8.6
           - laravel: 12.*
             php: 8.4
           - laravel: 11.*
-            php: 8.5
+            php: 8.6
           - laravel: 11.*
-            php: 8.4
+            php: 8.5
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

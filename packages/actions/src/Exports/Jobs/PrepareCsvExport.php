@@ -18,7 +18,6 @@ use Illuminate\Support\Collection;
 use League\Csv\Bom;
 use League\Csv\Writer;
 use League\Flysystem\UnableToWriteFile;
-use SplTempFileObject;
 
 class PrepareCsvExport implements ShouldQueue
 {
@@ -61,7 +60,7 @@ class PrepareCsvExport implements ShouldQueue
             return;
         }
 
-        $csv = Writer::from(new SplTempFileObject);
+        $csv = Writer::fromString();
         $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));

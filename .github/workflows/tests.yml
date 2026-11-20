@@ -94,7 +94,7 @@ jobs:
           - laravel: 13.*
             php: 8.4
           - laravel: 12.*
-            php: 8.5
+            php: 8.6
           - laravel: 12.*
             php: 8.4
           - laravel: 11.*
