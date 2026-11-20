@@ -860,6 +860,8 @@ TextEntry::make('slug')
 
 By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
+When merging attributes, each callback registration is evaluated separately, even if the same callback is registered more than once.
+
 ### Adding extra HTML attributes to the entry wrapper
 
 You can also pass extra HTML attributes to the very outer element of the "entry wrapper" which surrounds the label and content of the entry. This is useful if you want to style the label or spacing of the entry via CSS, since you could target elements as children of the wrapper:

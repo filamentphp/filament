@@ -3,6 +3,7 @@
 use Filament\Actions\Testing\TestAction;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
@@ -253,6 +254,35 @@ describe('validation', function (): void {
 
         expect(filled($user->getAppAuthenticationSecret()))
             ->toBeTrue();
+    });
+
+    test('a `recoveryCode` trimmed to an empty value cannot disable app authentication', function (): void {
+        TextInput::configureUsing(
+            static fn (TextInput $component): TextInput => $component->trim(),
+            during: function (): void {
+                $user = auth()->user();
+
+                livewire(EditProfile::class)
+                    ->mountAction(TestAction::make('disableAppAuthentication')
+                        ->schemaComponent('app', schema: 'content'))
+                    ->callAction(TestAction::make('useRecoveryCode')
+                        ->schemaComponent('code'))
+                    ->fillForm([
+                        'password' => 'password',
+                        'recoveryCode' => "\u{200B}",
+                    ])
+                    ->callMountedAction()
+                    ->assertHasFormErrors([
+                        'recoveryCode' => 'required',
+                    ]);
+
+                expect(filled($user->fresh()->getAppAuthenticationSecret()))
+                    ->toBeTrue();
+
+                expect($user->fresh()->getAppAuthenticationRecoveryCodes())
+                    ->toHaveCount(8);
+            },
+        );
     });
 
     test('codes are required without a recovery code', function (): void {

@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.5, 8.4, 8.3]
+        php: [8.6, 8.5, 8.4, 8.3]
         laravel: [13.*, 12.*, 11.*]
         db: [sqlite]
         dependency-version: [prefer-stable]
@@ -90,6 +90,15 @@ jobs:
             db: sqlsrv
             dependency-version: prefer-stable
         exclude:
+          # Test PHP boundaries per Laravel, retaining PHP 8.5 on Laravel 13.
+          - laravel: 13.*
+            php: 8.4
+          - laravel: 12.*
+            php: 8.5
+          - laravel: 12.*
+            php: 8.4
+          - laravel: 11.*
+            php: 8.6
           - laravel: 11.*
             php: 8.5
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - DB:${{ matrix.db }}
@@ -162,9 +171,10 @@ jobs:
             "PKSA-yxbx-3c9s-cjt9": {"on-audit": false}
           }'
       - name: Install dependencies
+        # Paratest releases compatible with Pest 4 currently cap PHP at 8.5.
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction ${{ matrix.php == '8.6' && '--ignore-platform-req=php+' || '' }}
       # Remove once https://github.com/pestphp/pest-plugin-browser/pull/226 is released and required.
       - name: Fix Pest Browser HTTP server port allocation
         run: git apply --directory=vendor/pestphp/pest-plugin-browser tests/patches/pest-browser-http-server.patch

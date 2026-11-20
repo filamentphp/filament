@@ -9,7 +9,7 @@ use Filament\Support\View\ViewManager;
 trait HasRenderHooks
 {
     /**
-     * @var array<string, array<string, array<Closure>>>
+     * @var array<string, array<array{hook: Closure, scopes: array<string>}>>
      */
     protected array $renderHooks = [];
 
@@ -28,20 +28,16 @@ trait HasRenderHooks
             $scopes = [$scopes];
         }
 
-        foreach ($scopes as $scopeName) {
-            $this->renderHooks[$name][$scopeName][] = $hook;
-        }
+        $this->renderHooks[$name][] = ['hook' => $hook, 'scopes' => $scopes];
 
         return $this;
     }
 
     protected function registerRenderHooks(): void
     {
-        foreach ($this->renderHooks as $hookName => $scopedHooks) {
-            foreach ($scopedHooks as $scope => $hooks) {
-                foreach ($hooks as $hook) {
-                    FilamentView::registerRenderHook($hookName, $hook, $scope);
-                }
+        foreach ($this->renderHooks as $hookName => $hooks) {
+            foreach ($hooks as $hook) {
+                FilamentView::registerRenderHook($hookName, $hook['hook'], $hook['scopes']);
             }
         }
     }

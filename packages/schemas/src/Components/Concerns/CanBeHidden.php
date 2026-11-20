@@ -27,8 +27,17 @@ trait CanBeHidden
      */
     protected static array $visibilityCache = [];
 
+    /**
+     * @var array<int, object>
+     */
+    protected static array $visibilityCacheObjects = [];
+
     public function hidden(bool | Closure $condition = true): static
     {
+        if ($this->isHidden instanceof Closure) {
+            unset(static::$visibilityCache[spl_object_id($this) . '.hidden.' . spl_object_id($this->isHidden)]);
+        }
+
         $this->isHidden = $condition;
 
         return $this;
@@ -113,6 +122,10 @@ trait CanBeHidden
 
     public function visible(bool | Closure $condition = true): static
     {
+        if ($this->isVisible instanceof Closure) {
+            unset(static::$visibilityCache[spl_object_id($this) . '.visible.' . spl_object_id($this->isVisible)]);
+        }
+
         $this->isVisible = $condition;
 
         return $this;
@@ -143,9 +156,11 @@ trait CanBeHidden
     public function isHidden(): bool
     {
         if (static::isVisibilityCacheEnabled()) {
-            $componentKey = $this->getKey() ?? spl_object_id($this);
+            $componentKey = spl_object_id($this);
+            static::$visibilityCacheObjects[$componentKey] = $this;
 
             if ($this->isHidden instanceof Closure) {
+                static::$visibilityCacheObjects[spl_object_id($this->isHidden)] = $this->isHidden;
                 $hiddenClosureKey = $componentKey . '.hidden.' . spl_object_id($this->isHidden);
 
                 if (! static::hasVisibilityCacheKey($hiddenClosureKey)) {
@@ -163,6 +178,7 @@ trait CanBeHidden
             }
 
             if ($this->isVisible instanceof Closure) {
+                static::$visibilityCacheObjects[spl_object_id($this->isVisible)] = $this->isVisible;
                 $visibleClosureKey = $componentKey . '.visible.' . spl_object_id($this->isVisible);
 
                 if (! static::hasVisibilityCacheKey($visibleClosureKey)) {
@@ -244,12 +260,14 @@ trait CanBeHidden
     {
         static::$isCachingVisibility = true;
         static::$visibilityCache = [];
+        static::$visibilityCacheObjects = [];
     }
 
     public static function disableVisibilityCache(): void
     {
         static::$isCachingVisibility = false;
         static::$visibilityCache = [];
+        static::$visibilityCacheObjects = [];
     }
 
     /**

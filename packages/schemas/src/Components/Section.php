@@ -64,8 +64,6 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
     protected bool | Closure $isContentBefore = false;
 
-    protected ?Closure $contentSchemaExtraAttributes = null;
-
     const AFTER_HEADER_SCHEMA_KEY = 'after_header';
 
     const FOOTER_SCHEMA_KEY = 'footer';
@@ -243,7 +241,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
         if ($key === 'default') {
             $schema->extraAttributes(
-                $this->contentSchemaExtraAttributes ??= static fn (): array => ['class' => 'fi-section-content'],
+                ['class' => 'fi-section-content'],
                 merge: true,
             );
         }

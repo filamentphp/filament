@@ -368,8 +368,8 @@ class Actions extends Page
                     TextInput::make('payload'),
                 ])
                 ->disabledSchema()
-                ->action(function (): void {
-                    $this->dispatch('disabled-schema-called');
+                ->action(function (array $data): void {
+                    $this->dispatch('disabled-schema-called', data: $data);
                 }),
             Action::make('withoutUnsavedChangesAlert')
                 ->schema([

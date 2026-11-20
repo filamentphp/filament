@@ -22,7 +22,7 @@ trait HasExtraFieldWrapperAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
-            if (($attributes instanceof Closure) && in_array($attributes, $this->extraFieldWrapperAttributes, strict: true)) {
+            if (is_array($attributes) && in_array($attributes, $this->extraFieldWrapperAttributes, strict: true)) {
                 return $this;
             }
 
