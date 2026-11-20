@@ -61,6 +61,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
     protected string | Closure | null $relationship = null;
 
+    protected bool $shouldUseCachedRelationshipOptions = true;
+
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected bool | Closure $isBulkToggleable = false;
@@ -200,6 +202,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             if ($component->hasOptionLabelFromRecordUsingCallback() || $component->hasOptionDescriptionFromRecordUsingCallback()) {
                 if (
                     (! $modifyQueryUsing) &&
+                    $component->shouldUseCachedRelationshipOptions &&
                     ($cachedRecords !== null)
                 ) {
                     $records = $cachedRecords;
@@ -214,7 +217,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
                     $records = $relationshipQuery->get();
 
-                    if (! $modifyQueryUsing) {
+                    if ((! $modifyQueryUsing) && $component->shouldUseCachedRelationshipOptions) {
                         $cachedRecords = $records;
                     }
                 }
@@ -240,6 +243,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
             if (
                 (! $modifyQueryUsing) &&
+                $component->shouldUseCachedRelationshipOptions &&
                 ($cachedOptions !== null)
             ) {
                 return $cachedOptions;
@@ -277,7 +281,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 ->pluck($relationshipTitleAttribute, $relationship->getQualifiedRelatedKeyName())
                 ->toArray();
 
-            if (! $modifyQueryUsing) {
+            if ((! $modifyQueryUsing) && $component->shouldUseCachedRelationshipOptions) {
                 $cachedOptions = $options;
             }
 
@@ -526,7 +530,14 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             return $values;
         }
 
-        return array_keys($this->getEnabledOptions());
+        $shouldUseCachedRelationshipOptions = $this->shouldUseCachedRelationshipOptions;
+        $this->shouldUseCachedRelationshipOptions = false;
+
+        try {
+            return array_keys($this->getEnabledOptions());
+        } finally {
+            $this->shouldUseCachedRelationshipOptions = $shouldUseCachedRelationshipOptions;
+        }
     }
 
     public function hasInValidationOnMultipleValues(): bool

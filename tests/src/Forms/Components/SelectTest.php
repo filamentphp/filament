@@ -17,6 +17,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -211,6 +212,32 @@ describe('configuration', function (): void {
             $select->editOptionModalHeading('Edit Category');
 
             expect($select->getEditOptionModalHeading())->toBe('Edit Category');
+        });
+
+        it('reapplies global scopes when resolving the `editOption` action', function (): void {
+            $globalScopes = Team::getAllGlobalScopes();
+
+            try {
+                Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+                $team = Team::factory()->create(['name' => 'Alpha Team']);
+                $user = User::factory()->create(['team_id' => $team->getKey()])->load('team');
+
+                livewire(SelectWithEditableBelongsToRelationship::class, ['record' => $user])
+                    ->assertFormComponentExists('team_id', function (Select $component) use ($team): bool {
+                        expect($component->getSelectedRecord()?->is($team))->toBeTrue();
+
+                        $team->update(['name' => 'Beta Team']);
+                        $component->getLivewire()->mountedActions = [['name' => $component->getEditOptionActionName()]];
+                        $component->getEditOptionAction();
+
+                        expect($component->getSelectedRecord())->toBeNull();
+
+                        return true;
+                    });
+            } finally {
+                Team::setAllGlobalScopes($globalScopes);
+            }
         });
 
         it('returns fluent `$this` from `manageOptionForm()`', function (): void {
@@ -901,6 +928,56 @@ describe('validation', function (): void {
 
                 return true;
             });
+    });
+
+    it('reapplies global scopes to an eager-loaded `BelongsTo` relationship during validation', function (): void {
+        $globalScopes = Team::getAllGlobalScopes();
+
+        try {
+            Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+            $team = Team::factory()->create(['name' => 'Alpha Team']);
+            $user = User::factory()->create(['team_id' => $team->getKey()])->load('team');
+
+            livewire(SelectWithBelongsToRelationship::class, ['record' => $user])
+                ->assertFormComponentExists('team_id', function (Select $component) use ($team): bool {
+                    expect($component->getSelectedRecord()?->is($team))->toBeTrue();
+
+                    $team->update(['name' => 'Beta Team']);
+
+                    expect($component->getInValidationRuleValues())->toBe([]);
+
+                    return true;
+                });
+        } finally {
+            Team::setAllGlobalScopes($globalScopes);
+        }
+    });
+
+    it('reapplies global scopes to an eager-loaded `BelongsToMany` relationship during validation', function (): void {
+        $globalScopes = Team::getAllGlobalScopes();
+
+        try {
+            Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+            $team = Team::factory()->create(['name' => 'Alpha Team']);
+            $user = User::factory()->create();
+            $user->teams()->attach($team);
+            $user->load('teams');
+
+            livewire(SelectWithBelongsToManyRelationship::class, ['record' => $user])
+                ->assertFormComponentExists('teams', function (Select $component) use ($team): bool {
+                    expect($component->getOptionLabels(withDefaults: false))->toHaveKey($team->getKey());
+
+                    $team->update(['name' => 'Beta Team']);
+
+                    expect($component->getInValidationRuleValues())->toBe([]);
+
+                    return true;
+                });
+        } finally {
+            Team::setAllGlobalScopes($globalScopes);
+        }
     });
 
     it('rejects an existing value excluded by `modifyQueryUsing` on a searchable `BelongsTo` relationship', function (): void {
@@ -2793,6 +2870,40 @@ class SelectWithBelongsToRelationship extends Component implements HasActions, H
                 Select::make('team_id')
                     ->relationship('team', 'name')
                     ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class SelectWithEditableBelongsToRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('team_id')
+                    ->relationship('team', 'name')
+                    ->editOptionForm([
+                        TextInput::make('name'),
+                    ]),
             ])
             ->model($this->record)
             ->statePath('data');

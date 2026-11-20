@@ -316,7 +316,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
             if (
                 ($this instanceof HasTable) &&
-                $action->isBulk() &&
+                $action->hasCanAccessSelectedRecords() &&
                 method_exists($this, 'flushCachedTableRecords')
             ) {
                 $this->flushCachedTableRecords();
@@ -447,7 +447,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         if (
             ($this instanceof HasTable) &&
-            $action->isBulk() &&
+            $action->hasCanAccessSelectedRecords() &&
             method_exists($this, 'flushCachedTableRecords')
         ) {
             $this->flushCachedTableRecords();

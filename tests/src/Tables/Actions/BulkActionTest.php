@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachBulkAction;
@@ -68,6 +69,17 @@ describe('action lifecycle and configuration', function (): void {
         $livewire->callMountedTableBulkAction();
 
         expect($post->fresh()->deleted_at)->toBeNull();
+    });
+
+    it('refreshes cached selected records before executing a table action that accesses them', function (): void {
+        $post = Post::factory()->create(['is_published' => true]);
+        $component = livewire(QuerySelectablePostsTableWithSelectedRecordsAction::class)
+            ->set('selectedTableRecords', [(string) $post->getKey()])
+            ->call('mountTableAction', 'updateSelectedRecords');
+
+        expect($post->fresh())
+            ->is_published->toBeFalse()
+            ->deleted_at->toBeNull();
     });
 
     it('can call a bulk action', function (): void {
@@ -1373,6 +1385,20 @@ class QuerySelectablePostsTable extends SelectablePostsTable
                 ->where('is_published', true)
                 ->when($this->shouldUseDisjunction, static fn (Builder $query): Builder => $query->orWhere('rating', '>=', 5)))
             ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly);
+    }
+}
+
+class QuerySelectablePostsTableWithSelectedRecordsAction extends QuerySelectablePostsTable
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->headerActions([
+                Action::make('updateSelectedRecords')
+                    ->accessSelectedRecords()
+                    ->mountUsing(static fn (Collection $selectedRecords) => $selectedRecords->each->update(['is_published' => false]))
+                    ->action(static fn (Collection $selectedRecords) => $selectedRecords->each->delete()),
+            ]);
     }
 }
 

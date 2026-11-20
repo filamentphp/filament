@@ -99,6 +99,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected ?Model $cachedSelectedRecord = null;
 
+    protected bool $hasCachedMissingSelectedRecord = false;
+
     protected mixed $cachedSelectedRecordState = null;
 
     protected ?string $cachedSelectedRecordStatePath = null;
@@ -133,6 +135,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected bool $shouldIgnoreRelationshipRecord = false;
+
+    protected bool $shouldUseLoadedRelationshipForSelectedRecords = true;
 
     protected bool $isResolvingRelationshipForStateCasts = false;
 
@@ -402,6 +406,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         if (! $this->hasEditOptionActionFormSchema()) {
             return null;
+        }
+
+        $mountedActions = data_get($this->getLivewire(), 'mountedActions');
+        $mountedAction = is_array($mountedActions) ? Arr::last($mountedActions) : null;
+
+        if (is_array($mountedAction) && (($mountedAction['name'] ?? null) === $this->getEditOptionActionName())) {
+            $this->refreshSelectedRecord();
         }
 
         $action = Action::make($this->getEditOptionActionName())
@@ -842,6 +853,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (
                 (! $modifyQueryUsing) &&
+                $component->shouldUseLoadedRelationshipForSelectedRecords &&
                 ($relationship instanceof BelongsTo)
             ) {
                 $record = $component->getRecord();
@@ -884,6 +896,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (
                 (! $modifyQueryUsing) &&
+                $component->shouldUseLoadedRelationshipForSelectedRecords &&
                 ($record instanceof Model) &&
                 $record->relationLoaded($relationshipName) &&
                 (
@@ -1572,7 +1585,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $statePath = $this->getStatePath();
 
         if (
-            $this->cachedSelectedRecord &&
+            ($this->cachedSelectedRecord || $this->hasCachedMissingSelectedRecord) &&
             ($this->cachedSelectedRecordState === $state) &&
             ($this->cachedSelectedRecordStatePath === $statePath)
         ) {
@@ -1580,12 +1593,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if (blank($state)) {
+            $this->hasCachedMissingSelectedRecord = false;
+
             return $this->cachedSelectedRecord = null;
         }
 
         $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
         $this->cachedSelectedRecordState = $state;
         $this->cachedSelectedRecordStatePath = $statePath;
+        $this->hasCachedMissingSelectedRecord = false;
 
         return $this->cachedSelectedRecord;
     }
@@ -1793,7 +1809,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return null;
             }
 
-            $optionLabels = $this->getOptionLabels(withDefaults: false);
+            $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+            $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+            try {
+                $optionLabels = $this->getOptionLabels(withDefaults: false);
+            } finally {
+                $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+            }
 
             if (count($state) > count($optionLabels)) {
                 return [];
@@ -1829,9 +1852,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        $this->cachedSelectedRecord = null;
-        $this->cachedSelectedRecordState = null;
-        $this->cachedSelectedRecordStatePath = null;
+        $this->refreshSelectedRecord();
 
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
@@ -1848,6 +1869,24 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         return null;
+    }
+
+    protected function refreshSelectedRecord(): void
+    {
+        $this->cachedSelectedRecord = null;
+        $this->cachedSelectedRecordState = null;
+        $this->cachedSelectedRecordStatePath = null;
+        $this->hasCachedMissingSelectedRecord = false;
+
+        $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+        $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+        try {
+            $selectedRecord = $this->getSelectedRecord();
+            $this->hasCachedMissingSelectedRecord = ($selectedRecord === null);
+        } finally {
+            $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+        }
     }
 
     public function hasInValidationOnMultipleValues(): bool

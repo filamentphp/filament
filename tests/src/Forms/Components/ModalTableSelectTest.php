@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Tables\TeamsTable;
 use Filament\Tests\Fixtures\Tables\UsersTable;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -477,6 +478,56 @@ describe('scope enforcement', function (): void {
 
                 return true;
             });
+    });
+
+    it('reapplies global scopes to an eager-loaded `BelongsTo` relationship during validation', function (): void {
+        $globalScopes = Team::getAllGlobalScopes();
+
+        try {
+            Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+            $team = Team::factory()->create(['name' => 'Alpha Team']);
+            $user = User::factory()->create(['team_id' => $team->getKey()])->load('team');
+
+            livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
+                ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($team): bool {
+                    expect($component->getSelectedRecord()?->is($team))->toBeTrue();
+
+                    $team->update(['name' => 'Beta Team']);
+
+                    expect($component->getInValidationRuleValues())->toBe([]);
+
+                    return true;
+                });
+        } finally {
+            Team::setAllGlobalScopes($globalScopes);
+        }
+    });
+
+    it('reapplies global scopes to an eager-loaded `BelongsToMany` relationship during validation', function (): void {
+        $globalScopes = Team::getAllGlobalScopes();
+
+        try {
+            Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+            $team = Team::factory()->create(['name' => 'Alpha Team']);
+            $user = User::factory()->create();
+            $user->teams()->attach($team);
+            $user->load('teams');
+
+            livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+                ->assertFormComponentExists('teams', function (ModalTableSelect $component) use ($team): bool {
+                    expect($component->getOptionLabels(withDefaults: false))->toHaveKey($team->getKey());
+
+                    $team->update(['name' => 'Beta Team']);
+
+                    expect($component->getInValidationRuleValues())->toBe([]);
+
+                    return true;
+                });
+        } finally {
+            Team::setAllGlobalScopes($globalScopes);
+        }
     });
 
     it('rejects out-of-scope IDs in a `HasMany` select when `modifyQueryUsing()` excludes them', function (): void {

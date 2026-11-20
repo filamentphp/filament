@@ -61,6 +61,8 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
+    protected bool $shouldUseLoadedRelationshipForSelectedRecords = true;
+
     protected string | Closure | null $tableConfiguration = null;
 
     protected ?Closure $modifyTableSelectUsing = null;
@@ -300,6 +302,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
         if (
             (! $this->modifyRelationshipQueryUsing) &&
+            $this->shouldUseLoadedRelationshipForSelectedRecords &&
             ($relationship instanceof BelongsTo)
         ) {
             $record = $this->getRecord();
@@ -347,6 +350,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
         if (
             (! $this->modifyRelationshipQueryUsing) &&
+            $this->shouldUseLoadedRelationshipForSelectedRecords &&
             ($record instanceof Model) &&
             $record->relationLoaded($relationshipName) &&
             (
@@ -848,14 +852,28 @@ class ModalTableSelect extends Field implements HasEmbeddedView
         }
 
         if ($this->isMultiple()) {
-            return array_keys($this->getOptionLabels(withDefaults: false));
+            $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+            $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+            try {
+                return array_keys($this->getOptionLabels(withDefaults: false));
+            } finally {
+                $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+            }
         }
 
         $this->cachedSelectedRecord = null;
         $this->cachedSelectedRecordState = null;
         $this->cachedSelectedRecordStatePath = null;
 
-        return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
+        $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+        $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+        try {
+            return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
+        } finally {
+            $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+        }
     }
 
     public function hasInValidationOnMultipleValues(): bool
