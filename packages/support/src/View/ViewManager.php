@@ -12,9 +12,11 @@ use function Filament\Support\is_app_url;
 class ViewManager
 {
     /**
-     * @var array<string, array<string, array<Closure>>>
+     * @var array<string, array<string, array<int, Closure>>>
      */
     protected array $renderHooks = [];
+
+    protected int $renderHookIndex = 0;
 
     protected bool $hasSpaMode = false;
 
@@ -32,8 +34,10 @@ class ViewManager
             $scopes = [$scopes];
         }
 
+        $hookIndex = $this->renderHookIndex++;
+
         foreach ($scopes as $scopeName) {
-            $this->renderHooks[$name][$scopeName][] = $hook;
+            $this->renderHooks[$name][$scopeName][$hookIndex] = $hook;
         }
     }
 
@@ -46,31 +50,18 @@ class ViewManager
 
         $scopes = Arr::wrap($scopes);
 
-        $renderHook = function (callable $hook) use (&$renderedHooks, $scopes): ?string {
-            $hookId = spl_object_id($hook);
+        $hooks = [];
 
-            if (in_array($hookId, $renderedHooks)) {
-                return null;
+        foreach ([null, ...$scopes] as $scopeName) {
+            foreach ($this->renderHooks[$name][$scopeName] ?? [] as $hookIndex => $hook) {
+                if (isset($renderedHooks[$hookIndex])) {
+                    continue;
+                }
+
+                $renderedHooks[$hookIndex] = true;
+
+                $hooks[] = (string) app()->call($hook, ['scopes' => $scopes]);
             }
-
-            $renderedHooks[] = $hookId;
-
-            return (string) app()->call($hook, ['scopes' => $scopes]);
-        };
-
-        $hooks = array_map(
-            $renderHook,
-            $this->renderHooks[$name][null] ?? [],
-        );
-
-        foreach ($scopes as $scopeName) {
-            $hooks = [
-                ...$hooks,
-                ...array_map(
-                    $renderHook,
-                    $this->renderHooks[$name][$scopeName] ?? [],
-                ),
-            ];
         }
 
         return new HtmlString(implode('', $hooks));
