@@ -2286,13 +2286,131 @@ describe('browser interactions', function (): void {
         $page
             ->fill('[data-testid="default-rich-editor"] [role="textbox"]', '@Ali')
             ->click('Alice Chen')
-            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"][data-provider="trusted"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         $page->inDarkMode()
             ->assertVisible('[data-testid="default-rich-editor"] [role="textbox"]')
             ->assertNoAccessibilityIssues();
+    });
+
+    it('only renders mention extra attributes configured by the provider', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $mention = '[data-testid="mention-attributes-rich-editor"] [data-type="mention"]';
+
+        $page = visit('/rich-editor-mention-attributes-browser-test');
+
+        $page->script(<<<'JS'
+            const richEditorElement = document.querySelector('[data-testid="mention-attributes-rich-editor"] [data-rich-editor-key]')
+
+            Alpine.$data(richEditorElement).getEditor().commands.setContent({
+                type: 'doc',
+                content: [{
+                    type: 'paragraph',
+                    content: [{
+                        type: 'mention',
+                        attrs: {
+                            id: 'author-7',
+                            label: 'Alice Chen',
+                            char: '@',
+                            extra: {
+                                autofocus: '',
+                                tabindex: '0',
+                                onfocus: 'window.mentionFocusAttributeExecuted = true',
+                                'x-init': 'window.mentionAlpineAttributeExecuted = true',
+                                'data-attacker': 'client',
+                            },
+                        },
+                    }],
+                }],
+            })
+            JS);
+
+        $page
+            ->assertPresent($mention . '[data-provider="trusted"]')
+            ->assertAttributeMissing($mention, 'autofocus')
+            ->assertAttributeMissing($mention, 'tabindex')
+            ->assertAttributeMissing($mention, 'onfocus')
+            ->assertAttributeMissing($mention, 'x-init')
+            ->assertAttributeMissing($mention, 'data-attacker')
+            ->assertScript('window.mentionFocusAttributeExecuted ?? false', false)
+            ->assertScript('window.mentionAlpineAttributeExecuted ?? false', false)
+            ->assertNoSmoke();
+    });
+
+    it('sanitizes stored CSS values before rendering them in the editor', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $editor = '[data-testid="style-attributes-rich-editor"]';
+        $page = visit('/rich-editor-style-attributes-browser-test');
+
+        $page->script(<<<'JS'
+            const richEditorElement = document.querySelector('[data-testid="style-attributes-rich-editor"] [data-rich-editor-key]')
+
+            Alpine.$data(richEditorElement).getEditor().commands.setContent({
+                type: 'doc',
+                content: [{
+                    type: 'paragraph',
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Unsafe color',
+                            marks: [{
+                                type: 'textColor',
+                                attrs: {
+                                    'data-color': 'red; position: fixed; background-image: url(//attacker)',
+                                },
+                            }],
+                        },
+                        {
+                            type: 'image',
+                            attrs: {
+                                id: 'unsafe-image',
+                                src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+                                width: '100; position: fixed; inset: 0',
+                                height: '100; background-image: url(//attacker)',
+                            },
+                        },
+                        {
+                            type: 'text',
+                            text: 'Safe color',
+                            marks: [{
+                                type: 'textColor',
+                                attrs: { 'data-color': '#00ff00' },
+                            }],
+                        },
+                        {
+                            type: 'image',
+                            attrs: {
+                                id: 'safe-image',
+                                src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+                                width: '50%',
+                                height: '200',
+                            },
+                        },
+                    ],
+                }],
+            })
+            JS);
+
+        $page
+            ->assertAttributeMissing($editor . ' img[data-id="unsafe-image"]', 'width')
+            ->assertAttributeMissing($editor . ' img[data-id="unsafe-image"]', 'height')
+            ->assertAttributeMissing($editor . ' img[data-id="unsafe-image"]', 'style')
+            ->assertScript(<<<'JS'
+                Array.from(document.querySelectorAll('[data-testid="style-attributes-rich-editor"] span.color'))
+                    .find((element) => element.dataset.color.includes('position'))
+                    ?.getAttribute('style') ?? null
+                JS, null)
+            ->assertScript(<<<'JS'
+                document.querySelector('[data-testid="style-attributes-rich-editor"] span.color[data-color="#00ff00"]')
+                    .style.getPropertyValue('--color').trim()
+                JS, '#00ff00')
+            ->assertScript("document.querySelector('{$editor} img[data-id=\"safe-image\"]').style.width", '50%')
+            ->assertScript("document.querySelector('{$editor} img[data-id=\"safe-image\"]').style.height", '200px')
+            ->assertNoSmoke();
     });
 
     it('can search custom blocks and insert one at the preserved editor selection', function (): void {

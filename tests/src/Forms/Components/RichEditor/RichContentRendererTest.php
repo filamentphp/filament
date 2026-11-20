@@ -1232,6 +1232,33 @@ describe('mentions', function (): void {
         expect($html)->toContain('@John Doe');
     });
 
+    it('does not render a stored mention `href` without a provider URL', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'label' => 'John Doe',
+                                'char' => '@',
+                                'href' => 'javascript:alert(document.domain)',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toContain('<span')
+            ->not->toContain('href=')
+            ->not->toContain('javascript:');
+    });
+
     it('renders mentions as `<a>` elements when `MentionProvider` has a `url()` configured', function (): void {
         $renderer = RichContentRenderer::make([
             'type' => 'doc',
@@ -1244,6 +1271,7 @@ describe('mentions', function (): void {
                             'attrs' => [
                                 'id' => '1',
                                 'char' => '@',
+                                'href' => 'javascript:alert(document.domain)',
                             ],
                         ],
                     ],

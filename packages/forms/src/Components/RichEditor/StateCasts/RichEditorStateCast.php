@@ -52,6 +52,8 @@ class RichEditorStateCast implements StateCast
             unset($node->attrs->shouldApplyProseStylingToPreview);
         });
 
+        $this->normalizeMentionAttributes($editor);
+
         return $editor->{$this->richEditor->isJson() ? 'getDocument' : 'getHtml'}();
     }
 
@@ -121,9 +123,32 @@ class RichEditorStateCast implements StateCast
             $node->attrs->shouldApplyProseStylingToPreview = $block::shouldApplyProseStylingToPreview($nodeConfig);
         });
 
+        $this->normalizeMentionAttributes($editor);
         $this->hydrateMentionLabels($editor);
 
         return $editor->getDocument();
+    }
+
+    protected function normalizeMentionAttributes(Editor $editor): void
+    {
+        $extraAttributesByTriggerCharacter = [];
+
+        foreach ($this->richEditor->getMentionProviders() as $provider) {
+            $extraAttributesByTriggerCharacter[$provider->getTriggerCharacter()] ??= $provider->getExtraAttributes();
+        }
+
+        $editor->descendants(function (object &$node) use ($extraAttributesByTriggerCharacter): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $triggerCharacter = $node->attrs->char ?? '@';
+            $node->attrs->extra = isset($extraAttributesByTriggerCharacter[$triggerCharacter])
+                ? (object) $extraAttributesByTriggerCharacter[$triggerCharacter]
+                : null;
+
+            unset($node->attrs->href);
+        });
     }
 
     protected function hydrateMentionLabels(Editor $editor): void
