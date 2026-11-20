@@ -328,7 +328,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
-            if (($attributes instanceof Closure) && in_array($attributes, $this->extraImgAttributes, strict: true)) {
+            if (is_array($attributes) && in_array($attributes, $this->extraImgAttributes, strict: true)) {
                 return $this;
             }
 
