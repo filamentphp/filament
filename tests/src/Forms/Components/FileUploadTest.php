@@ -2,6 +2,8 @@
 
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
@@ -56,6 +58,57 @@ it('uses `hashName()` to derive the stored file extension from its MIME type', f
         ->toEndWith('.gif')
         ->not->toEndWith('.html');
 });
+
+it('only stores uploads during `getState()` when the field and its containing forms are enabled', function (bool $isFormDisabled, bool $isParentDisabled, bool $isFieldDisabled): void {
+    Storage::fake('tmp-for-tests');
+    Storage::fake('public');
+    Storage::disk('public')->put('uploads/existing.txt', 'Existing document');
+
+    $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+        UploadedFile::fake()->create('new-document.txt'),
+    );
+    Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", 'New document');
+    $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+    $field = FileUpload::make('document')
+        ->disk('public')
+        ->directory('uploads')
+        ->multiple()
+        ->preserveFilenames()
+        ->disabled($isFieldDisabled)
+        ->dehydrated();
+    $livewire = Livewire::make();
+    $form = Form::make($livewire)
+        ->statePath('data')
+        ->disabled($isFormDisabled)
+        ->schema([
+            TextInput::make('name')->default('Original name'),
+            Group::make([$field])->disabled($isParentDisabled)->dehydrated(),
+        ])
+        ->fill();
+    $livewire->data['document'] = [
+        'existing-file' => 'uploads/existing.txt',
+        'new-file' => $temporaryFile,
+    ];
+
+    $state = $form->getState();
+    $shouldStore = (! $isFormDisabled) && (! $isParentDisabled) && (! $isFieldDisabled);
+
+    if ($shouldStore) {
+        Storage::disk('public')->assertExists('uploads/new-document.txt');
+        expect($state['document'])->toBe(['uploads/existing.txt', 'uploads/new-document.txt']);
+    } else {
+        Storage::disk('public')->assertMissing('uploads/new-document.txt');
+        expect($state['document'])->toBe(['uploads/existing.txt', $temporaryFile]);
+
+        $field->saveUploadedFiles();
+        Storage::disk('public')->assertExists('uploads/new-document.txt');
+    }
+
+    expect($state['name'])->toBe('Original name')
+        ->and(Storage::disk('public')->get('uploads/existing.txt'))->toBe('Existing document')
+        ->and($temporaryFile->exists())->toBeFalse();
+})->with([false, true])->with([false, true])->with([false, true]);
 
 class TestComponentWithFileUpload extends Livewire
 {

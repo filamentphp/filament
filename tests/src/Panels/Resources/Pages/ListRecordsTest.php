@@ -3,9 +3,12 @@
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Models\Team;
+use Filament\Tests\Models\User;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPosts;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
+use Filament\Tests\Panels\Fixtures\Resources\UserResource\Pages\ListUsersWithRelationshipInViewAction;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +25,22 @@ it('can render posts page', function () {
 it('can render users page', function () {
     $this->get(UserResource::getUrl('index'))
         ->assertSuccessful();
+});
+
+it('does not save relationships when calling a table `ViewAction` with a disabled form', function (): void {
+    $user = User::factory()->create();
+    $originalTeam = Team::factory()->create();
+    $submittedTeam = Team::factory()->create();
+    $user->teams()->attach($originalTeam);
+
+    livewire(ListUsersWithRelationshipInViewAction::class)
+        ->mountTableAction('view', $user)
+        ->assertTableActionMounted('view')
+        ->set('mountedTableActionsData.0.teams', [$submittedTeam->getKey()])
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors();
+
+    expect($user->fresh()->teams()->pluck('teams.id')->all())->toBe([$originalTeam->getKey()]);
 });
 
 it('can list posts', function () {

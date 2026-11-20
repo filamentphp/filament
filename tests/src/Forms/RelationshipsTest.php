@@ -2,8 +2,13 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Models\Team;
+use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -48,6 +53,52 @@ test('fields can save relationships', function () {
     expect($numberOfRelationshipsSaved)
         ->toBe(2);
 });
+
+test('`getState()` only saves relationships for enabled forms, regardless of component opt-ins', function (bool $shouldSaveRelationshipsWhenDisabled, bool $isFormDisabled, bool $isDisabledInherited, bool $hasAfterValidate): void {
+    $user = User::factory()->create();
+    $originalTeam = Team::factory()->create();
+    $submittedTeam = Team::factory()->create();
+    $user->teams()->attach($originalTeam);
+
+    $components = [
+        TextInput::make('name'),
+        Select::make('teams')
+            ->relationship('teams', 'name')
+            ->multiple()
+            ->saveRelationshipsWhenDisabled($shouldSaveRelationshipsWhenDisabled),
+    ];
+    $livewire = Livewire::make();
+    $form = ComponentContainer::make($livewire)->statePath('data')->model($user);
+
+    if ($isDisabledInherited) {
+        $form->components([
+            $parentComponent = Group::make($components)->disabled($isFormDisabled),
+        ])->fill();
+
+        $form = $parentComponent->getChildComponentContainer();
+    } else {
+        $form->disabled($isFormDisabled)->components($components)->fill();
+    }
+
+    $livewire->data['name'] = 'Submitted name';
+    $livewire->data['teams'] = [$submittedTeam->getKey()];
+    $hasCalledAfterValidate = false;
+
+    $state = $form->getState(afterValidate: $hasAfterValidate ? static function () use (&$hasCalledAfterValidate): void {
+        $hasCalledAfterValidate = true;
+    } : null);
+
+    expect($user->teams()->pluck('teams.id')->all())
+        ->toBe([($isFormDisabled ? $originalTeam : $submittedTeam)->getKey()])
+        ->and($hasCalledAfterValidate)->toBe($hasAfterValidate)
+        ->and($state)->toBe(['name' => 'Submitted name']);
+
+    if ($isFormDisabled && $shouldSaveRelationshipsWhenDisabled) {
+        $form->saveRelationships();
+
+        expect($user->teams()->pluck('teams.id')->all())->toBe([$submittedTeam->getKey()]);
+    }
+})->with([false, true])->with([false, true])->with([false, true])->with([false, true]);
 
 test('hidden fields can save relationships when requested', function () {
     $numberOfRelationshipsSaved = 0;

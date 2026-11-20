@@ -4,6 +4,8 @@ use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Models\Team;
+use Filament\Tests\Models\User;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ViewPost;
 use Illuminate\Support\Str;
 
@@ -42,6 +44,22 @@ it('can call an action with data', function () {
         ->assertDispatched('data-called', data: [
             'payload' => $payload,
         ]);
+});
+
+it('does not save relationships when calling a `ViewAction` with a disabled form', function (): void {
+    $user = User::factory()->create();
+    $originalTeam = Team::factory()->create();
+    $submittedTeam = Team::factory()->create();
+    $user->teams()->attach($originalTeam);
+
+    livewire(Actions::class)
+        ->mountAction('viewTeams', ['user' => $user->getKey()])
+        ->assertActionMounted('viewTeams')
+        ->set('mountedActionsData.0.teams', [$submittedTeam->getKey()])
+        ->callMountedAction()
+        ->assertHasNoActionErrors();
+
+    expect($user->fresh()->teams()->pluck('teams.id')->all())->toBe([$originalTeam->getKey()]);
 });
 
 it('can validate an action\'s data', function () {

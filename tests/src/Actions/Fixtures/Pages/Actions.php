@@ -3,10 +3,13 @@
 namespace Filament\Tests\Actions\Fixtures\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Tests\Models\User;
 
 class Actions extends Page
 {
@@ -27,6 +30,14 @@ class Actions extends Page
                 ->action(function (array $data) {
                     $this->dispatch('data-called', data: $data);
                 }),
+            ViewAction::make('viewTeams')
+                ->record(fn (array $arguments): User => User::findOrFail($arguments['user']))
+                ->form([
+                    Select::make('teams')
+                        ->relationship('teams', 'name')
+                        ->multiple()
+                        ->saveRelationshipsWhenDisabled(),
+                ]),
             Action::make('before-hook-data')
                 ->form([
                     TextInput::make('payload')->required(),
