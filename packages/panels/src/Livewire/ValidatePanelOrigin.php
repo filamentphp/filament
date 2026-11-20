@@ -28,6 +28,9 @@ class ValidatePanelOrigin
     /** @var array{model: class-string<Model>, key: string} | false | null */
     protected array | false | null $tenantContext = null;
 
+    /** @var array{page: ?string, resource: ?string} | false | null */
+    protected array | false | null $configurationContext = null;
+
     /**
      * @var array{
      *     panel: string | false,
@@ -46,6 +49,7 @@ class ValidatePanelOrigin
             $context->addMemo('filamentOrigin', $validator->getOrigin());
             $context->addMemo('filamentRoute', $validator->getRouteContext());
             $context->addMemo('filamentTenant', $validator->getTenantContext());
+            $context->addMemo('filamentConfiguration', $validator->getConfigurationContext());
         });
 
         Livewire::listen('request', static function (array $requestPayload): void {
@@ -56,7 +60,7 @@ class ValidatePanelOrigin
             app(ValidatePanelOrigin::class)->verifyOrigin($snapshot);
         });
 
-        // Persistent middleware restores the panel and tenant in its `snapshot-verified` listener.
+        // Persistent middleware restores the panel, tenant, and configuration in its `snapshot-verified` listener.
         after('snapshot-verified', static function (array $snapshot): void {
             app(ValidatePanelOrigin::class)->verifyRestoredContext($snapshot);
         });
@@ -75,12 +79,13 @@ class ValidatePanelOrigin
             $validator->origin = null;
             $validator->routeContext = null;
             $validator->tenantContext = null;
+            $validator->configurationContext = null;
             $validator->requestContext = null;
             $validator->componentId = null;
         });
     }
 
-    /** @param array<int, array<string, mixed>> $requestPayload */
+    /** @param array<mixed> $requestPayload */
     protected function preflightRequest(array $requestPayload): void
     {
         if (! app(HandleRequests::class)->isLivewireRoute()) {
@@ -88,14 +93,23 @@ class ValidatePanelOrigin
         }
 
         foreach ($requestPayload as $componentPayload) {
-            $snapshot = json_decode($componentPayload['snapshot'], associative: true);
+            abort_unless(is_array($componentPayload), 404);
+
+            $encodedSnapshot = $componentPayload['snapshot'] ?? null;
+
+            abort_unless(is_string($encodedSnapshot), 404);
+
+            $snapshot = json_decode($encodedSnapshot, associative: true);
 
             abort_unless(is_array($snapshot), 404);
             abort_unless(is_string($snapshot['checksum'] ?? null), 404);
 
             Checksum::verify($snapshot);
 
-            ['route' => $routeContext, 'tenant' => $tenantContext] = $this->getSnapshotContext($snapshot);
+            $snapshotContext = $this->getSnapshotContext($snapshot);
+            ['route' => $routeContext, 'tenant' => $tenantContext] = $snapshotContext;
+
+            $this->preflightLazySnapshots($componentPayload['calls'] ?? [], $snapshotContext);
 
             $requestContext = [
                 'panel' => is_array($routeContext) ? $routeContext['panel'] : false,
@@ -109,6 +123,41 @@ class ValidatePanelOrigin
             }
 
             abort_unless($requestContext === $this->requestContext, 404);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $componentContext
+     */
+    protected function preflightLazySnapshots(mixed $calls, array $componentContext): void
+    {
+        abort_unless(is_array($calls), 404);
+
+        foreach ($calls as $call) {
+            if ((! is_array($call)) || (($call['method'] ?? null) !== '__lazyLoad')) {
+                continue;
+            }
+
+            $parameters = $call['params'] ?? null;
+
+            abort_unless(is_array($parameters), 404);
+
+            $encodedSnapshot = $parameters[0] ?? null;
+
+            abort_unless(is_string($encodedSnapshot), 404);
+
+            $decodedSnapshot = base64_decode($encodedSnapshot, strict: true);
+
+            abort_unless(is_string($decodedSnapshot), 404);
+
+            $snapshot = json_decode($decodedSnapshot, associative: true);
+
+            abort_unless(is_array($snapshot), 404);
+            abort_unless(is_string($snapshot['checksum'] ?? null), 404);
+
+            Checksum::verify($snapshot);
+
+            abort_unless($this->getSnapshotContext($snapshot) === $componentContext, 404);
         }
     }
 
@@ -182,6 +231,25 @@ class ValidatePanelOrigin
         ];
     }
 
+    /** @return array{page: ?string, resource: ?string} | false */
+    protected function getConfigurationContext(): array | false
+    {
+        if (app(HandleRequests::class)->isLivewireRoute()) {
+            abort_if(is_null($this->configurationContext), 404);
+
+            return $this->configurationContext;
+        }
+
+        if ($this->getRouteContext() === false) {
+            return false;
+        }
+
+        return [
+            'page' => Filament::getCurrentPageConfigurationKey(),
+            'resource' => Filament::getCurrentResourceConfigurationKey(),
+        ];
+    }
+
     /** @param array<string, mixed> $snapshot */
     protected function verifyOrigin(array $snapshot): void
     {
@@ -189,14 +257,20 @@ class ValidatePanelOrigin
             return;
         }
 
-        ['origin' => $origin, 'route' => $routeContext, 'tenant' => $tenantContext] = $this->getSnapshotContext($snapshot);
+        [
+            'origin' => $origin,
+            'route' => $routeContext,
+            'tenant' => $tenantContext,
+            'configuration' => $configurationContext,
+        ] = $this->getSnapshotContext($snapshot);
 
         // Nested snapshots, such as lazy mount parameters, must keep the active component's context.
         if (filled($this->componentId)) {
             abort_unless(
                 ($origin === $this->origin) &&
                 ($routeContext === $this->routeContext) &&
-                ($tenantContext === $this->tenantContext),
+                ($tenantContext === $this->tenantContext) &&
+                ($configurationContext === $this->configurationContext),
                 404,
             );
 
@@ -217,6 +291,7 @@ class ValidatePanelOrigin
         $this->origin = $origin;
         $this->routeContext = $routeContext;
         $this->tenantContext = $tenantContext;
+        $this->configurationContext = $configurationContext;
         $this->componentId = $snapshot['memo']['id'];
     }
 
@@ -245,6 +320,14 @@ class ValidatePanelOrigin
         ] : false;
 
         abort_unless($restoredTenantContext === $tenantContext, 404);
+
+        $configurationContext = $snapshot['memo']['filamentConfiguration'] ?? null;
+        $restoredConfigurationContext = [
+            'page' => Filament::getCurrentPageConfigurationKey(),
+            'resource' => Filament::getCurrentResourceConfigurationKey(),
+        ];
+
+        abort_unless($restoredConfigurationContext === $configurationContext, 404);
     }
 
     /**
@@ -253,6 +336,7 @@ class ValidatePanelOrigin
      *     origin: string | false,
      *     route: array{panel: string, uri: string, domain: ?string, name: ?string} | false,
      *     tenant: array{model: class-string<Model>, key: string} | false,
+     *     configuration: array{page: ?string, resource: ?string} | false,
      * }
      */
     protected function getSnapshotContext(array $snapshot): array
@@ -289,10 +373,26 @@ class ValidatePanelOrigin
 
         abort_if(($routeContext === false) && ($tenantContext !== false), 404);
 
+        $configurationContext = $snapshot['memo']['filamentConfiguration'] ?? null;
+
+        abort_unless(($configurationContext === false) || is_array($configurationContext), 404);
+
+        if (is_array($configurationContext)) {
+            abort_unless(
+                (array_keys($configurationContext) === ['page', 'resource']) &&
+                (is_null($configurationContext['page']) || is_string($configurationContext['page'])) &&
+                (is_null($configurationContext['resource']) || is_string($configurationContext['resource'])),
+                404,
+            );
+        }
+
+        abort_unless(($routeContext === false) === ($configurationContext === false), 404);
+
         return [
             'origin' => $origin,
             'route' => $routeContext,
             'tenant' => $tenantContext,
+            'configuration' => $configurationContext,
         ];
     }
 

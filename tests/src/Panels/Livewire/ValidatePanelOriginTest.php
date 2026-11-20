@@ -36,6 +36,7 @@ beforeEach(function (): void {
 
     PanelRouteProbe::$calls = 0;
     PanelRouteProbe::$tenantKeys = [];
+    PanelRouteProbe::$configurationContexts = [];
 });
 
 function panelRouteSnapshot(TestCase $test, Team $tenant): array
@@ -324,8 +325,8 @@ it('rejects lazy mount parameters from a different origin context', function (bo
     }
 
     updatePanelRoute($this, $snapshots[$isPanelOuter ? 'panel' : 'public'], 'app.example.test', [
-        ['method' => '__lazyLoad', 'params' => [$mountParameters[$isPanelOuter ? 'public' : 'panel']]],
         ['method' => 'record', 'params' => []],
+        ['method' => '__lazyLoad', 'params' => [$mountParameters[$isPanelOuter ? 'public' : 'panel']]],
     ])->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
@@ -357,8 +358,8 @@ it('rejects lazy mount parameters from a different tenant', function (): void {
     }
 
     updatePanelRoute($this, $snapshots[0], 'app.example.test', [
-        ['method' => '__lazyLoad', 'params' => [$mountParameters[1]]],
         ['method' => 'record', 'params' => []],
+        ['method' => '__lazyLoad', 'params' => [$mountParameters[1]]],
     ])->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
@@ -437,6 +438,36 @@ it('rejects an update when a tenant route key resolves to a different tenant', f
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
+it('rejects a path-only update when a custom resolver returns a different tenant on another host', function (): void {
+    $user = User::factory()->create();
+    $firstTenant = Team::factory()->create();
+    $secondTenant = Team::factory()->create();
+
+    $this->actingAs($user);
+
+    Filament::getPanel('slug-tenancy')->resolveTenantUsing(
+        static fn (string $key): Team => request()->getHost() === 'app.example.test' ? $firstTenant : $secondTenant,
+    );
+
+    Route::middleware([
+        'panel:slug-tenancy',
+        IdentifyTenant::class,
+    ])->get('/host-resolved-tenant/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $response = $this
+        ->get('https://app.example.test/host-resolved-tenant/shared')
+        ->assertSuccessful();
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+
+    expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
+    updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(1)
+        ->and(PanelRouteProbe::$tenantKeys)->toBe([$firstTenant->getKey()]);
+});
+
 it('rejects an update when middleware restores a different panel', function (): void {
     Route::domain('app.example.test')
         ->middleware('panel:admin')
@@ -469,6 +500,44 @@ it('rejects an update when middleware restores a different panel', function (): 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
+it('rejects an update when middleware restores a different configuration', function (string $middleware, string $type): void {
+    Route::domain('app.example.test')
+        ->middleware(['panel:admin', "{$middleware}:first"])
+        ->get('/restored-configuration-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'))
+        ->name('restored-configuration-probe');
+
+    $response = $this
+        ->get('https://app.example.test/restored-configuration-probe')
+        ->assertSuccessful();
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+
+    expect($snapshot['memo']['filamentConfiguration'][$type])->toBe('first');
+
+    $replacementRoute = Route::domain('app.example.test')
+        ->middleware(['panel:admin', "{$middleware}:second"])
+        ->get('/restored-configuration-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'))
+        ->name('restored-configuration-probe');
+    $remainingRoutes = new RouteCollection;
+
+    foreach (Route::getRoutes() as $route) {
+        if ($route->uri() === 'restored-configuration-probe') {
+            continue;
+        }
+
+        $remainingRoutes->add($route);
+    }
+
+    $remainingRoutes->add($replacementRoute);
+    Route::setRoutes($remainingRoutes);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+})->with([
+    'page configuration' => ['page-configuration', 'page'],
+    'resource configuration' => ['resource-configuration', 'resource'],
+]);
+
 it('allows bundled updates from the same panel and tenant across routes', function (): void {
     Route::domain('app.example.test')
         ->middleware([
@@ -487,6 +556,36 @@ it('allows bundled updates from the same panel and tenant across routes', functi
     updateBundledPanelRoutes($this, [$firstSnapshot, $secondSnapshot])->assertSuccessful();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('allows bundled updates from different configurations in the same panel', function (): void {
+    Route::domain('app.example.test')
+        ->middleware(['panel:admin', 'page-configuration:first'])
+        ->get('/first-configuration-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    Route::domain('app.example.test')
+        ->middleware(['panel:admin', 'page-configuration:second'])
+        ->get('/second-configuration-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $snapshots = [];
+
+    foreach (['first', 'second'] as $configuration) {
+        $response = $this
+            ->get("https://app.example.test/{$configuration}-configuration-probe")
+            ->assertSuccessful();
+        $snapshots[] = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+    }
+
+    updateBundledPanelRoutes($this, $snapshots, calls: [
+        [['method' => 'record', 'params' => [], 'path' => '']],
+        [['method' => 'record', 'params' => [], 'path' => '']],
+    ])->assertSuccessful();
+
+    expect(PanelRouteProbe::$calls)->toBe(2)
+        ->and(PanelRouteProbe::$configurationContexts)->toBe([
+            ['page' => 'first', 'resource' => null],
+            ['page' => 'second', 'resource' => null],
+        ]);
 });
 
 it('leaves path-only panel updates working across hosts', function (): void {
@@ -634,6 +733,18 @@ it('rejects a signed panel snapshot from before tenant context was added', funct
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
+it('rejects a signed panel snapshot from before configuration context was added', function (): void {
+    $snapshot = panelRouteSnapshot($this, Team::factory()->create());
+
+    unset($snapshot['memo']['filamentConfiguration'], $snapshot['checksum']);
+
+    $snapshot['checksum'] = Checksum::generate($snapshot);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
 it('does not restrict non-panel Livewire routes', function (): void {
     Route::get('/public-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
 
@@ -644,7 +755,8 @@ it('does not restrict non-panel Livewire routes', function (): void {
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
     expect($snapshot['memo']['filamentOrigin'])->toBeFalse()
-        ->and($snapshot['memo']['filamentTenant'])->toBeFalse();
+        ->and($snapshot['memo']['filamentTenant'])->toBeFalse()
+        ->and($snapshot['memo']['filamentConfiguration'])->toBeFalse();
 
     updatePanelRoute($this, $snapshot, 'other.example.test')->assertSuccessful();
 
@@ -657,6 +769,9 @@ class PanelRouteProbe extends Component
 
     /** @var array<int | string> */
     public static array $tenantKeys = [];
+
+    /** @var array<int, array{page: ?string, resource: ?string}> */
+    public static array $configurationContexts = [];
 
     public bool $shouldShowChild = false;
 
@@ -672,6 +787,10 @@ class PanelRouteProbe extends Component
     {
         static::$calls++;
         static::$tenantKeys[] = Filament::getTenant()?->getKey();
+        static::$configurationContexts[] = [
+            'page' => Filament::getCurrentPageConfigurationKey(),
+            'resource' => Filament::getCurrentResourceConfigurationKey(),
+        ];
     }
 
     public function render(): string
