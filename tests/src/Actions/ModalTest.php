@@ -250,6 +250,7 @@ describe('browser interactions', function (): void {
             ->assertSee('Behind: clicked')
             ->click('[data-testid="no-id-trigger"]')
             ->assertVisible('[data-testid="no-id-modal"]')
+            ->assertPresent('[aria-label="Modal without an ID"] :focus')
             ->keys(':focus', 'Escape')
             ->assertMissing('[data-testid="no-id-modal"]')
             ->assertPresent('[data-testid="no-id-trigger"]:focus')
