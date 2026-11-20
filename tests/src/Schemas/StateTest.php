@@ -857,6 +857,36 @@ describe('dehydrating state', function (): void {
             ->getState()->toBe([]);
     });
 
+    test('disabling a schema preserves its dehydrated field data', function (): void {
+        $schema = StateTestLivewire::make()->getSchema('form')
+            ->statePath('data')
+            ->components([
+                Field::make('direct')
+                    ->default('direct value'),
+                Field::make('excluded')
+                    ->default('excluded value')
+                    ->saved(false),
+                Field::make('disabled')
+                    ->default('disabled value')
+                    ->disabled(),
+                Field::make('saved')
+                    ->default('saved value')
+                    ->disabled()
+                    ->saved(),
+                (new Component)
+                    ->schema([
+                        Field::make('nested')
+                            ->default('nested value'),
+                    ]),
+            ])
+            ->fill();
+
+        $expected = ['direct' => 'direct value', 'saved' => 'saved value', 'nested' => 'nested value'];
+
+        expect($schema->getState())->toBe($expected)
+            ->and($schema->disabled()->getState())->toBe($expected);
+    });
+
     test('disabled components are excluded from state dehydration except if they are marked as dehydrated', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')

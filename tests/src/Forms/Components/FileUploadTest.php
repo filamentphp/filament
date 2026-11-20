@@ -3048,6 +3048,47 @@ describe('`saveUploadedFile()` branches', function (): void {
         return TemporaryUploadedFile::createFromLivewire($temporaryFileName);
     };
 
+    it('only stores uploads during `getState()` when the field and its containing schemas are enabled', function (bool $isSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled) use ($makeTemporaryUploadedFile): void {
+        Storage::fake('public');
+        Storage::disk('public')->put('uploads/existing.txt', 'Existing document');
+        $temporaryFile = $makeTemporaryUploadedFile('new-document.txt', 'New document');
+
+        $field = FileUpload::make('document')
+            ->disk('public')
+            ->directory('uploads')
+            ->multiple()
+            ->preserveFilenames()
+            ->disabled($isFieldDisabled)
+            ->saved();
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->disabled($isSchemaDisabled)
+            ->components([
+                Field::make('name')->default('Original name'),
+                Group::make([$field])->disabled($isParentDisabled)->saved(),
+            ])
+            ->fill();
+        $field->rawState([
+            'existing-file' => 'uploads/existing.txt',
+            'new-file' => $temporaryFile,
+        ]);
+
+        $state = $schema->getState();
+        $shouldStore = (! $isSchemaDisabled) && (! $isParentDisabled) && (! $isFieldDisabled);
+
+        if ($shouldStore) {
+            Storage::disk('public')->assertExists('uploads/new-document.txt');
+            expect($state['document'])->toBe(['uploads/existing.txt', 'uploads/new-document.txt']);
+        } else {
+            Storage::disk('public')->assertMissing('uploads/new-document.txt');
+            expect($state['document'])->toBe(['uploads/existing.txt', $temporaryFile]);
+        }
+
+        expect($state['name'])->toBe('Original name')
+            ->and(Storage::disk('public')->get('uploads/existing.txt'))->toBe('Existing document')
+            ->and($temporaryFile->exists())->toBe(! $shouldStore);
+    })->with([false, true])->with([false, true])->with([false, true]);
+
     it('uses `storeAs()` when disks differ between the field and the temp file', function () use ($makeField, $makeTemporaryUploadedFile): void {
         Storage::fake('public');
 

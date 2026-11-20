@@ -620,8 +620,10 @@ trait HasState
             if ($shouldCallHooksBefore) {
                 $this->callBeforeStateDehydrated($state);
 
-                $afterValidate || $this->saveRelationships();
-                $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
+                if ((! $afterValidate) && (! $this->isDisabled())) {
+                    $this->saveRelationships();
+                    $this->loadStateFromRelationships(shouldHydrate: true);
+                }
             }
 
             $this->dehydrateState($state);
@@ -634,8 +636,10 @@ trait HasState
             if ($afterValidate) {
                 value($afterValidate, $state);
 
-                $shouldCallHooksBefore && $this->saveRelationships();
-                $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
+                if ($shouldCallHooksBefore && (! $this->isDisabled())) {
+                    $this->saveRelationships();
+                    $this->loadStateFromRelationships(shouldHydrate: true);
+                }
             }
 
             return $state;
