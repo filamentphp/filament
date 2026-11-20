@@ -12,13 +12,23 @@ class DepartmentsWithAttachTableSelectAndModifiedQueryRelationManager extends Re
 {
     protected static string $relationship = 'departments';
 
+    public int $attachActionProcessCount = 0;
+
+    public int $attachActionAfterCount = 0;
+
     public function table(Table $table): Table
     {
         return DepartmentsTable::configure($table)
             ->headerActions([
                 AttachAction::make()
                     ->tableSelect(DepartmentsTable::class)
-                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('name', 'like', 'Active%')),
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('name', 'like', 'Active%'))
+                    ->using(function (): void {
+                        $this->attachActionProcessCount++;
+                    })
+                    ->after(function (): void {
+                        $this->attachActionAfterCount++;
+                    }),
             ]);
     }
 }

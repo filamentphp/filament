@@ -328,7 +328,8 @@ class AttachAction extends Action
 
     public function getTableRecordSelect(): TableSelect
     {
-        $relationship = $this->getTable()->getRelationship();
+        $table = $this->getTable();
+        $relationship = $table->getRelationship();
 
         assert($relationship instanceof BelongsToMany);
 
@@ -339,6 +340,22 @@ class AttachAction extends Action
             ->tableConfiguration($this->getTableSelectConfiguration())
             ->model($relationship->getParent())
             ->relationshipName($relationship->getRelationName())
+            ->in(function (TableSelect $component) use ($relationship, $table): array {
+                $state = Arr::wrap($component->getState());
+
+                if ($state === []) {
+                    return [];
+                }
+
+                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+                $relationshipQuery = $this->applyRecordSelectOptionsQuery($relationshipQuery, $relationship, $table);
+
+                return $relationshipQuery
+                    ->whereIn($relationship->getQualifiedRelatedKeyName(), $state)
+                    ->pluck($relationship->getQualifiedRelatedKeyName())
+                    ->map(static fn ($key): string => strval($key))
+                    ->all();
+            })
             ->multiple($this->isMultiple());
     }
 
