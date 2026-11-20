@@ -12,6 +12,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Testing\TestResponse;
@@ -322,6 +323,76 @@ it('leaves path-only panel updates working across hosts', function (): void {
     updatePanelRoute($this, $snapshot, 'other.example.test')->assertSuccessful();
 
     expect(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey()]);
+});
+
+it('rejects a path-only panel update when another host resolves the same path to a public route', function (): void {
+    Route::domain('other.example.test')
+        ->get('/path-only-collision/{tenant}', fn (): string => 'Public route');
+
+    Route::middleware([
+        'panel:tenant-menu-grouping',
+        IdentifyTenant::class,
+    ])->get('/path-only-collision/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $tenant = Team::factory()->create();
+
+    $response = $this
+        ->get("https://app.example.test/path-only-collision/{$tenant->getRouteKey()}")
+        ->assertSuccessful();
+
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+
+    expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
+    updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(1);
+});
+
+it('rejects a path-only panel update when its route no longer matches', function (): void {
+    Route::middleware('panel:tenant-menu-grouping')
+        ->get('/path-only-removed', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $response = $this
+        ->get('https://app.example.test/path-only-removed')
+        ->assertSuccessful();
+
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+    $remainingRoutes = new RouteCollection;
+
+    foreach (Route::getRoutes() as $route) {
+        if ($route->uri() === 'path-only-removed') {
+            continue;
+        }
+
+        $remainingRoutes->add($route);
+    }
+
+    Route::setRoutes($remainingRoutes);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('rejects a signed path-only panel snapshot from before route context was added', function (): void {
+    Route::middleware('panel:tenant-menu-grouping')
+        ->get('/path-only-legacy', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $response = $this
+        ->get('https://app.example.test/path-only-legacy')
+        ->assertSuccessful();
+
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+
+    unset($snapshot['memo']['filamentRoute'], $snapshot['checksum']);
+
+    $snapshot['checksum'] = Checksum::generate($snapshot);
+
+    updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
 it('rejects a signed snapshot from before the route guard was added', function (): void {
