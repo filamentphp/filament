@@ -83,7 +83,7 @@ return [
 
         'subheadings' => [
             'all' => 'Все :label',
-            'group' => 'Cводка :group',
+            'group' => 'Сводка :group',
             'page' => 'Эта страница',
         ],
 
