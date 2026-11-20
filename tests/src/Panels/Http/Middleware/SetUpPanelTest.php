@@ -76,12 +76,14 @@ it('clears stale context before restoring the next component context', function 
         [
             'panel' => 'tenant-menu-grouping',
             'tenant' => $tenant->getKey(),
+            'domain' => 'request.example.test',
             'resourceConfiguration' => 'bundled-resource',
             'pageConfiguration' => 'bundled-page',
         ],
         [
             'panel' => 'tenant-menu-grouping',
             'tenant' => $tenant->getKey(),
+            'domain' => 'request.example.test',
             'resourceConfiguration' => null,
             'pageConfiguration' => null,
         ],
@@ -168,7 +170,7 @@ function getPanelContextSnapshot(TestCase $testCase, string $path): array
 
 class BundledPanelContextComponent extends Component
 {
-    /** @var array<array{panel: string, tenant: int | string | null, resourceConfiguration: ?string, pageConfiguration: ?string}> */
+    /** @var array<array{panel: string, tenant: int | string | null, domain: string, resourceConfiguration: ?string, pageConfiguration: ?string}> */
     public static array $capturedContexts = [];
 
     public function captureContext(): void
@@ -176,6 +178,7 @@ class BundledPanelContextComponent extends Component
         static::$capturedContexts[] = [
             'panel' => Filament::getCurrentPanel()->getId(),
             'tenant' => Filament::getTenant()?->getKey(),
+            'domain' => Filament::getCurrentDomain(testingDomain: 'request.example.test'),
             'resourceConfiguration' => Filament::getCurrentResourceConfigurationKey(),
             'pageConfiguration' => Filament::getCurrentPageConfigurationKey(),
         ];
@@ -186,6 +189,7 @@ class BundledPanelContextComponent extends Component
         $this->captureContext();
 
         Filament::setTenant(Team::query()->findOrFail($tenantKey), isQuiet: true);
+        Filament::setCurrentDomain('replaced.example.test');
         Filament::setCurrentResourceConfigurationKey('replaced-resource');
         Filament::setCurrentPageConfigurationKey('replaced-page');
     }

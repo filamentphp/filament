@@ -60,17 +60,20 @@ function updatePanelRoute(TestCase $test, array $snapshot, string $host, ?array 
         ]);
 }
 
-/** @param array<array<string, mixed>> $snapshots */
-function updateBundledPanelRoutes(TestCase $test, array $snapshots, string $host = 'app.example.test'): TestResponse
+/**
+ * @param  array<array<string, mixed>>  $snapshots
+ * @param  array<int, array<int, array<string, mixed>>>  $calls
+ */
+function updateBundledPanelRoutes(TestCase $test, array $snapshots, string $host = 'app.example.test', array $calls = []): TestResponse
 {
     return $test
         ->withHeaders(['X-Livewire' => true])
         ->postJson("https://{$host}" . Livewire::getUpdateUri(), [
-            'components' => array_map(static fn (array $snapshot): array => [
+            'components' => array_map(static fn (array $snapshot, int $index): array => [
                 'snapshot' => json_encode($snapshot, JSON_THROW_ON_ERROR),
                 'updates' => [],
-                'calls' => [],
-            ], $snapshots),
+                'calls' => $calls[$index] ?? [],
+            ], $snapshots, array_keys($snapshots)),
         ]);
 }
 
@@ -373,7 +376,9 @@ it('rejects bundled panel and non-panel updates', function (bool $isPanelFirst):
     $publicSnapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
     $snapshots = $isPanelFirst ? [$panelSnapshot, $publicSnapshot] : [$publicSnapshot, $panelSnapshot];
 
-    updateBundledPanelRoutes($this, $snapshots)->assertNotFound();
+    updateBundledPanelRoutes($this, $snapshots, calls: [[
+        ['method' => 'record', 'params' => [], 'path' => ''],
+    ]])->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 })->with(['panel first' => true, 'non-panel first' => false]);
@@ -402,6 +407,64 @@ it('rejects bundled updates from different tenants', function (): void {
     $secondSnapshot = panelRouteSnapshot($this, Team::factory()->create());
 
     updateBundledPanelRoutes($this, [$firstSnapshot, $secondSnapshot])->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('rejects an update when a tenant route key resolves to a different tenant', function (): void {
+    $user = User::factory()->create();
+    $originalTenant = Team::factory()->create(['slug' => 'reassigned-tenant']);
+
+    $this->actingAs($user);
+
+    Route::domain('app.example.test')
+        ->middleware([
+            'panel:slug-tenancy',
+            IdentifyTenant::class,
+        ])
+        ->get('/tenant-route-key/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $response = $this
+        ->get('https://app.example.test/tenant-route-key/reassigned-tenant')
+        ->assertSuccessful();
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+
+    $originalTenant->update(['slug' => 'original-tenant-moved']);
+    Team::factory()->create(['slug' => 'reassigned-tenant']);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('rejects an update when middleware restores a different panel', function (): void {
+    Route::domain('app.example.test')
+        ->middleware('panel:admin')
+        ->get('/restored-panel-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'))
+        ->name('restored-panel-probe');
+
+    $response = $this
+        ->get('https://app.example.test/restored-panel-probe')
+        ->assertSuccessful();
+    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
+    $replacementRoute = Route::domain('app.example.test')
+        ->middleware(['panel:admin', 'panel:tenancy'])
+        ->get('/restored-panel-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'))
+        ->name('restored-panel-probe');
+    $remainingRoutes = new RouteCollection;
+
+    foreach (Route::getRoutes() as $route) {
+        if ($route->uri() === 'restored-panel-probe') {
+            continue;
+        }
+
+        $remainingRoutes->add($route);
+    }
+
+    $remainingRoutes->add($replacementRoute);
+    Route::setRoutes($remainingRoutes);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
