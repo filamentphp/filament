@@ -28,7 +28,7 @@ jobs:
         exclude:
           # Analyse PHP boundaries per Laravel, retaining every PHP on Laravel 13.
           - laravel: 12.*
-            php: 8.5
+            php: 8.6
           - laravel: 12.*
             php: 8.4
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}

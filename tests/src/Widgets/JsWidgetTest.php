@@ -4,6 +4,7 @@ use Filament\Tests\Fixtures\Widgets\JsWidget;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -35,7 +36,9 @@ it('renders the `getLoadingPlaceholder()` override in the JavaScript widget view
         }
     };
 
-    livewire($widget::class, ['framework' => 'inline'])
+    Livewire::component('js-widget-with-loading-placeholder', $widget::class);
+
+    livewire('js-widget-with-loading-placeholder', ['framework' => 'inline'])
         ->assertSeeHtml('data-testid="custom-loading-placeholder"')
         ->assertSeeHtml('Widget &lt;loading&gt;');
 });
