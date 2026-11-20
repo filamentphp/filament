@@ -892,6 +892,12 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         $this->ensureItemsCanBeProcessed($this->getItemsCount());
 
         $rawState = ($this->getRawState() ?? []);
+        $rawStateWithSafeKeys = $this->rekeyItemsWithUnsafeKeys($rawState);
+
+        if ($rawStateWithSafeKeys !== $rawState) {
+            $this->rawState($rawStateWithSafeKeys);
+            $rawState = $rawStateWithSafeKeys;
+        }
 
         $this->cachedItemsRawStateStructure = array_map(is_array(...), $rawState);
 

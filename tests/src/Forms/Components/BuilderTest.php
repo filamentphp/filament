@@ -4,6 +4,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -1196,6 +1197,79 @@ describe('item schemas', function (): void {
             ->and(array_keys($items))->toBe(array_keys($builder->getRawState()))
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
+
+    it('validates and dehydrates blocks whose keys would otherwise resolve to the wrong state path', function (string $unsafeItemKey): void {
+        $builder = Builder::make('content')
+            ->blocks([
+                Builder\Block::make('one')
+                    ->schema([
+                        TextInput::make('url')
+                            ->url()
+                            ->required(),
+                        Toggle::make('is_verified')
+                            ->disabled(),
+                    ]),
+            ]);
+
+        $schema = Schema::make(Livewire::make()->data([
+            'content' => [
+                'a' => [
+                    'type' => 'one',
+                    'data' => [
+                        'url' => 'https://filamentphp.com',
+                        'is_verified' => false,
+                    ],
+                ],
+                $unsafeItemKey => [
+                    'type' => 'one',
+                    'data' => [
+                        'url' => 'javascript:alert(1)',
+                        'is_verified' => true,
+                    ],
+                ],
+            ],
+        ]))
+            ->statePath('data')
+            ->components([$builder]);
+
+        $schema->getComponents();
+
+        $builder->getItems();
+
+        $itemKeys = array_keys($builder->getRawState());
+        $unsafeItemKeyReplacement = $itemKeys[1];
+
+        expect($itemKeys[0])->toBe('a')
+            ->and(Str::isUuid($unsafeItemKeyReplacement))->toBeTrue();
+
+        try {
+            $schema->getState();
+        } catch (ValidationException $exception) {
+            expect($exception->errors())->toHaveKey("data.content.{$unsafeItemKeyReplacement}.data.url");
+        }
+
+        expect(isset($exception))->toBeTrue();
+
+        $items = $builder->getRawState();
+        $items[$unsafeItemKeyReplacement]['data']['url'] = 'https://example.com';
+        $builder->rawState($items);
+
+        expect($schema->getState())->toBe([
+            'content' => [
+                [
+                    'type' => 'one',
+                    'data' => ['url' => 'https://filamentphp.com'],
+                ],
+                [
+                    'type' => 'one',
+                    'data' => ['url' => 'https://example.com'],
+                ],
+            ],
+        ]);
+    })->with([
+        'state-path sanitization collision' => ['a"'],
+        'blank state path' => [' '],
+    ]);
 
     it('updates item schemas after the state changes', function (): void {
         $items = [

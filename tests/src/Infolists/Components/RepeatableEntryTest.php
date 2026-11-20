@@ -192,6 +192,104 @@ describe('item collections', function (): void {
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
 
+    it('uses stable distinct internal paths for unsafe item keys while preserving collection keys', function (): void {
+        $itemsState = (object) [
+            'a' => ['name' => 'First'],
+            'a"' => ['name' => 'Second'],
+            ' ' => ['name' => 'Third'],
+        ];
+
+        $schema = Schema::make(Livewire::make())
+            ->components([
+                $entry = RepeatableEntry::make('items')
+                    ->state($itemsState)
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $schema->getComponents();
+
+        $items = $entry->getItems();
+        $itemStatePaths = array_map(
+            static fn (Schema $item): ?string => $item->getStatePath(),
+            $items,
+        );
+
+        expect(array_keys($items))->toBe(['a', 'a"', ' '])
+            ->and(array_unique($itemStatePaths))->toHaveCount(3)
+            ->and($items['a']->getComponents()[0]->getState())->toBe('First')
+            ->and($items['a"']->getComponents()[0]->getState())->toBe('Second')
+            ->and($items[' ']->getComponents()[0]->getState())->toBe('Third');
+
+        $itemsState->{'a"'} = ['name' => 'Updated second'];
+
+        $rebuiltItems = $entry->getItems();
+
+        expect(array_map(
+            static fn (Schema $item): ?string => $item->getStatePath(),
+            $rebuiltItems,
+        ))->toBe($itemStatePaths)
+            ->and($rebuiltItems['a"']->getComponents()[0]->getState())->toBe('Updated second');
+    });
+
+    it('resolves actions to the correct item when collection keys would otherwise collide', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    'a' => ['name' => 'First'],
+                    'a"' => ['name' => 'Second'],
+                ],
+            ])
+            ->components([
+                $entry = RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name')
+                            ->registerActions([
+                                Action::make('inspect'),
+                            ]),
+                    ]),
+            ]);
+
+        $schema->getComponents();
+
+        $items = $entry->getItems();
+        $firstEntry = $items['a']->getComponents()[0];
+        $secondEntry = $items['a"']->getComponents()[0];
+
+        expect($firstEntry->getKey())->not->toBe($secondEntry->getKey())
+            ->and($schema->getAction('inspect', $firstEntry->getKey())?->getSchemaComponent())->toBe($firstEntry)
+            ->and($schema->getAction('inspect', $secondEntry->getKey())?->getSchemaComponent())->toBe($secondEntry);
+    });
+
+    it('avoids internal paths colliding with safe collection keys', function (): void {
+        $unsafeItemKey = 'a"';
+        $collidingSafeItemKey = 'item-' . hash('sha256', $unsafeItemKey);
+
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    $unsafeItemKey => ['name' => 'Unsafe key'],
+                    $collidingSafeItemKey => ['name' => 'Safe key'],
+                ],
+            ])
+            ->components([
+                $entry = RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $schema->getComponents();
+
+        $items = $entry->getItems();
+
+        expect($items[$unsafeItemKey]->getStatePath())->not->toBe($items[$collidingSafeItemKey]->getStatePath())
+            ->and($items[$collidingSafeItemKey]->getStatePath())->toBe("items.{$collidingSafeItemKey}")
+            ->and($items[$unsafeItemKey]->getComponents()[0]->getState())->toBe('Unsafe key')
+            ->and($items[$collidingSafeItemKey]->getComponents()[0]->getState())->toBe('Safe key');
+    });
+
     it('rebuilds `getItems()` when an object item collection is mutated', function (): void {
         $itemsState = (object) [
             'first' => ['name' => 'First'],
