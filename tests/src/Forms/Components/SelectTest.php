@@ -886,6 +886,23 @@ describe('validation', function (): void {
             ->assertHasFormErrors(['author_id' => ['in']]);
     });
 
+    it('revalidates a cached relationship record after its query scope changes', function (): void {
+        $user = User::factory()->create(['name' => 'Alpha User']);
+
+        livewire(TestComponentWithBelongsToRelationshipAndModifyQueryValidation::class)
+            ->assertFormComponentExists('author_id', function (Select $component) use ($user): bool {
+                $component->state((string) $user->id);
+
+                expect($component->getSelectedRecord()?->is($user))->toBeTrue();
+
+                $user->update(['name' => 'Beta User']);
+
+                expect($component->getInValidationRuleValues())->toBe([]);
+
+                return true;
+            });
+    });
+
     it('rejects an existing value excluded by `modifyQueryUsing` on a searchable `BelongsTo` relationship', function (): void {
         $inScope = User::factory()->create(['name' => 'Alpha User']);
         $outOfScope = User::factory()->create(['name' => 'Beta User']);

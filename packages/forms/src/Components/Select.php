@@ -1829,6 +1829,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
+        $this->cachedSelectedRecord = null;
+        $this->cachedSelectedRecordState = null;
+        $this->cachedSelectedRecordStatePath = null;
+
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
         if (blank($optionLabel)) {

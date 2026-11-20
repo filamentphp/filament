@@ -446,6 +446,39 @@ describe('scope enforcement', function (): void {
         expect($user->fresh()->team_id)->toBe($inScopeTeam->id);
     });
 
+    it('revalidates a cached single relationship record after the state changes', function (): void {
+        $inScopeTeam = Team::factory()->create(['name' => 'Active Team']);
+        $outOfScopeTeam = Team::factory()->create(['name' => 'Inactive Team']);
+        $user = User::factory()->create(['team_id' => $inScopeTeam->id]);
+
+        livewire(ModalTableSelectWithFilteredBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($inScopeTeam, $outOfScopeTeam): bool {
+                expect($component->getSelectedRecord()?->is($inScopeTeam))->toBeTrue();
+
+                $component->state((string) $outOfScopeTeam->id);
+
+                expect($component->getInValidationRuleValues())->toBe([]);
+
+                return true;
+            });
+    });
+
+    it('revalidates a cached single relationship record after its query scope changes', function (): void {
+        $team = Team::factory()->create(['name' => 'Active Team']);
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        livewire(ModalTableSelectWithFilteredBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($team): bool {
+                expect($component->getSelectedRecord()?->is($team))->toBeTrue();
+
+                $team->update(['name' => 'Inactive Team']);
+
+                expect($component->getInValidationRuleValues())->toBe([]);
+
+                return true;
+            });
+    });
+
     it('rejects out-of-scope IDs in a `HasMany` select when `modifyQueryUsing()` excludes them', function (): void {
         $user = User::factory()->create();
         $inScopePost = Post::factory()->create(['author_id' => null, 'is_published' => true]);
