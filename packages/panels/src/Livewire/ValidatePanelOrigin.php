@@ -4,6 +4,7 @@ namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\SetUpPanel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -22,6 +23,17 @@ class ValidatePanelOrigin
     /** @var array{panel: string, uri: string, domain: ?string, name: ?string} | false | null */
     protected array | false | null $routeContext = null;
 
+    /** @var array{model: class-string<Model>, key: string} | false | null */
+    protected array | false | null $tenantContext = null;
+
+    /**
+     * @var array{
+     *     panel: string | false,
+     *     tenant: array{model: class-string<Model>, key: string} | false,
+     * } | null
+     */
+    protected ?array $requestContext = null;
+
     protected ?string $componentId = null;
 
     public static function register(): void
@@ -31,6 +43,7 @@ class ValidatePanelOrigin
 
             $context->addMemo('filamentOrigin', $validator->getOrigin());
             $context->addMemo('filamentRoute', $validator->getRouteContext());
+            $context->addMemo('filamentTenant', $validator->getTenantContext());
         });
 
         before('snapshot-verified', static function (array $snapshot): void {
@@ -50,6 +63,8 @@ class ValidatePanelOrigin
             $validator = app(ValidatePanelOrigin::class);
             $validator->origin = null;
             $validator->routeContext = null;
+            $validator->tenantContext = null;
+            $validator->requestContext = null;
             $validator->componentId = null;
         });
     }
@@ -99,6 +114,31 @@ class ValidatePanelOrigin
         ];
     }
 
+    /** @return array{model: class-string<Model>, key: string} | false */
+    protected function getTenantContext(): array | false
+    {
+        if (app(HandleRequests::class)->isLivewireRoute()) {
+            abort_if(is_null($this->tenantContext), 404);
+
+            return $this->tenantContext;
+        }
+
+        if ($this->getRouteContext() === false) {
+            return false;
+        }
+
+        $tenant = Filament::getTenant();
+
+        if (! $tenant) {
+            return false;
+        }
+
+        return [
+            'model' => $tenant::class,
+            'key' => (string) $tenant->getKey(),
+        ];
+    }
+
     /** @param array<string, mixed> $snapshot */
     protected function verifyOrigin(array $snapshot): void
     {
@@ -122,15 +162,48 @@ class ValidatePanelOrigin
             $this->verifyRoute($snapshot, $routeContext);
         }
 
+        $tenantContext = $snapshot['memo']['filamentTenant'] ?? null;
+
+        abort_unless(($tenantContext === false) || is_array($tenantContext), 404);
+
+        if (is_array($tenantContext)) {
+            abort_unless(
+                (array_keys($tenantContext) === ['model', 'key']) &&
+                is_string($tenantContext['model']) &&
+                is_a($tenantContext['model'], Model::class, true) &&
+                is_string($tenantContext['key']),
+                404,
+            );
+        }
+
+        abort_if(($routeContext === false) && ($tenantContext !== false), 404);
+
         // Nested snapshots, such as lazy mount parameters, must keep the active component's context.
         if (filled($this->componentId)) {
-            abort_unless(($origin === $this->origin) && ($routeContext === $this->routeContext), 404);
+            abort_unless(
+                ($origin === $this->origin) &&
+                ($routeContext === $this->routeContext) &&
+                ($tenantContext === $this->tenantContext),
+                404,
+            );
 
             return;
         }
 
+        $requestContext = [
+            'panel' => is_array($routeContext) ? $routeContext['panel'] : false,
+            'tenant' => $tenantContext,
+        ];
+
+        if ($this->requestContext === null) {
+            $this->requestContext = $requestContext;
+        } else {
+            abort_unless($requestContext === $this->requestContext, 404);
+        }
+
         $this->origin = $origin;
         $this->routeContext = $routeContext;
+        $this->tenantContext = $tenantContext;
         $this->componentId = $snapshot['memo']['id'];
     }
 

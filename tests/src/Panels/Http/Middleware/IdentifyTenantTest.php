@@ -91,7 +91,7 @@ it('identifies an accessible tenant before continuing', function (): void {
         ->assertSeeText((string) $tenant->getKey());
 });
 
-it('restores the tenant context for each component in a bundled Livewire request', function (): void {
+it('restores the same tenant context for each component in a bundled Livewire request', function (): void {
     $tenantA = Team::factory()->create();
     $tenantB = Team::factory()->create();
 
@@ -118,7 +118,7 @@ it('restores the tenant context for each component in a bundled Livewire request
     };
 
     $tenantASnapshot = $getSnapshot($tenantA);
-    $tenantBSnapshot = $getSnapshot($tenantB);
+    $secondTenantASnapshot = $getSnapshot($tenantA);
     $finalTenantASnapshot = $getSnapshot($tenantA);
 
     $this
@@ -129,11 +129,11 @@ it('restores the tenant context for each component in a bundled Livewire request
                     'snapshot' => json_encode($tenantASnapshot, JSON_THROW_ON_ERROR),
                     'updates' => [],
                     'calls' => [
-                        ['method' => 'captureTenant', 'params' => [], 'path' => ''],
+                        ['method' => 'captureTenant', 'params' => [$tenantB->getKey()], 'path' => ''],
                     ],
                 ],
                 [
-                    'snapshot' => json_encode($tenantBSnapshot, JSON_THROW_ON_ERROR),
+                    'snapshot' => json_encode($secondTenantASnapshot, JSON_THROW_ON_ERROR),
                     'updates' => [],
                     'calls' => [
                         ['method' => 'captureTenant', 'params' => [], 'path' => ''],
@@ -152,7 +152,7 @@ it('restores the tenant context for each component in a bundled Livewire request
 
     expect(BundledTenantContextComponent::$capturedTenantKeys)->toBe([
         $tenantA->getKey(),
-        $tenantB->getKey(),
+        $tenantA->getKey(),
         $tenantA->getKey(),
     ]);
 });
@@ -162,9 +162,13 @@ class BundledTenantContextComponent extends Component
     /** @var array<int | string> */
     public static array $capturedTenantKeys = [];
 
-    public function captureTenant(): void
+    public function captureTenant(int | string | null $replacementTenantKey = null): void
     {
         static::$capturedTenantKeys[] = Filament::getTenant()->getKey();
+
+        if ($replacementTenantKey !== null) {
+            Filament::setTenant(Team::query()->findOrFail($replacementTenantKey), isQuiet: true);
+        }
     }
 
     public function render(): string

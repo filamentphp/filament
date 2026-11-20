@@ -17,7 +17,6 @@ class SetUpPanel
         Filament::setCurrentResourceConfigurationKey(null);
         Filament::setTenant(null, isQuiet: true);
 
-        $panel->bootTenancy();
         Filament::bootCurrentPanel();
 
         return $next($request);

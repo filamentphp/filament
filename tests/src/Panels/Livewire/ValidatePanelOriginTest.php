@@ -60,6 +60,20 @@ function updatePanelRoute(TestCase $test, array $snapshot, string $host, ?array 
         ]);
 }
 
+/** @param array<array<string, mixed>> $snapshots */
+function updateBundledPanelRoutes(TestCase $test, array $snapshots, string $host = 'app.example.test'): TestResponse
+{
+    return $test
+        ->withHeaders(['X-Livewire' => true])
+        ->postJson("https://{$host}" . Livewire::getUpdateUri(), [
+            'components' => array_map(static fn (array $snapshot): array => [
+                'snapshot' => json_encode($snapshot, JSON_THROW_ON_ERROR),
+                'updates' => [],
+                'calls' => [],
+            ], $snapshots),
+        ]);
+}
+
 it('rejects replay of a panel snapshot on an unmatched host', function (): void {
     $snapshot = panelRouteSnapshot($this, Team::factory()->create());
 
@@ -118,7 +132,8 @@ it('allows the original panel route and restores its tenant on an update', funct
 
     $updatedSnapshot = json_decode($response->json('components.0.snapshot'), true, flags: JSON_THROW_ON_ERROR);
 
-    expect($updatedSnapshot['memo']['filamentOrigin'])->toBe($snapshot['memo']['filamentOrigin']);
+    expect($updatedSnapshot['memo']['filamentOrigin'])->toBe($snapshot['memo']['filamentOrigin'])
+        ->and($updatedSnapshot['memo']['filamentTenant'])->toBe($snapshot['memo']['filamentTenant']);
 });
 
 it('rejects replay when an unprotected route matches on another host', function (): void {
@@ -313,7 +328,40 @@ it('rejects lazy mount parameters from a different origin context', function (bo
     expect(PanelRouteProbe::$calls)->toBe(0);
 })->with(['panel component' => true, 'public component' => false]);
 
-it('preserves each origin in bundled panel and non-panel updates', function (bool $isPanelFirst): void {
+it('rejects lazy mount parameters from a different tenant', function (): void {
+    Route::domain('app.example.test')
+        ->middleware([
+            'panel:tenant-menu-grouping',
+            IdentifyTenant::class,
+        ])
+        ->get('/tenant-lazy-probe/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
+
+    $snapshots = [];
+    $mountParameters = [];
+
+    foreach ([Team::factory()->create(), Team::factory()->create()] as $tenant) {
+        $response = $this
+            ->get("https://app.example.test/tenant-lazy-probe/{$tenant->getRouteKey()}")
+            ->assertSuccessful();
+        $html = $response->getContent();
+        $snapshots[] = Utils::extractAttributeDataFromHtml($html, 'wire:snapshot');
+
+        preg_match("/__lazyLoad\\('([^']+)'\\)/", html_entity_decode($html), $matches);
+
+        expect($matches[1] ?? null)->not->toBeNull();
+
+        $mountParameters[] = $matches[1];
+    }
+
+    updatePanelRoute($this, $snapshots[0], 'app.example.test', [
+        ['method' => '__lazyLoad', 'params' => [$mountParameters[1]]],
+        ['method' => 'record', 'params' => []],
+    ])->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('rejects bundled panel and non-panel updates', function (bool $isPanelFirst): void {
     $panelSnapshot = panelRouteSnapshot($this, Team::factory()->create());
 
     Route::get('/public-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
@@ -325,24 +373,58 @@ it('preserves each origin in bundled panel and non-panel updates', function (boo
     $publicSnapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
     $snapshots = $isPanelFirst ? [$panelSnapshot, $publicSnapshot] : [$publicSnapshot, $panelSnapshot];
 
-    $response = $this
-        ->withHeaders(['X-Livewire' => true])
-        ->postJson('https://app.example.test' . Livewire::getUpdateUri(), [
-            'components' => array_map(static fn (array $snapshot): array => [
-                'snapshot' => json_encode($snapshot, JSON_THROW_ON_ERROR),
-                'updates' => [],
-                'calls' => [],
-            ], $snapshots),
-        ])->assertSuccessful();
+    updateBundledPanelRoutes($this, $snapshots)->assertNotFound();
 
-    $panelSnapshot = json_decode($response->json('components.' . ($isPanelFirst ? 0 : 1) . '.snapshot'), true, flags: JSON_THROW_ON_ERROR);
-    $publicSnapshot = json_decode($response->json('components.' . ($isPanelFirst ? 1 : 0) . '.snapshot'), true, flags: JSON_THROW_ON_ERROR);
-
-    updatePanelRoute($this, $publicSnapshot, 'other.example.test')->assertSuccessful();
-    updatePanelRoute($this, $panelSnapshot, 'other.example.test')->assertNotFound();
-
-    expect(PanelRouteProbe::$calls)->toBe(1);
+    expect(PanelRouteProbe::$calls)->toBe(0);
 })->with(['panel first' => true, 'non-panel first' => false]);
+
+it('rejects bundled updates from different panels', function (bool $isTenantPanelFirst): void {
+    Route::domain('app.example.test')
+        ->middleware('panel:admin')
+        ->get('/admin-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $tenantPanelSnapshot = panelRouteSnapshot($this, Team::factory()->create());
+    $adminPanelResponse = $this
+        ->get('https://app.example.test/admin-probe')
+        ->assertSuccessful();
+    $adminPanelSnapshot = Utils::extractAttributeDataFromHtml($adminPanelResponse->getContent(), 'wire:snapshot');
+    $snapshots = $isTenantPanelFirst ?
+        [$tenantPanelSnapshot, $adminPanelSnapshot] :
+        [$adminPanelSnapshot, $tenantPanelSnapshot];
+
+    updateBundledPanelRoutes($this, $snapshots)->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+})->with(['tenant panel first' => true, 'admin panel first' => false]);
+
+it('rejects bundled updates from different tenants', function (): void {
+    $firstSnapshot = panelRouteSnapshot($this, Team::factory()->create());
+    $secondSnapshot = panelRouteSnapshot($this, Team::factory()->create());
+
+    updateBundledPanelRoutes($this, [$firstSnapshot, $secondSnapshot])->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('allows bundled updates from the same panel and tenant across routes', function (): void {
+    Route::domain('app.example.test')
+        ->middleware([
+            'panel:tenant-menu-grouping',
+            IdentifyTenant::class,
+        ])
+        ->get('/same-context/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $tenant = Team::factory()->create();
+    $firstSnapshot = panelRouteSnapshot($this, $tenant);
+    $secondResponse = $this
+        ->get("https://app.example.test/same-context/{$tenant->getRouteKey()}")
+        ->assertSuccessful();
+    $secondSnapshot = Utils::extractAttributeDataFromHtml($secondResponse->getContent(), 'wire:snapshot');
+
+    updateBundledPanelRoutes($this, [$firstSnapshot, $secondSnapshot])->assertSuccessful();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
 
 it('leaves path-only panel updates working across hosts', function (): void {
     Route::middleware([
@@ -477,6 +559,18 @@ it('rejects a signed snapshot from before the route guard was added', function (
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
+it('rejects a signed panel snapshot from before tenant context was added', function (): void {
+    $snapshot = panelRouteSnapshot($this, Team::factory()->create());
+
+    unset($snapshot['memo']['filamentTenant'], $snapshot['checksum']);
+
+    $snapshot['checksum'] = Checksum::generate($snapshot);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
 it('does not restrict non-panel Livewire routes', function (): void {
     Route::get('/public-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
 
@@ -486,7 +580,8 @@ it('does not restrict non-panel Livewire routes', function (): void {
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
+    expect($snapshot['memo']['filamentOrigin'])->toBeFalse()
+        ->and($snapshot['memo']['filamentTenant'])->toBeFalse();
 
     updatePanelRoute($this, $snapshot, 'other.example.test')->assertSuccessful();
 

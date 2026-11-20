@@ -52,10 +52,7 @@ class FilamentManager
 
     protected bool $isServing = false;
 
-    /**
-     * @var array<Panel>
-     */
-    protected array $bootedPanels = [];
+    protected bool $isCurrentPanelBooted = false;
 
     protected ?Model $tenant = null;
 
@@ -70,15 +67,13 @@ class FilamentManager
 
     public function bootCurrentPanel(): void
     {
-        $panel = $this->getCurrentOrDefaultPanel();
-
-        if (in_array($panel, $this->bootedPanels, true)) {
+        if ($this->isCurrentPanelBooted) {
             return;
         }
 
-        $panel->boot();
+        $this->getCurrentOrDefaultPanel()->boot();
 
-        $this->bootedPanels[] = $panel;
+        $this->isCurrentPanelBooted = true;
     }
 
     /**

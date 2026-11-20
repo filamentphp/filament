@@ -30,13 +30,7 @@ class NavigationManager
 
     public function __construct()
     {
-        $this->setUpPanel(Filament::getCurrentOrDefaultPanel());
-    }
-
-    protected function setUpPanel(Panel $panel): void
-    {
-        $this->panel = $panel;
-        $this->isNavigationMounted = false;
+        $this->panel = Filament::getCurrentOrDefaultPanel();
 
         $this->navigationGroups = array_map(
             fn (NavigationGroup | string $group): NavigationGroup | string => $group instanceof NavigationGroup ? (clone $group) : $group,
@@ -53,12 +47,6 @@ class NavigationManager
      */
     public function get(): array
     {
-        $panel = Filament::getCurrentOrDefaultPanel();
-
-        if ($this->panel !== $panel) {
-            $this->setUpPanel($panel);
-        }
-
         if ($this->panel->hasNavigationBuilder()) {
             return $this->panel->buildNavigation();
         }
