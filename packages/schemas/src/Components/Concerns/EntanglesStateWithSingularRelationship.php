@@ -91,12 +91,28 @@ trait EntanglesStateWithSingularRelationship
                         ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
                         ($childComponent->hasRelationship())
                     ) {
+                        $isDisabled = $childComponent->isDisabled();
+
+                        if (
+                            (! $childComponent->isSaved()) &&
+                            (
+                                ($isDisabled && (! $childComponent->shouldSaveRelationshipsWhenDisabled())) ||
+                                ((! $isDisabled) && (! $childComponent->isHidden()))
+                            )
+                        ) {
+                            continue;
+                        }
+
                         $componentsWithThisRelationship[] = $childComponent;
 
                         continue;
                     }
 
                     foreach ($childComponent->getChildSchemas() as $schema) {
+                        if ($schema->isDisabled() && (! $childComponent->shouldSaveRelationshipsWhenDisabled())) {
+                            continue;
+                        }
+
                         $findComponentsWithThisRelationship($schema);
                     }
                 }

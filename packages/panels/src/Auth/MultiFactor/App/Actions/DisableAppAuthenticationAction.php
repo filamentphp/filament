@@ -84,6 +84,8 @@ class DisableAppAuthenticationAction
                     ->password()
                     ->revealable(Filament::arePasswordsRevealable())
                     ->autocomplete('one-time-code')
+                    // Validate the normalized value without making the input natively required when a one-time code is used.
+                    ->rule('required', fn (Get $get): bool => blank($get('code')))
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             if (blank($value)) {

@@ -4,6 +4,6 @@ return [
 
     'label' => 'Cargando...',
 
-    'error' => 'No se ha podido cargar.',
+    'error' => 'No se puede cargar.',
 
 ];

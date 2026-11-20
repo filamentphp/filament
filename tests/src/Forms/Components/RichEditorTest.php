@@ -2615,6 +2615,54 @@ describe('`resolveFileAttachmentIds()` behaviour', function (): void {
         $walker($decoded['content'] ?? []);
     };
 
+    it('only stores attachments during `getState()` when the editor and its containing schemas are enabled', function (bool $isSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled): void {
+        Storage::fake('tmp-for-tests');
+        Storage::fake('public');
+
+        $uploadedFile = UploadedFile::fake()->image('attachment.jpg');
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded($uploadedFile);
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $uploadedFile->getContent());
+        $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+        $editor = RichEditor::make('content')
+            ->fileAttachmentsDisk('public')
+            ->fileAttachmentsDirectory('attachments')
+            ->disabled($isFieldDisabled)
+            ->saved();
+        $livewire = Livewire::make();
+        $schema = Schema::make($livewire)
+            ->statePath('data')
+            ->disabled($isSchemaDisabled)
+            ->components([
+                Group::make([$editor])->disabled($isParentDisabled)->saved(),
+            ])
+            ->fill();
+
+        data_set($livewire, 'componentFileAttachments.data.content.new-upload', $temporaryFile);
+        $editor->rawState('<p><img src="placeholder" data-id="new-upload" /></p>');
+
+        $state = $schema->getState();
+        $shouldStore = (! $isSchemaDisabled) && (! $isParentDisabled) && (! $isFieldDisabled);
+
+        expect(Storage::disk('public')->allFiles())->toHaveCount($shouldStore ? 1 : 0);
+
+        if (! $shouldStore) {
+            expect($state['content'])->toContain('data-id="new-upload"');
+
+            $editor->saveFileAttachments();
+        }
+
+        $files = Storage::disk('public')->allFiles();
+
+        expect($files)->toHaveCount(1)
+            ->and(Storage::disk('public')->get($files[0]))->toBe($uploadedFile->getContent());
+    })->with([
+        'enabled' => [false, false, false],
+        'disabled schema' => [true, false, false],
+        'disabled parent' => [false, true, false],
+        'disabled editor' => [false, false, true],
+    ]);
+
     it('persists a newly uploaded image and rewrites its `data-id` to the stored path', function () use ($walkEditorRawState): void {
         Storage::fake('tmp-for-tests');
 

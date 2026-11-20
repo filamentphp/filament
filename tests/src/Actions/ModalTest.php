@@ -230,6 +230,34 @@ describe('browser interactions', function (): void {
             ->assertNoAccessibilityIssues();
     });
 
+    it('finishes closing a modal without an ID after repeated `Escape` events', function (int $pressCount): void {
+        $page = visit('/modal-browser-test')
+            ->click('[data-testid="no-id-trigger"]')
+            ->assertVisible('[data-testid="no-id-modal"]')
+            ->assertPresent('[aria-label="Modal without an ID"] :focus');
+
+        $page->script("for (let press = 0; press < {$pressCount}; press++) document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))");
+
+        $page->assertMissing('[data-testid="no-id-modal"]');
+
+        expect($page->script(<<<'JS'
+            const button = document.querySelector('[data-testid="behind-button"]')
+            const bounds = button.getBoundingClientRect()
+
+            document.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2) === button
+            JS))->toBeTrue();
+
+        $page->click('[data-testid="behind-button"]')
+            ->assertSee('Behind: clicked')
+            ->click('[data-testid="no-id-trigger"]')
+            ->assertVisible('[data-testid="no-id-modal"]')
+            ->assertPresent('[aria-label="Modal without an ID"] :focus')
+            ->keys(':focus', 'Escape')
+            ->assertMissing('[data-testid="no-id-modal"]')
+            ->assertPresent('[data-testid="no-id-trigger"]:focus')
+            ->assertNoSmoke();
+    })->with([1, 2]);
+
     it('restores focus and scroll position after cancelling and confirming a top-level action modal', function (): void {
         $this->actingAs(User::factory()->create());
 

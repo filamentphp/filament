@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
@@ -1135,6 +1136,15 @@ describe('calling actions', function (): void {
             ]);
     });
 
+    it('passes state from `disabledSchema()` to an action', function (): void {
+        livewire(Actions::class)
+            ->callAction('disabledSchema', data: [
+                'payload' => $payload = Str::random(),
+            ])
+            ->assertHasNoFormErrors()
+            ->assertDispatched('disabled-schema-called', data: ['payload' => $payload]);
+    });
+
     it('can call an action with arguments', function (): void {
         livewire(Actions::class)
             ->callAction('arguments', arguments: [
@@ -1480,6 +1490,50 @@ describe('authorization enforcement', function (): void {
             ->assertDispatched('enforcement-authorized-called');
     });
 });
+describe('table action registration context', function (): void {
+    it('does not mount non-record table actions with a supplied record', function (string $name): void {
+        $post = Post::factory()->create();
+
+        livewire(TableActionTestComponent::class)
+            ->mountAction(TestAction::make($name)->table($post))
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched("{$name}-called");
+    })->with(['simple', 'groupedHeader', 'toolbar', 'groupedToolbar']);
+
+    it('can call non-record table actions without a supplied record', function (string $name): void {
+        livewire(TableActionTestComponent::class)
+            ->callAction(TestAction::make($name)->table())
+            ->assertDispatched("{$name}-called");
+    })->with(['simple', 'groupedHeader', 'toolbar', 'groupedToolbar']);
+
+    it('can call registered record actions with a supplied record', function (string $name): void {
+        $post = Post::factory()->create();
+
+        livewire(TableActionTestComponent::class)
+            ->callAction(TestAction::make($name)->table($post))
+            ->assertDispatched("{$name}-called", recordKey: $post->getKey());
+    })->with(['view', 'groupedRecord']);
+
+    it('can mount and submit a column action with its record', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(TableActionTestComponent::class)
+            ->mountAction(TestAction::make('column')->table($post))
+            ->assertActionMounted(TestAction::make('column')->table($post))
+            ->callMountedAction()
+            ->assertDispatched('column-called', recordKey: $post->getKey());
+    });
+
+    it('does not resolve a page action as a table record action', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(TableActionTestComponent::class)
+            ->mountAction(TestAction::make('overview')->table($post))
+            ->assertActionNotMounted();
+    });
+});
+
 describe('actions mounted from a URL query parameter', function (): void {
     // The `?action=` / `?tableAction=` query string parameters open an action on page
     // load via `mountDefaultActions()` carrying a `mountedFromUrl` context
@@ -2217,6 +2271,28 @@ describe('record visibility and authorization', function (): void {
             ->and($action->isAuthorized())->toBeFalse();
     });
 
+    it('uses temporary model records returned by `record()` for visibility and authorization', function (string $check): void {
+        $isPublished = false;
+        $action = Action::make('test')
+            ->table(Table::make(app(TableActionTestComponent::class)))
+            ->record(static function () use (&$isPublished): Post {
+                return new Post(['id' => 1, 'is_published' => $isPublished]);
+            })
+            ->hidden(static fn (Post $record): bool => ! $record->is_published);
+
+        if ($check === 'isAuthorized') {
+            $action->authorize(static fn (Post $record): bool => $record->is_published);
+        }
+
+        $results = [];
+
+        foreach ([false, true, false, true] as $isPublished) {
+            $results[] = $action->{$check}();
+        }
+
+        expect($results)->toBe(($check === 'isHidden') ? [true, false, true, false] : [false, true, false, true]);
+    })->with(['isHidden', 'isAuthorized']);
+
     it('uses the current array record for visibility and authorization', function (): void {
         $component = livewire(TableActionTestComponent::class);
         $unpublishedRecord = ['__key' => '1', 'is_published' => false];
@@ -2295,14 +2371,29 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->lazyLoaded($this->isTableLazyLoaded)->columns([
-            TextColumn::make('title'),
+            TextColumn::make('title')->action(
+                Action::make('column')
+                    ->requiresConfirmation()
+                    ->action(fn (Post $record) => $this->dispatch('column-called', recordKey: $record->getKey())),
+            ),
         ])->recordActions([
             Action::make('view')->requiresConfirmation()->registerModalActions([
                 Action::make('confirm')->requiresConfirmation()->action(static fn () => null),
-            ])->action(static fn () => null),
+            ])->action(fn (Post $record) => $this->dispatch('view-called', recordKey: $record->getKey())),
+            ActionGroup::make([
+                Action::make('groupedRecord')->action(fn (Post $record) => $this->dispatch('groupedRecord-called', recordKey: $record->getKey())),
+            ]),
         ])->headerActions([
             Action::make('123')->requiresConfirmation()->action(static fn () => null),
             Action::make('simple')->action(fn () => $this->dispatch('simple-called')),
+            ActionGroup::make([
+                Action::make('groupedHeader')->action(fn () => $this->dispatch('groupedHeader-called')),
+            ]),
+        ])->toolbarActions([
+            Action::make('toolbar')->action(fn () => $this->dispatch('toolbar-called')),
+            ActionGroup::make([
+                Action::make('groupedToolbar')->action(fn () => $this->dispatch('groupedToolbar-called')),
+            ]),
         ]);
     }
 
