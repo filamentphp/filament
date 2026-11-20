@@ -233,7 +233,8 @@ describe('browser interactions', function (): void {
     it('finishes closing a modal without an ID after repeated `Escape` events', function (int $pressCount): void {
         $page = visit('/modal-browser-test')
             ->click('[data-testid="no-id-trigger"]')
-            ->assertVisible('[data-testid="no-id-modal"]');
+            ->assertVisible('[data-testid="no-id-modal"]')
+            ->assertPresent('[aria-label="Modal without an ID"] :focus');
 
         $page->script("for (let press = 0; press < {$pressCount}; press++) document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))");
 
