@@ -27,13 +27,14 @@ class PostsWithCreateAndMetadataRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->recordActions([
+                CreateAction::make('createFromRecord'),
                 EditAction::make(),
             ]);
     }
 
     public function form(Schema $schema): Schema
     {
-        return $schema
+        $schema
             ->components([
                 TextInput::make('title')->required(),
                 TextInput::make('rating')->numeric()->required(),
@@ -41,5 +42,9 @@ class PostsWithCreateAndMetadataRelationManager extends RelationManager
                     TextInput::make('seo_title'),
                 ])->relationship('metadata'),
             ]);
+
+        $schema->getFlatFields();
+
+        return $schema;
     }
 }

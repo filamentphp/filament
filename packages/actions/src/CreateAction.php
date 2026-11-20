@@ -227,7 +227,9 @@ class CreateAction extends Action
 
     public function getSchema(Schema $schema): ?Schema
     {
+        $model = $this->getModel();
+
         // Prevent inherited or supplied records from receiving relationship changes before the new record exists.
-        return parent::getSchema($schema)?->model($this->getModel());
+        return parent::getSchema($schema->model($model))?->model($model);
     }
 }

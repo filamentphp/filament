@@ -225,12 +225,6 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Action::make('enabled'),
                 Action::make('disabled')
                     ->disabled(),
-                ActionGroup::make([
-                    Action::make('groupedWithVisibleGroupCondition'),
-                ])->visible(fn (?Model $record): bool => $record !== null),
-                ActionGroup::make([
-                    Action::make('groupedWithHiddenGroupCondition'),
-                ])->hidden(fn (?Model $record): bool => $record !== null),
                 Action::make('hasIcon')
                     ->icon(Heroicon::PencilSquare),
                 Action::make('hasLabel')
@@ -250,6 +244,12 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->multiple(),
             ])
             ->recordActions([
+                ActionGroup::make([
+                    Action::make('groupedWithVisibleGroupCondition'),
+                ])->visible(fn (?Model $record): bool => $record !== null),
+                ActionGroup::make([
+                    Action::make('groupedWithHiddenGroupCondition'),
+                ])->hidden(fn (?Model $record): bool => $record !== null),
                 EditAction::make(),
                 DeleteAction::make(),
                 ForceDeleteAction::make(),

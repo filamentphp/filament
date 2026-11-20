@@ -118,6 +118,15 @@ describe('creating records', function (): void {
         expect(Department::count())->toBe($initialCount);
     });
 
+    it('does not mount a header `CreateAction` with a table record', function (): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->for($user, 'author')->create();
+
+        livewire(PostsWithCreateAndMetadataRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(CreateAction::class)->table($post))
+            ->assertActionNotMounted();
+    });
+
     it('does not save relationships to a table record denied `update()` when using `CreateAction`', function (): void {
         Gate::policy(Post::class, CreateActionPostPolicy::class);
 
@@ -133,7 +142,7 @@ describe('creating records', function (): void {
             ->assertActionNotMounted();
 
         livewire(PostsWithCreateAndMetadataRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-            ->callAction(TestAction::make(CreateAction::class)->table($post), [
+            ->callAction(TestAction::make('createFromRecord')->table($post), [
                 'title' => $title = Str::random(),
                 'rating' => 5,
                 'metadata' => ['seo_title' => $seoTitle = Str::random()],
