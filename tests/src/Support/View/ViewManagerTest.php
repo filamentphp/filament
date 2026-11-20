@@ -138,18 +138,45 @@ test('render hooks can be scoped to multiple scopes', function (): void {
         ->toHtml()->toBe('barbar');
 });
 
-test('render hooks can be scoped to multiple scopes but only ever output once', function (): void {
+test('render hooks output once per registration across matching scopes', function (array $scopes): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
 
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
-    }, ['baz', 'qux']);
+    }, $scopes);
 
-    expect(FilamentView::renderHook('foo', scopes: ['baz', 'qux']))
+    expect(FilamentView::renderHook('foo', scopes: ['qux', 'baz', 'qux']))
         ->toBeInstanceOf(HtmlString::class)
         ->toHtml()->toBe('barbar');
+})->with([
+    'multiple scopes' => [['baz', 'qux']],
+    'repeated scopes' => [['baz', 'qux', 'baz']],
+    'global and scoped' => [['', 'baz', 'qux']],
+]);
+
+test('stateless render hook registrations remain independent across matching scopes', function (): void {
+    foreach (range(1, 2) as $registration) {
+        FilamentView::registerRenderHook('independent', static fn (array $data): string => $data['content'], scopes: ['alpha', 'beta']);
+    }
+
+    expect(FilamentView::renderHook('independent', scopes: ['beta', 'alpha', 'beta'], data: ['content' => 'hook'])->toHtml())
+        ->toBe('hookhook');
+});
+
+test('reusing a render hook preserves its closure-local static state', function (): void {
+    $hook = static function (): string {
+        static $count = 0;
+
+        return (string) ++$count;
+    };
+
+    FilamentView::registerRenderHook('stateful', $hook);
+    FilamentView::registerRenderHook('stateful', $hook);
+
+    expect(FilamentView::renderHook('stateful')->toHtml())->toBe('12')
+        ->and(FilamentView::renderHook('stateful')->toHtml())->toBe('34');
 });
 
 test('render hooks can be passed data', function (): void {
@@ -162,7 +189,7 @@ test('render hooks can be passed data', function (): void {
         ->toHtml()->toBe('bar');
 });
 
-test('mobile menu hook spellings share scopes, ordering and callback identity', function (string $legacy, string $canonical): void {
+test('mobile menu hook spellings share scopes and ordering without merging registrations', function (string $legacy, string $canonical): void {
     foreach ([[$legacy, $canonical], [$canonical, $legacy]] as [$first, $second]) {
         FilamentView::swap(new ViewManager);
 
@@ -203,8 +230,8 @@ test('mobile menu hook spellings share scopes, ordering and callback identity', 
             expect(FilamentView::hasRenderHook($name))->toBeTrue()
                 ->and(FilamentView::hasRenderHook($name, scopes: 'unrelated'))->toBeTrue()
                 ->and(FilamentView::renderHook($name, scopes: ['beta', 'alpha'], data: ['value' => 'payload'])->toHtml())
-                ->toBe('12<b>beta,alpha:payload</b>RRBA')
-                ->and($calls)->toBe(1);
+                ->toBe('12<b>beta,alpha:payload</b><b>beta,alpha:payload</b>RRB<b>beta,alpha:payload</b>A')
+                ->and($calls)->toBe(3);
         }
     }
 })->with([

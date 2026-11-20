@@ -47,7 +47,7 @@ it('preserves the last configured icon across alternating compatible spellings',
     ['schema::components.callout.info', 'schemas::components.callout.info'],
 ]);
 
-it('preserves hook order and callback identity across alternating compatible spellings', function (string $legacy, string $canonical): void {
+it('preserves hook order and separate registrations across alternating compatible spellings', function (string $legacy, string $canonical): void {
     foreach ([[$legacy, $canonical], [$canonical, $legacy]] as [$first, $second]) {
         FilamentView::swap(new ViewManager);
         $sharedHook = static fn (): string => 'shared';
@@ -66,10 +66,26 @@ it('preserves hook order and callback identity across alternating compatible spe
 
         foreach ([$first, $second] as $name) {
             expect(FilamentView::hasRenderHook($name))->toBeTrue()
-                ->and(FilamentView::renderHook($name, scopes: ['page', 'resource'])->toHtml())->toBe('globalABCshared');
+                ->and(FilamentView::renderHook($name, scopes: ['page', 'resource'])->toHtml())->toBe('globalABCsharedshared');
         }
     }
 })->with([
     ['panels::page.sub-navigation.module-menu.before', 'panels::page.sub-navigation.mobile-menu.before'],
     ['panels::page.sub-navigation.module-menu.after', 'panels::page.sub-navigation.mobile-menu.after'],
+]);
+
+it('preserves stateless panel render hook registrations without duplicating matching scopes', function (array $scopes): void {
+    FilamentView::swap(new ViewManager);
+    $panel = Panel::make()->id('independent-hooks');
+
+    foreach (range(1, 2) as $registration) {
+        $panel->renderHook('independent', static fn (): string => 'hook', scopes: $scopes);
+    }
+
+    $panel->boot();
+
+    expect(FilamentView::renderHook('independent', scopes: ['resource', 'page', 'resource'])->toHtml())->toBe('hookhook');
+})->with([
+    'multiple scopes' => [['page', 'resource']],
+    'global and repeated scopes' => [['', 'page', 'resource', 'page']],
 ]);
