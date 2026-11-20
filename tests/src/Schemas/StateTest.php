@@ -405,6 +405,87 @@ describe('`afterStateUpdated()` hooks', function (): void {
             ->getData()->toBe([$statePath => strrev($state)]);
     });
 
+    test('each stateless hook registration runs once per component state', function (): void {
+        $component = TextInput::make('value');
+
+        foreach (range(1, 2) as $registration) {
+            $component->afterStateUpdated(static function (Livewire $livewire): void {
+                $livewire->data['calls']++;
+            });
+        }
+
+        $schema = Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([$component])
+            ->fill(['value' => 'first', 'calls' => 0]);
+
+        $schema->callAfterStateUpdated('data.value');
+        $schema->callAfterStateUpdated('data.value');
+
+        expect($livewire->data['calls'])->toBe(2);
+
+        $component->state('second');
+        $schema->callAfterStateUpdated('data.value');
+
+        expect($livewire->data['calls'])->toBe(4);
+
+        $component->state('first');
+        $schema->callAfterStateUpdated('data.value');
+
+        expect($livewire->data['calls'])->toBe(4);
+    });
+
+    test('registrations of the same callback run independently without cloning its static state', function (): void {
+        $hook = static function (Livewire $livewire): void {
+            static $calls = 0;
+
+            $livewire->data['calls'][] = ++$calls;
+        };
+        $component = TextInput::make('value')
+            ->afterStateUpdated($hook)
+            ->afterStateUpdated($hook);
+        $schema = Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([$component])
+            ->fill(['value' => 'first', 'calls' => []]);
+
+        $schema->callAfterStateUpdated('data.value');
+        $schema->callAfterStateUpdated('data.value');
+
+        expect($livewire->data['calls'])->toBe([1, 2]);
+
+        $component->state('second');
+        $schema->callAfterStateUpdated('data.value');
+
+        expect($livewire->data['calls'])->toBe([1, 2, 3, 4]);
+    });
+
+    test('replacement hook registrations run even when the component state has not changed', function (bool $clearWithNull): void {
+        $component = TextInput::make('value');
+        $schema = Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([$component])
+            ->fill(['value' => 'unchanged', 'calls' => 0]);
+        $hook = static function (Livewire $livewire): void {
+            $livewire->data['calls']++;
+        };
+
+        $component->afterStateUpdated($hook);
+        $schema->callAfterStateUpdated('data.value');
+
+        if ($clearWithNull) {
+            $component->afterStateUpdated(null);
+        } else {
+            $component->clearAfterStateUpdatedHooks();
+        }
+
+        $component->afterStateUpdated($hook);
+        $schema->callAfterStateUpdated('data.value');
+        $schema->callAfterStateUpdated('data.value');
+
+        expect($livewire->data['calls'])->toBe(2);
+    })->with(['clearing hooks' => false, 'setting a null hook' => true]);
+
     test('custom logic can be executed after nested state is updated', function (): void {
         Schema::make($livewire = Livewire::make())
             ->statePath('data')
