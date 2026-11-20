@@ -2262,6 +2262,28 @@ describe('record visibility and authorization', function (): void {
             ->and($action->isAuthorized())->toBeFalse();
     });
 
+    it('uses temporary model records returned by `record()` for visibility and authorization', function (string $check): void {
+        $isPublished = false;
+        $action = Action::make('test')
+            ->table(Table::make(app(TableActionTestComponent::class)))
+            ->record(static function () use (&$isPublished): Post {
+                return new Post(['id' => 1, 'is_published' => $isPublished]);
+            })
+            ->hidden(static fn (Post $record): bool => ! $record->is_published);
+
+        if ($check === 'isAuthorized') {
+            $action->authorize(static fn (Post $record): bool => $record->is_published);
+        }
+
+        $results = [];
+
+        foreach ([false, true, false, true] as $isPublished) {
+            $results[] = $action->{$check}();
+        }
+
+        expect($results)->toBe(($check === 'isHidden') ? [true, false, true, false] : [false, true, false, true]);
+    })->with(['isHidden', 'isAuthorized']);
+
     it('uses the current array record for visibility and authorization', function (): void {
         $component = livewire(TableActionTestComponent::class);
         $unpublishedRecord = ['__key' => '1', 'is_published' => false];
