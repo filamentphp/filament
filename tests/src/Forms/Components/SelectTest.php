@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Repeater;
@@ -227,9 +228,81 @@ describe('configuration', function (): void {
                     ->assertFormComponentExists('team_id', function (Select $component) use ($team): bool {
                         expect($component->getSelectedRecord()?->is($team))->toBeTrue();
 
+                        $editOptionAction = $component->getEditOptionAction()?->schemaComponent($component);
+
                         $team->update(['name' => 'Beta Team']);
-                        $component->getLivewire()->mountedActions = [['name' => $component->getEditOptionActionName()]];
+                        $component->getLivewire()->mountedActions = [[
+                            'name' => $component->getEditOptionActionName(),
+                            'context' => $editOptionAction?->getContext() ?? [],
+                        ]];
                         $component->getEditOptionAction();
+
+                        expect($component->getSelectedRecord())->toBeNull();
+
+                        return true;
+                    });
+            } finally {
+                Team::setAllGlobalScopes($globalScopes);
+            }
+        });
+
+        it('reapplies global scopes when resolving a nested action within the `editOption` action', function (): void {
+            $globalScopes = Team::getAllGlobalScopes();
+
+            try {
+                Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+                $team = Team::factory()->create(['name' => 'Alpha Team']);
+                $user = User::factory()->create(['team_id' => $team->getKey()])->load('team');
+
+                livewire(SelectWithEditableBelongsToRelationship::class, ['record' => $user])
+                    ->assertFormComponentExists('team_id', function (Select $component) use ($team): bool {
+                        expect($component->getSelectedRecord()?->is($team))->toBeTrue();
+
+                        $editOptionAction = $component->getEditOptionAction()?->schemaComponent($component);
+
+                        $team->update(['name' => 'Beta Team']);
+                        $component->getLivewire()->mountedActions = [
+                            [
+                                'name' => $component->getEditOptionActionName(),
+                                'context' => $editOptionAction?->getContext() ?? [],
+                            ],
+                            [
+                                'name' => 'nestedAction',
+                                'context' => ['schemaComponent' => 'mountedActionSchema0.nestedAction'],
+                            ],
+                        ];
+                        $component->getEditOptionAction();
+
+                        expect($component->getSelectedRecord())->toBeNull();
+
+                        return true;
+                    });
+            } finally {
+                Team::setAllGlobalScopes($globalScopes);
+            }
+        });
+
+        it('reapplies global scopes when a custom action resolves the selected record', function (): void {
+            $globalScopes = Team::getAllGlobalScopes();
+
+            try {
+                Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+                $team = Team::factory()->create(['name' => 'Alpha Team']);
+                $user = User::factory()->create(['team_id' => $team->getKey()])->load('team');
+
+                livewire(SelectWithEditableBelongsToRelationship::class, ['record' => $user])
+                    ->assertFormComponentExists('team_id', function (Select $component) use ($team): bool {
+                        expect($component->getSelectedRecord()?->is($team))->toBeTrue();
+
+                        $customAction = Action::make('inspectOption')->schemaComponent($component);
+
+                        $team->update(['name' => 'Beta Team']);
+                        $component->getLivewire()->mountedActions = [[
+                            'name' => $customAction->getName(),
+                            'context' => $customAction->getContext(),
+                        ]];
 
                         expect($component->getSelectedRecord())->toBeNull();
 

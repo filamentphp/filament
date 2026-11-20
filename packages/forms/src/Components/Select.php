@@ -101,6 +101,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool $hasCachedMissingSelectedRecord = false;
 
+    /**
+     * @var array<array{name: mixed, context: mixed, arguments: mixed}> | null
+     */
+    protected ?array $selectedRecordMountedActionState = null;
+
     protected mixed $cachedSelectedRecordState = null;
 
     protected ?string $cachedSelectedRecordStatePath = null;
@@ -406,13 +411,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         if (! $this->hasEditOptionActionFormSchema()) {
             return null;
-        }
-
-        $mountedActions = data_get($this->getLivewire(), 'mountedActions');
-        $mountedAction = is_array($mountedActions) ? Arr::last($mountedActions) : null;
-
-        if (is_array($mountedAction) && (($mountedAction['name'] ?? null) === $this->getEditOptionActionName())) {
-            $this->refreshSelectedRecord();
         }
 
         $action = Action::make($this->getEditOptionActionName())
@@ -1581,6 +1579,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function getSelectedRecord(): ?Model
     {
+        if ($this->shouldRefreshSelectedRecordForMountedAction()) {
+            $this->refreshSelectedRecord();
+        }
+
         $state = $this->getState();
         $statePath = $this->getStatePath();
 
@@ -1604,6 +1606,53 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->hasCachedMissingSelectedRecord = false;
 
         return $this->cachedSelectedRecord;
+    }
+
+    protected function shouldRefreshSelectedRecordForMountedAction(): bool
+    {
+        $mountedActions = data_get($this->getLivewire(), 'mountedActions');
+
+        if (! is_array($mountedActions)) {
+            $this->selectedRecordMountedActionState = null;
+
+            return false;
+        }
+
+        $mountedActionState = [];
+        $hasActionForComponent = false;
+        $componentKey = $this->getKey();
+
+        foreach ($mountedActions as $mountedAction) {
+            if (! is_array($mountedAction)) {
+                continue;
+            }
+
+            $schemaComponentKey = $mountedAction['context']['schemaComponent'] ?? null;
+
+            $mountedActionState[] = [
+                'name' => $mountedAction['name'] ?? null,
+                'context' => $mountedAction['context'] ?? null,
+                'arguments' => $mountedAction['arguments'] ?? null,
+            ];
+
+            if ($schemaComponentKey === $componentKey) {
+                $hasActionForComponent = true;
+            }
+        }
+
+        if (! $hasActionForComponent) {
+            $this->selectedRecordMountedActionState = null;
+
+            return false;
+        }
+
+        if ($this->selectedRecordMountedActionState === $mountedActionState) {
+            return false;
+        }
+
+        $this->selectedRecordMountedActionState = $mountedActionState;
+
+        return true;
     }
 
     public function hasRelationship(): bool
