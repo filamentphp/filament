@@ -266,6 +266,83 @@ test('custom logic can be executed after state is updated', function () {
         ->getData()->toBe([$statePath => strrev($state)]);
 });
 
+test('each stateless `afterStateUpdated()` registration runs once per component state', function () {
+    $component = (new Component)->statePath('value');
+
+    foreach (range(1, 2) as $registration) {
+        $component->afterStateUpdated(static function (Livewire $livewire): void {
+            $livewire->data['calls']++;
+        });
+    }
+
+    $container = ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([$component])
+        ->fill(['value' => 'first', 'calls' => 0]);
+
+    $container->callAfterStateUpdated('data.value');
+    $container->callAfterStateUpdated('data.value');
+
+    expect($livewire->data['calls'])->toBe(2);
+
+    $component->state('second');
+    $container->callAfterStateUpdated('data.value');
+
+    expect($livewire->data['calls'])->toBe(4);
+
+    $component->state('first');
+    $container->callAfterStateUpdated('data.value');
+
+    expect($livewire->data['calls'])->toBe(4);
+});
+
+test('registrations of the same `afterStateUpdated()` callback run independently without cloning its static state', function () {
+    $hook = static function (Livewire $livewire): void {
+        static $calls = 0;
+
+        $livewire->data['calls'][] = ++$calls;
+    };
+    $component = (new Component)
+        ->statePath('value')
+        ->afterStateUpdated($hook)
+        ->afterStateUpdated($hook);
+    $container = ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([$component])
+        ->fill(['value' => 'first', 'calls' => []]);
+
+    $container->callAfterStateUpdated('data.value');
+    $container->callAfterStateUpdated('data.value');
+
+    expect($livewire->data['calls'])->toBe([1, 2]);
+
+    $component->state('second');
+    $container->callAfterStateUpdated('data.value');
+
+    expect($livewire->data['calls'])->toBe([1, 2, 3, 4]);
+});
+
+test('replacement `afterStateUpdated()` registrations run even when the component state has not changed', function () {
+    $component = (new Component)->statePath('value');
+    $container = ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([$component])
+        ->fill(['value' => 'unchanged', 'calls' => 0]);
+    $hook = static function (Livewire $livewire): void {
+        $livewire->data['calls']++;
+    };
+
+    $component->afterStateUpdated($hook);
+    $container->callAfterStateUpdated('data.value');
+
+    $component->clearAfterStateUpdatedHooks();
+    $component->afterStateUpdated($hook);
+    $container->callAfterStateUpdated('data.value');
+    $container->callAfterStateUpdated('data.value');
+
+    expect($livewire->data['calls'])->toBe(2);
+});
+
 test('custom logic can be executed after nested state is updated', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')

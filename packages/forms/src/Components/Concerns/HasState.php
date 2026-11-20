@@ -22,6 +22,8 @@ trait HasState
      */
     protected array $afterStateUpdated = [];
 
+    protected int $afterStateUpdatedHookIndex = 0;
+
     protected ?Closure $beforeStateDehydrated = null;
 
     protected mixed $defaultState = null;
@@ -68,7 +70,7 @@ trait HasState
 
     public function afterStateUpdated(?Closure $callback): static
     {
-        $this->afterStateUpdated[] = $callback;
+        $this->afterStateUpdated[$this->afterStateUpdatedHookIndex++] = $callback;
 
         return $this;
     }
@@ -91,8 +93,8 @@ trait HasState
 
     public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
     {
-        foreach ($this->afterStateUpdated as $callback) {
-            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
+        foreach ($this->afterStateUpdated as $callbackIndex => $callback) {
+            $runId = $callbackIndex . ':' . md5(json_encode($this->getState()));
 
             if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
                 continue;
