@@ -15,7 +15,7 @@
         "prettier": "npx prettier --write --cache --cache-location=.prettiercache ."
     },
     "devDependencies": {
-        "@awcodes/alpine-floating-ui": "^3.4.0",
+        "@awcodes/alpine-floating-ui": "^3.6.5",
         "@babel/runtime": "^7.15.3",
         "@codemirror/commands": "^6.8.1",
         "@codemirror/lang-cpp": "^6.0.3",
