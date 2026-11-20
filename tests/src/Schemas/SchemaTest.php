@@ -489,6 +489,17 @@ describe('disabled state', function (): void {
 
         expect($schema->isDisabled())->toBeTrue();
     });
+
+    it('can inherit `isDisabled()` from a parent component', function (): void {
+        $livewire = Livewire::make();
+        $parentComponent = (new Component)
+            ->container(Schema::make($livewire))
+            ->disabled();
+        $schema = Schema::make($livewire)
+            ->parentComponent($parentComponent);
+
+        expect($schema->isDisabled())->toBeTrue();
+    });
 });
 
 describe('columns', function (): void {

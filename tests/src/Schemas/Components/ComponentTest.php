@@ -232,21 +232,20 @@ describe('extra attributes', function (): void {
         expect($component->getExtraAttributes())->toBe(['data-dynamic' => 'yes']);
     });
 
-    it('does not merge the same `Closure` into `extraAttributes()` more than once', function (): void {
-        $evaluationCount = 0;
-        $attributes = static function () use (&$evaluationCount): array {
-            $evaluationCount++;
+    it('evaluates each `extraAttributes()` registration even when its `Closure` is reused', function (): void {
+        $attributes = static function (): array {
+            static $evaluationCount = 0;
 
-            return ['class' => 'custom-content'];
+            return ['data-evaluation-' . ++$evaluationCount => 'yes'];
         };
         $component = (new Component)
             ->extraAttributes($attributes, merge: true)
             ->extraAttributes($attributes, merge: true);
 
         expect($component->getExtraAttributes())
-            ->toBe(['class' => 'custom-content'])
-            ->and($evaluationCount)
-            ->toBe(1);
+            ->toEqual(['data-evaluation-1' => 'yes', 'data-evaluation-2' => 'yes'])
+            ->and($component->getExtraAttributes())
+            ->toEqual(['data-evaluation-3' => 'yes', 'data-evaluation-4' => 'yes']);
     });
 });
 

@@ -936,6 +936,8 @@ TextInput::make('name')
 > [!TIP]
 > By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
+When merging attributes, each callback registration is evaluated separately, even if the same callback is registered more than once.
+
 ### Adding extra HTML attributes to the input element of a field
 
 Some fields use an underlying `<input>` or `<select>` DOM element, but this is often not the outer element in the field, so the `extraAttributes()` method may not work as you wish. In this case, you may use the `extraInputAttributes()` method, which will merge the attributes onto the `<input>` or `<select>` element in the field's HTML:

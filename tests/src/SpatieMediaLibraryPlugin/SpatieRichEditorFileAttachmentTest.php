@@ -1,9 +1,16 @@
 <?php
 
+use Filament\Forms\Components\RichEditor;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Livewire\RichEditorFileAttachmentForm;
 use Filament\Tests\Fixtures\Models\MediaPostWithRichContent;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Observers\MediaObserver;
+use Spatie\MediaLibrary\Support\FileRemover\DefaultFileRemover;
 
 use function Filament\Tests\livewire;
 
@@ -108,6 +115,50 @@ describe('create', function () use ($makeTipTapDocument, $makeParagraph, $makeIm
 });
 
 describe('update', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
+    it('only cleans up attachments during `getState()` when the editor and its containing schemas are enabled', function (bool $isSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled) use ($makeTipTapDocument, $makeImage): void {
+        // The test case does not boot Spatie's provider, which normally configures file deletion.
+        Media::observe(app(MediaObserver::class));
+        config()->set('media-library.file_remover_class', DefaultFileRemover::class);
+
+        $record = MediaPostWithRichContent::create(['title' => 'Original'])->fresh();
+        $keptMedia = $record->addMediaFromString('Kept attachment')->usingFileName('kept.txt')->toMediaCollection('content');
+        $removedMedia = $record->addMediaFromString('Removed attachment')->usingFileName('removed.txt')->toMediaCollection('content');
+        $record->update([
+            'content' => json_encode($makeTipTapDocument([$makeImage($keptMedia->uuid), $makeImage($removedMedia->uuid)])),
+        ]);
+
+        $editor = RichEditor::make('content')->disabled($isFieldDisabled)->saved();
+        $schema = Schema::make(Livewire::make())
+            ->model($record)
+            ->statePath('data')
+            ->disabled($isSchemaDisabled)
+            ->components([
+                Group::make([$editor])->disabled($isParentDisabled)->saved(),
+            ])
+            ->fill([
+                'content' => $makeTipTapDocument([$makeImage($keptMedia->uuid)]),
+            ]);
+
+        $schema->getState();
+        $shouldCleanUp = (! $isSchemaDisabled) && (! $isParentDisabled) && (! $isFieldDisabled);
+
+        expect($record->fresh()->getMedia('content'))->toHaveCount($shouldCleanUp ? 1 : 2)
+            ->and(Storage::disk('public')->exists($removedMedia->getPathRelativeToRoot()))->toBe(! $shouldCleanUp);
+
+        if (! $shouldCleanUp) {
+            $editor->saveFileAttachments();
+        }
+
+        expect($record->fresh()->getMedia('content')->modelKeys())->toBe([$keptMedia->getKey()]);
+        Storage::disk('public')->assertExists($keptMedia->getPathRelativeToRoot());
+        Storage::disk('public')->assertMissing($removedMedia->getPathRelativeToRoot());
+    })->with([
+        'enabled' => [false, false, false],
+        'disabled schema' => [true, false, false],
+        'disabled parent' => [false, true, false],
+        'disabled editor' => [false, false, true],
+    ]);
+
     it('adds new media when adding an image to existing content', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
         $record = MediaPostWithRichContent::create([
             'title' => 'Original',

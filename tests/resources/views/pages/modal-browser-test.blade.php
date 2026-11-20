@@ -84,6 +84,19 @@
     </x-filament::modal>
 
     <x-filament::modal
+        aria-label="Modal without an ID"
+        :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'no-id-modal'])"
+    >
+        <x-slot name="trigger">
+            <x-filament::button data-testid="no-id-trigger">
+                Open modal without an ID
+            </x-filament::button>
+        </x-slot>
+
+        <p>Standalone modal content.</p>
+    </x-filament::modal>
+
+    <x-filament::modal
         id="standalone-browser-test-long-sticky-modal"
         :close-button="false"
         :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'long-sticky-modal'])"

@@ -433,7 +433,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
-            if (($attributes instanceof Closure) && in_array($attributes, $this->extraTriggerAttributes, strict: true)) {
+            if (is_array($attributes) && in_array($attributes, $this->extraTriggerAttributes, strict: true)) {
                 return $this;
             }
 

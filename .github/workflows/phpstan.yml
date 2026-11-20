@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.5, 8.4, 8.3]
+        php: [8.6, 8.5, 8.4, 8.3]
         laravel: [13.*, 12.*]
         dependency-version: [prefer-stable]
         include:
@@ -25,6 +25,12 @@ jobs:
             testbench: 11.*
           - laravel: 12.*
             testbench: 10.*
+        exclude:
+          # Analyse PHP boundaries per Laravel, retaining every PHP on Laravel 13.
+          - laravel: 12.*
+            php: 8.5
+          - laravel: 12.*
+            php: 8.4
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -52,9 +58,10 @@ jobs:
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
       - name: Install dependencies
+        # Paratest releases compatible with Pest 4 currently cap PHP at 8.5.
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction ${{ matrix.php == '8.6' && '--ignore-platform-req=php+' || '' }}
       - name: Run PHPStan
         run: ./vendor/bin/phpstan
       - name: Check removed Filament APIs

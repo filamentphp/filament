@@ -126,6 +126,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         });
 
         $this->beforeStateDehydrated(static function (BaseFileUpload $component): void {
+            if ($component->isDisabled()) {
+                return;
+            }
+
             $component->saveUploadedFiles();
         }, shouldUpdateValidatedStateAfter: true);
 

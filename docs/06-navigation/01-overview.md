@@ -308,6 +308,8 @@ NavigationGroup::make()
 
 The `extraSidebarAttributes()` will be applied to navigation group elements contained in the sidebar, and the `extraTopbarAttributes()` will only be applied to topbar navigation group dropdowns when using [top navigation](#using-top-navigation).
 
+Pass `merge: true` to retain previous attributes. When merging attributes, each callback registration is evaluated separately, even if the same callback is registered more than once.
+
 ### Registering navigation groups with an enum
 
 You can use an enum class to register navigation groups, which allows you to control their labels, icons, and order in a single place, without needing to register them in the [configuration](../panel-configuration).

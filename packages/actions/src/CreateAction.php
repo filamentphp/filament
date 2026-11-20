@@ -214,4 +214,12 @@ class CreateAction extends Action
     {
         return $this->evaluate($this->getRelationshipUsing) ?? $this->getTable()?->getRelationship() ?? $this->getHasActionsLivewire()?->getDefaultActionRelationship($this);
     }
+
+    public function getSchema(Schema $schema): ?Schema
+    {
+        $model = $this->getModel();
+
+        // Prevent inherited or supplied records from receiving relationship changes before the new record exists.
+        return parent::getSchema($schema->model($model))?->model($model);
+    }
 }

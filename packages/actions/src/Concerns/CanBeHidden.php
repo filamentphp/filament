@@ -21,7 +21,7 @@ trait CanBeHidden
 
     protected ?bool $cachedIsAuthorizedOrNotHiddenWhenUnauthorized = null;
 
-    protected ?string $cachedVisibilityRecordKey = null;
+    protected Model | string | null $cachedVisibilityRecordKey = null;
 
     protected bool $hasVisibilityCache = false;
 
@@ -120,12 +120,12 @@ trait CanBeHidden
         return true;
     }
 
-    protected function getCurrentVisibilityRecordKey(): ?string
+    protected function getCurrentVisibilityRecordKey(): Model | string | null
     {
         $record = $this->getRecord();
 
         if ($record instanceof Model) {
-            return (string) spl_object_id($record);
+            return $record;
         }
 
         if (is_array($record)) {

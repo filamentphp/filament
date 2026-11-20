@@ -32,6 +32,8 @@ trait HasState
      */
     protected array $afterStateUpdated = [];
 
+    protected int $afterStateUpdatedHookIndex = 0;
+
     /**
      * @var array<string | Closure>
      */
@@ -137,7 +139,7 @@ trait HasState
             return $this;
         }
 
-        $this->afterStateUpdated[] = $callback;
+        $this->afterStateUpdated[$this->afterStateUpdatedHookIndex++] = $callback;
 
         return $this;
     }
@@ -208,8 +210,8 @@ trait HasState
 
     protected function callAfterStateUpdatedHooks(): static
     {
-        foreach ($this->afterStateUpdated as $callback) {
-            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
+        foreach ($this->afterStateUpdated as $callbackIndex => $callback) {
+            $runId = $callbackIndex . ':' . md5(json_encode($this->getState()));
 
             if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
                 continue;

@@ -1117,6 +1117,8 @@ TextColumn::make('slug')
 
 By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
+When merging attributes, each callback registration is evaluated separately, even if the same callback is registered more than once.
+
 ### Adding extra HTML attributes to the cell
 
 You can also pass extra HTML attributes to the table cell which surrounds the content of the column:

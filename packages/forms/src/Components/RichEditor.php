@@ -484,6 +484,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         ]);
 
         $this->beforeStateDehydrated(static function (RichEditor $component): void {
+            if ($component->isDisabled()) {
+                return;
+            }
+
             $component->saveFileAttachments();
         }, shouldUpdateValidatedStateAfter: true);
 
