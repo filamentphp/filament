@@ -492,6 +492,18 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasFormErrors(['teams.1' => ['in']]);
     });
+
+    it('rejects non-array state before saving a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
+
+        livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->set('data.teams', (string) $outOfScope->id)
+            ->call('save')
+            ->assertHasFormErrors(['teams' => ['array']]);
+
+        expect($user->fresh()->teams)->toBeEmpty();
+    });
 });
 
 describe('eager loading', function (): void {

@@ -920,6 +920,20 @@ describe('validation', function (): void {
             ->assertHasFormErrors(['teams.1' => ['in']]);
     });
 
+    it('rejects non-array state before saving a multiple `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
+
+        foreach ([(string) $outOfScope->id, json_encode([(string) $outOfScope->id])] as $state) {
+            livewire(TestComponentWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+                ->set('data.teams', $state)
+                ->call('save')
+                ->assertHasFormErrors(['teams' => ['array']]);
+
+            expect($user->fresh()->teams)->toBeEmpty();
+        }
+    });
+
     it('rejects existing values excluded by `modifyQueryUsing` on a searchable multiple `BelongsToMany` relationship', function (): void {
         $user = User::factory()->create();
         $inScope = Team::factory()->create(['name' => 'Alpha Team']);
