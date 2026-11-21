@@ -249,6 +249,8 @@ Toggle::make('is_admin')
 
 > If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
 
+The `dehydrated()` option does not override a disabled top-level form. Calling `getState()` on that form still validates it, but returns an empty array.
+
 ### Hiding a field
 
 You may hide a field:

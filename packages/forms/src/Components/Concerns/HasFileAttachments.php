@@ -38,6 +38,10 @@ trait HasFileAttachments
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $attachment): ?string
     {
+        if ($this->isDisabled()) {
+            return null;
+        }
+
         if ($callback = $this->saveUploadedFileAttachmentsUsing) {
             $file = $this->evaluate($callback, [
                 'file' => $attachment,

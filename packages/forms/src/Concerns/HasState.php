@@ -238,6 +238,12 @@ trait HasState
     {
         $state = $this->validate();
 
+        if ($this->isRoot() && $this->isDisabled()) {
+            value($afterValidate, []);
+
+            return [];
+        }
+
         if ($shouldCallHooksBefore) {
             $this->callBeforeStateDehydrated();
 

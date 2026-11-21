@@ -166,7 +166,7 @@ test('`getState()` only saves relationships for enabled forms, regardless of com
     expect($user->teams()->pluck('teams.id')->all())
         ->toBe([($isFormDisabled ? $originalTeam : $submittedTeam)->getKey()])
         ->and($hasCalledAfterValidate)->toBe($hasAfterValidate)
-        ->and($state)->toBe(['name' => 'Submitted name']);
+        ->and($state)->toBe(($isFormDisabled && (! $isDisabledInherited)) ? [] : ['name' => 'Submitted name']);
 
     if ($isFormDisabled && $shouldSaveRelationshipsWhenDisabled) {
         $form->saveRelationships();

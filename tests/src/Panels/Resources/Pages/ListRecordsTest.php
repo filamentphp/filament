@@ -7,6 +7,7 @@ use Filament\Tests\Models\Team;
 use Filament\Tests\Models\User;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPosts;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPostsWithDisabledEditAction;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource\Pages\ListUsersWithRelationshipInViewAction;
 use Filament\Tests\Panels\Resources\TestCase;
@@ -42,6 +43,30 @@ it('does not save relationships when calling a table `ViewAction` with a disable
 
     expect($user->fresh()->teams()->pluck('teams.id')->all())->toBe([$originalTeam->getKey()]);
 });
+
+it('does not save submitted field or relationship state when an `EditAction` form is disabled', function (bool $isPublished): void {
+    $originalAuthor = User::factory()->create();
+    $submittedAuthor = User::factory()->create();
+    $post = Post::factory()->create([
+        'title' => 'Original title',
+        'is_published' => $isPublished,
+        'author_id' => $originalAuthor->getKey(),
+    ]);
+
+    livewire(ListPostsWithDisabledEditAction::class)
+        ->mountTableAction('edit', $post)
+        ->set('mountedTableActionsData.0.title', 'Changed title')
+        ->set('mountedTableActionsData.0.author_id', $submittedAuthor->getKey())
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors();
+
+    expect($post->fresh())
+        ->title->toBe($isPublished ? 'Original title' : 'Changed title')
+        ->author_id->toBe(($isPublished ? $originalAuthor : $submittedAuthor)->getKey());
+})->with([
+    'disabled form' => true,
+    'enabled form' => false,
+]);
 
 it('can list posts', function () {
     $posts = Post::factory()->count(10)->create();

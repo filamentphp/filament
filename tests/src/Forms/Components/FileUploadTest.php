@@ -99,13 +99,13 @@ it('only stores uploads during `getState()` when the field and its containing fo
         expect($state['document'])->toBe(['uploads/existing.txt', 'uploads/new-document.txt']);
     } else {
         Storage::disk('public')->assertMissing('uploads/new-document.txt');
-        expect($state['document'])->toBe(['uploads/existing.txt', $temporaryFile]);
+        expect($state)->toBe($isFormDisabled ? [] : ['name' => 'Original name', 'document' => ['uploads/existing.txt', $temporaryFile]]);
 
         $field->saveUploadedFiles();
         Storage::disk('public')->assertExists('uploads/new-document.txt');
     }
 
-    expect($state['name'])->toBe('Original name')
+    expect($state['name'] ?? null)->toBe($isFormDisabled ? null : 'Original name')
         ->and(Storage::disk('public')->get('uploads/existing.txt'))->toBe('Existing document')
         ->and($temporaryFile->exists())->toBeFalse();
 })->with([false, true])->with([false, true])->with([false, true]);

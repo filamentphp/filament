@@ -141,6 +141,8 @@ Action::make('approvePost')
     })
 ```
 
+The form is still validated when submitted, but its fields are not passed to the action's `$data` and its relationships are not automatically saved, even if fields use `dehydrated()`. The action itself still runs. Read any values it needs from the `$record`, as in the example above.
+
 ## Customizing the modal's heading, description, and submit action label
 
 You may customize the heading, description and label of the submit button in the modal:

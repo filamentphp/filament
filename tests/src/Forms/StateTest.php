@@ -3,10 +3,12 @@
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 uses(TestCase::class);
 
@@ -764,6 +766,49 @@ test('disabled components are excluded from state dehydration if their parent co
 
     expect($container)
         ->dehydrateState()->toBe([]);
+});
+
+test('only disabled top-level forms exclude opted-in fields from `getState()`', function (bool $isRoot): void {
+    $livewire = Livewire::make();
+    $container = ComponentContainer::make($livewire)
+        ->statePath('data')
+        ->disabled()
+        ->components([
+            TextInput::make('name')->default('Original name')->dehydrated(),
+        ]);
+
+    if (! $isRoot) {
+        $container->parentComponent((new Component)->container(ComponentContainer::make($livewire)));
+    }
+
+    $container->fill();
+
+    expect($container->getState())->toBe($isRoot ? [] : ['name' => 'Original name']);
+})->with([
+    'top-level form' => true,
+    'child container' => false,
+]);
+
+test('a disabled form validates before returning empty state and calling `afterValidate`', function (): void {
+    $validatedState = null;
+    $afterValidate = function (array $state) use (&$validatedState): void {
+        $validatedState = $state;
+    };
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->disabled()
+        ->components([
+            TextInput::make('name')->required(),
+        ])
+        ->fill(['name' => null]);
+
+    expect(fn (): array => $container->getState(afterValidate: $afterValidate))->toThrow(ValidationException::class)
+        ->and($validatedState)->toBeNull();
+
+    $container->fill(['name' => 'Valid name']);
+
+    expect($container->getState(afterValidate: $afterValidate))->toBe([])
+        ->and($validatedState)->toBe([]);
 });
 
 test('dehydrated state can be mutated', function () {
