@@ -13,6 +13,8 @@ class SetUpPanel
         $panel = Filament::getPanel($panel);
 
         Filament::setCurrentPanel($panel);
+        Filament::currentDomain(null);
+        Filament::setTenant(null, isQuiet: true);
 
         Filament::bootCurrentPanel();
 
