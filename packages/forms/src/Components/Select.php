@@ -104,7 +104,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @var array<array{name: mixed, context: mixed, arguments: mixed}> | null
      */
-    protected ?array $selectedRecordMountedActionState = null;
+    protected ?array $cachedSelectedRecordMountedActionState = null;
 
     protected mixed $cachedSelectedRecordState = null;
 
@@ -1610,6 +1610,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->cachedSelectedRecord;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function shouldRefreshSelectedRecordForMountedAction(): bool
     {
         if ($this->isResolvingKeyForSelectedRecord) {
@@ -1619,7 +1622,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $mountedActions = data_get($this->getLivewire(), 'mountedActions');
 
         if ((! is_array($mountedActions)) || ($mountedActions === [])) {
-            $this->selectedRecordMountedActionState = null;
+            $this->cachedSelectedRecordMountedActionState = null;
 
             return false;
         }
@@ -1654,16 +1657,16 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if (! $hasActionForComponent) {
-            $this->selectedRecordMountedActionState = null;
+            $this->cachedSelectedRecordMountedActionState = null;
 
             return false;
         }
 
-        if ($this->selectedRecordMountedActionState === $mountedActionState) {
+        if ($this->cachedSelectedRecordMountedActionState === $mountedActionState) {
             return false;
         }
 
-        $this->selectedRecordMountedActionState = $mountedActionState;
+        $this->cachedSelectedRecordMountedActionState = $mountedActionState;
 
         return true;
     }
@@ -1933,6 +1936,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return null;
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
     protected function refreshSelectedRecord(): void
     {
         $this->cachedSelectedRecord = null;

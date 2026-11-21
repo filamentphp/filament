@@ -374,7 +374,10 @@ class AttachAction extends Action
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
-    private function applyRecordSelectOptionsQuery(Builder $query, BelongsToMany $relationship, Table $table, ?string $search = null): Builder
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    protected function applyRecordSelectOptionsQuery(Builder $query, BelongsToMany $relationship, Table $table, ?string $search = null): Builder
     {
         if ($this->modifyRecordSelectOptionsQueryUsing) {
             $query = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
