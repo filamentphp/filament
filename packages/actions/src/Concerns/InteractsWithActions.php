@@ -314,6 +314,14 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 return null;
             }
 
+            if (
+                ($this instanceof HasTable) &&
+                $action->hasCanAccessSelectedRecords() &&
+                method_exists($this, 'flushCachedTableRecords')
+            ) {
+                $this->flushCachedTableRecords();
+            }
+
             if ($action->isDisabled()) {
                 $this->unmountAction(cancelParentActions: false);
 
@@ -435,6 +443,14 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         if (! $action) {
             return null;
+        }
+
+        if (
+            ($this instanceof HasTable) &&
+            $action->hasCanAccessSelectedRecords() &&
+            method_exists($this, 'flushCachedTableRecords')
+        ) {
+            $this->flushCachedTableRecords();
         }
 
         $originalActionArguments = $action->getArguments();

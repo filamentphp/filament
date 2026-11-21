@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -451,6 +452,30 @@ describe('validation', function (): void {
             ->fillForm(['teams' => [(string) $teams->first()->id, '99999']])
             ->call('save')
             ->assertHasFormErrors(['teams.1' => ['in']]);
+    });
+
+    it('refreshes cached relationship options before validation', function (): void {
+        $globalScopes = Team::getAllGlobalScopes();
+
+        try {
+            Team::addGlobalScope('name', static fn (Builder $query): Builder => $query->where('name', 'like', 'Alpha%'));
+
+            $user = User::factory()->create();
+            $team = Team::factory()->create(['name' => 'Alpha Team']);
+
+            livewire(CheckboxListWithBelongsToManyRelationshipValidation::class, ['record' => $user])
+                ->assertFormComponentExists('teams', function (CheckboxList $component) use ($team): bool {
+                    expect($component->getInValidationRuleValues())->toContain($team->getKey());
+
+                    $team->update(['name' => 'Beta Team']);
+
+                    expect($component->getInValidationRuleValues())->not->toContain($team->getKey());
+
+                    return true;
+                });
+        } finally {
+            Team::setAllGlobalScopes($globalScopes);
+        }
     });
 
     it('rejects disabled static options during validation', function (): void {

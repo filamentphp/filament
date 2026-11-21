@@ -32,7 +32,18 @@ trait HasBulkActions
 
     public bool $isTrackingDeselectedTableRecords = false;
 
-    protected EloquentCollection | Collection | LazyCollection $cachedSelectedTableRecords;
+    protected EloquentCollection | Collection | LazyCollection | null $cachedSelectedTableRecords = null;
+
+    /**
+     * @var array{
+     *     selectedRecords: array<int | string>,
+     *     deselectedRecords: array<int | string>,
+     *     isTrackingDeselectedRecords: bool,
+     *     shouldFetchSelectedRecords: bool,
+     *     chunkSize: ?int,
+     * } | null
+     */
+    protected ?array $cachedSelectedTableRecordsState = null;
 
     /**
      * @var array<string, bool>
@@ -277,9 +288,24 @@ trait HasBulkActions
     #[Unexposed]
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection
     {
-        if (isset($this->cachedSelectedTableRecords)) {
+        $state = [
+            'selectedRecords' => $this->selectedTableRecords,
+            'deselectedRecords' => $this->deselectedTableRecords,
+            'isTrackingDeselectedRecords' => $this->isTrackingDeselectedTableRecords,
+            'shouldFetchSelectedRecords' => $shouldFetchSelectedRecords,
+            'chunkSize' => $chunkSize,
+        ];
+
+        if (
+            isset($this->cachedSelectedTableRecords) &&
+            ($this->cachedSelectedTableRecordsState === $state)
+        ) {
             return $this->cachedSelectedTableRecords;
         }
+
+        $this->cachedSelectedTableRecords = null;
+
+        $this->cachedSelectedTableRecordsState = $state;
 
         $table = $this->getTable();
 
