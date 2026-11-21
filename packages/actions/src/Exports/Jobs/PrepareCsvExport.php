@@ -17,7 +17,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use League\Csv\Bom;
 use League\Csv\Writer;
-use SplTempFileObject;
 
 class PrepareCsvExport implements ShouldQueue
 {
@@ -52,7 +51,7 @@ class PrepareCsvExport implements ShouldQueue
 
     public function handle(): void
     {
-        $csv = Writer::createFromFileObject(new SplTempFileObject);
+        $csv = Writer::createFromString();
         $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));

@@ -7,7 +7,6 @@ use Filament\Actions\Imports\Models\Import;
 use Illuminate\Support\Facades\Gate;
 use League\Csv\Bom;
 use League\Csv\Writer;
-use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use function Filament\authorize;
@@ -22,7 +21,7 @@ class DownloadImportFailureCsv
             abort_unless($import->user()->is(auth()->user()), 403);
         }
 
-        $csv = Writer::createFromFileObject(new SplTempFileObject);
+        $csv = Writer::createFromString();
         $csv->setOutputBOM(Bom::Utf8);
 
         $firstFailedRow = $import->failedRows()->first();

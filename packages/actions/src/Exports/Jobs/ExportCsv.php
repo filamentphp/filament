@@ -18,7 +18,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use League\Csv\Writer;
-use SplTempFileObject;
 use Throwable;
 
 class ExportCsv implements ShouldQueue
@@ -77,7 +76,7 @@ class ExportCsv implements ShouldQueue
             $processedRows = 0;
             $successfulRows = 0;
 
-            $csv = Writer::createFromFileObject(new SplTempFileObject);
+            $csv = Writer::createFromString();
             $csv->setDelimiter($this->exporter::getCsvDelimiter());
 
             $query = EloquentSerializeFacade::unserialize($this->query);

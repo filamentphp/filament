@@ -39,7 +39,6 @@ use League\Csv\Statement;
 use League\Csv\Writer;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait CanImportRecords
@@ -341,7 +340,7 @@ trait CanImportRecords
                 ->action(function (): StreamedResponse {
                     $columns = $this->getImporter()::getColumns();
 
-                    $csv = Writer::createFromFileObject(new SplTempFileObject);
+                    $csv = Writer::createFromString();
                     $csv->setOutputBOM(Bom::Utf8);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
