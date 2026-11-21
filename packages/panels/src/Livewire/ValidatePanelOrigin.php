@@ -15,6 +15,9 @@ use function Filament\Support\encode_key_segments;
 use function Livewire\after;
 use function Livewire\before;
 
+/**
+ * @internal Never call or extend this class. It is not part of the public API and may change in minor and patch releases.
+ */
 class ValidatePanelOrigin
 {
     // Bundled updates verify one snapshot at a time, and newly mounted children inherit its context.
