@@ -4,7 +4,6 @@ namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\SetUpPanel;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -263,13 +262,9 @@ class ValidatePanelOrigin
             return;
         }
 
-        [
-            'panel' => $panelContext,
-            'tenant' => $tenantContext,
-            'configuration' => $configurationContext,
-        ] = $this->getSnapshotContext($snapshot);
+        $panelContext = $snapshot['memo']['filamentPanel'] ?? null;
 
-        if ($panelContext === false) {
+        if (! is_string($panelContext)) {
             return;
         }
 
@@ -280,6 +275,7 @@ class ValidatePanelOrigin
             404,
         );
 
+        $tenantContext = $snapshot['memo']['filamentTenant'] ?? null;
         $tenant = Filament::getTenant();
         $restoredTenantContext = $tenant
             ? $this->hashContext('tenant', $tenant::class, (string) $tenant->getKey())
@@ -287,6 +283,7 @@ class ValidatePanelOrigin
 
         abort_unless($this->contextsMatch($tenantContext, $restoredTenantContext), 404);
 
+        $configurationContext = $snapshot['memo']['filamentConfiguration'] ?? null;
         $restoredConfigurationContext = $this->hashConfigurationContext(
             Filament::getCurrentPageConfigurationKey(),
             Filament::getCurrentResourceConfigurationKey(),
@@ -313,16 +310,16 @@ class ValidatePanelOrigin
         abort_unless(is_array($memo), 404);
 
         $panelContext = $memo['filamentPanel'] ?? null;
-        $tenantContext = $memo['filamentTenant'] ?? null;
-        $configurationContext = $memo['filamentConfiguration'] ?? null;
-
-        if (is_array($configurationContext)) {
-            return $this->hashLegacySnapshotContext($panelContext, $tenantContext, $configurationContext);
-        }
 
         abort_unless(($panelContext === false) || is_string($panelContext), 404);
+
+        $tenantContext = $memo['filamentTenant'] ?? null;
+
         abort_unless(($tenantContext === false) || is_string($tenantContext), 404);
+
         abort_if(($panelContext === false) && ($tenantContext !== false), 404);
+
+        $configurationContext = $memo['filamentConfiguration'] ?? null;
 
         abort_unless(($configurationContext === false) || is_string($configurationContext), 404);
 
@@ -371,43 +368,5 @@ class ValidatePanelOrigin
         }
 
         return $first === $second;
-    }
-
-    /**
-     * @param  array<string, mixed>  $configurationContext
-     * @return array{panel: string, tenant: string | false, configuration: string}
-     */
-    protected function hashLegacySnapshotContext(mixed $panelContext, mixed $tenantContext, array $configurationContext): array
-    {
-        abort_unless(is_string($panelContext), 404);
-        abort_unless(($tenantContext === false) || is_array($tenantContext), 404);
-
-        if (is_array($tenantContext)) {
-            abort_unless(
-                (array_keys($tenantContext) === ['model', 'key']) &&
-                is_string($tenantContext['model']) &&
-                is_a($tenantContext['model'], Model::class, true) &&
-                is_string($tenantContext['key']),
-                404,
-            );
-
-            $tenantContext = $this->hashContext('tenant', $tenantContext['model'], $tenantContext['key']);
-        }
-
-        abort_unless(
-            (array_keys($configurationContext) === ['page', 'resource']) &&
-            (is_null($configurationContext['page']) || is_string($configurationContext['page'])) &&
-            (is_null($configurationContext['resource']) || is_string($configurationContext['resource'])),
-            404,
-        );
-
-        return [
-            'panel' => $this->hashContext('panel', $panelContext),
-            'tenant' => $tenantContext,
-            'configuration' => $this->hashConfigurationContext(
-                $configurationContext['page'],
-                $configurationContext['resource'],
-            ),
-        ];
     }
 }

@@ -103,33 +103,6 @@ it('stores opaque Filament context in snapshots', function (): void {
         ->not->toContain(Team::class);
 });
 
-it('upgrades signed legacy Filament context to opaque tokens', function (): void {
-    $tenant = Team::factory()->create();
-    $snapshot = panelRouteSnapshot($this, $tenant);
-    $snapshot['memo']['filamentPanel'] = 'tenant-menu-grouping';
-    $snapshot['memo']['filamentTenant'] = [
-        'model' => Team::class,
-        'key' => (string) $tenant->getKey(),
-    ];
-    $snapshot['memo']['filamentConfiguration'] = [
-        'page' => null,
-        'resource' => null,
-    ];
-
-    unset($snapshot['checksum']);
-
-    $snapshot['checksum'] = Checksum::generate($snapshot);
-
-    $response = updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
-    $updatedSnapshot = json_decode($response->json('components.0.snapshot'), true, flags: JSON_THROW_ON_ERROR);
-
-    foreach (['filamentPanel', 'filamentTenant', 'filamentConfiguration'] as $memo) {
-        expect($updatedSnapshot['memo'][$memo])->toMatch('/\A[a-f0-9]{64}\z/');
-    }
-
-    expect(PanelRouteProbe::$calls)->toBe(1);
-});
-
 it('recognizes panel routes using the setup middleware class', function (): void {
     Route::domain('direct.example.test')
         ->middleware([
