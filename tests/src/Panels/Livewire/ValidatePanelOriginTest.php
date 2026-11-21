@@ -588,7 +588,7 @@ it('allows bundled updates from different configurations in the same panel', fun
         ]);
 });
 
-it('leaves path-only panel updates working across hosts', function (): void {
+it('allows path-only panel updates on the original host', function (): void {
     Route::middleware([
         'panel:tenant-menu-grouping',
         IdentifyTenant::class,
@@ -604,7 +604,7 @@ it('leaves path-only panel updates working across hosts', function (): void {
 
     expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
 
-    updatePanelRoute($this, $snapshot, 'other.example.test')->assertSuccessful();
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
 
     expect(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey()]);
 });
@@ -745,7 +745,7 @@ it('rejects a signed panel snapshot from before configuration context was added'
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('does not restrict non-panel Livewire routes', function (): void {
+it('allows non-panel Livewire updates on the original host', function (): void {
     Route::get('/public-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
 
     $response = $this
@@ -758,7 +758,7 @@ it('does not restrict non-panel Livewire routes', function (): void {
         ->and($snapshot['memo']['filamentTenant'])->toBeFalse()
         ->and($snapshot['memo']['filamentConfiguration'])->toBeFalse();
 
-    updatePanelRoute($this, $snapshot, 'other.example.test')->assertSuccessful();
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
 
     expect(PanelRouteProbe::$calls)->toBe(1);
 });

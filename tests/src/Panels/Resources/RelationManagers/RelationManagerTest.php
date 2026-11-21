@@ -940,7 +940,7 @@ describe('attaching records', function (): void {
             'pageClass' => EditTicket::class,
         ])
             ->callAction(TestAction::make(AttachAction::class)->table(), [
-                'recordId' => $department->getKey(),
+                'recordId' => [$department->getKey()],
             ])
             ->assertHasNoFormErrors();
 
@@ -1007,7 +1007,7 @@ describe('attaching records', function (): void {
             'pageClass' => EditTicket::class,
         ])
             ->callAction(TestAction::make(AttachAction::class)->table(), [
-                'recordId' => $newDepartment->getKey(),
+                'recordId' => [$newDepartment->getKey()],
             ])
             ->assertHasNoFormErrors();
 
