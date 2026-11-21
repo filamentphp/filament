@@ -143,6 +143,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool $shouldUseLoadedRelationshipForSelectedRecords = true;
 
+    protected bool $isResolvingKeyForSelectedRecord = false;
+
     protected bool $isResolvingRelationshipForStateCasts = false;
 
     protected ?Collection $cachedRelationshipRecords = null;
@@ -1610,9 +1612,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected function shouldRefreshSelectedRecordForMountedAction(): bool
     {
+        if ($this->isResolvingKeyForSelectedRecord) {
+            return false;
+        }
+
         $mountedActions = data_get($this->getLivewire(), 'mountedActions');
 
-        if (! is_array($mountedActions)) {
+        if ((! is_array($mountedActions)) || ($mountedActions === [])) {
             $this->selectedRecordMountedActionState = null;
 
             return false;
@@ -1620,7 +1626,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $mountedActionState = [];
         $hasActionForComponent = false;
-        $componentKey = $this->getKey();
+
+        $this->isResolvingKeyForSelectedRecord = true;
+
+        try {
+            $componentKey = $this->getKey();
+        } finally {
+            $this->isResolvingKeyForSelectedRecord = false;
+        }
 
         foreach ($mountedActions as $mountedAction) {
             if (! is_array($mountedAction)) {

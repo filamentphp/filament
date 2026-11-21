@@ -32,7 +32,7 @@ trait HasBulkActions
 
     public bool $isTrackingDeselectedTableRecords = false;
 
-    protected EloquentCollection | Collection | LazyCollection $cachedSelectedTableRecords;
+    protected EloquentCollection | Collection | LazyCollection | null $cachedSelectedTableRecords = null;
 
     /**
      * @var array{
@@ -303,7 +303,7 @@ trait HasBulkActions
             return $this->cachedSelectedTableRecords;
         }
 
-        unset($this->cachedSelectedTableRecords);
+        $this->cachedSelectedTableRecords = null;
 
         $this->cachedSelectedTableRecordsState = $state;
 

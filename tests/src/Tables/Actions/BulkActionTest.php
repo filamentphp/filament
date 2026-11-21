@@ -52,7 +52,7 @@ describe('action lifecycle and configuration', function (): void {
         $livewire = livewire(PostsTable::class)->instance();
         $livewire->selectedTableRecords = [(string) $post->getKey()];
 
-        expect($livewire->getSelectedTableRecords(shouldFetchSelectedRecords: false)->all())->toBe([$post->getKey()]);
+        expect($livewire->getSelectedTableRecords(shouldFetchSelectedRecords: false)->map(strval(...))->all())->toBe([(string) $post->getKey()]);
         expect($livewire->getSelectedTableRecords()->modelKeys())->toBe([$post->getKey()]);
     });
 

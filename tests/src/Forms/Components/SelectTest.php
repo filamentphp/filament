@@ -1437,6 +1437,35 @@ describe('relationship options and search', function (): void {
 });
 
 describe('relationship state', function (): void {
+    it('can resolve a `key()` that reads `getSelectedRecord()`', function (bool $hasMountedAction): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->getKey()]);
+        $livewire = Livewire::make()->data(['team_id' => (string) $team->getKey()]);
+
+        if ($hasMountedAction) {
+            $livewire->mountedActions = [['name' => 'inspect', 'context' => [], 'arguments' => []]];
+        }
+
+        $keyEvaluations = 0;
+        $select = Select::make('team_id')
+            ->relationship('team', 'name')
+            ->key(function (Select $component) use (&$keyEvaluations): string {
+                if (++$keyEvaluations > 10) {
+                    throw new RuntimeException('The component key depends recursively on itself.');
+                }
+
+                return 'team-' . $component->getSelectedRecord()?->getKey();
+            });
+
+        Schema::make($livewire)
+            ->model($user)
+            ->statePath('data')
+            ->components([$select])
+            ->getComponents();
+
+        expect($select->getKey())->toBe('data.team-' . $team->getKey());
+    })->with([false, true]);
+
     it('returns early from `fillStateFromRelationship()` when state is already filled', function (): void {
         $teams = Team::factory()->count(2)->create();
         $user = User::factory()->create(['team_id' => $teams->first()->id]);

@@ -340,12 +340,15 @@ class AttachAction extends Action
             ->tableConfiguration($this->getTableSelectConfiguration())
             ->model($relationship->getParent())
             ->relationshipName($relationship->getRelationName())
-            ->in(function (TableSelect $component) use ($relationship, $table): array {
+            ->in(function (TableSelect $component) use ($table): array {
                 $state = Arr::wrap($component->getState());
 
                 if ($state === []) {
                     return [];
                 }
+
+                /** @var BelongsToMany $relationship */
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
                 $relationshipQuery = $this->applyRecordSelectOptionsQuery($relationshipQuery, $relationship, $table);

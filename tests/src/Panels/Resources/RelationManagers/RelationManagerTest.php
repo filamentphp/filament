@@ -995,6 +995,26 @@ describe('attaching records', function (): void {
         ]);
     });
 
+    it('can validate a changed `tableSelect()` attachment selection on the same form', function (): void {
+        $ticket = Ticket::factory()->create();
+        $departments = Department::factory()->count(2)->create(['name' => 'Active Engineering']);
+        $component = livewire(DepartmentsWithMultipleAttachTableSelectAndModifiedQueryRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->mountAction(TestAction::make(AttachAction::class)->table())
+            ->instance();
+
+        $schema = $component->getSchema($component->getMountedActionSchemaName());
+
+        foreach ($departments as $department) {
+            $schema->fill(['recordId' => [$department->getKey()]]);
+
+            expect($schema->validate()['mountedActions'][0]['data']['recordId'])
+                ->toBe([(string) $department->getKey()]);
+        }
+    });
+
     it('rejects a mixed batch containing an out-of-scope `recordId` when `tableSelect()` is paired with `recordSelectOptionsQuery()`', function (): void {
         $ticket = Ticket::factory()->create();
         $inScopeDepartment = Department::factory()->create(['name' => 'Active Engineering']);
