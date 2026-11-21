@@ -1,5 +1,23 @@
 import { Mark } from '@tiptap/core'
 
+const sanitizeCssColor = (value) => {
+    if (typeof value !== 'string') return null
+
+    const normalizedValue = value.trim()
+
+    if (/^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(normalizedValue)) {
+        return normalizedValue
+    }
+
+    if (/^[a-z]+$/i.test(normalizedValue)) return normalizedValue
+
+    return /^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^();:"']*\)$/i.test(
+        normalizedValue,
+    )
+        ? normalizedValue
+        : null
+}
+
 export default Mark.create({
     name: 'textColor',
 
@@ -29,10 +47,11 @@ export default Mark.create({
 
         const hasColorName =
             typeof colorName === 'string' && colorName.length > 0
+        const sanitizedColor = hasColorName ? sanitizeCssColor(colorName) : null
         const cssVars = config
             ? `--color: ${config.color}; --dark-color: ${config.darkColor}`
-            : hasColorName
-              ? `--color: ${colorName}; --dark-color: ${colorName}`
+            : sanitizedColor
+              ? `--color: ${sanitizedColor}; --dark-color: ${sanitizedColor}`
               : null
 
         if (cssVars) {

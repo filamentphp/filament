@@ -154,11 +154,7 @@ export default Node.create({
             },
             extra: {
                 default: null,
-                renderHTML: (attributes) => {
-                    const value = attributes?.extra
-                    if (!value || typeof value !== 'object') return {}
-                    return value
-                },
+                rendered: false,
             },
         }
     },
@@ -182,6 +178,7 @@ export default Node.create({
             { 'data-type': this.name },
             this.options.HTMLAttributes,
             HTMLAttributes,
+            suggestion?.extraAttributes ?? {},
         )
 
         const html = this.options.renderHTML({
@@ -197,6 +194,7 @@ export default Node.create({
                     { 'data-type': this.name },
                     this.options.HTMLAttributes,
                     HTMLAttributes,
+                    suggestion?.extraAttributes ?? {},
                 ),
                 html,
             ]
