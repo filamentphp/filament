@@ -113,7 +113,7 @@ it('recognizes panel routes using the setup middleware class', function (): void
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBe('https://direct.example.test');
+    expect($snapshot['memo']['filamentPanel'])->toBe('tenant-menu-grouping');
 
     updatePanelRoute($this, $snapshot, 'direct.example.test')->assertSuccessful();
 
@@ -136,7 +136,7 @@ it('allows the original panel route and restores its tenant on an update', funct
 
     $updatedSnapshot = json_decode($response->json('components.0.snapshot'), true, flags: JSON_THROW_ON_ERROR);
 
-    expect($updatedSnapshot['memo']['filamentOrigin'])->toBe($snapshot['memo']['filamentOrigin'])
+    expect($updatedSnapshot['memo']['filamentPanel'])->toBe($snapshot['memo']['filamentPanel'])
         ->and($updatedSnapshot['memo']['filamentTenant'])->toBe($snapshot['memo']['filamentTenant']);
 });
 
@@ -236,7 +236,7 @@ it('binds the registration page of a domain-bound panel to its original host', f
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBe('https://registration.example.test');
+    expect($snapshot['memo']['origin'])->toBe('https://registration.example.test');
 
     updatePanelRoute($this, $snapshot, 'registration.example.test', [])->assertSuccessful();
     updatePanelRoute($this, $snapshot, 'other.example.test', [])->assertNotFound();
@@ -266,13 +266,13 @@ it('binds a `tenantDomain()` page to its tenant host', function (): void {
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBe("https://{$tenant->domain}");
+    expect($snapshot['memo']['origin'])->toBe("https://{$tenant->domain}");
 
     updatePanelRoute($this, $snapshot, $tenant->domain, [])->assertSuccessful();
     updatePanelRoute($this, $snapshot, 'example.test', [])->assertNotFound();
 });
 
-it('preserves the panel origin for newly mounted children', function (bool $isLazy): void {
+it('preserves the panel context for newly mounted children', function (bool $isLazy): void {
     $tenant = Team::factory()->create();
     $snapshot = panelRouteSnapshot($this, $tenant);
 
@@ -302,7 +302,7 @@ it('preserves the panel origin for newly mounted children', function (bool $isLa
         ->and(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey()]);
 })->with(['eager' => false, 'lazy' => true]);
 
-it('rejects lazy mount parameters from a different origin context', function (bool $isPanelOuter): void {
+it('rejects lazy mount parameters from a different panel context', function (bool $isPanelOuter): void {
     Route::domain('app.example.test')
         ->middleware('panel:tenant-menu-grouping')
         ->get('/panel-lazy-probe', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
@@ -438,7 +438,7 @@ it('rejects an update when a tenant route key resolves to a different tenant', f
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('rejects a path-only update when a custom resolver returns a different tenant on another host', function (): void {
+it('rejects an update when a custom resolver returns a different tenant on another host', function (): void {
     $user = User::factory()->create();
     $firstTenant = Team::factory()->create();
     $secondTenant = Team::factory()->create();
@@ -459,7 +459,7 @@ it('rejects a path-only update when a custom resolver returns a different tenant
         ->assertSuccessful();
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
+    expect($snapshot['memo']['origin'])->toBe('https://app.example.test');
 
     updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
     updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
@@ -602,7 +602,7 @@ it('allows path-only panel updates on the original host', function (): void {
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
+    expect($snapshot['memo']['filamentPanel'])->toBe('tenant-menu-grouping');
 
     updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
 
@@ -626,7 +626,7 @@ it('rejects a path-only panel update when another host resolves the same path to
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
+    expect($snapshot['memo']['origin'])->toBe('https://app.example.test');
 
     updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
     updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
@@ -690,33 +690,38 @@ it('rejects a path-only panel update when only a panel fallback route matches', 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('rejects a signed path-only panel snapshot from before route context was added', function (): void {
-    Route::middleware('panel:tenant-menu-grouping')
-        ->get('/path-only-legacy', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+it('rejects a signed snapshot without Livewire origin context', function (): void {
+    $snapshot = panelRouteSnapshot($this, Team::factory()->create());
 
-    $response = $this
-        ->get('https://app.example.test/path-only-legacy')
-        ->assertSuccessful();
-
-    $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
-
-    unset($snapshot['memo']['filamentRoute'], $snapshot['checksum']);
+    unset($snapshot['memo']['origin'], $snapshot['checksum']);
 
     $snapshot['checksum'] = Checksum::generate($snapshot);
 
-    updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('rejects a signed snapshot from before the route guard was added', function (): void {
+it('rejects a signed snapshot without Livewire route context', function (): void {
     $snapshot = panelRouteSnapshot($this, Team::factory()->create());
 
-    unset($snapshot['memo']['filamentOrigin'], $snapshot['checksum']);
+    unset($snapshot['memo']['route'], $snapshot['checksum']);
 
     $snapshot['checksum'] = Checksum::generate($snapshot);
 
-    updatePanelRoute($this, $snapshot, 'other.example.test')->assertNotFound();
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
+it('rejects a signed panel snapshot from before panel context was added', function (): void {
+    $snapshot = panelRouteSnapshot($this, Team::factory()->create());
+
+    unset($snapshot['memo']['filamentPanel'], $snapshot['checksum']);
+
+    $snapshot['checksum'] = Checksum::generate($snapshot);
+
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
@@ -754,7 +759,7 @@ it('allows non-panel Livewire updates on the original host', function (): void {
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentOrigin'])->toBeFalse()
+    expect($snapshot['memo']['filamentPanel'])->toBeFalse()
         ->and($snapshot['memo']['filamentTenant'])->toBeFalse()
         ->and($snapshot['memo']['filamentConfiguration'])->toBeFalse();
 

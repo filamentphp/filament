@@ -11,8 +11,6 @@ use Livewire\Livewire;
 use Livewire\Mechanisms\HandleComponents\Checksum;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
 use Livewire\Mechanisms\HandleRequests\HandleRequests;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function Livewire\after;
 use function Livewire\before;
@@ -20,10 +18,7 @@ use function Livewire\before;
 class ValidatePanelOrigin
 {
     // Bundled updates verify one snapshot at a time, and newly mounted children inherit its context.
-    protected string | false | null $origin = null;
-
-    /** @var array{panel: string, uri: string, domain: ?string, name: ?string} | false | null */
-    protected array | false | null $routeContext = null;
+    protected string | false | null $panelContext = null;
 
     /** @var array{model: class-string<Model>, key: string} | false | null */
     protected array | false | null $tenantContext = null;
@@ -46,8 +41,7 @@ class ValidatePanelOrigin
         Livewire::listen('dehydrate', static function (Component $component, ComponentContext $context): void {
             $validator = app(ValidatePanelOrigin::class);
 
-            $context->addMemo('filamentOrigin', $validator->getOrigin());
-            $context->addMemo('filamentRoute', $validator->getRouteContext());
+            $context->addMemo('filamentPanel', $validator->getPanelContext());
             $context->addMemo('filamentTenant', $validator->getTenantContext());
             $context->addMemo('filamentConfiguration', $validator->getConfigurationContext());
         });
@@ -57,7 +51,7 @@ class ValidatePanelOrigin
         });
 
         before('snapshot-verified', static function (array $snapshot): void {
-            app(ValidatePanelOrigin::class)->verifyOrigin($snapshot);
+            app(ValidatePanelOrigin::class)->verifyContext($snapshot);
         });
 
         // Persistent middleware restores the panel, tenant, and configuration in its `snapshot-verified` listener.
@@ -76,8 +70,7 @@ class ValidatePanelOrigin
         // Livewire test helpers flush state without ending the container scope.
         Livewire::listen('flush-state', static function (): void {
             $validator = app(ValidatePanelOrigin::class);
-            $validator->origin = null;
-            $validator->routeContext = null;
+            $validator->panelContext = null;
             $validator->tenantContext = null;
             $validator->configurationContext = null;
             $validator->requestContext = null;
@@ -107,12 +100,12 @@ class ValidatePanelOrigin
             Checksum::verify($snapshot);
 
             $snapshotContext = $this->getSnapshotContext($snapshot);
-            ['route' => $routeContext, 'tenant' => $tenantContext] = $snapshotContext;
+            ['panel' => $panelContext, 'tenant' => $tenantContext] = $snapshotContext;
 
             $this->preflightLazySnapshots($componentPayload['calls'] ?? [], $snapshotContext);
 
             $requestContext = [
-                'panel' => is_array($routeContext) ? $routeContext['panel'] : false,
+                'panel' => $panelContext,
                 'tenant' => $tenantContext,
             ];
 
@@ -161,30 +154,12 @@ class ValidatePanelOrigin
         }
     }
 
-    protected function getOrigin(): string | false
+    protected function getPanelContext(): string | false
     {
         if (app(HandleRequests::class)->isLivewireRoute()) {
-            abort_if(is_null($this->origin), 404);
+            abort_if(is_null($this->panelContext), 404);
 
-            return $this->origin;
-        }
-
-        $routeContext = $this->getRouteContext();
-
-        if (($routeContext === false) || (! $routeContext['domain'])) {
-            return false;
-        }
-
-        return request()->getSchemeAndHttpHost();
-    }
-
-    /** @return array{panel: string, uri: string, domain: ?string, name: ?string} | false */
-    protected function getRouteContext(): array | false
-    {
-        if (app(HandleRequests::class)->isLivewireRoute()) {
-            abort_if(is_null($this->routeContext), 404);
-
-            return $this->routeContext;
+            return $this->panelContext;
         }
 
         $route = request()->route();
@@ -198,12 +173,7 @@ class ValidatePanelOrigin
             return false;
         }
 
-        return [
-            'panel' => $panel->getId(),
-            'uri' => $route->uri(),
-            'domain' => $route->getDomain(),
-            'name' => $route->getName(),
-        ];
+        return $panel->getId();
     }
 
     /** @return array{model: class-string<Model>, key: string} | false */
@@ -215,7 +185,7 @@ class ValidatePanelOrigin
             return $this->tenantContext;
         }
 
-        if ($this->getRouteContext() === false) {
+        if ($this->getPanelContext() === false) {
             return false;
         }
 
@@ -240,7 +210,7 @@ class ValidatePanelOrigin
             return $this->configurationContext;
         }
 
-        if ($this->getRouteContext() === false) {
+        if ($this->getPanelContext() === false) {
             return false;
         }
 
@@ -251,15 +221,14 @@ class ValidatePanelOrigin
     }
 
     /** @param array<string, mixed> $snapshot */
-    protected function verifyOrigin(array $snapshot): void
+    protected function verifyContext(array $snapshot): void
     {
         if (! app(HandleRequests::class)->isLivewireRoute()) {
             return;
         }
 
         [
-            'origin' => $origin,
-            'route' => $routeContext,
+            'panel' => $panelContext,
             'tenant' => $tenantContext,
             'configuration' => $configurationContext,
         ] = $this->getSnapshotContext($snapshot);
@@ -267,8 +236,7 @@ class ValidatePanelOrigin
         // Nested snapshots, such as lazy mount parameters, must keep the active component's context.
         if (filled($this->componentId)) {
             abort_unless(
-                ($origin === $this->origin) &&
-                ($routeContext === $this->routeContext) &&
+                ($panelContext === $this->panelContext) &&
                 ($tenantContext === $this->tenantContext) &&
                 ($configurationContext === $this->configurationContext),
                 404,
@@ -278,7 +246,7 @@ class ValidatePanelOrigin
         }
 
         $requestContext = [
-            'panel' => is_array($routeContext) ? $routeContext['panel'] : false,
+            'panel' => $panelContext,
             'tenant' => $tenantContext,
         ];
 
@@ -288,8 +256,7 @@ class ValidatePanelOrigin
             abort_unless($requestContext === $this->requestContext, 404);
         }
 
-        $this->origin = $origin;
-        $this->routeContext = $routeContext;
+        $this->panelContext = $panelContext;
         $this->tenantContext = $tenantContext;
         $this->configurationContext = $configurationContext;
         $this->componentId = $snapshot['memo']['id'];
@@ -302,15 +269,15 @@ class ValidatePanelOrigin
             return;
         }
 
-        $routeContext = $snapshot['memo']['filamentRoute'] ?? null;
+        $panelContext = $snapshot['memo']['filamentPanel'] ?? null;
 
-        if (! is_array($routeContext)) {
+        if (! is_string($panelContext)) {
             return;
         }
 
         $panel = Filament::getCurrentPanel();
 
-        abort_unless($panel?->getId() === $routeContext['panel'], 404);
+        abort_unless($panel?->getId() === $panelContext, 404);
 
         $tenantContext = $snapshot['memo']['filamentTenant'] ?? null;
         $tenant = Filament::getTenant();
@@ -333,31 +300,22 @@ class ValidatePanelOrigin
     /**
      * @param  array<string, mixed>  $snapshot
      * @return array{
-     *     origin: string | false,
-     *     route: array{panel: string, uri: string, domain: ?string, name: ?string} | false,
+     *     panel: string | false,
      *     tenant: array{model: class-string<Model>, key: string} | false,
      *     configuration: array{page: ?string, resource: ?string} | false,
      * }
      */
     protected function getSnapshotContext(array $snapshot): array
     {
-        $origin = $snapshot['memo']['filamentOrigin'] ?? null;
+        $memo = $snapshot['memo'] ?? null;
 
-        abort_unless(($origin === false) || is_string($origin), 404);
+        abort_unless(is_array($memo), 404);
 
-        if (is_string($origin)) {
-            abort_unless($origin === request()->getSchemeAndHttpHost(), 404);
-        }
+        $panelContext = $memo['filamentPanel'] ?? null;
 
-        $routeContext = $snapshot['memo']['filamentRoute'] ?? null;
+        abort_unless(($panelContext === false) || is_string($panelContext), 404);
 
-        abort_unless(($routeContext === false) || is_array($routeContext), 404);
-
-        if (is_array($routeContext)) {
-            $this->verifyRoute($snapshot, $routeContext);
-        }
-
-        $tenantContext = $snapshot['memo']['filamentTenant'] ?? null;
+        $tenantContext = $memo['filamentTenant'] ?? null;
 
         abort_unless(($tenantContext === false) || is_array($tenantContext), 404);
 
@@ -371,9 +329,9 @@ class ValidatePanelOrigin
             );
         }
 
-        abort_if(($routeContext === false) && ($tenantContext !== false), 404);
+        abort_if(($panelContext === false) && ($tenantContext !== false), 404);
 
-        $configurationContext = $snapshot['memo']['filamentConfiguration'] ?? null;
+        $configurationContext = $memo['filamentConfiguration'] ?? null;
 
         abort_unless(($configurationContext === false) || is_array($configurationContext), 404);
 
@@ -386,11 +344,10 @@ class ValidatePanelOrigin
             );
         }
 
-        abort_unless(($routeContext === false) === ($configurationContext === false), 404);
+        abort_unless(($panelContext === false) === ($configurationContext === false), 404);
 
         return [
-            'origin' => $origin,
-            'route' => $routeContext,
+            'panel' => $panelContext,
             'tenant' => $tenantContext,
             'configuration' => $configurationContext,
         ];
@@ -402,44 +359,6 @@ class ValidatePanelOrigin
             SetUpPanel::class . ":{$panelId}",
             app('router')->gatherRouteMiddleware($route),
             true,
-        );
-    }
-
-    /**
-     * @param  array<string, mixed>  $snapshot
-     * @param  array<string, mixed>  $routeContext
-     */
-    protected function verifyRoute(array $snapshot, array $routeContext): void
-    {
-        $path = $snapshot['memo']['path'] ?? null;
-        $method = $snapshot['memo']['method'] ?? null;
-        $panelId = $routeContext['panel'] ?? null;
-
-        abort_unless(is_string($path) && is_string($method) && is_string($panelId), 404);
-
-        $currentPath = '/' . ltrim(request()->path(), '/');
-        $originalPath = '/' . ltrim($path, '/');
-        $serverBag = clone request()->server;
-        $serverBag->set('REQUEST_URI', str_replace($currentPath, $originalPath, $serverBag->get('REQUEST_URI')));
-        $serverBag->set('REQUEST_METHOD', $method);
-
-        $request = request()->duplicate(server: $serverBag->all());
-
-        try {
-            $route = app('router')->getRoutes()->match($request);
-        } catch (MethodNotAllowedHttpException | NotFoundHttpException) {
-            abort(404);
-        }
-
-        abort_unless(
-            $this->hasPanelMiddleware($route, $panelId) &&
-            ($routeContext === [
-                'panel' => $panelId,
-                'uri' => $route->uri(),
-                'domain' => $route->getDomain(),
-                'name' => $route->getName(),
-            ]),
-            404,
         );
     }
 }
