@@ -47,6 +47,8 @@ class TagsInput extends Field implements Contracts\HasAffixActions, Contracts\Ha
 
         $this->default([]);
 
+        $this->rule('array');
+
         $this->afterStateHydrated(static function (TagsInput $component, $state): void {
             if (is_array($state)) {
                 return;
