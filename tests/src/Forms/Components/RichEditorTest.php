@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\MentionProvider;
@@ -357,6 +358,54 @@ describe('configuration and state', function (): void {
     });
 
     describe('file attachments', function (): void {
+        it('does not persist attachments through `saveUploadedFileAttachmentAndGetUrl()` when the editor is disabled', function (string $editorClass, bool $isSchemaDisabled, bool $isChildSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled): void {
+            Storage::fake('tmp-for-tests');
+            Storage::fake('public');
+
+            $uploadedFile = UploadedFile::fake()->image('attachment.jpg');
+            $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded($uploadedFile);
+            Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $uploadedFile->getContent());
+            $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+            $editor = $editorClass::make('content')
+                ->fileAttachmentsDisk('public')
+                ->disabled($isFieldDisabled)
+                ->saved()
+                ->saveUploadedFileAttachmentUsing(static fn (TemporaryUploadedFile $file): string => $file->storeAs('attachments', 'attachment.jpg', 'public'))
+                ->getFileAttachmentUrlUsing(static fn (): string => 'https://example.test/attachment.jpg');
+
+            $schema = Schema::make($livewire = Livewire::make())
+                ->statePath('data')
+                ->disabled($isSchemaDisabled)
+                ->components([
+                    Group::make()
+                        ->disabled($isParentDisabled)
+                        ->schema(Schema::make()->disabled($isChildSchemaDisabled)->components([$editor])),
+                ])
+                ->fill();
+
+            data_set($livewire, 'componentFileAttachments.data.content', $temporaryFile);
+
+            $shouldStore = (! $isSchemaDisabled) && (! $isChildSchemaDisabled) && (! $isParentDisabled) && (! $isFieldDisabled);
+
+            expect($editor->saveUploadedFileAttachmentAndGetUrl())->toBe($shouldStore ? 'https://example.test/attachment.jpg' : null);
+
+            if ($shouldStore) {
+                expect(Storage::disk('public')->get('attachments/attachment.jpg'))->toBe($uploadedFile->getContent());
+            } else {
+                Storage::disk('public')->assertMissing('attachments/attachment.jpg');
+            }
+        })->with([
+            'rich editor' => RichEditor::class,
+            'markdown editor' => MarkdownEditor::class,
+        ])->with([
+            'enabled' => [false, false, false, false],
+            'disabled top-level schema' => [true, false, false, false],
+            'disabled child schema' => [false, true, false, false],
+            'disabled parent layout' => [false, false, true, false],
+            'disabled editor' => [false, false, false, true],
+        ]);
+
         it('stores the server-detected `mimetype`', function (): void {
             $richEditor = Schema::make(Livewire::make())
                 ->statePath('data')
@@ -2797,7 +2846,11 @@ describe('`resolveFileAttachmentIds()` behaviour', function (): void {
         expect(Storage::disk('public')->allFiles())->toHaveCount($shouldStore ? 1 : 0);
 
         if (! $shouldStore) {
-            expect($state['content'])->toContain('data-id="new-upload"');
+            if ($isSchemaDisabled) {
+                expect($state)->toBe([]);
+            } else {
+                expect($state['content'])->toContain('data-id="new-upload"');
+            }
 
             $editor->saveFileAttachments();
         }
