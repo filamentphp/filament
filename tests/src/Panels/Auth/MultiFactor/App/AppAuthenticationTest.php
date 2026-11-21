@@ -791,6 +791,81 @@ describe('recovery codes', function (): void {
 });
 
 describe('security', function (): void {
+    it('does not count the multi-factor challenge as a login attempt', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        foreach (range(1, 4) as $i) {
+            livewire(Login::class)
+                ->fillForm([
+                    'email' => $userToAuthenticate->email,
+                    'password' => 'incorrect-password',
+                ])
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+        }
+
+        // The 5th login attempt starts the challenge, so submitting it would have been the 6th.
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'code' => $appAuthentication->getCurrentCode($userToAuthenticate),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertNotNotified()
+            ->assertHasNoErrors()
+            ->assertRedirect(Filament::getUrl());
+
+        $this->assertAuthenticatedAs($userToAuthenticate);
+    });
+
+    it('still rate limits login attempts made after the multi-factor challenge has started', function (): void {
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        // An incorrect password ends the challenge, so every attempt after it counts again: the
+        // challenge's own login attempt and the 4 incorrect ones after the first spend all 5.
+        foreach (range(1, 5) as $i) {
+            $livewire
+                ->fillForm([
+                    'email' => $userToAuthenticate->email,
+                    'password' => 'incorrect-password',
+                ])
+                ->call('authenticate')
+                ->assertSet('userUndertakingMultiFactorAuthentication', null);
+        }
+
+        $livewire
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotified()
+            ->assertSet('userUndertakingMultiFactorAuthentication', null);
+
+        $this->assertGuest();
+    });
+
     it('can throttle multi-factor challenge attempts per user', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 

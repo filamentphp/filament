@@ -70,12 +70,17 @@ class Login extends SimplePage
     #[Exposed]
     public function authenticate(): ?LoginResponse
     {
-        try {
-            $this->rateLimit(5);
-        } catch (TooManyRequestsException $exception) {
-            $this->getRateLimitedNotification($exception)?->send();
+        // Submitting the multi-factor challenge is not another login attempt: it can only be
+        // reached with valid credentials, and it has its own rate limit per user. Otherwise,
+        // failed password attempts before the challenge would leave none for the challenge.
+        if (blank($this->userUndertakingMultiFactorAuthentication)) {
+            try {
+                $this->rateLimit(5);
+            } catch (TooManyRequestsException $exception) {
+                $this->getRateLimitedNotification($exception)?->send();
 
-            return null;
+                return null;
+            }
         }
 
         $data = $this->form->getState();
