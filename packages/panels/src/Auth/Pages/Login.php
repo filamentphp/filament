@@ -73,7 +73,7 @@ class Login extends SimplePage
         // Submitting the multi-factor challenge is not another login attempt: it can only be
         // reached with valid credentials, and it has its own rate limit per user. Otherwise,
         // failed password attempts before the challenge would leave none for the challenge.
-        if (blank($this->userUndertakingMultiFactorAuthentication)) {
+        if (! $this->isSubmittingMultiFactorChallenge()) {
             try {
                 $this->rateLimit(5);
             } catch (TooManyRequestsException $exception) {
@@ -195,6 +195,36 @@ class Login extends SimplePage
         }
 
         return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
+    }
+
+    /**
+     * Whether the form submits the multi-factor challenge for the same user it was started for.
+     * Livewire snapshots can be replayed, so a challenge started for one user must not exempt
+     * login attempts for another user from the rate limit.
+     */
+    protected function isSubmittingMultiFactorChallenge(): bool
+    {
+        $userUndertakingMultiFactorAuthenticationData = $this->getUserUndertakingMultiFactorAuthenticationData();
+
+        if (! $userUndertakingMultiFactorAuthenticationData) {
+            return false;
+        }
+
+        /** @var SessionGuard $authGuard */
+        $authGuard = Filament::auth();
+
+        $credentials = Arr::except(
+            $this->getCredentialsFromFormData([
+                'email' => '',
+                'password' => '',
+                ...($this->data ?? []),
+            ]),
+            ['password'],
+        );
+
+        $user = $authGuard->getProvider()->retrieveByCredentials($credentials); /** @phpstan-ignore-line */
+
+        return $user && hash_equals($userUndertakingMultiFactorAuthenticationData['userKey'], Filament::getUserScopedAuthIdentifier($user));
     }
 
     protected function getMultiFactorChallenge(): MultiFactorChallenge

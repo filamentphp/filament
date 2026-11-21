@@ -829,6 +829,55 @@ describe('security', function (): void {
         $this->assertAuthenticatedAs($userToAuthenticate);
     });
 
+    it('does not let a replayed multi-factor challenge exempt login attempts for another user from the rate limit', function (): void {
+        $challengedUser = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $otherUser = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $challengedUser->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        // Livewire snapshots can be replayed, so restoring the state with the started challenge
+        // before each attempt is what a client sending that snapshot again would do.
+        $lastState = new ReflectionProperty($livewire, 'lastState');
+        $challengeState = $lastState->getValue($livewire);
+
+        foreach (range(1, 4) as $i) {
+            $lastState->setValue($livewire, $challengeState);
+
+            $livewire
+                ->fillForm([
+                    'email' => $otherUser->email,
+                    'password' => 'incorrect-password',
+                ])
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+        }
+
+        // The challenge's own login attempt and the 4 attempts for another user spend all 5.
+        $lastState->setValue($livewire, $challengeState);
+
+        $livewire
+            ->fillForm([
+                'email' => $otherUser->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotified()
+            ->assertHasNoFormErrors();
+
+        $this->assertGuest();
+    });
+
     it('still rate limits login attempts made after the multi-factor challenge has started', function (): void {
         $userToAuthenticate = User::factory()
             ->hasAppAuthentication()
