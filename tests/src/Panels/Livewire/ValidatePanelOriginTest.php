@@ -20,6 +20,7 @@ use Illuminate\Testing\TestResponse;
 use Livewire\Component;
 use Livewire\Drawer\Utils;
 use Livewire\Livewire;
+use Livewire\Mechanisms\ComponentRegistry;
 use Livewire\Mechanisms\HandleComponents\Checksum;
 
 uses(TestCase::class);
@@ -305,6 +306,11 @@ it('preserves the panel context for newly mounted children', function (bool $isL
 
         expect($matches[1] ?? null)->not->toBeNull();
 
+        // A real update request does not retain components registered while rendering the placeholder.
+        app()->forgetInstance(ComponentRegistry::class);
+        app(ComponentRegistry::class)->register();
+        Livewire::component('panel-route-probe', PanelRouteProbe::class);
+
         $response = updatePanelRoute($this, $childSnapshot, 'app.example.test', [
             ['method' => '__lazyLoad', 'params' => [$matches[1]]],
         ])->assertSuccessful();
@@ -318,6 +324,50 @@ it('preserves the panel context for newly mounted children', function (bool $isL
     expect(PanelRouteProbe::$calls)->toBe(1)
         ->and(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey()]);
 })->with(['eager' => false, 'lazy' => true]);
+
+it('allows a cold lazy update bundled with an ordinary action across routes in the same tenant', function (bool $isLazyFirst): void {
+    Route::domain('app.example.test')
+        ->middleware([
+            'panel:tenant-menu-grouping',
+            IdentifyTenant::class,
+        ])
+        ->get('/bundled-lazy/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
+
+    $tenant = Team::factory()->create();
+    $ordinarySnapshot = panelRouteSnapshot($this, $tenant);
+    $response = $this->get("https://app.example.test/bundled-lazy/{$tenant->getRouteKey()}")->assertSuccessful();
+    $html = $response->getContent();
+    $lazySnapshot = Utils::extractAttributeDataFromHtml($html, 'wire:snapshot');
+
+    preg_match("/__lazyLoad\\('([^']+)'\\)/", html_entity_decode($html), $matches);
+
+    expect($matches[1] ?? null)->not->toBeNull();
+
+    // Start with the component registry that a fresh update request would have.
+    app()->forgetInstance(ComponentRegistry::class);
+    app(ComponentRegistry::class)->register();
+    Livewire::component('panel-route-probe', PanelRouteProbe::class);
+
+    $snapshots = [$lazySnapshot, $ordinarySnapshot];
+    $calls = [
+        [['method' => '__lazyLoad', 'params' => [$matches[1]], 'path' => '']],
+        [['method' => 'record', 'params' => [], 'path' => '']],
+    ];
+
+    if (! $isLazyFirst) {
+        $snapshots = array_reverse($snapshots);
+        $calls = array_reverse($calls);
+    }
+
+    $response = updateBundledPanelRoutes($this, $snapshots, calls: $calls)->assertSuccessful();
+    $lazyIndex = $isLazyFirst ? 0 : 1;
+    $mountedSnapshot = json_decode($response->json("components.{$lazyIndex}.snapshot"), true, flags: JSON_THROW_ON_ERROR);
+
+    updatePanelRoute($this, $mountedSnapshot, 'app.example.test')->assertSuccessful();
+
+    expect(PanelRouteProbe::$calls)->toBe(2)
+        ->and(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey(), $tenant->getKey()]);
+})->with(['lazy first' => true, 'ordinary first' => false]);
 
 it('rejects lazy mount parameters from a different panel context', function (bool $isPanelOuter): void {
     Route::domain('app.example.test')
