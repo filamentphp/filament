@@ -37,7 +37,6 @@ use League\Csv\Statement;
 use League\Csv\Writer;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ImportAction extends Action
@@ -284,7 +283,7 @@ class ImportAction extends Action
                 ->action(function (): StreamedResponse {
                     $columns = $this->getImporter()::getColumns();
 
-                    $csv = Writer::createFromFileObject(new SplTempFileObject);
+                    $csv = Writer::fromString();
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                         $csv->setDelimiter($csvDelimiter);
