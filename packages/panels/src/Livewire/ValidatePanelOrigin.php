@@ -8,6 +8,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Livewire\Component;
+use Livewire\Features\SupportLazyLoading\SupportLazyLoading;
 use Livewire\Livewire;
 use Livewire\Mechanisms\HandleComponents\Checksum;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
@@ -163,6 +164,9 @@ class ValidatePanelOrigin
 
             abort_unless(is_array($snapshot), 404);
             abort_unless(is_string($snapshot['checksum'] ?? null), 404);
+
+            // Livewire's release-token check must resolve the lazy mount container before resurrection.
+            app(SupportLazyLoading::class)->registerContainerComponent();
 
             Checksum::verify($snapshot);
 
