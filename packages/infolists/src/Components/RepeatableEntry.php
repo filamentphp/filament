@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanLimitItemsForProcessing;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Schema;
+use Filament\Schemas\StatePathSegment;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Enums\Alignment;
@@ -91,12 +92,23 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
         $this->cachedItemsState = $state;
 
         $containers = [];
+        $usedItemStatePaths = [];
+
+        foreach (array_keys($state) as $itemKey) {
+            if (StatePathSegment::isSafe($itemKey)) {
+                $usedItemStatePaths[(string) $itemKey] = true;
+            }
+        }
 
         foreach ($state as $itemKey => $itemData) {
+            $itemStatePath = StatePathSegment::isSafe($itemKey)
+                ? $itemKey
+                : $this->generateSafeItemStatePath($itemKey, $usedItemStatePaths);
+
             $container = $this
                 ->getChildSchema()
                 ->getClone()
-                ->statePath($itemKey)
+                ->statePath($itemStatePath)
                 ->inlineLabel(false);
 
             if ($itemData instanceof Model) {
@@ -109,6 +121,27 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
         }
 
         return $containers;
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @param  array<string, true>  $usedItemStatePaths
+     */
+    protected function generateSafeItemStatePath(string | int $itemKey, array &$usedItemStatePaths): string
+    {
+        $baseItemStatePath = 'item-' . hash('sha256', (string) $itemKey);
+        $itemStatePath = $baseItemStatePath;
+        $itemStatePathSuffix = 1;
+
+        while (isset($usedItemStatePaths[$itemStatePath])) {
+            $itemStatePath = "{$baseItemStatePath}-{$itemStatePathSuffix}";
+            $itemStatePathSuffix++;
+        }
+
+        $usedItemStatePaths[$itemStatePath] = true;
+
+        return $itemStatePath;
     }
 
     protected function areCachedDefaultChildSchemasFresh(): bool

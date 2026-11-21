@@ -29,6 +29,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -517,6 +518,21 @@ describe('UUID generation', function (): void {
         expect($repeater->generateUuid())->toBe('items-key');
         expect($repeater->generateUuid())->toBe('items-key');
     });
+
+    it('adds an item when a custom UUID callback returns an unsafe key', function (): void {
+        $repeater = Repeater::make('items')
+            ->generateUuidUsing(static fn (): string => 'unsafe.key')
+            ->schema([TextInput::make('name')->default('Added item')]);
+
+        Schema::make(Livewire::make()->data(['items' => []]))
+            ->statePath('data')
+            ->components([$repeater])
+            ->getComponents();
+
+        $repeater->getAddAction()->schemaComponent($repeater)->call();
+
+        expect(array_values($repeater->getRawState()))->toBe([['name' => 'Added item']]);
+    });
 });
 
 describe('state hydration', function (): void {
@@ -766,6 +782,197 @@ describe('item schemas', function (): void {
             ->and(array_keys($items))->toBe(array_keys($repeater->getRawState()))
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
+
+    it('rekeys unsafe item state-path keys before building schemas', function (string $unsafeItemKey): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ]);
+
+        $schema = Schema::make(Livewire::make()->data([
+            'items' => [
+                $unsafeItemKey => ['name' => 'Unsafe item key'],
+            ],
+        ]))
+            ->statePath('data')
+            ->components([$repeater]);
+
+        $schema->getComponents();
+
+        $items = $repeater->getItems();
+        $itemKey = array_key_first($items);
+
+        expect($items)->toHaveCount(1)
+            ->and($itemKey)->not->toBe($unsafeItemKey)
+            ->and(Str::isUuid($itemKey))->toBeTrue()
+            ->and($repeater->getRawState())->toHaveKey($itemKey, ['name' => 'Unsafe item key']);
+    })->with([
+        'empty' => [''],
+        'whitespace' => [' '],
+        'multiple whitespace characters' => ['   '],
+        'dot' => ['a.b'],
+        'wildcard' => ['*'],
+        'escaped wildcard' => ['\\*'],
+        'first-item placeholder' => ['{first}'],
+        'last-item placeholder' => ['{last}'],
+        'escaped first-item placeholder' => ['\\{first}'],
+        'escaped last-item placeholder' => ['\\{last}'],
+        'trailing backslash' => ['part\\'],
+        'multiple trailing backslashes' => ['part\\\\'],
+        'quote stripped from state paths' => ['a"'],
+        'control character stripped from state paths' => ["a\na"],
+    ]);
+
+    it('uses numeric replacement keys when UUID generation is disabled', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->generateUuidUsing(false);
+
+        $schema = Schema::make(Livewire::make()->data([
+            'items' => [
+                0 => ['name' => 'Safe item key'],
+                ' ' => ['name' => 'First unsafe item key'],
+                'unsafe.key' => ['name' => 'Second unsafe item key'],
+            ],
+        ]))
+            ->statePath('data')
+            ->components([$repeater]);
+
+        $schema->getComponents();
+        $repeater->getItems();
+
+        expect(array_keys($repeater->getRawState()))->toBe([0, 1, 2]);
+    });
+
+    it('uses a safe custom replacement key when configured', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->generateUuidUsing(static fn (): string => 'custom-item-key');
+
+        $schema = Schema::make(Livewire::make()->data([
+            'items' => [
+                ' ' => ['name' => 'Unsafe item key'],
+            ],
+        ]))
+            ->statePath('data')
+            ->components([$repeater]);
+
+        $schema->getComponents();
+        $repeater->getItems();
+
+        expect($repeater->getRawState())->toHaveKey('custom-item-key', ['name' => 'Unsafe item key']);
+    });
+
+    it('falls back to a UUID when a custom replacement key is unsafe', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->generateUuidUsing(static fn (): string => 'unsafe.key');
+
+        $schema = Schema::make(Livewire::make()->data([
+            'items' => [
+                ' ' => ['name' => 'Unsafe item key'],
+            ],
+        ]))
+            ->statePath('data')
+            ->components([$repeater]);
+
+        $schema->getComponents();
+        $repeater->getItems();
+
+        expect(Str::isUuid(array_key_first($repeater->getRawState())))->toBeTrue();
+    });
+
+    it('falls back to a UUID when a custom replacement key already exists', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->generateUuidUsing(static fn (): string => 'existing-item-key');
+
+        $schema = Schema::make(Livewire::make()->data([
+            'items' => [
+                'existing-item-key' => ['name' => 'Existing item'],
+                ' ' => ['name' => 'Unsafe item key'],
+            ],
+        ]))
+            ->statePath('data')
+            ->components([$repeater]);
+
+        $schema->getComponents();
+        $repeater->getItems();
+
+        $items = $repeater->getRawState();
+        $itemKeys = array_keys($items);
+
+        expect($items)->toHaveCount(2)
+            ->and($items['existing-item-key'])->toBe(['name' => 'Existing item'])
+            ->and(Str::isUuid($itemKeys[1]))->toBeTrue()
+            ->and($items[$itemKeys[1]])->toBe(['name' => 'Unsafe item key']);
+    });
+
+    it('validates and dehydrates items whose keys would otherwise resolve to the wrong state path', function (string $unsafeItemKey): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('url')
+                    ->url()
+                    ->required(),
+                Toggle::make('is_verified')
+                    ->disabled(),
+            ]);
+
+        $schema = Schema::make(Livewire::make()->data([
+            'items' => [
+                'a' => [
+                    'url' => 'https://filamentphp.com',
+                    'is_verified' => false,
+                ],
+                $unsafeItemKey => [
+                    'url' => 'javascript:alert(1)',
+                    'is_verified' => true,
+                ],
+            ],
+        ]))
+            ->statePath('data')
+            ->components([$repeater]);
+
+        $schema->getComponents();
+
+        $repeater->getItems();
+
+        $itemKeys = array_keys($repeater->getRawState());
+        $unsafeItemKeyReplacement = $itemKeys[1];
+
+        expect($itemKeys[0])->toBe('a')
+            ->and(Str::isUuid($unsafeItemKeyReplacement))->toBeTrue();
+
+        try {
+            $schema->getState();
+        } catch (ValidationException $exception) {
+            expect($exception->errors())->toHaveKey("data.items.{$unsafeItemKeyReplacement}.url");
+        }
+
+        expect(isset($exception))->toBeTrue();
+
+        $items = $repeater->getRawState();
+        $items[$unsafeItemKeyReplacement]['url'] = 'https://example.com';
+        $repeater->rawState($items);
+
+        expect($schema->getState())->toBe([
+            'items' => [
+                ['url' => 'https://filamentphp.com'],
+                ['url' => 'https://example.com'],
+            ],
+        ]);
+    })->with([
+        'state-path sanitization collision' => ['a"'],
+        'blank state path' => [' '],
+    ]);
 
     it('clones components from a warmed closure-backed `Schema` for each item', function (): void {
         $livewire = Livewire::make();
@@ -2015,6 +2222,40 @@ describe('relationship ordering and mutation', function (): void {
 });
 
 describe('relationship persistence', function (): void {
+    it('preserves safe string record keys and rejects unsafe keys before changing related records', function (string $recordKey, bool $isSafe): void {
+        $user = User::factory()->create();
+        $user = RepeaterUserWithStringKeyPosts::findOrFail($user->id);
+        $post = Post::factory()->create(['author_id' => $user->id, 'title' => $recordKey, 'content' => 'Original']);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->model($user)
+            ->components([
+                $repeater = Repeater::make('posts')->relationship('posts')->schema([TextInput::make('content')]),
+            ]);
+
+        if (! $isSafe) {
+            expect(fn () => $schema->loadStateFromRelationships())->toThrow(LogicException::class);
+            expect($post->fresh()->content)->toBe('Original')
+                ->and($user->posts()->count())->toBe(1);
+
+            return;
+        }
+
+        $schema->loadStateFromRelationships();
+        $state = $repeater->getRawState();
+        $state[array_key_first($state)]['content'] = 'Updated';
+        $repeater->rawState($state);
+        $schema->saveRelationships();
+
+        expect($post->fresh()->content)->toBe('Updated')
+            ->and($user->posts()->count())->toBe(1);
+    })->with([
+        'literal backslash' => ['part\\one', true],
+        'dot' => ['part.one', false],
+        'quote' => ['part"one', false],
+    ]);
+
     it('creates new records when items are added', function (): void {
         $user = User::factory()->create();
 
@@ -3023,6 +3264,27 @@ class RepeaterWithMutateBeforeSaveReturnsNull extends Component implements HasAc
     {
         return view('livewire.form');
     }
+}
+
+class RepeaterUserWithStringKeyPosts extends User
+{
+    protected $table = 'users';
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(RepeaterStringKeyPost::class, 'author_id');
+    }
+}
+
+class RepeaterStringKeyPost extends Post
+{
+    protected $table = 'posts';
+
+    protected $primaryKey = 'title';
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
 }
 
 class RepeaterWithMutateBeforeCreateReturnsNull extends Component implements HasActions, HasSchemas

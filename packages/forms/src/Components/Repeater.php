@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Concerns\CanLimitItemsForProcessing;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
+use Filament\Schemas\StatePathSegment;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Alignment;
@@ -891,13 +892,24 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     {
         $this->ensureItemsCanBeProcessed($this->getItemsCount());
 
+        $relationship = $this->getRelationship();
+        $records = $relationship ? $this->getCachedExistingRecords() : null;
+
         $rawState = ($this->getRawState() ?? []);
+        $rawStateWithSafeKeys = $this->rekeyItemsWithUnsafeKeys($rawState);
+
+        if ($rawStateWithSafeKeys !== $rawState) {
+            foreach (array_keys($rawState) as $itemKey) {
+                if (($records?->has($itemKey)) && (! StatePathSegment::isSafe($itemKey))) {
+                    throw new LogicException('Repeater relationship records must have primary keys that can be used as state path segments.');
+                }
+            }
+
+            $this->rawState($rawStateWithSafeKeys);
+            $rawState = $rawStateWithSafeKeys;
+        }
 
         $this->cachedItemsRawStateStructure = array_map(is_array(...), $rawState);
-
-        $relationship = $this->getRelationship();
-
-        $records = $relationship ? $this->getCachedExistingRecords() : null;
 
         $items = [];
 
