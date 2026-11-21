@@ -11,6 +11,7 @@ use Filament\Tests\Models\Team;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 uses(TestCase::class);
 
@@ -99,6 +100,41 @@ test('`getState()` only saves relationships for enabled forms, regardless of com
         expect($user->teams()->pluck('teams.id')->all())->toBe([$submittedTeam->getKey()]);
     }
 })->with([false, true])->with([false, true])->with([false, true])->with([false, true]);
+
+test('multiple `Select` fields reject scalar state before saving relationships', function (bool $isJson) {
+    $user = User::factory()->create();
+    $allowedTeam = Team::factory()->create();
+    $excludedTeam = Team::factory()->create();
+    $user->teams()->attach($allowedTeam);
+
+    $livewire = Livewire::make();
+    $form = ComponentContainer::make($livewire)
+        ->statePath('data')
+        ->model($user)
+        ->components([
+            Select::make('teams')
+                ->relationship('teams', 'name')
+                ->multiple()
+                ->nestedRecursiveRules(['in:' . $allowedTeam->getKey()]),
+        ])
+        ->fill();
+
+    $livewire->data['teams'] = $isJson ? json_encode([$excludedTeam->getKey()]) : (string) $excludedTeam->getKey();
+    $failedRules = [];
+
+    try {
+        $form->getState();
+    } catch (ValidationException $exception) {
+        $failedRules = $exception->validator->failed();
+    }
+
+    expect($failedRules['data.teams'] ?? [])->toHaveKey('Array');
+    $this->assertDatabaseCount('team_user', 1);
+    $this->assertDatabaseHas('team_user', [
+        'user_id' => $user->getKey(),
+        'team_id' => $allowedTeam->getKey(),
+    ]);
+})->with([false, true]);
 
 test('hidden fields can save relationships when requested', function () {
     $numberOfRelationshipsSaved = 0;

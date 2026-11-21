@@ -51,6 +51,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
         $this->default([]);
 
+        $this->rule('array');
+
         $this->afterStateHydrated(static function (CheckboxList $component, $state) {
             if (is_array($state)) {
                 return;

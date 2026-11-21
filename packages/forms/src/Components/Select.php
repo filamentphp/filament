@@ -124,6 +124,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->default(static fn (Select $component): ?array => $component->isMultiple() ? [] : null);
 
+        $this->rule('array', static fn (Select $component): bool => $component->isMultiple());
+
         $this->afterStateHydrated(static function (Select $component, $state): void {
             if (! $component->isMultiple()) {
                 return;

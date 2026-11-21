@@ -1,7 +1,10 @@
 <?php
 
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Arrayable;
@@ -10,6 +13,57 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 uses(TestCase::class);
+
+test('multiple option fields reject non-array state', function (string $componentClass, mixed $state) {
+    $component = $componentClass::make('options')->options(['one' => 'One', 'two' => 'Two']);
+
+    if (! $component instanceof CheckboxList) {
+        $component->multiple();
+    }
+
+    $form = ComponentContainer::make(Livewire::make()->data(['options' => $state]))
+        ->statePath('data')
+        ->components([$component]);
+
+    try {
+        $form->validate();
+    } catch (ValidationException $exception) {
+        expect($exception->validator->failed()['data.options'])->toHaveKey('Array');
+
+        return;
+    }
+
+    $this->fail('Non-array multiple option state passed validation.');
+})->with([Select::class, CheckboxList::class, ToggleButtons::class])
+    ->with(['one', '["one"]', 7, true, false]);
+
+test('multiple option fields accept arrays and optional empty state', function (string $componentClass, mixed $state) {
+    $component = $componentClass::make('options')->options(['one' => 'One', 'two' => 'Two']);
+
+    if (! $component instanceof CheckboxList) {
+        $component->multiple();
+    }
+
+    $form = ComponentContainer::make(Livewire::make()->data(['options' => $state]))
+        ->statePath('data')
+        ->components([$component]);
+
+    expect($form->validate())->toBe(['data' => ['options' => $state]]);
+})->with([Select::class, CheckboxList::class, ToggleButtons::class])
+    ->with([[['one', 'two']], [[]], [null], ['']]);
+
+test('single option fields still accept scalar state after `multiple()` is disabled', function (string $componentClass) {
+    $form = ComponentContainer::make(Livewire::make()->data(['option' => 'one']))
+        ->statePath('data')
+        ->components([
+            $componentClass::make('option')
+                ->options(['one' => 'One'])
+                ->multiple()
+                ->multiple(false),
+        ]);
+
+    expect($form->validate())->toBe(['data' => ['option' => 'one']]);
+})->with([[Select::class], [ToggleButtons::class]]);
 
 test('fields can be required', function () {
     $rules = [];

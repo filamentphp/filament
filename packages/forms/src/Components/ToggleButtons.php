@@ -36,6 +36,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
 
         $this->default(fn (ToggleButtons $component): mixed => $component->isMultiple() ? [] : null);
 
+        $this->rule('array', static fn (ToggleButtons $component): bool => $component->isMultiple());
+
         $this->afterStateHydrated(static function (ToggleButtons $component, $state): void {
             if (! $component->isMultiple()) {
                 return;
