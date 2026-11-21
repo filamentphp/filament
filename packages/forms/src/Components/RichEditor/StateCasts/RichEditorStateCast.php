@@ -142,6 +142,8 @@ class RichEditorStateCast implements StateCast
                 return;
             }
 
+            $node->attrs ??= (object) [];
+
             $triggerCharacter = $node->attrs->char ?? '@';
             $node->attrs->extra = isset($extraAttributesByTriggerCharacter[$triggerCharacter])
                 ? (object) $extraAttributesByTriggerCharacter[$triggerCharacter]

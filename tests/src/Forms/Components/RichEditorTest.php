@@ -2413,6 +2413,38 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
+    it('keeps resizable images visible when loading fails', function (): void {
+        RichEditor::configureUsing(static fn (RichEditor $component) => $component->resizableImages());
+
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-browser-test');
+
+        $page->script(<<<'JS'
+            const richEditorElement = document.querySelector('[data-testid="default-rich-editor"] [data-rich-editor-key]')
+
+            Alpine.$data(richEditorElement).$getEditor().commands.setContent({
+                type: 'doc',
+                content: [{
+                    type: 'paragraph',
+                    content: [{
+                        type: 'image',
+                        attrs: {
+                            src: 'data:image/png;base64,broken',
+                            alt: 'Unavailable illustration',
+                            width: '120',
+                            height: '80',
+                        },
+                    }],
+                }],
+            })
+            JS);
+
+        $page
+            ->assertScript('document.querySelector(\'[data-testid="default-rich-editor"] img\').complete', true)
+            ->assertVisible('[data-testid="default-rich-editor"] img[alt="Unavailable illustration"]');
+    });
+
     it('can search custom blocks and insert one at the preserved editor selection', function (): void {
         $this->actingAs(User::factory()->create());
 

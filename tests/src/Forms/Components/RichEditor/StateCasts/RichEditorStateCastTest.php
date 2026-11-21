@@ -660,6 +660,32 @@ describe('`get()`', function (): void {
     });
 });
 
+it('preserves mentions with missing attributes during state casting', function (string $direction, array $attributes): void {
+    $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+
+    $result = $cast->{$direction}([
+        'type' => 'doc',
+        'content' => [[
+            'type' => 'paragraph',
+            'content' => [['type' => 'mention', ...$attributes]],
+        ]],
+    ]);
+
+    $mentions = [];
+
+    walkStateCastResult($result, function (array $node) use (&$mentions): void {
+        if (($node['type'] ?? null) === 'mention') {
+            $mentions[] = $node;
+        }
+    });
+
+    expect($mentions)->toHaveCount(1)
+        ->and($mentions[0]['attrs']['extra'])->toBeNull();
+})->with(['get', 'set'])->with([
+    'omitted' => [[]],
+    'null' => [['attrs' => null]],
+]);
+
 class StateCastCustomBlock extends RichContentCustomBlock
 {
     public static function getId(): string
