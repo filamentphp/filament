@@ -87,6 +87,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected ?Model $cachedSelectedRecord = null;
 
+    protected mixed $cachedSelectedRecordState = null;
+
+    protected ?string $cachedSelectedRecordStatePath = null;
+
+    /**
+     * @var array<string, array<mixed> | null> | null
+     */
+    protected ?array $cachedSelectedRecordMountedActionState = null;
+
+    protected bool $isResolvingKeyForSelectedRecord = false;
+
     protected bool | Closure $isMultiple = false;
 
     protected ?Closure $getOptionLabelUsing = null;
@@ -1183,15 +1194,77 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function getSelectedRecord(): ?Model
     {
-        if ($this->cachedSelectedRecord) {
+        if ($this->shouldRefreshSelectedRecordForMountedAction()) {
+            $this->cachedSelectedRecord = null;
+        }
+
+        $state = $this->getState();
+        $statePath = $this->getStatePath();
+
+        if (
+            $this->cachedSelectedRecord &&
+            ($this->cachedSelectedRecordState === $state) &&
+            ($this->cachedSelectedRecordStatePath === $statePath)
+        ) {
             return $this->cachedSelectedRecord;
         }
 
-        if (blank($this->getState())) {
-            return null;
+        if (blank($state)) {
+            return $this->cachedSelectedRecord = null;
         }
 
-        return $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
+        $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
+        $this->cachedSelectedRecordState = $state;
+        $this->cachedSelectedRecordStatePath = $statePath;
+
+        return $this->cachedSelectedRecord;
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    protected function shouldRefreshSelectedRecordForMountedAction(): bool
+    {
+        if ($this->isResolvingKeyForSelectedRecord) {
+            return false;
+        }
+
+        $livewire = $this->getLivewire();
+        $mountedActions = data_get($livewire, 'mountedFormComponentActions');
+
+        if (empty($mountedActions)) {
+            $this->cachedSelectedRecordMountedActionState = null;
+
+            return false;
+        }
+
+        $mountedActionState = [
+            'names' => $mountedActions,
+            'components' => data_get($livewire, 'mountedFormComponentActionsComponents'),
+            'arguments' => data_get($livewire, 'mountedFormComponentActionsArguments'),
+        ];
+
+        $this->isResolvingKeyForSelectedRecord = true;
+
+        try {
+            $componentKey = $this->getKey();
+        } finally {
+            $this->isResolvingKeyForSelectedRecord = false;
+        }
+
+        if (! in_array($componentKey, $mountedActionState['components'] ?? [], true)) {
+            $this->cachedSelectedRecordMountedActionState = null;
+
+            return false;
+        }
+
+        if ($this->cachedSelectedRecordMountedActionState === $mountedActionState) {
+            return false;
+        }
+
+        $this->cachedSelectedRecordMountedActionState = $mountedActionState;
+
+        return true;
     }
 
     public function hasRelationship(): bool

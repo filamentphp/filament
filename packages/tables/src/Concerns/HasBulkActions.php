@@ -35,7 +35,12 @@ trait HasBulkActions
      */
     public ?array $mountedTableBulkActionData = [];
 
-    protected EloquentCollection | Collection $cachedSelectedTableRecords;
+    protected EloquentCollection | Collection | null $cachedSelectedTableRecords = null;
+
+    /**
+     * @var array{selectedTableRecords: array<int | string>, shouldFetchSelectedRecords: bool} | null
+     */
+    protected ?array $cachedSelectedTableRecordsState = null;
 
     protected function configureTableBulkAction(BulkAction $action): void {}
 
@@ -44,6 +49,8 @@ trait HasBulkActions
      */
     public function callMountedTableBulkAction(array $arguments = []): mixed
     {
+        $this->cachedSelectedTableRecords = null;
+
         $action = $this->getMountedTableBulkAction();
 
         if (! $action) {
@@ -136,6 +143,8 @@ trait HasBulkActions
      */
     public function mountTableBulkAction(string $name, ?array $selectedRecords = null): mixed
     {
+        $this->cachedSelectedTableRecords = null;
+
         $this->mountedTableBulkAction = $name;
 
         if ($selectedRecords !== null) {
@@ -342,6 +351,16 @@ trait HasBulkActions
 
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true): EloquentCollection | Collection
     {
+        $selectedRecordsState = [
+            'selectedTableRecords' => $this->selectedTableRecords,
+            'shouldFetchSelectedRecords' => $shouldFetchSelectedRecords,
+        ];
+
+        if ($this->cachedSelectedTableRecordsState !== $selectedRecordsState) {
+            $this->cachedSelectedTableRecords = null;
+            $this->cachedSelectedTableRecordsState = $selectedRecordsState;
+        }
+
         if (isset($this->cachedSelectedTableRecords)) {
             return $this->cachedSelectedTableRecords;
         }

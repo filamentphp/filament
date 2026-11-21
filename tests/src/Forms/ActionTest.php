@@ -1,9 +1,14 @@
 <?php
 
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Actions;
+use Filament\Tests\Models\Post;
+use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -120,3 +125,49 @@ it('can state whether a form component action exists', function () {
         ->assertFormComponentActionExists('textInput', 'exists')
         ->assertFormComponentActionDoesNotExist('textInput', 'doesNotExist');
 });
+
+it('refreshes a selected record before mounting its field action', function (bool $shouldRevokeSelection, bool $isNested): void {
+    $author = User::factory()->create(['name' => 'Eligible author']);
+    $livewire = livewire(SelectionRefreshFormActions::class)->instance();
+    $livewire->form->fill(['author_id' => $author->getKey()]);
+    $select = $livewire->form->getComponent('selected-author');
+
+    expect($select->getSelectedRecord()->getKey())->toBe($author->getKey());
+
+    if ($isNested) {
+        $livewire->mountFormComponentAction('selected-author', 'inspect');
+    }
+
+    if ($shouldRevokeSelection) {
+        $author->update(['name' => 'Excluded author']);
+    }
+
+    $livewire->mountFormComponentAction('selected-author', 'inspect', ['nested' => $isNested]);
+
+    expect($livewire->selectedRecordKey)->toBe($shouldRevokeSelection ? null : $author->getKey())
+        ->and($livewire->mountedFormComponentActions)->toHaveCount($isNested ? 2 : 1);
+})->with([false, true])->with([false, true]);
+
+class SelectionRefreshFormActions extends Actions
+{
+    public int | string | null $selectedRecordKey = null;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->model(Post::class)
+            ->statePath('data')
+            ->schema([
+                Select::make('author_id')
+                    ->key('selected-author')
+                    ->relationship('author', 'name', modifyQueryUsing: static fn (Builder $query): Builder => $query->where('name', 'Eligible author'))
+                    ->suffixAction(
+                        Action::make('inspect')
+                            ->requiresConfirmation()
+                            ->mountUsing(function (Select $component): void {
+                                $this->selectedRecordKey = $component->getSelectedRecord()?->getKey();
+                            }),
+                    ),
+            ]);
+    }
+}

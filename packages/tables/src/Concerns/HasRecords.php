@@ -180,6 +180,8 @@ trait HasRecords
     public function flushCachedTableRecords(): void
     {
         $this->cachedTableRecords = null;
+        $this->cachedSelectedTableRecords = null;
+        $this->cachedSelectedTableRecordsState = null;
     }
 
     /**

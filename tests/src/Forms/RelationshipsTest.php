@@ -55,6 +55,80 @@ test('fields can save relationships', function () {
         ->toBe(2);
 });
 
+describe('selected record caching', function (): void {
+    it('resolves the current selection after its state changes', function (bool $shouldClearState): void {
+        $authors = User::factory()->count(2)->create();
+        $livewire = Livewire::make()->data(['author_id' => $authors->first()->getKey()]);
+        $select = Select::make('author_id')->relationship('author', 'name');
+
+        ComponentContainer::make($livewire)
+            ->model(Post::class)
+            ->statePath('data')
+            ->components([$select])
+            ->getComponents();
+
+        $selectedRecord = $select->getSelectedRecord();
+
+        expect($selectedRecord->getKey())->toBe($authors->first()->getKey())
+            ->and($select->getSelectedRecord())->toBe($selectedRecord);
+
+        $select->state($shouldClearState ? null : $authors->last()->getKey());
+
+        expect($select->getSelectedRecord()?->getKey())->toBe($shouldClearState ? null : $authors->last()->getKey());
+    })->with([false, true]);
+
+    it('does not reuse a selected record when a clone moves to another state path', function (): void {
+        $author = User::factory()->create(['name' => 'Original name']);
+        $livewire = Livewire::make()->data([
+            'author_id' => $author->getKey(),
+            'reviewer_id' => $author->getKey(),
+        ]);
+        $select = Select::make('author_id')->relationship('author', 'name');
+        $form = ComponentContainer::make($livewire)
+            ->model(Post::class)
+            ->statePath('data')
+            ->components([$select]);
+        $form->getComponents();
+
+        expect($select->getSelectedRecord()->name)->toBe('Original name');
+
+        $author->update(['name' => 'Updated name']);
+        $clone = $select->getClone()->statePath('reviewer_id')->container($form);
+
+        expect($clone->getSelectedRecord()->name)->toBe('Updated name');
+    });
+
+    it('can resolve a `key()` that reads `getSelectedRecord()`', function (bool $hasMountedAction): void {
+        $author = User::factory()->create();
+        $livewire = Livewire::make()->data(['author_id' => $author->getKey()]);
+
+        if ($hasMountedAction) {
+            $livewire->mountedFormComponentActions = ['inspect'];
+            $livewire->mountedFormComponentActionsComponents = ['other'];
+            $livewire->mountedFormComponentActionsArguments = [[]];
+        }
+
+        $keyEvaluations = 0;
+        $select = Select::make('author_id')
+            ->relationship('author', 'name')
+            ->key(function (Select $component) use (&$keyEvaluations): string {
+                if (++$keyEvaluations > 10) {
+                    throw new RuntimeException('The component key depends recursively on itself.');
+                }
+
+                return 'author-' . $component->getSelectedRecord()?->getKey();
+            });
+
+        ComponentContainer::make($livewire)
+            ->model(Post::class)
+            ->statePath('data')
+            ->components([$select])
+            ->getComponents();
+
+        expect($select->getKey())->toBe('author-' . $author->getKey());
+    })->with([false, true]);
+});
+
 test('`getState()` only saves relationships for enabled forms, regardless of component opt-ins', function (bool $shouldSaveRelationshipsWhenDisabled, bool $isFormDisabled, bool $isDisabledInherited, bool $hasAfterValidate): void {
     $user = User::factory()->create();
     $originalTeam = Team::factory()->create();

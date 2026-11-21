@@ -69,6 +69,8 @@ trait HasActions
      */
     public function callMountedTableAction(array $arguments = []): mixed
     {
+        $this->cachedSelectedTableRecords = null;
+
         $action = $this->getMountedTableAction();
 
         if (! $action) {
@@ -170,6 +172,8 @@ trait HasActions
      */
     public function mountTableAction(string $name, ?string $record = null, array $arguments = []): mixed
     {
+        $this->cachedSelectedTableRecords = null;
+
         $this->mountedTableActions[] = $name;
         $this->mountedTableActionsArguments[] = $arguments;
         $this->mountedTableActionsData[] = [];
