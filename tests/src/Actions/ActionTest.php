@@ -1136,13 +1136,13 @@ describe('calling actions', function (): void {
             ]);
     });
 
-    it('passes state from `disabledSchema()` to an action', function (): void {
+    it('does not pass state from `disabledSchema()` to an action', function (): void {
         livewire(Actions::class)
             ->callAction('disabledSchema', data: [
-                'payload' => $payload = Str::random(),
+                'payload' => Str::random(),
             ])
             ->assertHasNoFormErrors()
-            ->assertDispatched('disabled-schema-called', data: ['payload' => $payload]);
+            ->assertDispatched('disabled-schema-called', data: []);
     });
 
     it('can call an action with arguments', function (): void {

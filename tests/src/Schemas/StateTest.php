@@ -11,6 +11,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 use function Filament\Tests\livewire;
 
@@ -938,7 +939,7 @@ describe('dehydrating state', function (): void {
             ->getState()->toBe([]);
     });
 
-    test('disabling a schema preserves its dehydrated field data', function (): void {
+    test('disabling a schema prevents fields from being dehydrated even when they opt into saving', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')
             ->components([
@@ -954,6 +955,9 @@ describe('dehydrating state', function (): void {
                     ->default('saved value')
                     ->disabled()
                     ->saved(),
+                Field::make('dehydrated')
+                    ->default('dehydrated value')
+                    ->dehydrated(),
                 (new Component)
                     ->schema([
                         Field::make('nested')
@@ -962,10 +966,54 @@ describe('dehydrating state', function (): void {
             ])
             ->fill();
 
-        $expected = ['direct' => 'direct value', 'saved' => 'saved value', 'nested' => 'nested value'];
+        $expected = ['direct' => 'direct value', 'saved' => 'saved value', 'dehydrated' => 'dehydrated value', 'nested' => 'nested value'];
 
         expect($schema->getState())->toBe($expected)
-            ->and($schema->disabled()->getState())->toBe($expected);
+            ->and($schema->disabled()->getState())->toBe([]);
+    });
+
+    test('a disabled child schema still permits field saving opt-ins inside an enabled top-level schema', function (): void {
+        $childComponent = (new Component)
+            ->schema(Schema::make()->disabled()->components([
+                Field::make('nested')
+                    ->default('nested value')
+                    ->saved()
+                    ->dehydrated(),
+            ]));
+
+        $schema = StateTestLivewire::make()->getSchema('form')
+            ->statePath('data')
+            ->components([
+                $childComponent,
+                Field::make('sibling')->default('sibling value'),
+            ])
+            ->fill();
+
+        $expected = ['nested' => 'nested value', 'sibling' => 'sibling value'];
+
+        expect($schema->getState())->toBe($expected);
+    });
+
+    test('a disabled schema validates before returning empty state and calling `afterValidate`', function (): void {
+        $validatedState = null;
+        $afterValidate = function (array $state) use (&$validatedState): void {
+            $validatedState = $state;
+        };
+        $schema = StateTestLivewire::make()->getSchema('form')
+            ->statePath('data')
+            ->disabled()
+            ->components([
+                TextInput::make('name')->required(),
+            ])
+            ->fill(['name' => null]);
+
+        expect(fn (): array => $schema->getState(afterValidate: $afterValidate))->toThrow(ValidationException::class)
+            ->and($validatedState)->toBeNull();
+
+        $schema->fill(['name' => 'Valid name']);
+
+        expect($schema->getState(afterValidate: $afterValidate))->toBe([])
+            ->and($validatedState)->toBe([]);
     });
 
     test('disabled components are excluded from state dehydration except if they are marked as dehydrated', function (): void {

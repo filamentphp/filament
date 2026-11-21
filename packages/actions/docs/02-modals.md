@@ -179,6 +179,8 @@ Action::make('approvePost')
     })
 ```
 
+The form is still validated when submitted, but its fields are not passed to the action's `$data` and its relationships are not automatically saved, even if fields use `saved()` or `dehydrated()`. The action itself still runs. Read any values it needs from the `$record`, as in the example above.
+
 <AutoScreenshot name="actions/modal/disabled-form" alt="Modal with disabled form fields" />
 
 #### Rendering a wizard in a modal
