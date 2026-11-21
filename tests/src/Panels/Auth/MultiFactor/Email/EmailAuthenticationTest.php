@@ -86,6 +86,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'credentialsHash' => hash('sha256', serialize(['email' => $userToAuthenticate->email])),
             ]);
 
         $this->assertGuest();
@@ -720,6 +721,7 @@ describe('failure cases', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'credentialsHash' => hash('sha256', serialize(['email' => $userToAuthenticate->email])),
             ]);
 
         $login

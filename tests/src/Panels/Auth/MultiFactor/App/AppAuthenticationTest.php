@@ -17,6 +17,7 @@ use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -58,6 +59,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'credentialsHash' => hash('sha256', serialize(['email' => $userToAuthenticate->email])),
             ]);
 
         $this->assertGuest();
@@ -866,6 +868,8 @@ describe('security', function (): void {
         // The challenge's own login attempt and the 4 attempts for another user spend all 5.
         $lastState->setValue($livewire, $challengeState);
 
+        DB::enableQueryLog();
+
         $livewire
             ->fillForm([
                 'email' => $otherUser->email,
@@ -876,6 +880,11 @@ describe('security', function (): void {
             ->assertHasNoFormErrors();
 
         $this->assertGuest();
+
+        // Telling the challenge's user from another must not look up the user in the form, as
+        // the request is not rate limited yet and could otherwise be replayed without limit.
+        expect(collect(DB::getQueryLog())->pluck('query')->filter(fn (string $query): bool => str_contains($query, 'email'))->values()->all())
+            ->toBe([]);
     });
 
     it('still rate limits login attempts made after the multi-factor challenge has started', function (): void {

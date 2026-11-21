@@ -147,6 +147,7 @@ class Login extends SimplePage
                 $this->userUndertakingMultiFactorAuthentication = encrypt([
                     'identifier' => $user->getAuthIdentifier(),
                     'userKey' => Filament::getUserScopedAuthIdentifier($user),
+                    'credentialsHash' => $this->getMultiFactorChallengeCredentialsHash(),
                 ]);
 
                 $multiFactorChallenge->beforeChallenge($user, $multiFactorAuthenticationProvider);
@@ -198,21 +199,23 @@ class Login extends SimplePage
     }
 
     /**
-     * Whether the form submits the multi-factor challenge for the same user it was started for.
-     * Livewire snapshots can be replayed, so a challenge started for one user must not exempt
-     * login attempts for another user from the rate limit.
+     * Whether the form submits the multi-factor challenge for the same credentials it was started
+     * with. Livewire snapshots can be replayed, so a challenge started for one user must not exempt
+     * login attempts for another user from the rate limit. The credentials are compared by hash,
+     * without a user lookup, since this runs before the request is rate limited.
      */
     protected function isSubmittingMultiFactorChallenge(): bool
     {
-        $userUndertakingMultiFactorAuthenticationData = $this->getUserUndertakingMultiFactorAuthenticationData();
+        $credentialsHash = $this->getUserUndertakingMultiFactorAuthenticationData()['credentialsHash'] ?? null;
 
-        if (! $userUndertakingMultiFactorAuthenticationData) {
-            return false;
-        }
+        return is_string($credentialsHash) && hash_equals($credentialsHash, $this->getMultiFactorChallengeCredentialsHash());
+    }
 
-        /** @var SessionGuard $authGuard */
-        $authGuard = Filament::auth();
-
+    /**
+     * Hash of the credentials in the form, without the password, that identify the user.
+     */
+    protected function getMultiFactorChallengeCredentialsHash(): string
+    {
         $credentials = Arr::except(
             $this->getCredentialsFromFormData([
                 'email' => '',
@@ -222,9 +225,7 @@ class Login extends SimplePage
             ['password'],
         );
 
-        $user = $authGuard->getProvider()->retrieveByCredentials($credentials); /** @phpstan-ignore-line */
-
-        return $user && hash_equals($userUndertakingMultiFactorAuthenticationData['userKey'], Filament::getUserScopedAuthIdentifier($user));
+        return hash('sha256', serialize($credentials));
     }
 
     protected function getMultiFactorChallenge(): MultiFactorChallenge
@@ -345,7 +346,7 @@ class Login extends SimplePage
     }
 
     /**
-     * @return array{identifier: mixed, userKey: string} | null
+     * @return array{identifier: mixed, userKey: string, credentialsHash?: string} | null
      */
     protected function getUserUndertakingMultiFactorAuthenticationData(): ?array
     {
