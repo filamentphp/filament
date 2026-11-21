@@ -41,6 +41,10 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
     protected ?Model $cachedSelectedRecord = null;
 
+    protected mixed $cachedSelectedRecordState = null;
+
+    protected ?string $cachedSelectedRecordStatePath = null;
+
     protected bool | Closure $isMultiple = false;
 
     protected ?Closure $getOptionLabelUsing;
@@ -56,6 +60,8 @@ class ModalTableSelect extends Field implements HasEmbeddedView
     protected string | Closure | null $relationship = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
+
+    protected bool $shouldUseLoadedRelationshipForSelectedRecords = true;
 
     protected string | Closure | null $tableConfiguration = null;
 
@@ -296,6 +302,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
         if (
             (! $this->modifyRelationshipQueryUsing) &&
+            $this->shouldUseLoadedRelationshipForSelectedRecords &&
             ($relationship instanceof BelongsTo)
         ) {
             $record = $this->getRecord();
@@ -343,6 +350,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
         if (
             (! $this->modifyRelationshipQueryUsing) &&
+            $this->shouldUseLoadedRelationshipForSelectedRecords &&
             ($record instanceof Model) &&
             $record->relationLoaded($relationshipName) &&
             (
@@ -777,15 +785,26 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
     public function getSelectedRecord(): ?Model
     {
-        if ($this->cachedSelectedRecord) {
+        $state = $this->getState();
+        $statePath = $this->getStatePath();
+
+        if (
+            $this->cachedSelectedRecord &&
+            ($this->cachedSelectedRecordState === $state) &&
+            ($this->cachedSelectedRecordStatePath === $statePath)
+        ) {
             return $this->cachedSelectedRecord;
         }
 
-        if (blank($this->getState())) {
-            return null;
+        if (blank($state)) {
+            return $this->cachedSelectedRecord = null;
         }
 
-        return $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
+        $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
+        $this->cachedSelectedRecordState = $state;
+        $this->cachedSelectedRecordStatePath = $statePath;
+
+        return $this->cachedSelectedRecord;
     }
 
     public function hasRelationship(): bool
@@ -833,10 +852,28 @@ class ModalTableSelect extends Field implements HasEmbeddedView
         }
 
         if ($this->isMultiple()) {
-            return array_keys($this->getOptionLabels(withDefaults: false));
+            $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+            $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+            try {
+                return array_keys($this->getOptionLabels(withDefaults: false));
+            } finally {
+                $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+            }
         }
 
-        return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
+        $this->cachedSelectedRecord = null;
+        $this->cachedSelectedRecordState = null;
+        $this->cachedSelectedRecordStatePath = null;
+
+        $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+        $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+        try {
+            return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
+        } finally {
+            $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+        }
     }
 
     public function hasInValidationOnMultipleValues(): bool

@@ -1033,7 +1033,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     {
         $this->ensureItemsCanBeProcessed($this->getItemsCount());
 
-        $rawState = $this->getRawState();
+        $rawState = $this->getRawState() ?? [];
+        $rawStateWithSafeKeys = $this->rekeyItemsWithUnsafeKeys($rawState);
+
+        if ($rawStateWithSafeKeys !== $rawState) {
+            $this->rawState($rawStateWithSafeKeys);
+            $rawState = $rawStateWithSafeKeys;
+        }
 
         $this->cachedItemsRawStateStructure = $this->getRawStateStructure($rawState);
 

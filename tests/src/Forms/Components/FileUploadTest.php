@@ -3086,10 +3086,10 @@ describe('`saveUploadedFile()` branches', function (): void {
             expect($state['document'])->toBe(['uploads/existing.txt', 'uploads/new-document.txt']);
         } else {
             Storage::disk('public')->assertMissing('uploads/new-document.txt');
-            expect($state['document'])->toBe(['uploads/existing.txt', $temporaryFile]);
+            expect($state)->toBe($isSchemaDisabled ? [] : ['name' => 'Original name', 'document' => ['uploads/existing.txt', $temporaryFile]]);
         }
 
-        expect($state['name'])->toBe('Original name')
+        expect($state['name'] ?? null)->toBe($isSchemaDisabled ? null : 'Original name')
             ->and(Storage::disk('public')->get('uploads/existing.txt'))->toBe('Existing document')
             ->and($temporaryFile->exists())->toBe(! $shouldStore);
     })->with([false, true])->with([false, true])->with([false, true]);

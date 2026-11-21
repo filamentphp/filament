@@ -54,7 +54,8 @@ class RichEditorBrowserTest extends Page
                         HTML)
                     ->mentions([
                         MentionProvider::make('@')
-                            ->getSearchResultsUsing(static fn (string $search): array => $search === 'Ali' ? ['author-7' => 'Alice Chen'] : []),
+                            ->getSearchResultsUsing(static fn (string $search): array => $search === 'Ali' ? ['author-7' => 'Alice Chen'] : [])
+                            ->extraAttributes(['data-provider' => 'trusted']),
                     ])
                     ->extraAttributes(['data-testid' => 'default-rich-editor']),
                 RichEditor::make('heightConstrainedContent')

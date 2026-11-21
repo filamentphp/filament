@@ -738,7 +738,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     {
         $relationship = Relation::noConstraints(fn () => $this->getOptionsRelationship());
 
-        $relatedRecord = $record->getRelationValue($this->getOptionsRelationshipName());
+        $relatedRecord = $this->modifyOptionsRelationshipQueryUsing
+            ? null
+            : $record->getRelationValue($this->getOptionsRelationshipName());
 
         if (strval($relatedRecord?->getAttribute($this->getRelatedKeyNameForOptionsRelationship($relationship))) !== strval($state)) {
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);

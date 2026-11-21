@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\MentionProvider;
@@ -357,6 +358,54 @@ describe('configuration and state', function (): void {
     });
 
     describe('file attachments', function (): void {
+        it('does not persist attachments through `saveUploadedFileAttachmentAndGetUrl()` when the editor is disabled', function (string $editorClass, bool $isSchemaDisabled, bool $isChildSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled): void {
+            Storage::fake('tmp-for-tests');
+            Storage::fake('public');
+
+            $uploadedFile = UploadedFile::fake()->image('attachment.jpg');
+            $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded($uploadedFile);
+            Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $uploadedFile->getContent());
+            $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+            $editor = $editorClass::make('content')
+                ->fileAttachmentsDisk('public')
+                ->disabled($isFieldDisabled)
+                ->saved()
+                ->saveUploadedFileAttachmentUsing(static fn (TemporaryUploadedFile $file): string => $file->storeAs('attachments', 'attachment.jpg', 'public'))
+                ->getFileAttachmentUrlUsing(static fn (): string => 'https://example.test/attachment.jpg');
+
+            $schema = Schema::make($livewire = Livewire::make())
+                ->statePath('data')
+                ->disabled($isSchemaDisabled)
+                ->components([
+                    Group::make()
+                        ->disabled($isParentDisabled)
+                        ->schema(Schema::make()->disabled($isChildSchemaDisabled)->components([$editor])),
+                ])
+                ->fill();
+
+            data_set($livewire, 'componentFileAttachments.data.content', $temporaryFile);
+
+            $shouldStore = (! $isSchemaDisabled) && (! $isChildSchemaDisabled) && (! $isParentDisabled) && (! $isFieldDisabled);
+
+            expect($editor->saveUploadedFileAttachmentAndGetUrl())->toBe($shouldStore ? 'https://example.test/attachment.jpg' : null);
+
+            if ($shouldStore) {
+                expect(Storage::disk('public')->get('attachments/attachment.jpg'))->toBe($uploadedFile->getContent());
+            } else {
+                Storage::disk('public')->assertMissing('attachments/attachment.jpg');
+            }
+        })->with([
+            'rich editor' => RichEditor::class,
+            'markdown editor' => MarkdownEditor::class,
+        ])->with([
+            'enabled' => [false, false, false, false],
+            'disabled top-level schema' => [true, false, false, false],
+            'disabled child schema' => [false, true, false, false],
+            'disabled parent layout' => [false, false, true, false],
+            'disabled editor' => [false, false, false, true],
+        ]);
+
         it('stores the server-detected `mimetype`', function (): void {
             $richEditor = Schema::make(Livewire::make())
                 ->statePath('data')
@@ -2286,13 +2335,163 @@ describe('browser interactions', function (): void {
         $page
             ->fill('[data-testid="default-rich-editor"] [role="textbox"]', '@Ali')
             ->click('Alice Chen')
-            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"][data-provider="trusted"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         $page->inDarkMode()
             ->assertVisible('[data-testid="default-rich-editor"] [role="textbox"]')
             ->assertNoAccessibilityIssues();
+    });
+
+    it('only renders mention extra attributes configured by the provider', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $mention = '[data-testid="mention-attributes-rich-editor"] [data-type="mention"]';
+
+        $page = visit('/rich-editor-mention-attributes-browser-test');
+
+        $page->script(<<<'JS'
+            const richEditorElement = document.querySelector('[data-testid="mention-attributes-rich-editor"] [data-rich-editor-key]')
+
+            Alpine.$data(richEditorElement).getEditor().commands.setContent({
+                type: 'doc',
+                content: [{
+                    type: 'paragraph',
+                    content: [{
+                        type: 'mention',
+                        attrs: {
+                            id: 'author-7',
+                            label: 'Alice Chen',
+                            char: '@',
+                            extra: {
+                                autofocus: '',
+                                tabindex: '0',
+                                onfocus: 'window.mentionFocusAttributeExecuted = true',
+                                'x-init': 'window.mentionAlpineAttributeExecuted = true',
+                                'data-attacker': 'client',
+                            },
+                        },
+                    }],
+                }],
+            })
+            JS);
+
+        $page
+            ->assertPresent($mention . '[data-provider="trusted"]')
+            ->assertAttributeMissing($mention, 'autofocus')
+            ->assertAttributeMissing($mention, 'tabindex')
+            ->assertAttributeMissing($mention, 'onfocus')
+            ->assertAttributeMissing($mention, 'x-init')
+            ->assertAttributeMissing($mention, 'data-attacker')
+            ->assertScript('window.mentionFocusAttributeExecuted ?? false', false)
+            ->assertScript('window.mentionAlpineAttributeExecuted ?? false', false)
+            ->assertNoSmoke();
+    });
+
+    it('sanitizes stored CSS values before rendering them in the editor', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $editor = '[data-testid="style-attributes-rich-editor"]';
+        $page = visit('/rich-editor-style-attributes-browser-test');
+
+        $page->script(<<<'JS'
+            const richEditorElement = document.querySelector('[data-testid="style-attributes-rich-editor"] [data-rich-editor-key]')
+
+            Alpine.$data(richEditorElement).getEditor().commands.setContent({
+                type: 'doc',
+                content: [{
+                    type: 'paragraph',
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Unsafe color',
+                            marks: [{
+                                type: 'textColor',
+                                attrs: {
+                                    'data-color': 'red; position: fixed; background-image: url(//attacker)',
+                                },
+                            }],
+                        },
+                        {
+                            type: 'image',
+                            attrs: {
+                                id: 'unsafe-image',
+                                src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+                                width: '100; position: fixed; inset: 0',
+                                height: '100; background-image: url(//attacker)',
+                            },
+                        },
+                        {
+                            type: 'text',
+                            text: 'Safe color',
+                            marks: [{
+                                type: 'textColor',
+                                attrs: { 'data-color': '#00ff00' },
+                            }],
+                        },
+                        {
+                            type: 'image',
+                            attrs: {
+                                id: 'safe-image',
+                                src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+                                width: '50%',
+                                height: '200',
+                            },
+                        },
+                    ],
+                }],
+            })
+            JS);
+
+        $page
+            ->assertAttributeMissing($editor . ' img[data-id="unsafe-image"]', 'width')
+            ->assertAttributeMissing($editor . ' img[data-id="unsafe-image"]', 'height')
+            ->assertAttributeMissing($editor . ' img[data-id="unsafe-image"]', 'style')
+            ->assertScript(<<<'JS'
+                Array.from(document.querySelectorAll('[data-testid="style-attributes-rich-editor"] span.color'))
+                    .find((element) => element.dataset.color.includes('position'))
+                    ?.getAttribute('style') ?? null
+                JS, null)
+            ->assertScript(<<<'JS'
+                document.querySelector('[data-testid="style-attributes-rich-editor"] span.color[data-color="#00ff00"]')
+                    .style.getPropertyValue('--color').trim()
+                JS, '#00ff00')
+            ->assertScript("document.querySelector('{$editor} img[data-id=\"safe-image\"]').style.width", '50%')
+            ->assertScript("document.querySelector('{$editor} img[data-id=\"safe-image\"]').style.height", '200px')
+            ->assertNoSmoke();
+    });
+
+    it('keeps resizable images visible when loading fails', function (): void {
+        RichEditor::configureUsing(static fn (RichEditor $component) => $component->resizableImages());
+
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-browser-test');
+
+        $page->script(<<<'JS'
+            const richEditorElement = document.querySelector('[data-testid="default-rich-editor"] [data-rich-editor-key]')
+
+            Alpine.$data(richEditorElement).$getEditor().commands.setContent({
+                type: 'doc',
+                content: [{
+                    type: 'paragraph',
+                    content: [{
+                        type: 'image',
+                        attrs: {
+                            src: 'data:image/png;base64,broken',
+                            alt: 'Unavailable illustration',
+                            width: '120',
+                            height: '80',
+                        },
+                    }],
+                }],
+            })
+            JS);
+
+        $page
+            ->assertScript('document.querySelector(\'[data-testid="default-rich-editor"] img\').complete', true)
+            ->assertVisible('[data-testid="default-rich-editor"] img[alt="Unavailable illustration"]');
     });
 
     it('can search custom blocks and insert one at the preserved editor selection', function (): void {
@@ -2647,7 +2846,11 @@ describe('`resolveFileAttachmentIds()` behaviour', function (): void {
         expect(Storage::disk('public')->allFiles())->toHaveCount($shouldStore ? 1 : 0);
 
         if (! $shouldStore) {
-            expect($state['content'])->toContain('data-id="new-upload"');
+            if ($isSchemaDisabled) {
+                expect($state)->toBe([]);
+            } else {
+                expect($state['content'])->toContain('data-id="new-upload"');
+            }
 
             $editor->saveFileAttachments();
         }

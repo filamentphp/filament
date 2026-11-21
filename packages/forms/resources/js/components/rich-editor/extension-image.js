@@ -1,5 +1,17 @@
 import Image from '@tiptap/extension-image'
 
+const sanitizeStyleLength = (value) => {
+    if (!['number', 'string'].includes(typeof value)) return null
+
+    const normalizedValue = String(value).trim()
+
+    return /^\d+(?:\.\d+)?(?:%|px|em|rem|vw|vh|vmin|vmax|pt|pc|cm|mm|in|ch|ex)?$/i.test(
+        normalizedValue,
+    )
+        ? normalizedValue
+        : null
+}
+
 const normalizeStyleLength = (value) =>
     /^\d+(?:\.\d+)?$/.test(value) ? `${value}px` : value
 
@@ -29,13 +41,15 @@ export default Image.extend({
                     element.style.width ||
                     null,
                 renderHTML: (attributes) => {
-                    if (!attributes.width) {
+                    const width = sanitizeStyleLength(attributes.width)
+
+                    if (!width) {
                         return {}
                     }
 
                     return {
-                        width: attributes.width,
-                        style: `width: ${normalizeStyleLength(attributes.width)}`,
+                        width,
+                        style: `width: ${normalizeStyleLength(width)}`,
                     }
                 },
             },
@@ -47,13 +61,15 @@ export default Image.extend({
                     element.style.height ||
                     null,
                 renderHTML: (attributes) => {
-                    if (!attributes.height) {
+                    const height = sanitizeStyleLength(attributes.height)
+
+                    if (!height) {
                         return {}
                     }
 
                     return {
-                        height: attributes.height,
-                        style: `height: ${normalizeStyleLength(attributes.height)}`,
+                        height,
+                        style: `height: ${normalizeStyleLength(height)}`,
                     }
                 },
             },

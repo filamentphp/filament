@@ -589,6 +589,12 @@ trait HasState
         return Component::withVisibilityCache(function () use ($shouldCallHooksBefore, $afterValidate): array {
             $state = $this->validate();
 
+            if ($this->isRoot() && $this->isDisabled()) {
+                value($afterValidate, []);
+
+                return [];
+            }
+
             // `validate()` returns data that went through `prepareForValidation()`,
             // which applies `mutateStateForValidation()` mutations. Those mutations
             // should only affect validation rules, not the dehydrated output. Replace

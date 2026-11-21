@@ -896,6 +896,13 @@ trait CanBeValidated
             $rules[] = $rule;
         }
 
+        if (
+            $this->hasInValidationOnMultipleValues() &&
+            (! in_array('array', $rules, strict: true))
+        ) {
+            $rules[] = 'array';
+        }
+
         return $rules;
     }
 
