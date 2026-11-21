@@ -33,6 +33,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Timebox;
 use Illuminate\Validation\ValidationException;
@@ -70,10 +71,16 @@ class Login extends SimplePage
     #[Exposed]
     public function authenticate(): ?LoginResponse
     {
+        $isSubmittingMultiFactorChallenge = $this->isSubmittingMultiFactorChallenge();
+
         // Submitting the multi-factor challenge is not another login attempt: it can only be
         // reached with valid credentials, and it has its own rate limit per user. Otherwise,
         // failed password attempts before the challenge would leave none for the challenge.
-        if (! $this->isSubmittingMultiFactorChallenge()) {
+        if ($isSubmittingMultiFactorChallenge) {
+            if ($this->isMultiFactorChallengeSubmissionRateLimited()) {
+                return null;
+            }
+        } else {
             try {
                 $this->rateLimit(5);
             } catch (TooManyRequestsException $exception) {
@@ -147,7 +154,7 @@ class Login extends SimplePage
                 $this->userUndertakingMultiFactorAuthentication = encrypt([
                     'identifier' => $user->getAuthIdentifier(),
                     'userKey' => Filament::getUserScopedAuthIdentifier($user),
-                    'credentialsHash' => $this->getMultiFactorChallengeCredentialsHash(),
+                    'loginDataHash' => $this->getMultiFactorChallengeLoginDataHash(),
                 ]);
 
                 $multiFactorChallenge->beforeChallenge($user, $multiFactorAuthenticationProvider);
@@ -198,34 +205,37 @@ class Login extends SimplePage
         return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
     }
 
-    /**
-     * Whether the form submits the multi-factor challenge for the same credentials it was started
-     * with. Livewire snapshots can be replayed, so a challenge started for one user must not exempt
-     * login attempts for another user from the rate limit. The credentials are compared by hash,
-     * without a user lookup, since this runs before the request is rate limited.
-     */
     protected function isSubmittingMultiFactorChallenge(): bool
     {
-        $credentialsHash = $this->getUserUndertakingMultiFactorAuthenticationData()['credentialsHash'] ?? null;
+        $loginDataHash = $this->getUserUndertakingMultiFactorAuthenticationData()['loginDataHash'] ?? null;
 
-        return is_string($credentialsHash) && hash_equals($credentialsHash, $this->getMultiFactorChallengeCredentialsHash());
+        return is_string($loginDataHash) && hash_equals($loginDataHash, $this->getMultiFactorChallengeLoginDataHash());
     }
 
-    /**
-     * Hash of the credentials in the form, without the password, that identify the user.
-     */
-    protected function getMultiFactorChallengeCredentialsHash(): string
+    protected function getMultiFactorChallengeLoginDataHash(): string
     {
-        $credentials = Arr::except(
-            $this->getCredentialsFromFormData([
-                'email' => '',
-                'password' => '',
-                ...($this->data ?? []),
-            ]),
-            ['password'],
-        );
+        return hash('sha256', serialize(Arr::except($this->data ?? [], ['multiFactor'])));
+    }
 
-        return hash('sha256', serialize($credentials));
+    protected function isMultiFactorChallengeSubmissionRateLimited(): bool
+    {
+        $multiFactorChallenge = $this->getMultiFactorChallenge();
+        $rateLimiterKey = 'filament:auth:multi_factor_challenge_submission:rate_limit:' . hash('sha256', (string) $this->userUndertakingMultiFactorAuthentication);
+
+        if (RateLimiter::tooManyAttempts($rateLimiterKey, $multiFactorChallenge->getMaxRateLimiterAttempts())) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'authenticate',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimiterKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimiterKey);
+
+        return false;
     }
 
     protected function getMultiFactorChallenge(): MultiFactorChallenge
@@ -346,7 +356,7 @@ class Login extends SimplePage
     }
 
     /**
-     * @return array{identifier: mixed, userKey: string, credentialsHash?: string} | null
+     * @return array{identifier: mixed, userKey: string, loginDataHash?: string} | null
      */
     protected function getUserUndertakingMultiFactorAuthenticationData(): ?array
     {
