@@ -365,6 +365,42 @@ it('rejects lazy mount parameters from a different tenant', function (): void {
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
+it('rejects lazy mount parameters from a different origin before running actions', function (): void {
+    foreach (['app.example.test', 'other.example.test'] as $host) {
+        Route::domain($host)
+            ->middleware([
+                'panel:tenant-menu-grouping',
+                IdentifyTenant::class,
+            ])
+            ->get('/origin-lazy-probe/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
+    }
+
+    $tenant = Team::factory()->create();
+    $snapshots = [];
+    $mountParameters = [];
+
+    foreach (['app.example.test', 'other.example.test'] as $host) {
+        $response = $this
+            ->get("https://{$host}/origin-lazy-probe/{$tenant->getRouteKey()}")
+            ->assertSuccessful();
+        $html = $response->getContent();
+        $snapshots[$host] = Utils::extractAttributeDataFromHtml($html, 'wire:snapshot');
+
+        preg_match("/__lazyLoad\\('([^']+)'\\)/", html_entity_decode($html), $matches);
+
+        expect($matches[1] ?? null)->not->toBeNull();
+
+        $mountParameters[$host] = $matches[1];
+    }
+
+    updatePanelRoute($this, $snapshots['app.example.test'], 'app.example.test', [
+        ['method' => 'record', 'params' => []],
+        ['method' => '__lazyLoad', 'params' => [$mountParameters['other.example.test']]],
+    ])->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+});
+
 it('rejects bundled panel and non-panel updates', function (bool $isPanelFirst): void {
     $panelSnapshot = panelRouteSnapshot($this, Team::factory()->create());
 
@@ -411,6 +447,31 @@ it('rejects bundled updates from different tenants', function (): void {
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
+
+it('rejects bundled updates from different origins before running actions', function (bool $isCurrentOriginFirst): void {
+    Route::domain('other.example.test')
+        ->middleware([
+            'panel:tenant-menu-grouping',
+            IdentifyTenant::class,
+        ])
+        ->get('/other-secure/{tenant}', fn (): string => Blade::render('<livewire:panel-route-probe />'));
+
+    $tenant = Team::factory()->create();
+    $currentOriginSnapshot = panelRouteSnapshot($this, $tenant);
+    $otherOriginResponse = $this
+        ->get("https://other.example.test/other-secure/{$tenant->getRouteKey()}")
+        ->assertSuccessful();
+    $otherOriginSnapshot = Utils::extractAttributeDataFromHtml($otherOriginResponse->getContent(), 'wire:snapshot');
+    $snapshots = $isCurrentOriginFirst
+        ? [$currentOriginSnapshot, $otherOriginSnapshot]
+        : [$otherOriginSnapshot, $currentOriginSnapshot];
+
+    updateBundledPanelRoutes($this, $snapshots, calls: [[
+        ['method' => 'record', 'params' => [], 'path' => ''],
+    ]])->assertNotFound();
+
+    expect(PanelRouteProbe::$calls)->toBe(0);
+})->with(['current origin first' => true, 'other origin first' => false]);
 
 it('rejects an update when a tenant route key resolves to a different tenant', function (): void {
     $user = User::factory()->create();

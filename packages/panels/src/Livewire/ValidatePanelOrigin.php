@@ -300,6 +300,7 @@ class ValidatePanelOrigin
     /**
      * @param  array<string, mixed>  $snapshot
      * @return array{
+     *     origin: string,
      *     panel: string | false,
      *     tenant: array{model: class-string<Model>, key: string} | false,
      *     configuration: array{page: ?string, resource: ?string} | false,
@@ -310,6 +311,15 @@ class ValidatePanelOrigin
         $memo = $snapshot['memo'] ?? null;
 
         abort_unless(is_array($memo), 404);
+
+        $origin = $memo['origin'] ?? null;
+
+        // Livewire verifies each component's origin later. Recheck it here so a bundled request
+        // cannot run an earlier component before Livewire rejects a later one.
+        abort_unless(
+            is_string($origin) && ($origin === request()->getSchemeAndHttpHost()),
+            404,
+        );
 
         $panelContext = $memo['filamentPanel'] ?? null;
 
@@ -347,6 +357,7 @@ class ValidatePanelOrigin
         abort_unless(($panelContext === false) === ($configurationContext === false), 404);
 
         return [
+            'origin' => $origin,
             'panel' => $panelContext,
             'tenant' => $tenantContext,
             'configuration' => $configurationContext,
