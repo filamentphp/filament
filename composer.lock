@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e9037aea33699d1aa634a59b47bd004",
+    "content-hash": "a69c13c5dcfc3ba691c24577f9baec7b",
     "packages": [],
     "packages-dev": [
         {
@@ -2974,11 +2974,11 @@
         },
         {
             "name": "filament/support",
-            "version": "dev-main",
+            "version": "4.x-dev",
             "dist": {
                 "type": "path",
                 "url": "packages/support",
-                "reference": "d1642cb4b24d384bbc77994c3cb8f88adba2b8d9"
+                "reference": "d3955f4865fe02347e586ef19c123c64bef7725b"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
@@ -2989,7 +2989,7 @@
                 "illuminate/contracts": "^11.28|^12.0|^13.0",
                 "kirschbaum-development/eloquent-power-joins": "^4.0",
                 "league/uri-components": "^7.0",
-                "livewire/livewire": "^3.8.7",
+                "livewire/livewire": "^3.8.12",
                 "nette/php-generator": "^4.0",
                 "php": "^8.2",
                 "ryangjchandler/blade-capture-directive": "^1.0",
@@ -5371,16 +5371,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.8.9",
+            "version": "v3.8.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "993a3f5051774ca12768067ab8644ea97c417417"
+                "reference": "4193052b05938d40445270138a09e70a855ef6c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/993a3f5051774ca12768067ab8644ea97c417417",
-                "reference": "993a3f5051774ca12768067ab8644ea97c417417",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/4193052b05938d40445270138a09e70a855ef6c4",
+                "reference": "4193052b05938d40445270138a09e70a855ef6c4",
                 "shasum": ""
             },
             "require": {
@@ -5435,7 +5435,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.8.9"
+                "source": "https://github.com/livewire/livewire/tree/v3.8.12"
             },
             "funding": [
                 {
@@ -5443,7 +5443,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-14T19:27:17+00:00"
+            "time": "2026-11-21T00:39:22+00:00",
+            "published-time": "2026-11-21T01:10:26+00:00"
         },
         {
             "name": "maennchen/zipstream-php",

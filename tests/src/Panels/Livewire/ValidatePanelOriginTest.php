@@ -297,13 +297,13 @@ it('preserves each origin in bundled panel and non-panel updates', function (boo
     $panelSnapshot = json_decode($response->json('components.' . ($isPanelFirst ? 0 : 1) . '.snapshot'), true, flags: JSON_THROW_ON_ERROR);
     $publicSnapshot = json_decode($response->json('components.' . ($isPanelFirst ? 1 : 0) . '.snapshot'), true, flags: JSON_THROW_ON_ERROR);
 
-    updatePanelRoute($this, $publicSnapshot, 'other.example.test')->assertSuccessful();
+    updatePanelRoute($this, $publicSnapshot, 'app.example.test')->assertSuccessful();
     updatePanelRoute($this, $panelSnapshot, 'other.example.test')->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(1);
 })->with(['panel first' => true, 'non-panel first' => false]);
 
-it('leaves path-only panel updates working across hosts', function (): void {
+it('allows path-only panel updates on the original host', function (): void {
     Route::middleware([
         'panel:tenant-menu-grouping',
         IdentifyTenant::class,
@@ -319,7 +319,7 @@ it('leaves path-only panel updates working across hosts', function (): void {
 
     expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
 
-    updatePanelRoute($this, $snapshot, 'other.example.test')->assertSuccessful();
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
 
     expect(PanelRouteProbe::$tenantKeys)->toBe([$tenant->getKey()]);
 });
@@ -336,7 +336,7 @@ it('rejects a signed snapshot from before the route guard was added', function (
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('does not restrict non-panel Livewire routes', function (): void {
+it('allows non-panel Livewire updates on the original host', function (): void {
     Route::get('/public-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'));
 
     $response = $this
@@ -347,7 +347,7 @@ it('does not restrict non-panel Livewire routes', function (): void {
 
     expect($snapshot['memo']['filamentOrigin'])->toBeFalse();
 
-    updatePanelRoute($this, $snapshot, 'other.example.test')->assertSuccessful();
+    updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
 
     expect(PanelRouteProbe::$calls)->toBe(1);
 });
