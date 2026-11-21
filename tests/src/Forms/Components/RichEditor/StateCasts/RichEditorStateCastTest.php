@@ -321,6 +321,47 @@ describe('`set()`', function (): void {
         expect($label)->toBe('Alice');
     });
 
+    it('replaces mention extra attributes with those configured by the matching provider', function (): void {
+        $editor = makeStateCastEditor()
+            ->mentions([
+                MentionProvider::make('@')
+                    ->items(['1' => 'Alice'])
+                    ->extraAttributes(['data-provider' => 'trusted']),
+            ]);
+
+        $cast = new RichEditorStateCast($editor);
+
+        $result = $cast->set([
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'content' => [[
+                    'type' => 'mention',
+                    'attrs' => [
+                        'id' => '1',
+                        'char' => '@',
+                        'href' => 'javascript:alert(document.domain)',
+                        'extra' => [
+                            'x-init' => 'alert(document.domain)',
+                            'data-attacker' => 'stored',
+                        ],
+                    ],
+                ]],
+            ]],
+        ]);
+
+        $mentionAttributes = null;
+
+        walkStateCastResult($result, function (array $node) use (&$mentionAttributes): void {
+            if (($node['type'] ?? null) === 'mention') {
+                $mentionAttributes = $node['attrs'] ?? null;
+            }
+        });
+
+        expect($mentionAttributes['extra'] ?? null)->toBe(['data-provider' => 'trusted'])
+            ->and($mentionAttributes)->not->toHaveKey('href');
+    });
+
     it('preserves a mention with a `data-id` of `0` when hydrating HTML', function (): void {
         $editor = makeStateCastEditor()
             ->mentions([
@@ -385,6 +426,48 @@ describe('`get()`', function (): void {
 
         expect($output)->toBeArray();
         expect($output['type'] ?? null)->toBe('doc');
+    });
+
+    it('replaces client-supplied mention extra attributes before returning JSON state', function (): void {
+        $editor = makeStateCastEditor()
+            ->json()
+            ->mentions([
+                MentionProvider::make('@')
+                    ->items(['1' => 'Alice'])
+                    ->extraAttributes(['data-provider' => 'trusted']),
+            ]);
+
+        $cast = new RichEditorStateCast($editor);
+
+        $output = $cast->get([
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'content' => [[
+                    'type' => 'mention',
+                    'attrs' => [
+                        'id' => '1',
+                        'char' => '@',
+                        'href' => 'javascript:alert(document.domain)',
+                        'extra' => [
+                            'x-init' => 'alert(document.domain)',
+                            'data-attacker' => 'stored',
+                        ],
+                    ],
+                ]],
+            ]],
+        ]);
+
+        $mentionAttributes = null;
+
+        walkStateCastResult($output, function (array $node) use (&$mentionAttributes): void {
+            if (($node['type'] ?? null) === 'mention') {
+                $mentionAttributes = $node['attrs'] ?? null;
+            }
+        });
+
+        expect($mentionAttributes['extra'] ?? null)->toBe(['data-provider' => 'trusted'])
+            ->and($mentionAttributes)->not->toHaveKey('href');
     });
 
     it('strips image `src` when the file attachments visibility is `private`', function (): void {
@@ -576,6 +659,32 @@ describe('`get()`', function (): void {
         expect($cast->get(null))->toBeString();
     });
 });
+
+it('preserves mentions with missing attributes during state casting', function (string $direction, array $attributes): void {
+    $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+
+    $result = $cast->{$direction}([
+        'type' => 'doc',
+        'content' => [[
+            'type' => 'paragraph',
+            'content' => [['type' => 'mention', ...$attributes]],
+        ]],
+    ]);
+
+    $mentions = [];
+
+    walkStateCastResult($result, function (array $node) use (&$mentions): void {
+        if (($node['type'] ?? null) === 'mention') {
+            $mentions[] = $node;
+        }
+    });
+
+    expect($mentions)->toHaveCount(1)
+        ->and($mentions[0]['attrs']['extra'])->toBeNull();
+})->with(['get', 'set'])->with([
+    'omitted' => [[]],
+    'null' => [['attrs' => null]],
+]);
 
 class StateCastCustomBlock extends RichContentCustomBlock
 {
