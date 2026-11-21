@@ -10,12 +10,14 @@ use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\StatePathSegment;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
@@ -801,9 +803,23 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
         $records = $relationship ? $this->getCachedExistingRecords() : null;
 
+        $state = $this->getState() ?? [];
+        $stateWithSafeKeys = $this->rekeyItemsWithUnsafeKeys($state);
+
+        if ($stateWithSafeKeys !== $state) {
+            foreach (array_keys($state) as $itemKey) {
+                if (($records?->has($itemKey)) && (! StatePathSegment::isSafe($itemKey))) {
+                    throw new LogicException('Repeater relationship records must have primary keys that can be used as state path segments.');
+                }
+            }
+
+            $this->state($stateWithSafeKeys);
+            $state = $stateWithSafeKeys;
+        }
+
         $containers = [];
 
-        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
+        foreach ($state as $itemKey => $itemData) {
             $containers[$itemKey] = $this
                 ->getChildComponentContainer()
                 ->statePath($itemKey)

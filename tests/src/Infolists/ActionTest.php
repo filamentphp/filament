@@ -1,6 +1,11 @@
 <?php
 
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Tests\Infolists\Fixtures\Actions;
+use Filament\Tests\Infolists\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -94,3 +99,40 @@ it('can state whether a form component action exists', function () {
         ->assertInfolistActionExists('textEntry', 'exists')
         ->assertInfolistActionDoesNotExist('textEntry', 'doesNotExist');
 });
+
+it('can address actions in repeated items without unsafe keys leaking into click handlers', function (string $itemKey, string $stateType): void {
+    $items = [
+        $itemKey => ['name' => 'First item'],
+        'item-' . hash('sha256', $itemKey) => ['name' => 'Reserved item'],
+        'safe' => ['name' => 'Last item'],
+    ];
+    $infolist = Infolist::make(Livewire::make())->name('test')->schema([
+        $entry = RepeatableEntry::make('items')->state(static fn () => match ($stateType) {
+            'collection' => collect($items),
+            'generator' => (static function () use ($items): Generator {
+                yield from $items;
+            })(),
+            default => $items,
+        })->schema([
+            TextEntry::make('name')
+                ->key(static fn (TextEntry $component): string => $component->getContainer()->getStatePath() . '.name')
+                ->suffixAction(Action::make('inspect')),
+        ]),
+    ]);
+    $infolist->getComponents();
+    $containers = $entry->getChildComponentContainers();
+
+    expect(array_keys($containers))->toBe(array_keys($items));
+    $componentKeys = [];
+
+    foreach ($containers as $itemKey => $container) {
+        $component = $container->getComponents()[0];
+        $handler = $component->getAction('inspect')->getLivewireClickHandler();
+
+        expect(preg_match("/^mountInfolistAction\\('inspect', '([^'\\\\]+)', 'test'\\)$/", $handler, $matches))->toBe(1);
+        expect($infolist->getComponent($matches[1])->getContainer()->getState())->toBe($items[$itemKey]);
+        $componentKeys[] = $matches[1];
+    }
+
+    expect(array_unique($componentKeys))->toHaveCount(count($items));
+})->with(["part'one", 'a.b', '{first}', ''])->with(['array', 'collection', 'generator']);

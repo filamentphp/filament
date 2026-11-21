@@ -887,7 +887,15 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             return [];
         }
 
-        return collect($this->getState())
+        $state = $this->getState() ?? [];
+        $stateWithSafeKeys = $this->rekeyItemsWithUnsafeKeys($state);
+
+        if ($stateWithSafeKeys !== $state) {
+            $this->state($stateWithSafeKeys);
+            $state = $stateWithSafeKeys;
+        }
+
+        return collect($state)
             ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
             ->map(
                 fn (array $itemData, $itemIndex): ComponentContainer => $this
