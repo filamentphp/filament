@@ -99,6 +99,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected ?Model $cachedSelectedRecord = null;
 
+    protected bool $hasCachedMissingSelectedRecord = false;
+
+    /**
+     * @var array<array{name: mixed, context: mixed, arguments: mixed}> | null
+     */
+    protected ?array $cachedSelectedRecordMountedActionState = null;
+
     protected mixed $cachedSelectedRecordState = null;
 
     protected ?string $cachedSelectedRecordStatePath = null;
@@ -133,6 +140,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected bool $shouldIgnoreRelationshipRecord = false;
+
+    protected bool $shouldUseLoadedRelationshipForSelectedRecords = true;
+
+    protected bool $isResolvingKeyForSelectedRecord = false;
 
     protected bool $isResolvingRelationshipForStateCasts = false;
 
@@ -842,6 +853,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (
                 (! $modifyQueryUsing) &&
+                $component->shouldUseLoadedRelationshipForSelectedRecords &&
                 ($relationship instanceof BelongsTo)
             ) {
                 $record = $component->getRecord();
@@ -884,6 +896,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (
                 (! $modifyQueryUsing) &&
+                $component->shouldUseLoadedRelationshipForSelectedRecords &&
                 ($record instanceof Model) &&
                 $record->relationLoaded($relationshipName) &&
                 (
@@ -1568,11 +1581,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function getSelectedRecord(): ?Model
     {
+        if ($this->shouldRefreshSelectedRecordForMountedAction()) {
+            $this->refreshSelectedRecord();
+        }
+
         $state = $this->getState();
         $statePath = $this->getStatePath();
 
         if (
-            $this->cachedSelectedRecord &&
+            ($this->cachedSelectedRecord || $this->hasCachedMissingSelectedRecord) &&
             ($this->cachedSelectedRecordState === $state) &&
             ($this->cachedSelectedRecordStatePath === $statePath)
         ) {
@@ -1580,14 +1597,78 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if (blank($state)) {
+            $this->hasCachedMissingSelectedRecord = false;
+
             return $this->cachedSelectedRecord = null;
         }
 
         $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
         $this->cachedSelectedRecordState = $state;
         $this->cachedSelectedRecordStatePath = $statePath;
+        $this->hasCachedMissingSelectedRecord = false;
 
         return $this->cachedSelectedRecord;
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    protected function shouldRefreshSelectedRecordForMountedAction(): bool
+    {
+        if ($this->isResolvingKeyForSelectedRecord) {
+            return false;
+        }
+
+        $mountedActions = data_get($this->getLivewire(), 'mountedActions');
+
+        if ((! is_array($mountedActions)) || ($mountedActions === [])) {
+            $this->cachedSelectedRecordMountedActionState = null;
+
+            return false;
+        }
+
+        $mountedActionState = [];
+        $hasActionForComponent = false;
+
+        $this->isResolvingKeyForSelectedRecord = true;
+
+        try {
+            $componentKey = $this->getKey();
+        } finally {
+            $this->isResolvingKeyForSelectedRecord = false;
+        }
+
+        foreach ($mountedActions as $mountedAction) {
+            if (! is_array($mountedAction)) {
+                continue;
+            }
+
+            $schemaComponentKey = $mountedAction['context']['schemaComponent'] ?? null;
+
+            $mountedActionState[] = [
+                'name' => $mountedAction['name'] ?? null,
+                'context' => $mountedAction['context'] ?? null,
+                'arguments' => $mountedAction['arguments'] ?? null,
+            ];
+
+            if ($schemaComponentKey === $componentKey) {
+                $hasActionForComponent = true;
+            }
+        }
+
+        if (! $hasActionForComponent) {
+            $this->cachedSelectedRecordMountedActionState = null;
+
+            return false;
+        }
+
+        if ($this->cachedSelectedRecordMountedActionState === $mountedActionState) {
+            return false;
+        }
+
+        $this->cachedSelectedRecordMountedActionState = $mountedActionState;
+
+        return true;
     }
 
     public function hasRelationship(): bool
@@ -1793,7 +1874,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return null;
             }
 
-            $optionLabels = $this->getOptionLabels(withDefaults: false);
+            $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+            $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+            try {
+                $optionLabels = $this->getOptionLabels(withDefaults: false);
+            } finally {
+                $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+            }
 
             if (count($state) > count($optionLabels)) {
                 return [];
@@ -1829,6 +1917,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
+        $this->refreshSelectedRecord();
+
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
         if (blank($optionLabel)) {
@@ -1844,6 +1934,27 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         return null;
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    protected function refreshSelectedRecord(): void
+    {
+        $this->cachedSelectedRecord = null;
+        $this->cachedSelectedRecordState = null;
+        $this->cachedSelectedRecordStatePath = null;
+        $this->hasCachedMissingSelectedRecord = false;
+
+        $shouldUseLoadedRelationshipForSelectedRecords = $this->shouldUseLoadedRelationshipForSelectedRecords;
+        $this->shouldUseLoadedRelationshipForSelectedRecords = false;
+
+        try {
+            $selectedRecord = $this->getSelectedRecord();
+            $this->hasCachedMissingSelectedRecord = ($selectedRecord === null);
+        } finally {
+            $this->shouldUseLoadedRelationshipForSelectedRecords = $shouldUseLoadedRelationshipForSelectedRecords;
+        }
     }
 
     public function hasInValidationOnMultipleValues(): bool

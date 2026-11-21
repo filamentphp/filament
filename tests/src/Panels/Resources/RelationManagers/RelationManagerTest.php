@@ -45,6 +45,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAt
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMixedSummaryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithModifiedQueryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMultipleAttachTableSelectAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
@@ -982,7 +983,56 @@ describe('attaching records', function (): void {
         ])
             ->callAction(TestAction::make(AttachAction::class)->table(), [
                 'recordId' => $outOfScopeDepartment->getKey(),
-            ]);
+            ])
+            ->assertHasFormErrors(['recordId'])
+            ->assertSet('attachActionProcessCount', 0)
+            ->assertSet('attachActionAfterCount', 0)
+            ->assertNotNotified();
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $outOfScopeDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+    });
+
+    it('can validate a changed `tableSelect()` attachment selection on the same form', function (): void {
+        $ticket = Ticket::factory()->create();
+        $departments = Department::factory()->count(2)->create(['name' => 'Active Engineering']);
+        $component = livewire(DepartmentsWithMultipleAttachTableSelectAndModifiedQueryRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->mountAction(TestAction::make(AttachAction::class)->table())
+            ->instance();
+
+        $schema = $component->getSchema($component->getMountedActionSchemaName());
+
+        foreach ($departments as $department) {
+            $schema->fill(['recordId' => [$department->getKey()]]);
+
+            expect($schema->validate()['mountedActions'][0]['data']['recordId'])
+                ->toBe([(string) $department->getKey()]);
+        }
+    });
+
+    it('rejects a mixed batch containing an out-of-scope `recordId` when `tableSelect()` is paired with `recordSelectOptionsQuery()`', function (): void {
+        $ticket = Ticket::factory()->create();
+        $inScopeDepartment = Department::factory()->create(['name' => 'Active Engineering']);
+        $outOfScopeDepartment = Department::factory()->create(['name' => 'Inactive Department']);
+
+        livewire(DepartmentsWithMultipleAttachTableSelectAndModifiedQueryRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->callAction(TestAction::make(AttachAction::class)->table(), [
+                'recordId' => [$inScopeDepartment->getKey(), $outOfScopeDepartment->getKey()],
+            ])
+            ->assertHasFormErrors();
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $inScopeDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
 
         assertDatabaseMissing('department_ticket', [
             'department_id' => $outOfScopeDepartment->getKey(),

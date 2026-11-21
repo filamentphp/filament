@@ -742,6 +742,17 @@ describe('relationship options, labels, and updates', function (): void {
         expect($post->fresh()->author_id)->toBe($inScopeUser->id);
     });
 
+    it('rejects a matching eager-loaded relationship excluded by `modifyQueryUsing()`', function (): void {
+        $outOfScopeUser = User::factory()->create(['name' => 'Beta User']);
+        $post = Post::factory()->create(['author_id' => $outOfScopeUser->getKey()]);
+
+        livewire(TestTableWithEagerLoadedFilteredRelationshipSelectColumn::class)
+            ->call('updateTableColumnState', 'author_id', (string) $post->getKey(), $outOfScopeUser->getKey())
+            ->assertSet('updateCount', 0);
+
+        expect($post->fresh()->author_id)->toBe($outOfScopeUser->getKey());
+    });
+
     it('allows an `updateTableColumnState` call with a value matched by `modifyQueryUsing`', function (): void {
         $inScopeUser = User::factory()->create(['name' => 'Alpha User']);
         $anotherInScopeUser = User::factory()->create(['name' => 'Alpha Author']);
@@ -1212,6 +1223,33 @@ class TestTableWithFilteredRelationshipSelectColumn extends Component implements
             ->columns([
                 SelectColumn::make('author_id')
                     ->optionsRelationship('author', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%')),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithEagerLoadedFilteredRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public int $updateCount = 0;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query()->with('author'))
+            ->columns([
+                SelectColumn::make('author_id')
+                    ->optionsRelationship('author', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'))
+                    ->afterStateUpdated(function (): void {
+                        $this->updateCount++;
+                    }),
             ]);
     }
 
