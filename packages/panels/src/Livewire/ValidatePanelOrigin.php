@@ -4,7 +4,6 @@ namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\SetUpPanel;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -12,6 +11,7 @@ use Livewire\Mechanisms\HandleComponents\Checksum;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
 use Livewire\Mechanisms\HandleRequests\HandleRequests;
 
+use function Filament\Support\encode_key_segments;
 use function Livewire\after;
 use function Livewire\before;
 
@@ -20,16 +20,14 @@ class ValidatePanelOrigin
     // Bundled updates verify one snapshot at a time, and newly mounted children inherit its context.
     protected string | false | null $panelContext = null;
 
-    /** @var array{model: class-string<Model>, key: string} | false | null */
-    protected array | false | null $tenantContext = null;
+    protected string | false | null $tenantContext = null;
 
-    /** @var array{page: ?string, resource: ?string} | false | null */
-    protected array | false | null $configurationContext = null;
+    protected string | false | null $configurationContext = null;
 
     /**
      * @var array{
      *     panel: string | false,
-     *     tenant: array{model: class-string<Model>, key: string} | false,
+     *     tenant: string | false,
      * } | null
      */
     protected ?array $requestContext = null;
@@ -173,11 +171,10 @@ class ValidatePanelOrigin
             return false;
         }
 
-        return $panel->getId();
+        return $this->hashContext('panel', $panel->getId());
     }
 
-    /** @return array{model: class-string<Model>, key: string} | false */
-    protected function getTenantContext(): array | false
+    protected function getTenantContext(): string | false
     {
         if (app(HandleRequests::class)->isLivewireRoute()) {
             abort_if(is_null($this->tenantContext), 404);
@@ -195,14 +192,10 @@ class ValidatePanelOrigin
             return false;
         }
 
-        return [
-            'model' => $tenant::class,
-            'key' => (string) $tenant->getKey(),
-        ];
+        return $this->hashContext('tenant', $tenant::class, (string) $tenant->getKey());
     }
 
-    /** @return array{page: ?string, resource: ?string} | false */
-    protected function getConfigurationContext(): array | false
+    protected function getConfigurationContext(): string | false
     {
         if (app(HandleRequests::class)->isLivewireRoute()) {
             abort_if(is_null($this->configurationContext), 404);
@@ -214,10 +207,10 @@ class ValidatePanelOrigin
             return false;
         }
 
-        return [
-            'page' => Filament::getCurrentPageConfigurationKey(),
-            'resource' => Filament::getCurrentResourceConfigurationKey(),
-        ];
+        return $this->hashConfigurationContext(
+            Filament::getCurrentPageConfigurationKey(),
+            Filament::getCurrentResourceConfigurationKey(),
+        );
     }
 
     /** @param array<string, mixed> $snapshot */
@@ -277,32 +270,37 @@ class ValidatePanelOrigin
 
         $panel = Filament::getCurrentPanel();
 
-        abort_unless($panel?->getId() === $panelContext, 404);
+        abort_unless(
+            $panel && hash_equals($panelContext, $this->hashContext('panel', $panel->getId())),
+            404,
+        );
 
         $tenantContext = $snapshot['memo']['filamentTenant'] ?? null;
         $tenant = Filament::getTenant();
-        $restoredTenantContext = $tenant ? [
-            'model' => $tenant::class,
-            'key' => (string) $tenant->getKey(),
-        ] : false;
+        $restoredTenantContext = $tenant
+            ? $this->hashContext('tenant', $tenant::class, (string) $tenant->getKey())
+            : false;
 
-        abort_unless($restoredTenantContext === $tenantContext, 404);
+        abort_unless($this->contextsMatch($tenantContext, $restoredTenantContext), 404);
 
         $configurationContext = $snapshot['memo']['filamentConfiguration'] ?? null;
-        $restoredConfigurationContext = [
-            'page' => Filament::getCurrentPageConfigurationKey(),
-            'resource' => Filament::getCurrentResourceConfigurationKey(),
-        ];
+        $restoredConfigurationContext = $this->hashConfigurationContext(
+            Filament::getCurrentPageConfigurationKey(),
+            Filament::getCurrentResourceConfigurationKey(),
+        );
 
-        abort_unless($restoredConfigurationContext === $configurationContext, 404);
+        abort_unless(
+            is_string($configurationContext) && hash_equals($configurationContext, $restoredConfigurationContext),
+            404,
+        );
     }
 
     /**
      * @param  array<string, mixed>  $snapshot
      * @return array{
      *     panel: string | false,
-     *     tenant: array{model: class-string<Model>, key: string} | false,
-     *     configuration: array{page: ?string, resource: ?string} | false,
+     *     tenant: string | false,
+     *     configuration: string | false,
      * }
      */
     protected function getSnapshotContext(array $snapshot): array
@@ -317,32 +315,13 @@ class ValidatePanelOrigin
 
         $tenantContext = $memo['filamentTenant'] ?? null;
 
-        abort_unless(($tenantContext === false) || is_array($tenantContext), 404);
-
-        if (is_array($tenantContext)) {
-            abort_unless(
-                (array_keys($tenantContext) === ['model', 'key']) &&
-                is_string($tenantContext['model']) &&
-                is_a($tenantContext['model'], Model::class, true) &&
-                is_string($tenantContext['key']),
-                404,
-            );
-        }
+        abort_unless(($tenantContext === false) || is_string($tenantContext), 404);
 
         abort_if(($panelContext === false) && ($tenantContext !== false), 404);
 
         $configurationContext = $memo['filamentConfiguration'] ?? null;
 
-        abort_unless(($configurationContext === false) || is_array($configurationContext), 404);
-
-        if (is_array($configurationContext)) {
-            abort_unless(
-                (array_keys($configurationContext) === ['page', 'resource']) &&
-                (is_null($configurationContext['page']) || is_string($configurationContext['page'])) &&
-                (is_null($configurationContext['resource']) || is_string($configurationContext['resource'])),
-                404,
-            );
-        }
+        abort_unless(($configurationContext === false) || is_string($configurationContext), 404);
 
         abort_unless(($panelContext === false) === ($configurationContext === false), 404);
 
@@ -360,5 +339,34 @@ class ValidatePanelOrigin
             app('router')->gatherRouteMiddleware($route),
             true,
         );
+    }
+
+    protected function hashConfigurationContext(?string $page, ?string $resource): string
+    {
+        return $this->hashContext(
+            'configuration',
+            is_null($page) ? 'null' : 'string',
+            $page ?? '',
+            is_null($resource) ? 'null' : 'string',
+            $resource ?? '',
+        );
+    }
+
+    protected function hashContext(string $type, string ...$segments): string
+    {
+        return hash_hmac(
+            'sha256',
+            encode_key_segments('filament-livewire-context', 'v1', $type, ...$segments),
+            config('app.key'),
+        );
+    }
+
+    protected function contextsMatch(string | false | null $first, string | false $second): bool
+    {
+        if (is_string($first) && is_string($second)) {
+            return hash_equals($first, $second);
+        }
+
+        return $first === $second;
     }
 }

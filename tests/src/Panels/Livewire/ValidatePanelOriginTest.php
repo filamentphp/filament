@@ -86,6 +86,23 @@ it('rejects replay of a panel snapshot on an unmatched host', function (): void 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
+it('stores opaque Filament context in snapshots', function (): void {
+    $snapshot = panelRouteSnapshot($this, Team::factory()->create());
+    $contexts = [
+        $snapshot['memo']['filamentPanel'],
+        $snapshot['memo']['filamentTenant'],
+        $snapshot['memo']['filamentConfiguration'],
+    ];
+
+    foreach ($contexts as $context) {
+        expect($context)->toMatch('/\A[a-f0-9]{64}\z/');
+    }
+
+    expect(implode('', $contexts))
+        ->not->toContain('tenant-menu-grouping')
+        ->not->toContain(Team::class);
+});
+
 it('recognizes panel routes using the setup middleware class', function (): void {
     Route::domain('direct.example.test')
         ->middleware([
@@ -113,7 +130,7 @@ it('recognizes panel routes using the setup middleware class', function (): void
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentPanel'])->toBe('tenant-menu-grouping');
+    expect($snapshot['memo']['filamentPanel'])->toMatch('/\A[a-f0-9]{64}\z/');
 
     updatePanelRoute($this, $snapshot, 'direct.example.test')->assertSuccessful();
 
@@ -589,7 +606,7 @@ it('rejects an update when middleware restores a different panel', function (): 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('rejects an update when middleware restores a different configuration', function (string $middleware, string $type): void {
+it('rejects an update when middleware restores a different configuration', function (string $middleware): void {
     Route::domain('app.example.test')
         ->middleware(['panel:admin', "{$middleware}:first"])
         ->get('/restored-configuration-probe', fn (): string => Blade::render('<livewire:panel-route-probe />'))
@@ -600,7 +617,7 @@ it('rejects an update when middleware restores a different configuration', funct
         ->assertSuccessful();
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentConfiguration'][$type])->toBe('first');
+    expect($snapshot['memo']['filamentConfiguration'])->toMatch('/\A[a-f0-9]{64}\z/');
 
     $replacementRoute = Route::domain('app.example.test')
         ->middleware(['panel:admin', "{$middleware}:second"])
@@ -623,8 +640,8 @@ it('rejects an update when middleware restores a different configuration', funct
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 })->with([
-    'page configuration' => ['page-configuration', 'page'],
-    'resource configuration' => ['resource-configuration', 'resource'],
+    'page configuration' => ['page-configuration'],
+    'resource configuration' => ['resource-configuration'],
 ]);
 
 it('allows bundled updates from the same panel and tenant across routes', function (): void {
@@ -691,7 +708,7 @@ it('allows path-only panel updates on the original host', function (): void {
 
     $snapshot = Utils::extractAttributeDataFromHtml($response->getContent(), 'wire:snapshot');
 
-    expect($snapshot['memo']['filamentPanel'])->toBe('tenant-menu-grouping');
+    expect($snapshot['memo']['filamentPanel'])->toMatch('/\A[a-f0-9]{64}\z/');
 
     updatePanelRoute($this, $snapshot, 'app.example.test')->assertSuccessful();
 
