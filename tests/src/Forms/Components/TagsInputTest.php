@@ -6,6 +6,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Validation\ValidationException;
 
 use function Filament\Tests\livewire;
 
@@ -222,7 +223,79 @@ describe('state hydration', function (): void {
     });
 });
 
+describe('validation', function (): void {
+    it('accepts arrays and optional empty state', function (mixed $state): void {
+        $schema = Schema::make(Livewire::make()->data(['tags' => $state]))
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')->nestedRecursiveRules(['string', 'in:one,two']),
+            ]);
+
+        expect($schema->validate())->toBe(['data' => ['tags' => $state]]);
+    })->with([[['one', 'two']], [[]], [null], ['']]);
+
+    it('validates each tag with `nestedRecursiveRules()`', function (array $state, string $invalidStatePath): void {
+        $schema = Schema::make(Livewire::make()->data(['tags' => $state]))
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')->nestedRecursiveRules(['in:one,two']),
+            ]);
+
+        try {
+            $schema->validate();
+        } catch (ValidationException $exception) {
+            expect($exception->validator->failed())->toBe([$invalidStatePath => ['In' => ['one', 'two']]]);
+
+            return;
+        }
+
+        $this->fail('Invalid tag passed nested validation.');
+    })->with([
+        [['invalid', 'two'], 'data.tags.0'],
+        [['one', 'invalid'], 'data.tags.1'],
+    ]);
+
+    it('rejects non-array state', function (mixed $state, ?string $separator): void {
+        $schema = Schema::make(Livewire::make()->data(['tags' => $state]))
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')->separator($separator),
+            ]);
+
+        try {
+            $schema->validate();
+        } catch (ValidationException $exception) {
+            expect($exception->validator->failed()['data.tags'])->toHaveKey('Array');
+
+            return;
+        }
+
+        $this->fail('Non-array tags input state passed validation.');
+    })->with(['one', '["one"]', 7, true, false])
+        ->with([null, ',']);
+});
+
 describe('state dehydration', function (): void {
+    it('validates hydrated arrays before dehydrating with `separator()`', function (?string $state, string $separator, array $hydratedState, string $dehydratedState): void {
+        $schema = Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')
+                    ->separator($separator)
+                    ->nestedRecursiveRules(['in:one,two']),
+            ])
+            ->fill(['tags' => $state]);
+
+        expect($livewire->getData())->toBe(['tags' => $hydratedState])
+            ->and($schema->validate())->toBe(['data' => ['tags' => $hydratedState]])
+            ->and($schema->getState())->toBe(['tags' => $dehydratedState]);
+    })->with([
+        ['one,two', ',', ['one', 'two'], 'one,two'],
+        ['two | one', ' | ', ['two', 'one'], 'two | one'],
+        ['', ',', [], ''],
+        [null, ',', [], ''],
+    ]);
+
     it('joins array state with separator without filtering array values', function (array $state, string $separator, string $expected): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
