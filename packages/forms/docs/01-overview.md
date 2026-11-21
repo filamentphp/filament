@@ -211,6 +211,8 @@ Toggle::make('is_admin')
 
 <UtilityInjection set="formFields">As well as allowing a static value, the `saved()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+The `saved()` option does not override a disabled top-level schema. Calling `getState()` on that schema still validates it, but returns an empty array.
+
 ### Disabling a field based on the current operation
 
 The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../resources).

@@ -239,10 +239,12 @@ describe('disabled fields', function (): void {
             $hasCalledAfterValidate = true;
         } : null);
 
+        $isSchemaDirectlyDisabled = $isSchemaDisabled && (! $isDisabledInherited);
+
         expect($ticket->departments()->pluck('departments.id')->all())
             ->toBe([($isSchemaDisabled ? $originalDepartment : $submittedDepartment)->getKey()])
             ->and($hasCalledAfterValidate)->toBe($hasAfterValidate)
-            ->and($state)->toBe(['name' => 'Submitted name']);
+            ->and($state)->toBe($isSchemaDirectlyDisabled ? [] : ['name' => 'Submitted name']);
 
         if ($isSchemaDisabled) {
             $schema->saveRelationships();
