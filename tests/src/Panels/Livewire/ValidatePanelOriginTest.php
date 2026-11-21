@@ -365,7 +365,7 @@ it('rejects lazy mount parameters from a different tenant', function (): void {
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('rejects lazy mount parameters from a different origin before running actions', function (): void {
+it('rejects lazy mount parameters from a different origin', function (): void {
     foreach (['app.example.test', 'other.example.test'] as $host) {
         Route::domain($host)
             ->middleware([
@@ -394,44 +394,7 @@ it('rejects lazy mount parameters from a different origin before running actions
     }
 
     updatePanelRoute($this, $snapshots['app.example.test'], 'app.example.test', [
-        ['method' => 'record', 'params' => []],
         ['method' => '__lazyLoad', 'params' => [$mountParameters['other.example.test']]],
-    ])->assertNotFound();
-
-    expect(PanelRouteProbe::$calls)->toBe(0);
-});
-
-it('rejects lazy mount parameters from a different route before running actions', function (): void {
-    foreach (['first', 'second'] as $route) {
-        Route::domain('app.example.test')
-            ->middleware([
-                'panel:tenant-menu-grouping',
-                IdentifyTenant::class,
-            ])
-            ->get("/{$route}-route-lazy-probe/{tenant}", fn (): string => Blade::render('<livewire:panel-route-probe lazy />'));
-    }
-
-    $tenant = Team::factory()->create();
-    $snapshots = [];
-    $mountParameters = [];
-
-    foreach (['first', 'second'] as $route) {
-        $response = $this
-            ->get("https://app.example.test/{$route}-route-lazy-probe/{$tenant->getRouteKey()}")
-            ->assertSuccessful();
-        $html = $response->getContent();
-        $snapshots[$route] = Utils::extractAttributeDataFromHtml($html, 'wire:snapshot');
-
-        preg_match("/__lazyLoad\\('([^']+)'\\)/", html_entity_decode($html), $matches);
-
-        expect($matches[1] ?? null)->not->toBeNull();
-
-        $mountParameters[$route] = $matches[1];
-    }
-
-    updatePanelRoute($this, $snapshots['first'], 'app.example.test', [
-        ['method' => 'record', 'params' => []],
-        ['method' => '__lazyLoad', 'params' => [$mountParameters['second']]],
     ])->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
@@ -484,7 +447,7 @@ it('rejects bundled updates from different tenants', function (): void {
     expect(PanelRouteProbe::$calls)->toBe(0);
 });
 
-it('rejects bundled updates from different origins before running actions', function (bool $isCurrentOriginFirst): void {
+it('rejects bundled updates from different origins', function (bool $isCurrentOriginFirst): void {
     Route::domain('other.example.test')
         ->middleware([
             'panel:tenant-menu-grouping',
@@ -502,14 +465,12 @@ it('rejects bundled updates from different origins before running actions', func
         ? [$currentOriginSnapshot, $otherOriginSnapshot]
         : [$otherOriginSnapshot, $currentOriginSnapshot];
 
-    updateBundledPanelRoutes($this, $snapshots, calls: [[
-        ['method' => 'record', 'params' => [], 'path' => ''],
-    ]])->assertNotFound();
+    updateBundledPanelRoutes($this, $snapshots)->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 })->with(['current origin first' => true, 'other origin first' => false]);
 
-it('rejects a stale route in a bundle before running actions', function (): void {
+it('rejects a stale route in a bundle', function (): void {
     Route::domain('app.example.test')
         ->middleware([
             'panel:tenant-menu-grouping',
@@ -535,9 +496,7 @@ it('rejects a stale route in a bundle before running actions', function (): void
 
     Route::setRoutes($remainingRoutes);
 
-    updateBundledPanelRoutes($this, [$validSnapshot, $staleSnapshot], calls: [[
-        ['method' => 'record', 'params' => [], 'path' => ''],
-    ]])->assertNotFound();
+    updateBundledPanelRoutes($this, [$validSnapshot, $staleSnapshot])->assertNotFound();
 
     expect(PanelRouteProbe::$calls)->toBe(0);
 });

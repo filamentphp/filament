@@ -11,8 +11,6 @@ use Livewire\Livewire;
 use Livewire\Mechanisms\HandleComponents\Checksum;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
 use Livewire\Mechanisms\HandleRequests\HandleRequests;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function Livewire\after;
 use function Livewire\before;
@@ -302,8 +300,6 @@ class ValidatePanelOrigin
     /**
      * @param  array<string, mixed>  $snapshot
      * @return array{
-     *     origin: string | false,
-     *     route: array{uri: string, domain: ?string} | null | false,
      *     panel: string | false,
      *     tenant: array{model: class-string<Model>, key: string} | false,
      *     configuration: array{page: ?string, resource: ?string} | false,
@@ -318,37 +314,6 @@ class ValidatePanelOrigin
         $panelContext = $memo['filamentPanel'] ?? null;
 
         abort_unless(($panelContext === false) || is_string($panelContext), 404);
-
-        $origin = false;
-        $routeContext = false;
-
-        if (is_string($panelContext)) {
-            $origin = $memo['origin'] ?? null;
-
-            // Livewire verifies each component's origin later. Recheck it here so a bundled request
-            // cannot run an earlier component before Livewire rejects a later one.
-            abort_unless(
-                is_string($origin) && ($origin === request()->getSchemeAndHttpHost()),
-                404,
-            );
-
-            abort_unless(array_key_exists('route', $memo), 404);
-
-            $routeContext = $memo['route'];
-
-            abort_unless(is_null($routeContext) || is_array($routeContext), 404);
-
-            if (is_array($routeContext)) {
-                abort_unless(
-                    (array_keys($routeContext) === ['uri', 'domain']) &&
-                    is_string($routeContext['uri']) &&
-                    (is_null($routeContext['domain']) || is_string($routeContext['domain'])),
-                    404,
-                );
-            }
-
-            $this->verifyRouteContext($snapshot, $routeContext);
-        }
 
         $tenantContext = $memo['filamentTenant'] ?? null;
 
@@ -382,8 +347,6 @@ class ValidatePanelOrigin
         abort_unless(($panelContext === false) === ($configurationContext === false), 404);
 
         return [
-            'origin' => $origin,
-            'route' => $routeContext,
             'panel' => $panelContext,
             'tenant' => $tenantContext,
             'configuration' => $configurationContext,
@@ -397,37 +360,5 @@ class ValidatePanelOrigin
             app('router')->gatherRouteMiddleware($route),
             true,
         );
-    }
-
-    /**
-     * @param  array<string, mixed>  $snapshot
-     * @param  array{uri: string, domain: ?string} | null  $routeContext
-     */
-    protected function verifyRouteContext(array $snapshot, ?array $routeContext): void
-    {
-        $path = $snapshot['memo']['path'] ?? null;
-        $method = $snapshot['memo']['method'] ?? null;
-
-        abort_unless(is_string($path) && is_string($method), 404);
-
-        $currentPath = '/' . ltrim(request()->path(), '/');
-        $originalPath = '/' . ltrim($path, '/');
-        $serverBag = clone request()->server;
-        $serverBag->set('REQUEST_URI', str_replace($currentPath, $originalPath, $serverBag->get('REQUEST_URI')));
-        $serverBag->set('REQUEST_METHOD', $method);
-
-        $request = request()->duplicate(server: $serverBag->all());
-
-        try {
-            $route = app('router')->getRoutes()->match($request);
-            $restoredRouteContext = [
-                'uri' => $route->uri(),
-                'domain' => $route->getDomain(),
-            ];
-        } catch (MethodNotAllowedHttpException | NotFoundHttpException) {
-            $restoredRouteContext = null;
-        }
-
-        abort_unless($restoredRouteContext === $routeContext, 404);
     }
 }
