@@ -1113,6 +1113,25 @@ describe('UUID generation', function (): void {
         expect($builder->generateUuid())->toBe('items-key');
         expect($builder->generateUuid())->toBe('items-key');
     });
+
+    it('adds a block when a custom UUID callback returns an unsafe key', function (): void {
+        $builder = Builder::make('items')
+            ->generateUuidUsing(static fn (): string => 'unsafe.key')
+            ->blocks([
+                Builder\Block::make('paragraph')->schema([TextInput::make('text')->default('Added block')]),
+            ]);
+
+        Schema::make(Livewire::make()->data(['items' => []]))
+            ->statePath('data')
+            ->components([$builder])
+            ->getComponents();
+
+        $builder->getAddAction()->schemaComponent($builder)->call(['arguments' => ['block' => 'paragraph']]);
+
+        expect(array_values($builder->getRawState()))->toBe([
+            ['type' => 'paragraph', 'data' => ['text' => 'Added block']],
+        ]);
+    });
 });
 
 describe('state hydration', function (): void {

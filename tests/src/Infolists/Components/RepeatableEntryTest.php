@@ -381,6 +381,8 @@ describe('item collections', function (): void {
         $itemsState = (object) collect(range(0, 9))
             ->mapWithKeys(static fn (int $itemIndex): array => ["item{$itemIndex}" => ['name' => "Item {$itemIndex}"]])
             ->all();
+        $itemsState->{'part\\one'} = ['name' => 'Backslash item'];
+
         $entry = RepeatableEntry::make('items');
         $schema = Schema::make(Livewire::make())
             ->state(['items' => $itemsState])
@@ -406,6 +408,8 @@ describe('item collections', function (): void {
         foreach (range(0, 9) as $itemIndex) {
             expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
         }
+
+        expect($get('/items.part\\one.name'))->toBe('Backslash item');
     });
 
     it('updates `getItems()` to reflect a new item count', function (): void {

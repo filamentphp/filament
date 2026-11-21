@@ -20,7 +20,11 @@ trait CanGenerateUuids
     public function generateUuid(): ?string
     {
         if ($this->generateUuidUsing instanceof Closure) {
-            return $this->evaluate($this->generateUuidUsing);
+            $uuid = $this->evaluate($this->generateUuidUsing);
+
+            if (($uuid === null) || StatePathSegment::isSafe($uuid)) {
+                return $uuid;
+            }
         }
 
         if ($this->generateUuidUsing === false) {
@@ -31,6 +35,8 @@ trait CanGenerateUuids
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<string | int, mixed>  $items
      * @return array<string | int, mixed>
      */
@@ -55,6 +61,8 @@ trait CanGenerateUuids
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<string | int, mixed>  $items
      * @param  array<string | int, mixed>  $itemsWithSafeKeys
      */
@@ -82,6 +90,8 @@ trait CanGenerateUuids
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
      * @param  array<string | int, mixed>  $items
      * @param  array<string | int, mixed>  $itemsWithSafeKeys
      */

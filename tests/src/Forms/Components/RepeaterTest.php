@@ -29,6 +29,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -517,6 +518,21 @@ describe('UUID generation', function (): void {
         expect($repeater->generateUuid())->toBe('items-key');
         expect($repeater->generateUuid())->toBe('items-key');
     });
+
+    it('adds an item when a custom UUID callback returns an unsafe key', function (): void {
+        $repeater = Repeater::make('items')
+            ->generateUuidUsing(static fn (): string => 'unsafe.key')
+            ->schema([TextInput::make('name')->default('Added item')]);
+
+        Schema::make(Livewire::make()->data(['items' => []]))
+            ->statePath('data')
+            ->components([$repeater])
+            ->getComponents();
+
+        $repeater->getAddAction()->schemaComponent($repeater)->call();
+
+        expect(array_values($repeater->getRawState()))->toBe([['name' => 'Added item']]);
+    });
 });
 
 describe('state hydration', function (): void {
@@ -799,6 +815,10 @@ describe('item schemas', function (): void {
         'escaped wildcard' => ['\\*'],
         'first-item placeholder' => ['{first}'],
         'last-item placeholder' => ['{last}'],
+        'escaped first-item placeholder' => ['\\{first}'],
+        'escaped last-item placeholder' => ['\\{last}'],
+        'trailing backslash' => ['part\\'],
+        'multiple trailing backslashes' => ['part\\\\'],
         'quote stripped from state paths' => ['a"'],
         'control character stripped from state paths' => ["a\na"],
     ]);
@@ -2202,6 +2222,40 @@ describe('relationship ordering and mutation', function (): void {
 });
 
 describe('relationship persistence', function (): void {
+    it('preserves safe string record keys and rejects unsafe keys before changing related records', function (string $recordKey, bool $isSafe): void {
+        $user = User::factory()->create();
+        $user = RepeaterUserWithStringKeyPosts::findOrFail($user->id);
+        $post = Post::factory()->create(['author_id' => $user->id, 'title' => $recordKey, 'content' => 'Original']);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->model($user)
+            ->components([
+                $repeater = Repeater::make('posts')->relationship('posts')->schema([TextInput::make('content')]),
+            ]);
+
+        if (! $isSafe) {
+            expect(fn () => $schema->loadStateFromRelationships())->toThrow(LogicException::class);
+            expect($post->fresh()->content)->toBe('Original')
+                ->and($user->posts()->count())->toBe(1);
+
+            return;
+        }
+
+        $schema->loadStateFromRelationships();
+        $state = $repeater->getRawState();
+        $state[array_key_first($state)]['content'] = 'Updated';
+        $repeater->rawState($state);
+        $schema->saveRelationships();
+
+        expect($post->fresh()->content)->toBe('Updated')
+            ->and($user->posts()->count())->toBe(1);
+    })->with([
+        'literal backslash' => ['part\\one', true],
+        'dot' => ['part.one', false],
+        'quote' => ['part"one', false],
+    ]);
+
     it('creates new records when items are added', function (): void {
         $user = User::factory()->create();
 
@@ -3210,6 +3264,27 @@ class RepeaterWithMutateBeforeSaveReturnsNull extends Component implements HasAc
     {
         return view('livewire.form');
     }
+}
+
+class RepeaterUserWithStringKeyPosts extends User
+{
+    protected $table = 'users';
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(RepeaterStringKeyPost::class, 'author_id');
+    }
+}
+
+class RepeaterStringKeyPost extends Post
+{
+    protected $table = 'posts';
+
+    protected $primaryKey = 'title';
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
 }
 
 class RepeaterWithMutateBeforeCreateReturnsNull extends Component implements HasActions, HasSchemas

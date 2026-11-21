@@ -23,10 +23,10 @@ class StatePathSegment
             return false;
         }
 
-        if (Str::contains($segment, ['.', '*', '\\'])) {
+        if (Str::contains($segment, ['.', '*']) || str_ends_with($segment, '\\')) {
             return false;
         }
 
-        return ! in_array($segment, ['{first}', '{last}'], strict: true);
+        return ! in_array($segment, ['{first}', '{last}', '\\{first}', '\\{last}'], strict: true);
     }
 }
