@@ -366,6 +366,12 @@ class RichContentRenderer implements Htmlable
 
     protected function processMentions(Editor $editor): void
     {
+        $editor->descendants(function (object &$node): void {
+            if ($node->type === 'mention') {
+                unset($node->attrs->href);
+            }
+        });
+
         if (blank($this->mentionProviders)) {
             return;
         }

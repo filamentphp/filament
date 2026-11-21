@@ -244,6 +244,42 @@ describe('record select options', function (): void {
         ]);
     });
 
+    it('rejects an already-attached `recordId` when submitted directly', function (): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+
+        $ticket->departments()->attach($department);
+
+        livewire(DepartmentsWithAttachActionRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->callAction(TestAction::make(AttachAction::class)->table(), [
+                'recordId' => $department->getKey(),
+            ])
+            ->assertHasFormErrors(['recordId']);
+
+        expect($ticket->departments()->whereKey($department->getKey())->count())->toBe(1);
+    });
+
+    it('rejects a multi-attach batch containing an already-attached `recordId`', function (): void {
+        $ticket = Ticket::factory()->create();
+        $attachedDepartment = Department::factory()->create();
+        $availableDepartment = Department::factory()->create();
+
+        $ticket->departments()->attach($attachedDepartment);
+
+        livewire(DepartmentsWithPreloadedAttachRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->callAction(TestAction::make(AttachAction::class)->table(), [
+                'recordId' => [$attachedDepartment->getKey(), $availableDepartment->getKey()],
+            ])
+            ->assertHasFormErrors();
+
+        expect($ticket->departments()->whereKey($attachedDepartment->getKey())->count())->toBe(1);
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $availableDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+    });
+
     it('applies `recordSelectOptionsQuery()` to search results', function (): void {
         $ticket = Ticket::factory()->create();
         Department::factory()->create(['name' => 'Active Engineering']);

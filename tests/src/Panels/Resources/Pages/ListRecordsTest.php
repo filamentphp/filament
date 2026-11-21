@@ -22,6 +22,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithCustomFiltersRemoveAllAction;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithDisabledEditAction;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithTabs;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
@@ -384,6 +385,29 @@ it('does not save relationships when a view-only user calls the `ViewAction`', f
     'default relationship saving' => ListTicketsWithRelationshipInViewAction::class,
     'relationship saving opted in while disabled' => ListTicketsWithRelationshipSaveOptInInViewAction::class,
     'relationship saved explicitly' => ListTicketsWithRelationshipSavedInViewAction::class,
+]);
+
+it('does not save forged field or relationship state when an `EditAction` schema is disabled', function (bool $isPublished): void {
+    $originalAuthor = User::factory()->create();
+    $submittedAuthor = User::factory()->create();
+    $post = Post::factory()->create([
+        'title' => 'Original title',
+        'is_published' => $isPublished,
+        'author_id' => $originalAuthor->getKey(),
+    ]);
+
+    livewire(ListPostsWithDisabledEditAction::class)
+        ->call('mountAction', 'edit', [], ['table' => true, 'recordKey' => (string) $post->getKey()])
+        ->set('mountedActions.0.data.title', 'Changed title')
+        ->set('mountedActions.0.data.author_id', $submittedAuthor->getKey())
+        ->callMountedAction();
+
+    expect($post->fresh())
+        ->title->toBe($isPublished ? 'Original title' : 'Changed title')
+        ->author_id->toBe(($isPublished ? $originalAuthor : $submittedAuthor)->getKey());
+})->with([
+    'disabled schema' => true,
+    'enabled schema' => false,
 ]);
 
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {

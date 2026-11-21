@@ -67,7 +67,9 @@ use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
 use Filament\Tests\Fixtures\Pages\RadioBrowserTest;
 use Filament\Tests\Fixtures\Pages\RepeaterBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\RichEditorMentionAttributesBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
+use Filament\Tests\Fixtures\Pages\RichEditorStyleAttributesBrowserTest;
 use Filament\Tests\Fixtures\Pages\SchemaComponentScopeBrowserTest;
 use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
@@ -204,7 +206,9 @@ class AdminPanelProvider extends PanelProvider
                 RadioBrowserTest::class,
                 RepeaterBrowserTest::class,
                 RichEditorBrowserTest::class,
+                RichEditorMentionAttributesBrowserTest::class,
                 RichEditorMinimalControlsBrowserTest::class,
+                RichEditorStyleAttributesBrowserTest::class,
                 SectionBrowserTest::class,
                 SelectBrowserTest::class,
                 Settings::class,

@@ -125,6 +125,10 @@ trait HasFileAttachments
     #[Renderless]
     public function saveUploadedFileAttachmentAndGetUrl(): ?string
     {
+        if ($this->isDisabled()) {
+            return null;
+        }
+
         $attachment = $this->getUploadedFileAttachment();
 
         if (! $attachment) {

@@ -353,6 +353,8 @@ trait HasRecords
     {
         $this->cachedTableRecords = null;
         $this->cachedTableRecordSelectabilityUsingQuery = [];
+        $this->cachedSelectedTableRecords = null;
+        $this->cachedSelectedTableRecordsState = null;
     }
 
     /**

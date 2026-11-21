@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachBulkAction;
@@ -33,6 +34,54 @@ use function Pest\Laravel\assertSoftDeleted;
 uses(TestCase::class);
 
 describe('action lifecycle and configuration', function (): void {
+    it('refreshes cached selected records when the selection changes', function (): void {
+        $posts = Post::factory()->count(2)->create();
+        $livewire = livewire(PostsTable::class)->instance();
+
+        $livewire->selectedTableRecords = [(string) $posts->first()->getKey()];
+
+        expect($livewire->getSelectedTableRecords()->modelKeys())->toBe([$posts->first()->getKey()]);
+
+        $livewire->selectedTableRecords = [(string) $posts->last()->getKey()];
+
+        expect($livewire->getSelectedTableRecords()->modelKeys())->toBe([$posts->last()->getKey()]);
+    });
+
+    it('refreshes cached selected records when the `getSelectedTableRecords()` fetch mode changes', function (): void {
+        $post = Post::factory()->create();
+        $livewire = livewire(PostsTable::class)->instance();
+        $livewire->selectedTableRecords = [(string) $post->getKey()];
+
+        expect($livewire->getSelectedTableRecords(shouldFetchSelectedRecords: false)->map(strval(...))->all())->toBe([(string) $post->getKey()]);
+        expect($livewire->getSelectedTableRecords()->modelKeys())->toBe([$post->getKey()]);
+    });
+
+    it('refreshes cached selected records before executing a bulk action', function (): void {
+        $post = Post::factory()->create(['is_published' => true]);
+        $livewire = livewire(QuerySelectablePostsTable::class)->instance();
+
+        $livewire->mountTableBulkAction(DeleteBulkAction::class, [(string) $post->getKey()]);
+
+        expect($livewire->getSelectedTableRecords()->modelKeys())->toBe([$post->getKey()]);
+
+        $post->update(['is_published' => false]);
+
+        $livewire->callMountedTableBulkAction();
+
+        expect($post->fresh()->deleted_at)->toBeNull();
+    });
+
+    it('refreshes cached selected records before executing a table action that accesses them', function (): void {
+        $post = Post::factory()->create(['is_published' => true]);
+        $component = livewire(QuerySelectablePostsTableWithSelectedRecordsAction::class)
+            ->set('selectedTableRecords', [(string) $post->getKey()])
+            ->call('mountTableAction', 'updateSelectedRecords');
+
+        expect($post->fresh())
+            ->is_published->toBeFalse()
+            ->deleted_at->toBeNull();
+    });
+
     it('can call a bulk action', function (): void {
         $posts = Post::factory()->count(10)->create();
 
@@ -1363,6 +1412,20 @@ class QuerySelectablePostsTable extends SelectablePostsTable
                 ->where('is_published', true)
                 ->when($this->shouldUseDisjunction, static fn (Builder $query): Builder => $query->orWhere('rating', '>=', 5)))
             ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly);
+    }
+}
+
+class QuerySelectablePostsTableWithSelectedRecordsAction extends QuerySelectablePostsTable
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->headerActions([
+                Action::make('updateSelectedRecords')
+                    ->accessSelectedRecords()
+                    ->mountUsing(static fn (Collection $selectedRecords) => $selectedRecords->each->update(['is_published' => false]))
+                    ->action(static fn (Collection $selectedRecords) => $selectedRecords->each->delete()),
+            ]);
     }
 }
 

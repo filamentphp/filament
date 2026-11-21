@@ -83,6 +83,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'loginDataHash' => hash('sha256', serialize(Arr::except($livewire->get('data'), ['multiFactor']))),
             ]);
 
         $this->assertGuest();
@@ -589,6 +590,7 @@ describe('failure cases', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'loginDataHash' => hash('sha256', serialize(Arr::except($login->get('data'), ['multiFactor']))),
             ]);
 
         $login

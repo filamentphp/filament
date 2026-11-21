@@ -57,6 +57,8 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
 
         $this->default([]);
 
+        $this->rule('array');
+
         $this->afterStateHydrated(static function (TagsInput $component): void {
             $component->hydrateTags();
         });

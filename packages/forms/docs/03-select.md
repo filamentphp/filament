@@ -658,7 +658,7 @@ When customizing persistence with `createOptionUsing()` or `updateOptionUsing()`
 
 The selected ID is client-controlled form state. Use the [`relationship()` query's `modifyQueryUsing` argument](#customizing-the-relationship-query) to apply tenant or ownership restrictions when resolving the record for editing. A parent resource's query restrictions do not automatically scope the related model, and allowing a record to be selected does not authorize editing it.
 
-Relationship queries retain the related model's global scopes. However, without `modifyQueryUsing`, an already-loaded selected relationship may be reused without querying its current scopes again. Use `modifyQueryUsing` if these restrictions must be reapplied. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+Relationship queries retain the related model's global scopes. Filament queries the selected relationship again when validating the field or when a mounted action belonging to the field resolves the selected record, so current global scopes are applied at those boundaries. This includes the edit option action and custom prefix or suffix actions. Other label lookups may reuse an already-loaded relationship for display. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 ### Handling `MorphTo` relationships
 

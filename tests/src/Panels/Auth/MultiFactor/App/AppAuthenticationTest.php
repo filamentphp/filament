@@ -58,6 +58,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'loginDataHash' => hash('sha256', serialize(Arr::except($livewire->get('data'), ['multiFactor']))),
             ]);
 
         $this->assertGuest();
@@ -808,6 +809,276 @@ describe('security', function (): void {
             ->and($appAuthentication->verifyCode($expiredCode, $secret))->toBeFalse();
     });
 
+    it('does not count the multi-factor challenge as a login attempt', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        foreach (range(1, 4) as $attempt) {
+            livewire(Login::class)
+                ->fillForm([
+                    'email' => $userToAuthenticate->email,
+                    'password' => 'incorrect-password',
+                ])
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+        }
+
+        // The 5th login attempt starts the challenge, so submitting it would have been the 6th.
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'code' => $appAuthentication->getCurrentCode($userToAuthenticate),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertNotNotified()
+            ->assertHasNoErrors()
+            ->assertRedirect(Filament::getUrl());
+
+        $this->assertAuthenticatedAs($userToAuthenticate);
+    });
+
+    it('does not let a replayed multi-factor challenge exempt login attempts for another user from the rate limit', function (): void {
+        $challengedUser = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $otherUser = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $challengedUser->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        // Livewire snapshots can be replayed, so restoring the state with the started challenge
+        // before each attempt is what a client sending that snapshot again would do.
+        $lastState = new ReflectionProperty($livewire, 'lastState');
+        $challengeState = $lastState->getValue($livewire);
+
+        foreach (range(1, 4) as $attempt) {
+            $lastState->setValue($livewire, $challengeState);
+
+            $livewire
+                ->fillForm([
+                    'email' => $otherUser->email,
+                    'password' => 'incorrect-password',
+                ])
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+        }
+
+        // The challenge's own login attempt and the 4 attempts for another user spend all 5.
+        $lastState->setValue($livewire, $challengeState);
+
+        $livewire
+            ->fillForm([
+                'email' => $otherUser->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotified()
+            ->assertHasNoFormErrors();
+
+        $this->assertGuest();
+    });
+
+    it('does not let a replayed multi-factor challenge exempt changed passwords for the same user from the rate limit', function (): void {
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        $lastState = new ReflectionProperty($livewire, 'lastState');
+        $challengeState = $lastState->getValue($livewire);
+
+        $userToAuthenticate->update([
+            'password' => Hash::make('new-password'),
+        ]);
+
+        foreach (range(1, 4) as $attempt) {
+            $lastState->setValue($livewire, $challengeState);
+
+            $livewire
+                ->fillForm([
+                    'email' => $userToAuthenticate->email,
+                    'password' => "incorrect-password-{$attempt}",
+                ])
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+        }
+
+        $lastState->setValue($livewire, $challengeState);
+
+        $livewire
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'new-password',
+            ])
+            ->call('authenticate')
+            ->assertNotified()
+            ->assertHasNoFormErrors();
+
+        $this->assertGuest();
+    });
+
+    it('does not call `getCredentialsFromFormData()` before rate limiting a replayed multi-factor challenge', function (): void {
+        $challengedUser = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $otherUser = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        CountingCredentialsLogin::$credentialsFromFormDataCallCount = 0;
+
+        $livewire = livewire(CountingCredentialsLogin::class)
+            ->fillForm([
+                'email' => $challengedUser->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        $lastState = new ReflectionProperty($livewire, 'lastState');
+        $challengeState = $lastState->getValue($livewire);
+
+        foreach (range(1, 4) as $attempt) {
+            $lastState->setValue($livewire, $challengeState);
+
+            $livewire
+                ->fillForm([
+                    'email' => $otherUser->email,
+                    'password' => 'incorrect-password',
+                ])
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+        }
+
+        $credentialsFromFormDataCallCount = CountingCredentialsLogin::$credentialsFromFormDataCallCount;
+
+        $lastState->setValue($livewire, $challengeState);
+
+        $livewire
+            ->fillForm([
+                'email' => $otherUser->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotified()
+            ->assertHasNoFormErrors();
+
+        expect(CountingCredentialsLogin::$credentialsFromFormDataCallCount)
+            ->toBe($credentialsFromFormDataCallCount);
+    });
+
+    it('does not validate credentials after a multi-factor challenge submission is rate limited', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        CountingCredentialsLogin::$credentialsFromFormDataCallCount = 0;
+
+        $livewire = livewire(CountingCredentialsLogin::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        $invalidCode = ($appAuthentication->getCurrentCode($userToAuthenticate) === '000000')
+            ? '111111'
+            : '000000';
+
+        foreach (range(1, 5) as $attempt) {
+            $livewire
+                ->fillForm([
+                    $appAuthentication->getId() => [
+                        'code' => $invalidCode,
+                    ],
+                ], 'multiFactorChallengeForm')
+                ->call('authenticate')
+                ->assertNoRedirect();
+        }
+
+        $credentialsFromFormDataCallCount = CountingCredentialsLogin::$credentialsFromFormDataCallCount;
+
+        $livewire
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'code' => $appAuthentication->getCurrentCode($userToAuthenticate),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertNotified()
+            ->assertNoRedirect();
+
+        expect(CountingCredentialsLogin::$credentialsFromFormDataCallCount)
+            ->toBe($credentialsFromFormDataCallCount);
+
+        $this->assertGuest();
+    });
+
+    it('still rate limits login attempts made after the multi-factor challenge has started', function (): void {
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        // The challenge's login attempt and the 4 incorrect attempts spend all 5.
+        foreach (range(1, 4) as $attempt) {
+            $livewire
+                ->fillForm([
+                    'email' => $userToAuthenticate->email,
+                    'password' => 'incorrect-password',
+                ])
+                ->call('authenticate')
+                ->assertSet('userUndertakingMultiFactorAuthentication', null);
+        }
+
+        $livewire
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotified()
+            ->assertSet('userUndertakingMultiFactorAuthentication', null);
+
+        $this->assertGuest();
+    });
+
     it('can throttle multi-factor challenge attempts per user', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -1178,6 +1449,18 @@ class NonLockingCacheStore implements Store
     public function getPrefix(): string
     {
         return '';
+    }
+}
+
+class CountingCredentialsLogin extends Login
+{
+    public static int $credentialsFromFormDataCallCount = 0;
+
+    protected function getCredentialsFromFormData(#[SensitiveParameter] array $data): array
+    {
+        static::$credentialsFromFormDataCallCount++;
+
+        return parent::getCredentialsFromFormData($data);
     }
 }
 

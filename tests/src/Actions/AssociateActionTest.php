@@ -264,6 +264,34 @@ describe('record select options', function (): void {
         expect($inScopePost->refresh()->author_id)->toBeNull();
     });
 
+    it('rejects an already-associated `recordId` when submitted directly', function (): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => $user->getKey()]);
+
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => $post->getKey(),
+            ])
+            ->assertHasFormErrors(['recordId']);
+
+        expect($post->refresh()->author_id)->toBe($user->getKey());
+    });
+
+    it('rejects a multi-associate batch containing an already-associated `recordId`', function (): void {
+        $user = User::factory()->create();
+        $associatedPost = Post::factory()->create(['author_id' => $user->getKey()]);
+        $availablePost = Post::factory()->create(['author_id' => null]);
+
+        livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => [$associatedPost->getKey(), $availablePost->getKey()],
+            ])
+            ->assertHasFormErrors();
+
+        expect($associatedPost->refresh()->author_id)->toBe($user->getKey())
+            ->and($availablePost->refresh()->author_id)->toBeNull();
+    });
+
     it('applies `recordSelectOptionsQuery()` to search results', function (): void {
         $user = User::factory()->create();
         Post::factory()->create(['title' => 'Published Article', 'author_id' => null]);

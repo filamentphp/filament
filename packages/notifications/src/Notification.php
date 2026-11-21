@@ -126,7 +126,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
             $static->view($data['view']);
         }
 
-        $static->viewData($data['viewData'] ?? []);
+        $static->viewData(Arr::except($data['viewData'] ?? [], [
+            ...array_keys($static->extractPublicMethods()),
+            $static->viewIdentifier,
+            'attributes',
+        ]));
         $static->body($data['body'] ?? null);
         $static->color($data['color'] ?? null);
         $static->duration($data['duration'] ?? $static->getDuration());
