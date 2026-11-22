@@ -2,6 +2,8 @@
 
 namespace Filament\Auth\Http\Requests;
 
+use Filament\Auth\Events\EmailChanged;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -70,12 +72,24 @@ class EmailChangeVerificationRequest extends FormRequest
             return false;
         }
 
-        $user->update([
+        $previousEmail = $user->getOriginal('email');
+
+        // `wasChanged()` must be read before `markEmailAsVerified()`, which saves the model again and resets its changes.
+        $wasEmailChanged = $user->update([
             'email' => $newEmail,
-        ]);
+        ]) && $user->wasChanged('email');
 
         if (method_exists($user, 'markEmailAsVerified')) {
             $user->markEmailAsVerified();
+        }
+
+        if (
+            $wasEmailChanged &&
+            ($user instanceof Authenticatable) &&
+            is_string($previousEmail) &&
+            ($previousEmail !== '')
+        ) {
+            event(new EmailChanged($user, $previousEmail));
         }
 
         return true;
