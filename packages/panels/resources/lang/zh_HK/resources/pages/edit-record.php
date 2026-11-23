@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => '編輯',
 
+    'navigation_label' => '編輯',
+
     'form' => [
 
         'actions' => [
@@ -18,6 +20,14 @@ return [
                 'label' => '保存',
             ],
 
+        ],
+
+    ],
+
+    'content' => [
+
+        'tab' => [
+            'label' => '編輯',
         ],
 
     ],
