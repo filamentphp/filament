@@ -255,6 +255,48 @@ describe('authentication failures', function (): void {
             ->and($failedEvents)->toBe(1);
     });
 
+    it('does not authenticate without a code when the password is rehashed during challenge validation', function (string $panel): void {
+        Notification::fake();
+        Filament::setCurrentPanel($panel);
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        $retrievedUsers = 0;
+        $rehashedPassword = Hash::make('password');
+
+        Event::listen('eloquent.retrieved: ' . User::class, static function () use (&$retrievedUsers, $userToAuthenticate, $rehashedPassword): void {
+            $retrievedUsers++;
+
+            // The credentials and pending challenge have been read, but the challenge form has not.
+            if ($retrievedUsers !== 2) {
+                return;
+            }
+
+            $userToAuthenticate->newQuery()
+                ->whereKey($userToAuthenticate->getKey())
+                ->update(['password' => $rehashedPassword]);
+        });
+
+        $livewire
+            ->call('authenticate')
+            ->assertNoRedirect();
+
+        $this->assertGuest();
+
+        expect($userToAuthenticate->fresh()->password)->toBe($rehashedPassword);
+    })->with(['app-authentication', 'email-authentication']);
+
     it('does not authenticate a different principal returned by the final credential lookup', function (): void {
         $initialUser = User::factory()->create();
         $differentUser = User::factory()->create();
