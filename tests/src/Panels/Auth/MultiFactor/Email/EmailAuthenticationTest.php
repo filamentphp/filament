@@ -86,6 +86,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'passwordKey' => hash('sha256', $userToAuthenticate->getAuthPassword()),
                 'loginDataHash' => hash('sha256', serialize(Arr::except($livewire->get('data'), ['multiFactor']))),
             ]);
 
@@ -160,6 +161,45 @@ describe('authentication flow', function (): void {
                     ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.resent.title'))
                     ->success()
             );
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    });
+
+    it('will not resend the code from a challenge created before the user changed their password', function (): void {
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $userToAuthenticate->update([
+            'password' => Hash::make('new-password'),
+        ]);
+
+        $livewire->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        );
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $livewire
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'new-password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
 
         Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
     });
@@ -721,6 +761,7 @@ describe('failure cases', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'passwordKey' => hash('sha256', $userToAuthenticate->getAuthPassword()),
                 'loginDataHash' => hash('sha256', serialize(Arr::except($login->get('data'), ['multiFactor']))),
             ]);
 
