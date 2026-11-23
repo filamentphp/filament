@@ -55,6 +55,11 @@ return [
             'title' => '저장 완료',
         ],
 
+        'throttled' => [
+            'title' => '요청이 너무 많습니다. :seconds초 후에 다시 시도하세요.',
+            'body' => ':seconds초 후에 다시 시도하세요.',
+        ],
+
     ],
 
     'actions' => [

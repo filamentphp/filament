@@ -14,6 +14,18 @@ return [
 
                 'label' => '열',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => '모두 선택',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => '모두 선택 해제',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => '내보내기가 너무 큽니다',
             'body' => '한 번에 1개 이상의 행을 내보낼 수 없습니다.|한 번에 :count개 이상의 행을 내보낼 수 없습니다.',
+        ],
+
+        'no_columns' => [
+            'title' => '선택된 열이 없습니다',
+            'body' => '내보낼 열을 하나 이상 선택하세요.',
         ],
 
         'started' => [
