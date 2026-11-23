@@ -128,7 +128,10 @@ it('cannot verify an email change to an address that has been taken since the ve
         ->get($verificationUrl)
         ->assertRedirect(Filament::getProfileUrl());
 
-    Notification::assertNotified('That email address is no longer available.');
+    Notification::assertNotified(Notification::make()
+        ->title('That email address is no longer available.')
+        ->body('It was claimed by another account while your verification link was outstanding.')
+        ->danger());
     Notification::assertNotNotified('Email address changed');
 
     expect($userToVerify->refresh())
@@ -292,7 +295,7 @@ it('does not dispatch `EmailChangeVerified` when the authenticated user already 
     Event::assertNotDispatched(EmailChangeVerified::class);
 });
 
-it('reports an unavailable email change and does not dispatch `EmailChangeVerified` when a model event prevents the email address from being saved', function (): void {
+it('reports a failed email change and does not dispatch `EmailChangeVerified` when a model event prevents the email address from being saved', function (): void {
     Event::fake([EmailChangeVerified::class]);
 
     $createdUser = User::factory()->create();
@@ -313,7 +316,10 @@ it('reports an unavailable email change and does not dispatch `EmailChangeVerifi
         ->get($verificationUrl)
         ->assertRedirect(Filament::getProfileUrl());
 
-    Notification::assertNotified('That email address is no longer available.');
+    Notification::assertNotified(Notification::make()
+        ->title('Email address could not be changed')
+        ->body('The email change could not be completed. Please try changing your email address again.')
+        ->danger());
     Notification::assertNotNotified('Email address changed');
 
     expect($userToVerify->refresh())

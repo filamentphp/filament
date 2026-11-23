@@ -13,6 +13,8 @@ class EmailChangeVerificationRequest extends FormRequest
 {
     use Concerns\CanConsumeEmailChangeVerification;
 
+    protected bool $wasEmailUpdateRejected = false;
+
     public function authorize(): bool
     {
         $signature = $this->query('signature');
@@ -66,6 +68,8 @@ class EmailChangeVerificationRequest extends FormRequest
         ]);
 
         if (! $wasEmailUpdated) {
+            $this->wasEmailUpdateRejected = true;
+
             return false;
         }
 
@@ -85,6 +89,11 @@ class EmailChangeVerificationRequest extends FormRequest
         }
 
         return true;
+    }
+
+    public function wasEmailUpdateRejected(): bool
+    {
+        return $this->wasEmailUpdateRejected;
     }
 
     public function withValidator(Validator $validator): Validator
