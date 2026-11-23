@@ -61,9 +61,15 @@ class EmailChangeVerificationRequest extends FormRequest
 
         $previousEmail = $user->getOriginal('email');
 
-        $wasEmailChanged = $user->update([
+        $wasEmailUpdated = $user->update([
             'email' => $newEmail,
-        ]) && ($user->getOriginal('email') !== $previousEmail);
+        ]);
+
+        if (! $wasEmailUpdated) {
+            return false;
+        }
+
+        $wasEmailChanged = $user->getOriginal('email') !== $previousEmail;
 
         if (method_exists($user, 'markEmailAsVerified')) {
             $user->markEmailAsVerified();

@@ -292,7 +292,7 @@ it('does not dispatch `EmailChangeVerified` when the authenticated user already 
     Event::assertNotDispatched(EmailChangeVerified::class);
 });
 
-it('does not dispatch `EmailChangeVerified` when a model event prevents the email address from being saved', function (): void {
+it('reports an unavailable email change and does not dispatch `EmailChangeVerified` when a model event prevents the email address from being saved', function (): void {
     Event::fake([EmailChangeVerified::class]);
 
     $createdUser = User::factory()->create();
@@ -312,6 +312,9 @@ it('does not dispatch `EmailChangeVerified` when a model event prevents the emai
         ->actingAs($userToVerify)
         ->get($verificationUrl)
         ->assertRedirect(Filament::getProfileUrl());
+
+    Notification::assertNotified('That email address is no longer available.');
+    Notification::assertNotNotified('Email address changed');
 
     expect($userToVerify->refresh())
         ->email->toBe($previousEmail);
