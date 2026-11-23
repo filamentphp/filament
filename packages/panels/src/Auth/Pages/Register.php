@@ -219,6 +219,7 @@ class Register extends SimplePage
         return TextInput::make('email')
             ->label(__('filament-panels::auth/pages/register.form.email.label'))
             ->email()
+            ->notRegex('/[<>]/')
             ->required()
             ->maxLength(255)
             ->unique($this->getUserModel());

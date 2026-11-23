@@ -6,10 +6,34 @@ return [
 
         'heading' => '열',
 
+        'position' => ':count개 중 :position번째입니다.',
+
+        'position_in_group' => ':group 그룹에서 :count개 중 :position번째입니다.',
+
+        'reordered' => ':column 열이 :count개 중 :position번째 위치로 이동했습니다.',
+
+        'reordered_deferred' => ':column 열이 :count개 중 :position번째 위치로 이동했습니다. 변경 사항을 저장하려면 열을 적용하세요.',
+
+        'reordered_in_group' => ':column 열이 :group 그룹에서 :count개 중 :position번째 위치로 이동했습니다.',
+
+        'reordered_in_group_deferred' => ':column 열이 :group 그룹에서 :count개 중 :position번째 위치로 이동했습니다. 변경 사항을 저장하려면 열을 적용하세요.',
+
         'actions' => [
 
             'apply' => [
                 'label' => '열 적용',
+            ],
+
+            'move_up' => [
+                'label' => ':column 열 위로 이동',
+            ],
+
+            'move_down' => [
+                'label' => ':column 열 아래로 이동',
+            ],
+
+            'reorder' => [
+                'label' => '열 순서 변경',
             ],
 
             'reset' => [
@@ -26,9 +50,27 @@ return [
             'label' => '작업|작업들',
         ],
 
+        'editable' => [
+            'saving' => '변경 사항 저장 중...',
+            'saved' => '변경 사항이 저장되었습니다.',
+            'failure' => '저장되었는지 확인할 수 없습니다. 다시 시도하기 전에 페이지를 새로고침하세요.',
+            'unavailable' => '이 항목은 더 이상 수정할 수 없습니다.',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => '예',
+                'false' => '아니오',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => '로드 중...',
+
+            'no_options_message' => '사용 가능한 옵션이 없습니다.',
 
             'no_search_results_message' => '검색 결과가 없습니다.',
 
@@ -113,6 +155,18 @@ return [
             'label' => '항목 순서 변경',
         ],
 
+        'reorder_record' => [
+            'label' => ':key 항목 순서 변경',
+        ],
+
+        'move_record_up' => [
+            'label' => ':label 위로 이동',
+        ],
+
+        'move_record_down' => [
+            'label' => ':label 아래로 이동',
+        ],
+
         'filter' => [
             'label' => '필터',
         ],
@@ -127,6 +181,10 @@ return [
 
         'column_manager' => [
             'label' => '열 전환',
+        ],
+
+        'toggle_record_content' => [
+            'label' => ':key 항목 펼치기/접기',
         ],
 
     ],
@@ -217,7 +275,16 @@ return [
 
     ],
 
+    'loading' => '로드 중...',
+
     'reorder_indicator' => '항목을 순서대로 끌어다 놓습니다.',
+
+    'reordering' => [
+        'position' => ':label, :count개 중 :position번째입니다.',
+        'moved' => ':label 항목이 :count개 중 :position번째 위치로 이동했습니다.',
+    ],
+
+    'result_count' => '{0} 결과 없음|{1} 결과 :count개|[2,*] 결과 :count개',
 
     'selection_indicator' => [
 

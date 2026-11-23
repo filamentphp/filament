@@ -5,9 +5,16 @@ use Filament\Auth\Pages\EmailVerification\EmailVerificationPrompt;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\TestCase;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -55,6 +62,33 @@ it('can resend notification', function (): void {
         ->assertNotified();
 
     Notification::assertSentTo($userToVerify, VerifyEmail::class);
+});
+
+it('does not send a queued notification after the mail recipient changes', function (): void {
+    config()->set('mail.default', 'array');
+
+    Queue::fake();
+
+    $userToVerify = User::factory()->create([
+        'email_verified_at' => null,
+    ]);
+
+    $this->actingAs($userToVerify);
+
+    livewire(EmailVerificationPrompt::class)
+        ->callAction('resendNotification')
+        ->assertNotified();
+
+    $queuedNotification = Queue::pushed(SendQueuedNotifications::class)->sole();
+    $serializedNotification = serialize($queuedNotification);
+
+    $userToVerify->updateQuietly([
+        'email' => 'changed@example.com',
+    ]);
+
+    unserialize($serializedNotification)->handle(app(ChannelManager::class));
+
+    expect(app('mailer')->getSymfonyTransport()->messages())->toHaveCount(0);
 });
 
 describe('rate limiting', function (): void {
@@ -130,4 +164,31 @@ it('redirects guests to the panel when unauthenticated', function (): void {
 
     $this->get(Filament::getEmailVerificationPromptUrl())
         ->assertRedirect($panel?->getUrl());
+});
+
+it('redirects Livewire requests to the prompt page once the user\'s email address is no longer verified', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user);
+
+    $html = $this->get(Settings::getUrl())
+        ->assertSuccessful()
+        ->getContent();
+
+    $snapshot = collect(Str::matchAll('/wire:snapshot="([^"]+)"/', $html))
+        ->map(fn (string $snapshot): string => htmlspecialchars_decode($snapshot, ENT_QUOTES))
+        ->first(fn (string $snapshot): bool => json_decode($snapshot, associative: true)['memo']['name'] === Livewire::new(Settings::class)->getName());
+
+    $sendLivewireRequest = fn (): TestResponse => $this
+        ->withHeaders(['X-Livewire' => 'true'])
+        ->postJson(app('livewire')->getUpdateUri(), [
+            'components' => [['snapshot' => $snapshot, 'updates' => [], 'calls' => []]],
+        ], ['Accept' => 'text/html']);
+
+    $sendLivewireRequest()->assertSuccessful();
+
+    $user->forceFill(['email_verified_at' => null])->save();
+    Livewire::flushState();
+
+    $sendLivewireRequest()->assertRedirect(Filament::getEmailVerificationPromptUrl());
 });

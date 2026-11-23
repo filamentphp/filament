@@ -11,6 +11,10 @@ use Illuminate\Validation\Validator;
 
 class EmailChangeVerificationRequest extends FormRequest
 {
+    use Concerns\CanConsumeEmailChangeVerification;
+
+    protected bool $wasEmailUpdateRejected = false;
+
     public function authorize(): bool
     {
         $signature = $this->query('signature');
@@ -51,32 +55,25 @@ class EmailChangeVerificationRequest extends FormRequest
             ->useWritePdo()
             ->exists();
 
-        $signature = $this->query('signature');
-        $cache = cache();
-        $wasPending = false;
-        $wasRemoved = true;
+        $wasConsumed = $this->consumeEmailChangeVerification($this->query('signature'));
 
-        foreach (["filament:auth:email_change:verification:{$signature}", $signature] as $cacheKey) {
-            if (! $cache->has($cacheKey)) {
-                continue;
-            }
-
-            $wasPending = true;
-
-            if ((! $cache->forget($cacheKey)) && ($cache->get($cacheKey) !== null)) {
-                $wasRemoved = false;
-            }
-        }
-
-        if ($isEmailTaken || (! $wasPending) || (! $wasRemoved)) {
+        if ($isEmailTaken || (! $wasConsumed)) {
             return false;
         }
 
         $previousEmail = $user->getOriginal('email');
 
-        $wasEmailChanged = $user->update([
+        $wasEmailUpdated = $user->update([
             'email' => $newEmail,
-        ]) && ($user->getOriginal('email') !== $previousEmail);
+        ]);
+
+        if (! $wasEmailUpdated) {
+            $this->wasEmailUpdateRejected = true;
+
+            return false;
+        }
+
+        $wasEmailChanged = $user->getOriginal('email') !== $previousEmail;
 
         if (method_exists($user, 'markEmailAsVerified')) {
             $user->markEmailAsVerified();
@@ -92,6 +89,11 @@ class EmailChangeVerificationRequest extends FormRequest
         }
 
         return true;
+    }
+
+    public function wasEmailUpdateRejected(): bool
+    {
+        return $this->wasEmailUpdateRejected;
     }
 
     public function withValidator(Validator $validator): Validator

@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
@@ -8,6 +9,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\RateLimiter as CacheRateLimiter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
@@ -248,6 +250,49 @@ it('cannot bypass code throttling with blank submissions and changing action arg
         ->assertHasFormErrors([
             'code' => __('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.messages.rate_limited'),
         ]);
+
+    expect($user->hasEmailAuthentication())
+        ->toBeTrue();
+});
+
+it('cannot bypass code throttling with blank submissions and changing action arguments when actions use database transactions', function (): void {
+    /** @var EmailAuthentication $emailAuthentication */
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $user = auth()->user();
+
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+
+    config()->set('cache.default', 'database');
+    app()->forgetInstance(CacheRateLimiter::class);
+    RateLimiter::clearResolvedInstances();
+
+    Action::configureUsing(static fn (Action $action) => $action->databaseTransaction(), during: function () use ($code): void {
+        foreach (range(1, 5) as $attempt) {
+            livewire(EditProfile::class)
+                ->callAction(
+                    TestAction::make('disableEmailAuthentication')
+                        ->schemaComponent('email_code', schema: 'content')
+                        ->arguments(['nonce' => $attempt]),
+                    ['code' => ''],
+                )
+                ->assertHasFormErrors([
+                    'code' => 'required',
+                ]);
+        }
+
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableEmailAuthentication')
+                    ->schemaComponent('email_code', schema: 'content')
+                    ->arguments(['nonce' => 6]),
+                ['code' => $code],
+            )
+            ->assertHasFormErrors([
+                'code' => __('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.messages.rate_limited'),
+            ]);
+    });
 
     expect($user->hasEmailAuthentication())
         ->toBeTrue();

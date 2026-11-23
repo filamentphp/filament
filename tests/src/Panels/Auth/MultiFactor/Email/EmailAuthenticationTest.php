@@ -17,10 +17,13 @@ use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -33,6 +36,30 @@ beforeEach(function (): void {
     Filament::setCurrentPanel('email-authentication');
 
     Notification::fake();
+});
+
+it('does not send a queued authentication code after the mail recipient changes', function (): void {
+    config()->set('mail.default', 'array');
+
+    app()->forgetInstance(ChannelManager::class);
+    Notification::clearResolvedInstance(ChannelManager::class);
+    Queue::fake();
+
+    $emailAuthentication = EmailAuthentication::make();
+    $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
+
+    expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue();
+
+    $queuedNotification = Queue::pushed(SendQueuedNotifications::class)->sole();
+    $serializedNotification = serialize($queuedNotification);
+
+    $userToAuthenticate->updateQuietly([
+        'email' => 'changed@example.com',
+    ]);
+
+    unserialize($serializedNotification)->handle(app(ChannelManager::class));
+
+    expect(app('mailer')->getSymfonyTransport()->messages())->toHaveCount(0);
 });
 
 it('configures and clears the code generator through either setter', function (string $method, string $otherMethod): void {
@@ -86,6 +113,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'passwordKey' => hash('sha256', $userToAuthenticate->getAuthPassword()),
                 'loginDataHash' => hash('sha256', serialize(Arr::except($livewire->get('data'), ['multiFactor']))),
             ]);
 
@@ -162,6 +190,75 @@ describe('authentication flow', function (): void {
             );
 
         Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    });
+
+    it('will not resend the code from a challenge created before the user changed their password', function (): void {
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $userToAuthenticate->update([
+            'password' => Hash::make('new-password'),
+        ]);
+
+        $livewire->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        );
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $livewire
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'new-password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    });
+
+    it('will not resend the code after the user loses panel access', function (): void {
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+        Filament::auth()->getProvider()->setModel(RevocableEmailAuthenticationUser::class);
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $userToAuthenticate->update(['email_verified_at' => null]);
+
+        $livewire->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        );
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $this->assertGuest();
     });
 
     it('can not resend the code to the user more than twice per minute', function (): void {
@@ -721,6 +818,7 @@ describe('failure cases', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'passwordKey' => hash('sha256', $userToAuthenticate->getAuthPassword()),
                 'loginDataHash' => hash('sha256', serialize(Arr::except($login->get('data'), ['multiFactor']))),
             ]);
 
@@ -1265,6 +1363,16 @@ class EmailAuthenticationUser extends User
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+}
+
+class RevocableEmailAuthenticationUser extends User
+{
+    protected $table = 'users';
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return parent::canAccessPanel($panel) && $this->hasVerifiedEmail();
     }
 }
 
