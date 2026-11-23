@@ -6,6 +6,8 @@ return [
 
         'heading' => '알림',
 
+        'unread_label' => '읽지 않은 알림',
+
         'actions' => [
 
             'clear' => [

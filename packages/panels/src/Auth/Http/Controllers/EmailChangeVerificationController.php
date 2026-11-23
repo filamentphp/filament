@@ -11,9 +11,11 @@ class EmailChangeVerificationController
     public function __invoke(EmailChangeVerificationRequest $request): EmailChangeVerificationResponse
     {
         if (! $request->fulfill()) {
+            $notificationKey = $request->wasEmailUpdateRejected() ? 'rejected' : 'unavailable';
+
             Notification::make()
-                ->title(__('filament-panels::auth/http/controllers/email-change-verification-controller.notifications.unavailable.title'))
-                ->body(__('filament-panels::auth/http/controllers/email-change-verification-controller.notifications.unavailable.body'))
+                ->title(__("filament-panels::auth/http/controllers/email-change-verification-controller.notifications.{$notificationKey}.title"))
+                ->body(__("filament-panels::auth/http/controllers/email-change-verification-controller.notifications.{$notificationKey}.body"))
                 ->danger()
                 ->send();
 

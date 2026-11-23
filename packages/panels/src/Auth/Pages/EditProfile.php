@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Auth\Notifications\NoticeOfEmailChangeRequest;
+use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Auth\Notifications\VerifyEmailChange;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
@@ -30,10 +31,12 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
@@ -197,6 +200,9 @@ class EditProfile extends Page
 
         RateLimiter::hit($rateLimitingKey);
 
+        $user = $this->getUser();
+        $emailForVerification = ($user instanceof MustVerifyEmail) ? $user->getEmailForVerification() : null;
+
         try {
             $this->beginDatabaseTransaction();
 
@@ -210,7 +216,7 @@ class EditProfile extends Page
 
             $this->callHook('beforeSave');
 
-            $this->handleRecordUpdate($this->getUser(), $data);
+            $this->handleRecordUpdate($user, $data);
 
             $this->callHook('afterSave');
         } catch (Halt $exception) {
@@ -236,7 +242,24 @@ class EditProfile extends Page
         $this->data['password'] = null;
         $this->data['passwordConfirmation'] = null;
 
+        if (($user instanceof MustVerifyEmail) && ($user->getEmailForVerification() !== $emailForVerification)) {
+            $this->sendEmailVerificationNotification($user);
+        }
+
         $this->getSavedNotification()?->send();
+
+        $panel = Filament::getCurrentOrDefaultPanel();
+
+        if (
+            static::isEmailVerificationRequired($panel) &&
+            ($user instanceof MustVerifyEmail) &&
+            (! $user->hasVerifiedEmail()) &&
+            filled($emailVerificationPromptUrl = $panel->getEmailVerificationPromptUrl())
+        ) {
+            $this->redirect($emailVerificationPromptUrl, navigate: FilamentView::hasSpaMode($emailVerificationPromptUrl));
+
+            return;
+        }
 
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
@@ -254,9 +277,63 @@ class EditProfile extends Page
             unset($data['email']);
         }
 
-        $record->update($data);
+        $record->fill($data);
+
+        $shouldInvalidateEmailVerification = ($record instanceof MustVerifyEmail) && $record->isDirty('email');
+        $originalEmailVerifiedAt = $record->getOriginal('email_verified_at');
+
+        if ($shouldInvalidateEmailVerification) {
+            $record->setAttribute('email_verified_at', null);
+        }
+
+        if (! $record->save()) {
+            $record->refresh();
+
+            throw (new Halt)->rollBackDatabaseTransaction();
+        }
+
+        if (
+            $shouldInvalidateEmailVerification &&
+            (! $record->wasChanged('email')) &&
+            ($originalEmailVerifiedAt !== null) &&
+            ($record->getAttributeValue('email_verified_at') === null)
+        ) {
+            $record->newModelQuery()
+                ->whereKey($record->getKey())
+                ->where('email', $record->getAttributeValue('email'))
+                ->whereNull('email_verified_at')
+                ->update(['email_verified_at' => $originalEmailVerifiedAt]);
+
+            $record->refresh();
+        }
 
         return $record;
+    }
+
+    protected function sendEmailVerificationNotification(Model $record): void
+    {
+        if (! Filament::hasEmailVerification()) {
+            return;
+        }
+
+        if (! $record instanceof MustVerifyEmail) {
+            return;
+        }
+
+        if ($record->hasVerifiedEmail()) {
+            return;
+        }
+
+        if (! method_exists($record, 'notify')) {
+            $recordClass = $record::class;
+
+            throw new LogicException("Model [{$recordClass}] does not have a [notify()] method.");
+        }
+
+        $notification = app(VerifyEmail::class);
+        $notification->url = Filament::getVerifyEmailUrl($record);
+
+        $record->notify($notification);
     }
 
     protected function sendEmailChangeVerification(Model $record, string $newEmail): void
@@ -268,14 +345,26 @@ class EditProfile extends Page
         $notification = app(VerifyEmailChange::class);
         $notification->url = Filament::getVerifyEmailChangeUrl($record, $newEmail);
 
-        $verificationSignature = Query::new($notification->url)->get('signature');
+        $verificationQuery = Query::fromUri($notification->url);
+        $verificationSignature = $verificationQuery->get('signature');
 
-        cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
+        cache()->put(
+            "filament:auth:email_change:verification:{$verificationSignature}",
+            true,
+            ttl: Carbon::createFromTimestamp((int) $verificationQuery->get('expires')),
+        );
 
-        $record->notify(app(NoticeOfEmailChangeRequest::class, [/** @phpstan-ignore-line */
+        $notice = app(NoticeOfEmailChangeRequest::class, [/** @phpstan-ignore-line */
             'blockVerificationUrl' => Filament::getBlockEmailChangeVerificationUrl($record, $newEmail, $verificationSignature),
             'newEmail' => $newEmail,
-        ]));
+        ]);
+
+        if ($record instanceof HasLocalePreference) {
+            $notice->locale($record->preferredLocale());
+        }
+
+        Notification::route('mail', method_exists($record, 'routeNotificationFor') ? $record->routeNotificationFor('mail', $notice) : $record->getAttributeValue('email'))
+            ->notify($notice);
 
         $newEmailRecipient = $this->getEmailChangeVerificationRecipientWithNewEmail($record, $notification, $newEmail);
 
