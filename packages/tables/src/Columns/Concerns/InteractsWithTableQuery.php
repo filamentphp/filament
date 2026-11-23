@@ -5,6 +5,8 @@ namespace Filament\Tables\Columns\Concerns;
 use Filament\Support\Services\RelationshipOrderer;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
@@ -117,7 +119,7 @@ trait InteractsWithTableQuery
                     },
                     fn (EloquentBuilder $query) => apply_search_constraint(
                         $query,
-                        generate_search_column_expression($this->getJsonSafeColumnName($searchColumn, $model->getTable()), $isSearchForcedCaseInsensitive, $databaseConnection),
+                        generate_search_column_expression($this->getJsonSafeColumnName($this->qualifyColumnForBelongsToManyTable($searchColumn, $model), $model->getTable()), $isSearchForcedCaseInsensitive, $databaseConnection),
                         $searchPattern,
                         ($whereClause === 'where') ? 'and' : 'or',
                     ),
@@ -164,9 +166,44 @@ trait InteractsWithTableQuery
                 continue;
             }
 
-            $query->orderBy($sortColumn, $direction);
+            $query->orderBy($this->qualifyColumnForBelongsToManyTable($sortColumn, $query->getModel()), $direction);
         }
 
         return $query;
+    }
+
+    /**
+     * In a `BelongsToMany` table, the pivot table is joined to the related
+     * table, and it may have columns with the same names, such as `id` and
+     * the timestamps, which makes those names ambiguous. The related model's
+     * key, timestamps and soft delete columns always exist in its table, and
+     * they are the values shown in the table, so they are qualified with it.
+     */
+    protected function qualifyColumnForBelongsToManyTable(string $column, Model $model): string
+    {
+        if (str($column)->contains(['.', '->'])) {
+            return $column;
+        }
+
+        if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
+            return $column;
+        }
+
+        $modelColumns = [$model->getKeyName()];
+
+        if ($model->usesTimestamps()) {
+            $modelColumns[] = $model->getCreatedAtColumn();
+            $modelColumns[] = $model->getUpdatedAtColumn();
+        }
+
+        if (method_exists($model, 'getDeletedAtColumn')) {
+            $modelColumns[] = $model->getDeletedAtColumn();
+        }
+
+        if (! in_array($column, $modelColumns, strict: true)) {
+            return $column;
+        }
+
+        return $model->qualifyColumn($column);
     }
 }

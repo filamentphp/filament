@@ -48,6 +48,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMo
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMultipleAttachTableSelectAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSortableTimestampsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
@@ -58,6 +59,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -1223,6 +1225,48 @@ it('can summarize pivot columns in a `BelongsToMany` `RelationManager`', functio
         ->assertSuccessful()
         ->assertTableColumnSummarySet('quantity', 'quantity_sum', 60)    // 10 + 20 + 30
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000); // 1000 + 2000 + 3000
+});
+
+it('can sort and search the related model\'s key and timestamps when the pivot table has columns with the same names', function (): void {
+    $ticket = Ticket::factory()->create();
+    $departments = Department::factory()->count(3)->create();
+
+    foreach ($departments as $index => $department) {
+        $department->forceFill([
+            'created_at' => now()->subDays(3 - $index),
+            'updated_at' => now()->subDays(3 - $index),
+        ])->saveQuietly();
+    }
+
+    // Attached in reverse, so the pivot table's keys and timestamps run the other way.
+    foreach ($departments->reverse() as $index => $department) {
+        $ticket->departments()->attach($department, ['quantity' => 3 - $index]);
+
+        DB::table('department_ticket')
+            ->where('department_id', $department->getKey())
+            ->update([
+                'created_at' => now()->addDays(3 - $index),
+                'updated_at' => now()->addDays(3 - $index),
+            ]);
+    }
+
+    livewire(DepartmentsWithSortableTimestampsRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->sortTable('id')
+        ->assertCanSeeTableRecords($departments, inOrder: true)
+        ->sortTable('id', 'desc')
+        ->assertCanSeeTableRecords($departments->reverse(), inOrder: true)
+        ->sortTable('created_at')
+        ->assertCanSeeTableRecords($departments, inOrder: true)
+        ->sortTable('updated_at', 'desc')
+        ->assertCanSeeTableRecords($departments->reverse(), inOrder: true)
+        ->sortTable('quantity')
+        ->assertCanSeeTableRecords($departments->reverse(), inOrder: true)
+        ->searchTable($departments->first()->name)
+        ->assertCanSeeTableRecords([$departments->first()])
+        ->assertCanNotSeeTableRecords($departments->skip(1));
 });
 
 it('preserves `modifyQueryUsing()` `addSelect()` subqueries when resolving a `BelongsToMany` record', function (): void {
