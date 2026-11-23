@@ -14,8 +14,13 @@ return [
 
             'label' => '그룹',
 
+            'group' => [
+                'label' => '그룹',
+            ],
+
             'block' => [
                 'label' => '배타적 논리 (OR)',
+                'picker_group' => '논리',
                 'or' => '또는',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(조건 없음)',
+
+    'max_rules_reached_tooltip' => '조건은 최대 :count개까지 추가할 수 있습니다.',
 
     'item_separators' => [
         'and' => '그리고',
@@ -146,6 +153,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => '초',
+                'minute' => '분',
+                'hour' => '시간',
+                'day' => '일',
+                'week' => '주',
+                'month' => '개월',
+                'quarter' => '분기',
+                'year' => '년',
+            ],
+
+            'presets' => [
+                'past_decade' => '지난 10년',
+                'past_5_years' => '지난 5년',
+                'past_2_years' => '지난 2년',
+                'past_year' => '지난 1년',
+                'past_6_months' => '지난 6개월',
+                'past_quarter' => '지난 분기',
+                'past_month' => '지난 1개월',
+                'past_2_weeks' => '지난 2주',
+                'past_week' => '지난 1주',
+                'past_hour' => '지난 1시간',
+                'past_minute' => '지난 1분',
+                'this_decade' => '이번 연대',
+                'this_year' => '올해',
+                'this_quarter' => '이번 분기',
+                'this_month' => '이번 달',
+                'today' => '오늘',
+                'this_hour' => '이번 시간',
+                'this_minute' => '이번 분',
+                'next_minute' => '다음 1분',
+                'next_hour' => '다음 1시간',
+                'next_week' => '다음 1주',
+                'next_2_weeks' => '다음 2주',
+                'next_month' => '다음 1개월',
+                'next_quarter' => '다음 분기',
+                'next_6_months' => '다음 6개월',
+                'next_year' => '다음 1년',
+                'next_2_years' => '다음 2년',
+                'next_5_years' => '다음 5년',
+                'next_decade' => '다음 10년',
+                'custom' => '사용자 지정',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +209,40 @@ return [
 
                 'year' => [
                     'label' => '년도',
+                ],
+
+                'mode' => [
+
+                    'label' => '날짜 지정 방식',
+
+                    'options' => [
+                        'absolute' => '특정 날짜',
+                        'relative' => '상대 기간',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => '기간',
+                ],
+
+                'relative_value' => [
+                    'label' => '수치',
+                ],
+
+                'relative_unit' => [
+                    'label' => '시간 단위',
+                ],
+
+                'tense' => [
+
+                    'label' => '시점',
+
+                    'options' => [
+                        'past' => '과거',
+                        'future' => '미래',
+                    ],
+
                 ],
 
             ],
