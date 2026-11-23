@@ -162,7 +162,7 @@ describe('saving profile', function (): void {
         Filament::getCurrentOrDefaultPanel()->emailVerification();
 
         $this->user->updateQuietly(['email' => 'user@example.com']);
-        $verifiedAt = $this->user->email_verified_at;
+        $verifiedAt = $this->user->refresh()->email_verified_at;
 
         User::updating(static function (User $user): void {
             $user->email = strtolower($user->email);
