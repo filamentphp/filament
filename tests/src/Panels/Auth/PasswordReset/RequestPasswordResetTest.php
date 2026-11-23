@@ -7,8 +7,11 @@ use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 
 use function Filament\Tests\livewire;
 
@@ -79,6 +82,28 @@ it('cannot request password reset without panel access', function () {
         );
 
     Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
+});
+
+it('does not send a queued password reset notification after the mail recipient changes', function () {
+    config()->set('mail.default', 'array');
+    Queue::fake();
+
+    $userToResetPassword = User::factory()->create();
+
+    livewire(RequestPasswordReset::class)
+        ->fillForm([
+            'email' => $userToResetPassword->email,
+        ])
+        ->call('request')
+        ->assertNotified();
+
+    $serializedNotification = serialize(Queue::pushed(SendQueuedNotifications::class)->sole());
+
+    $userToResetPassword->updateQuietly(['email' => 'changed@example.com']);
+
+    unserialize($serializedNotification)->handle(app(ChannelManager::class));
+
+    expect(app('mailer')->getSymfonyTransport()->messages())->toHaveCount(0);
 });
 
 it('can throttle requests', function () {

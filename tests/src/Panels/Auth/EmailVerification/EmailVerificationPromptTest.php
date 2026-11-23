@@ -5,7 +5,10 @@ use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 
 use function Filament\Tests\livewire;
 
@@ -53,6 +56,29 @@ it('can resend notification', function () {
         ->assertNotified();
 
     Notification::assertSentTo($userToVerify, VerifyEmail::class);
+});
+
+it('does not send a queued notification after the mail recipient changes', function () {
+    config()->set('mail.default', 'array');
+    Queue::fake();
+
+    $userToVerify = User::factory()->create([
+        'email_verified_at' => null,
+    ]);
+
+    $this->actingAs($userToVerify);
+
+    livewire(EmailVerificationPrompt::class)
+        ->callAction('resendNotification')
+        ->assertNotified();
+
+    $serializedNotification = serialize(Queue::pushed(SendQueuedNotifications::class)->sole());
+
+    $userToVerify->updateQuietly(['email' => 'changed@example.com']);
+
+    unserialize($serializedNotification)->handle(app(ChannelManager::class));
+
+    expect(app('mailer')->getSymfonyTransport()->messages())->toHaveCount(0);
 });
 
 it('can throttle resend notification attempts', function () {
