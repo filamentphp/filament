@@ -172,6 +172,13 @@ describe('validation', function (): void {
             ->assertHasFormErrors(['email' => ['email']]);
     });
 
+    it('can validate `email` does not contain angle brackets', function (): void {
+        livewire(Register::class)
+            ->fillForm(['email' => '"<attacker@example.com>"@trusted.example'])
+            ->call('register')
+            ->assertHasFormErrors(['email' => ['not_regex']]);
+    });
+
     it('can validate `email` is max 255 characters', function (): void {
         livewire(Register::class)
             ->fillForm(['email' => Str::random(256)])

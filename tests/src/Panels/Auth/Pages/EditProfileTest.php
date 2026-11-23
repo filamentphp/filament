@@ -241,6 +241,10 @@ it('can validate', function (array $formData, array $errors): void {
         ['name' => fake()->name(), 'email' => 'not-an-email'],
         ['email' => ['email']],
     ],
+    '`email` does not contain angle brackets' => [
+        ['name' => fake()->name(), 'email' => '"<attacker@example.com>"@trusted.example'],
+        ['email' => ['not_regex']],
+    ],
     '`email` is unique' => fn (): array => [
         ['name' => fake()->name(), 'email' => User::factory()->create()->email],
         ['email' => ['unique']],
