@@ -72,8 +72,14 @@ class RequestPasswordReset extends SimplePage
         $data = $this->form->getState();
         $broker = Password::broker(Filament::getAuthPasswordBroker());
         $credentials = $this->getCredentialsFromFormData($data);
+        $user = ($broker instanceof PasswordBroker) ? $broker->getUser($credentials) : null;
+        $canAccessPanel = (! ($user instanceof FilamentUser)) || $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
 
-        $sendResetLink = function () use ($broker, $credentials): string {
+        $status = app(Timebox::class)->call(function () use ($broker, $credentials, $canAccessPanel): string {
+            if (! $canAccessPanel) {
+                return Password::RESET_LINK_SENT;
+            }
+
             return $broker->sendResetLink($credentials, function (CanResetPassword $user, #[SensitiveParameter] string $token): void {
                 if (
                     ($user instanceof FilamentUser) &&
@@ -97,29 +103,10 @@ class RequestPasswordReset extends SimplePage
                     event(new PasswordResetLinkSent($user));
                 }
             });
-        };
+        }, (int) config('auth.timebox_duration', 200_000));
 
-        if ($broker instanceof PasswordBroker) {
-            $user = $broker->getUser($credentials);
-
-            if (
-                ($user instanceof FilamentUser) &&
-                (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
-            ) {
-                $status = app(Timebox::class)->call(
-                    function () use ($broker, $credentials): string {
-                        // Match the broker's second user lookup before padding the response, without creating a token.
-                        $broker->getUser($credentials);
-
-                        return Password::RESET_LINK_SENT;
-                    },
-                    (int) config('auth.timebox_duration', 200_000),
-                );
-            } else {
-                $status = $sendResetLink();
-            }
-        } else {
-            $status = $sendResetLink();
+        if ($status === Password::RESET_THROTTLED) {
+            $status = Password::RESET_LINK_SENT;
         }
 
         if ($status !== Password::RESET_LINK_SENT) {

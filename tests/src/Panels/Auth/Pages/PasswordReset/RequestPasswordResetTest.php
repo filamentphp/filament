@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Sleep;
 
 use function Filament\Tests\livewire;
 
@@ -148,6 +149,90 @@ describe('requesting password reset', function (): void {
         expect(Password::broker(Filament::getAuthPasswordBroker())->tokenExists($userToResetPassword, $resetPasswordNotification->token))
             ->toBeTrue();
     });
+
+    it('does not disclose panel access when a password reset token is throttled', function (string $panel): void {
+        Notification::fake();
+
+        $userToResetPassword = User::factory()->create();
+        $broker = Password::broker(Filament::getAuthPasswordBroker());
+        $token = $broker->createToken($userToResetPassword);
+
+        Filament::setCurrentPanel($panel);
+
+        foreach (range(1, 2) as $attempt) {
+            livewire(RequestPasswordReset::class)
+                ->fillForm([
+                    'email' => $userToResetPassword->email,
+                ])
+                ->call('request')
+                ->assertNotified(
+                    FilamentNotification::make()
+                        ->success()
+                        ->title(__('passwords.sent'))
+                        ->body(__('filament-panels::auth/pages/password-reset/request-password-reset.notifications.sent.body'))
+                );
+        }
+
+        Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
+
+        expect($broker->tokenExists($userToResetPassword, $token))->toBeTrue();
+    })->with(['admin', 'custom']);
+
+    it('pads password reset requests even when the broker does not', function (string $panel): void {
+        Notification::fake();
+        Sleep::fake();
+
+        config()->set('auth.timebox_duration', 5_000_000);
+
+        $userToResetPassword = User::factory()->create();
+        $broker = Password::broker(Filament::getAuthPasswordBroker());
+        $broker->createToken($userToResetPassword);
+
+        // Laravel 11 brokers do not have their own `Timebox`.
+        if (method_exists($broker, 'getTimebox')) {
+            $broker->getTimebox()->returnEarly();
+        }
+
+        Filament::setCurrentPanel($panel);
+
+        livewire(RequestPasswordReset::class)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
+            ->call('request');
+
+        Sleep::assertSlept(fn ($duration): bool => $duration->totalMicroseconds >= 4_000_000);
+    })->with(['admin', 'custom']);
+
+    it('pads dispatch independently of a slow user lookup with broker timeboxing enabled', function (string $panel): void {
+        Notification::fake();
+        Sleep::fake();
+
+        config()->set('auth.timebox_duration', 1_000_000);
+
+        $userToResetPassword = User::factory()->create();
+        Password::broker(Filament::getAuthPasswordBroker())->createToken($userToResetPassword);
+
+        User::retrieved(static function (): void {
+            usleep(250_000);
+        });
+
+        $padding = 0;
+
+        Sleep::whenFakingSleep(function ($duration) use (&$padding): void {
+            $padding += $duration->totalMicroseconds;
+        });
+
+        Filament::setCurrentPanel($panel);
+
+        livewire(RequestPasswordReset::class)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
+            ->call('request');
+
+        expect($padding)->toBeGreaterThanOrEqual(900_000);
+    })->with(['admin', 'custom']);
 });
 
 it('can validate `email` is required', function (): void {
