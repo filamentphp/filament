@@ -208,6 +208,32 @@ it('does not dispatch `EmailChanged` when saving leaves the email address unchan
     Event::assertNotDispatched(EmailChanged::class);
 });
 
+it('does not dispatch `EmailChanged` when the authenticated user already saved the new email address', function (): void {
+    $this->freezeTime();
+
+    Event::fake([EmailChanged::class]);
+
+    $userToVerify = User::factory()->create();
+    $newEmail = fake()->email();
+
+    $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
+
+    $verificationSignature = Query::new($verificationUrl)->get('signature');
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
+
+    $userToVerify->update(['email' => $newEmail]);
+
+    $this
+        ->actingAs($userToVerify)
+        ->get($verificationUrl)
+        ->assertRedirect(Filament::getProfileUrl());
+
+    expect($userToVerify->refresh())
+        ->email->toBe($newEmail);
+
+    Event::assertNotDispatched(EmailChanged::class);
+});
+
 it('does not dispatch `EmailChanged` when a model event prevents the email address from being saved', function (): void {
     Event::fake([EmailChanged::class]);
 

@@ -74,10 +74,9 @@ class EmailChangeVerificationRequest extends FormRequest
 
         $previousEmail = $user->getOriginal('email');
 
-        // `wasChanged()` must be read before `markEmailAsVerified()`, which saves the model again and resets its changes.
         $wasEmailChanged = $user->update([
             'email' => $newEmail,
-        ]) && $user->wasChanged('email');
+        ]) && ($user->getOriginal('email') !== $previousEmail);
 
         if (method_exists($user, 'markEmailAsVerified')) {
             $user->markEmailAsVerified();
