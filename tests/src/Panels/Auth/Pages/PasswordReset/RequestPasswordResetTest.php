@@ -9,6 +9,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 
 use function Filament\Tests\livewire;
 
@@ -110,6 +111,42 @@ describe('requesting password reset', function (): void {
             );
 
         Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
+    });
+
+    it('does not replace an existing password reset token without panel access', function (): void {
+        Notification::fake();
+
+        $this->assertGuest();
+
+        $userToResetPassword = User::factory()->create();
+
+        livewire(RequestPasswordReset::class)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
+            ->call('request');
+
+        $resetPasswordNotification = Notification::sent($userToResetPassword, ResetPassword::class)->first();
+
+        expect($resetPasswordNotification)
+            ->toBeInstanceOf(ResetPassword::class)
+            ->and(Password::broker(Filament::getAuthPasswordBroker())->tokenExists($userToResetPassword, $resetPasswordNotification->token))
+            ->toBeTrue();
+
+        $this->travel(61)->seconds();
+
+        Filament::setCurrentPanel(Filament::getPanel('custom'));
+
+        livewire(RequestPasswordReset::class)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
+            ->call('request');
+
+        Notification::assertSentToTimes($userToResetPassword, ResetPassword::class, times: 1);
+
+        expect(Password::broker(Filament::getAuthPasswordBroker())->tokenExists($userToResetPassword, $resetPasswordNotification->token))
+            ->toBeTrue();
     });
 });
 

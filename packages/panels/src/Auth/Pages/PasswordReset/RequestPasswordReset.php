@@ -26,9 +26,11 @@ use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Timebox;
 use LogicException;
 use SensitiveParameter;
 
@@ -68,10 +70,11 @@ class RequestPasswordReset extends SimplePage
         }
 
         $data = $this->form->getState();
+        $broker = Password::broker(Filament::getAuthPasswordBroker());
+        $credentials = $this->getCredentialsFromFormData($data);
 
-        $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
-            $this->getCredentialsFromFormData($data),
-            function (CanResetPassword $user, #[SensitiveParameter] string $token): void {
+        $sendResetLink = function () use ($broker, $credentials): string {
+            return $broker->sendResetLink($credentials, function (CanResetPassword $user, #[SensitiveParameter] string $token): void {
                 if (
                     ($user instanceof FilamentUser) &&
                     (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
@@ -93,8 +96,31 @@ class RequestPasswordReset extends SimplePage
                 if (class_exists(PasswordResetLinkSent::class)) {
                     event(new PasswordResetLinkSent($user));
                 }
-            },
-        );
+            });
+        };
+
+        if ($broker instanceof PasswordBroker) {
+            $user = $broker->getUser($credentials);
+
+            if (
+                ($user instanceof FilamentUser) &&
+                (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
+            ) {
+                $status = app(Timebox::class)->call(
+                    function () use ($broker, $credentials): string {
+                        // Match the broker's second user lookup before padding the response, without creating a token.
+                        $broker->getUser($credentials);
+
+                        return Password::RESET_LINK_SENT;
+                    },
+                    (int) config('auth.timebox_duration', 200_000),
+                );
+            } else {
+                $status = $sendResetLink();
+            }
+        } else {
+            $status = $sendResetLink();
+        }
 
         if ($status !== Password::RESET_LINK_SENT) {
             $this->getFailureNotification($status)?->send();
