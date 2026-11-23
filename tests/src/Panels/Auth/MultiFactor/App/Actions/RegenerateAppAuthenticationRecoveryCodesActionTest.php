@@ -1,10 +1,12 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\RateLimiter as CacheRateLimiter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -292,6 +294,45 @@ describe('throttling', function (): void {
 
         expect($user->getAppAuthenticationRecoveryCodes())
             ->toBe($recoveryCodes);
+    });
+
+    it('cannot bypass password throttling by changing action arguments when actions use database transactions', function (): void {
+        $user = auth()->user();
+
+        $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
+
+        config()->set('cache.default', 'database');
+        app()->forgetInstance(CacheRateLimiter::class);
+        RateLimiter::clearResolvedInstances();
+
+        Action::configureUsing(static fn (Action $action) => $action->databaseTransaction(), during: function () use ($recoveryCodes, $user): void {
+            foreach (range(1, 5) as $attempt) {
+                livewire(EditProfile::class)
+                    ->callAction(
+                        TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                            ->schemaComponent('app', schema: 'content')
+                            ->arguments(['nonce' => $attempt]),
+                        ['password' => "incorrect-password-{$attempt}"],
+                    )
+                    ->assertHasFormErrors([
+                        'password' => 'current_password',
+                    ]);
+            }
+
+            livewire(EditProfile::class)
+                ->callAction(
+                    TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                        ->schemaComponent('app', schema: 'content')
+                        ->arguments(['nonce' => 6]),
+                    ['password' => 'password'],
+                )
+                ->assertHasFormErrors([
+                    'password' => __('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'),
+                ]);
+
+            expect($user->getAppAuthenticationRecoveryCodes())
+                ->toBe($recoveryCodes);
+        });
     });
 
     it('can throttle code verification attempts per user', function (): void {

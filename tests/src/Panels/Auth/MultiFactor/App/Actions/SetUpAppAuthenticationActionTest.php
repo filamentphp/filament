@@ -1,10 +1,12 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\RateLimiter as CacheRateLimiter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -249,6 +251,48 @@ describe('validation', function (): void {
             ->assertHasFormErrors([
                 'password' => __('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.rate_limited'),
             ]);
+    });
+
+    test('password verification attempts cannot bypass throttling by changing action arguments when actions use database transactions', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        config()->set('cache.default', 'database');
+        app()->forgetInstance(CacheRateLimiter::class);
+        RateLimiter::clearResolvedInstances();
+
+        Action::configureUsing(static fn (Action $action) => $action->databaseTransaction(), during: function () use ($appAuthentication, $user): void {
+            $livewire = livewire(EditProfile::class)
+                ->mountAction(TestAction::make('setUpAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'));
+
+            $secret = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted'])['secret'];
+
+            foreach (range(1, 5) as $attempt) {
+                $livewire
+                    ->set('mountedActions.0.arguments.nonce', $attempt)
+                    ->fillForm([
+                        'code' => $appAuthentication->getCurrentCode($user, $secret),
+                        'password' => "incorrect-password-{$attempt}",
+                    ])
+                    ->callMountedAction()
+                    ->assertHasFormErrors([
+                        'password' => 'current_password',
+                    ]);
+            }
+
+            $livewire
+                ->set('mountedActions.0.arguments.nonce', 6)
+                ->fillForm([
+                    'code' => $appAuthentication->getCurrentCode($user, $secret),
+                    'password' => 'password',
+                ])
+                ->callMountedAction()
+                ->assertHasFormErrors([
+                    'password' => __('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.rate_limited'),
+                ]);
+        });
     });
 
     test('codes are required', function (): void {
