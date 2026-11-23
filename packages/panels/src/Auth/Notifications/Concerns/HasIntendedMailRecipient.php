@@ -35,7 +35,7 @@ trait HasIntendedMailRecipient
      */
     protected function getMailRecipientHash($notifiable): string
     {
-        $recipients = $notifiable->routeNotificationFor('mail', $this);
+        $recipients = $notifiable->routeNotificationFor('mail', $this) ?: [];
 
         if (is_string($recipients)) {
             $recipients = [$recipients];

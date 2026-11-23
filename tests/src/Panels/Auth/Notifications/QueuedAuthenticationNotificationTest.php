@@ -8,6 +8,8 @@ use Filament\Auth\Notifications\VerifyEmailChange;
 use Filament\Tests\Fixtures\Models\ProfileEmailChangeMailUser;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Notifications\Notification;
 
 uses(TestCase::class);
@@ -26,6 +28,24 @@ it('does not skip a queued authentication notification when only the mail recipi
 
     expect($notification->shouldSend($user, 'mail'))->toBeFalse();
 });
+
+it('skips authentication mail when the mail route is disabled', function (string | false $initialMailRoute): void {
+    config()->set('mail.default', 'array');
+
+    $notifiable = (new AnonymousNotifiable)->route('mail', $initialMailRoute);
+    $notification = new VerifyEmail;
+    $notification->url = 'https://example.com/verify';
+    $channels = $notification->via($notifiable);
+
+    $notifiable->route('mail', false);
+
+    app(ChannelManager::class)->sendNow($notifiable, unserialize(serialize($notification)), $channels);
+
+    expect(app('mailer')->getSymfonyTransport()->messages())->toHaveCount(0);
+})->with([
+    'disabled before queueing' => false,
+    'disabled after queueing' => 'intended@example.com',
+]);
 
 it('can send a queued authentication notification without an intended mail recipient', function (Notification $notification): void {
     $user = User::factory()->create();
