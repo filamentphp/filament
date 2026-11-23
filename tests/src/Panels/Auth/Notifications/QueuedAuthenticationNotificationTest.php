@@ -14,6 +14,22 @@ use Illuminate\Notifications\Notification;
 
 uses(TestCase::class);
 
+it('supports overriding `shouldSend()` with the Laravel signature', function (): void {
+    $notification = new class extends VerifyEmail
+    {
+        public function shouldSend(object $notifiable, string $channel): bool
+        {
+            return parent::shouldSend($notifiable, $channel);
+        }
+    };
+
+    $user = User::factory()->create();
+
+    $notification->via($user);
+
+    expect($notification->shouldSend($user, 'mail'))->toBeTrue();
+});
+
 it('does not skip a queued authentication notification when only the mail recipient name changes', function (): void {
     $user = ProfileEmailChangeMailUser::factory()->create();
     $notification = new VerifyEmail;

@@ -7,21 +7,17 @@ use Illuminate\Support\Collection;
 trait HasIntendedMailRecipient
 {
     // `null` retains the delivery behavior of notifications queued before recipient binding was added.
-    protected ?string $intendedMailRecipientHash = null;
+    private ?string $intendedMailRecipientHash = null;
 
-    /**
-     * @param  object  $notifiable
-     */
-    protected function captureIntendedMailRecipient($notifiable): void
+    private function captureIntendedMailRecipient(object $notifiable): void
     {
         $this->intendedMailRecipientHash = $this->getMailRecipientHash($notifiable);
     }
 
     /**
-     * @param  object  $notifiable
-     * @param  string  $channel
+     * @return bool
      */
-    public function shouldSend($notifiable, $channel): bool
+    public function shouldSend(object $notifiable, string $channel)
     {
         if (($channel !== 'mail') || ($this->intendedMailRecipientHash === null)) {
             return true;
@@ -30,10 +26,7 @@ trait HasIntendedMailRecipient
         return hash_equals($this->intendedMailRecipientHash, $this->getMailRecipientHash($notifiable));
     }
 
-    /**
-     * @param  object  $notifiable
-     */
-    protected function getMailRecipientHash($notifiable): string
+    private function getMailRecipientHash(object $notifiable): string
     {
         $recipients = $notifiable->routeNotificationFor('mail', $this) ?: [];
 
