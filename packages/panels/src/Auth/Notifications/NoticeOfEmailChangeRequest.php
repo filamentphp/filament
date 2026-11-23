@@ -2,6 +2,7 @@
 
 namespace Filament\Auth\Notifications;
 
+use Filament\Auth\Notifications\Concerns\HasIntendedMailRecipient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -9,6 +10,7 @@ use Illuminate\Notifications\Notification;
 
 class NoticeOfEmailChangeRequest extends Notification implements ShouldQueue
 {
+    use HasIntendedMailRecipient;
     use Queueable;
 
     public function __construct(
@@ -21,6 +23,8 @@ class NoticeOfEmailChangeRequest extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
+        $this->captureIntendedMailRecipient($notifiable);
+
         return ['mail'];
     }
 

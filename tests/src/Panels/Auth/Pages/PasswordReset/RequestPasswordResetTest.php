@@ -7,9 +7,12 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Sleep;
 
 use function Filament\Tests\livewire;
@@ -58,6 +61,32 @@ describe('requesting password reset', function (): void {
         if (class_exists(PasswordResetLinkSent::class)) {
             Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event): bool => $event->user->is($userToResetPassword));
         }
+    });
+
+    it('does not send a queued password reset notification after the mail recipient changes', function (): void {
+        config()->set('mail.default', 'array');
+
+        Queue::fake();
+
+        $userToResetPassword = User::factory()->create();
+
+        livewire(RequestPasswordReset::class)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
+            ->call('request')
+            ->assertNotified();
+
+        $queuedNotification = Queue::pushed(SendQueuedNotifications::class)->sole();
+        $serializedNotification = serialize($queuedNotification);
+
+        $userToResetPassword->updateQuietly([
+            'email' => 'changed@example.com',
+        ]);
+
+        unserialize($serializedNotification)->handle(app(ChannelManager::class));
+
+        expect(app('mailer')->getSymfonyTransport()->messages())->toHaveCount(0);
     });
 
     it('can throttle requests', function (): void {
