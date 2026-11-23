@@ -1,8 +1,12 @@
 <?php
 
+use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
+use Livewire\Livewire;
 
 uses(TestCase::class);
 
@@ -54,4 +58,35 @@ it('redirects the user away from the setup page if they have already set up mult
 
     $this->get(Filament::getSetUpRequiredMultiFactorAuthenticationUrl())
         ->assertRedirect(Filament::getProfileUrl());
+});
+
+it('redirects Livewire requests to the setup page once the user has disabled multi-factor authentication', function (): void {
+    Filament::setCurrentPanel('required-multi-factor-authentication');
+
+    $user = User::factory()
+        ->hasEmailAuthentication()
+        ->create();
+
+    $this->actingAs($user);
+
+    $html = $this->get(Filament::getProfileUrl())
+        ->assertSuccessful()
+        ->getContent();
+
+    $snapshot = collect(Str::matchAll('/wire:snapshot="([^"]+)"/', $html))
+        ->map(fn (string $snapshot): string => htmlspecialchars_decode($snapshot, ENT_QUOTES))
+        ->first(fn (string $snapshot): bool => json_decode($snapshot, associative: true)['memo']['name'] === Livewire::new(EditProfile::class)->getName());
+
+    $sendLivewireRequest = fn (): TestResponse => $this
+        ->withHeaders(['X-Livewire' => 'true'])
+        ->postJson(app('livewire')->getUpdateUri(), [
+            'components' => [['snapshot' => $snapshot, 'updates' => [], 'calls' => []]],
+        ]);
+
+    $sendLivewireRequest()->assertSuccessful();
+
+    $user->toggleEmailAuthentication(false);
+    Livewire::flushState();
+
+    $sendLivewireRequest()->assertRedirect(Filament::getSetUpRequiredMultiFactorAuthenticationUrl());
 });
