@@ -24,13 +24,11 @@ Route::name('filament.')
             $domains = $panel->getDomains();
 
             foreach ((empty($domains) ? [null] : $domains) as $domain) {
-                $routeNamePrefix = "{$panelId}." . ((filled($domain) && (count($domains) > 1)) ? "{$domain}." : '');
-
                 Route::domain($domain)
                     ->middleware($panel->getMiddleware())
-                    ->name($routeNamePrefix)
+                    ->name("{$panelId}." . ((filled($domain) && (count($domains) > 1)) ? "{$domain}." : ''))
                     ->prefix($panel->getPath())
-                    ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute, $routeNamePrefix): void {
+                    ->group(fn () => $panel->registerRoutesForDomain($domain, function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
                         foreach ($panel->getRoutes() as $routes) {
                             $routes($panel);
                         }
@@ -60,7 +58,7 @@ Route::name('filament.')
                         });
 
                         Route::middleware($panel->getAuthMiddleware())
-                            ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute, $routeNamePrefix): void {
+                            ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
                                 foreach ($panel->getAuthenticatedRoutes() as $routes) {
                                     $routes($panel);
                                 }
@@ -103,10 +101,10 @@ Route::name('filament.')
                                 if ($panel->hasMultiFactorAuthentication()) {
                                     Route::name('auth.multi-factor-authentication.')
                                         ->prefix($panel->getMultiFactorAuthenticationRoutePrefix())
-                                        ->group(function () use ($panel, $routeNamePrefix): void {
+                                        ->group(function () use ($panel): void {
                                             if ($panel->isMultiFactorAuthenticationRequired()) {
                                                 Route::get($panel->getSetUpRequiredMultiFactorAuthenticationRouteSlug(), $panel->getSetUpRequiredMultiFactorAuthenticationRouteAction())
-                                                    ->middleware($panel->isEmailVerificationRequired() ? [$panel->getEmailVerifiedMiddlewareName() . ":filament.{$routeNamePrefix}auth.email-verification.prompt"] : [])
+                                                    ->middleware($panel->isEmailVerificationRequired() ? [$panel->getEmailVerifiedMiddleware()] : [])
                                                     ->name('set-up-required');
                                             }
                                         });
@@ -235,7 +233,7 @@ Route::name('filament.')
                                     }
                                 });
                         }
-                    });
+                    }));
             }
         }
     });
