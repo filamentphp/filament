@@ -11,6 +11,8 @@ use Filament\Tests\TestCase;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Support\Facades\Queue;
 
 uses(TestCase::class);
 
@@ -44,6 +46,31 @@ it('does not skip a queued authentication notification when only the mail recipi
 
     expect($notification->shouldSend($user, 'mail'))->toBeFalse();
 });
+
+it('preserves the intended recipient through queue serialization for inherited notifications', function (VerifyEmail $notification, bool $shouldChangeRecipient): void {
+    config()->set('mail.default', 'array');
+    Queue::fake();
+
+    $user = User::factory()->create();
+    $notification->url = 'https://example.com/verify';
+    $user->notify($notification);
+
+    $serializedNotification = serialize(Queue::pushed(SendQueuedNotifications::class)->sole());
+
+    if ($shouldChangeRecipient) {
+        $user->updateQuietly(['email' => 'changed@example.com']);
+    }
+
+    unserialize($serializedNotification)->handle(app(ChannelManager::class));
+
+    expect(app('mailer')->getSymfonyTransport()->messages())->toHaveCount($shouldChangeRecipient ? 0 : 1);
+})->with([
+    'base notification' => fn (): VerifyEmail => new VerifyEmail,
+    'inherited notification' => fn (): VerifyEmailChange => new VerifyEmailChange,
+])->with([
+    'unchanged recipient' => false,
+    'changed recipient' => true,
+]);
 
 it('skips authentication mail when the mail route is disabled', function (string | false $initialMailRoute): void {
     config()->set('mail.default', 'array');

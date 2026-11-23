@@ -4,12 +4,15 @@ namespace Filament\Auth\Notifications\Concerns;
 
 use Illuminate\Support\Collection;
 
+/**
+ * @internal Never use this trait. It is not part of the public API and may change in minor and patch releases.
+ */
 trait HasIntendedMailRecipient
 {
     // `null` retains the delivery behavior of notifications queued before recipient binding was added.
-    private ?string $intendedMailRecipientHash = null;
+    protected ?string $intendedMailRecipientHash = null;
 
-    private function captureIntendedMailRecipient(object $notifiable): void
+    protected function captureIntendedMailRecipient(object $notifiable): void
     {
         $this->intendedMailRecipientHash = $this->getMailRecipientHash($notifiable);
     }
@@ -26,7 +29,7 @@ trait HasIntendedMailRecipient
         return hash_equals($this->intendedMailRecipientHash, $this->getMailRecipientHash($notifiable));
     }
 
-    private function getMailRecipientHash(object $notifiable): string
+    protected function getMailRecipientHash(object $notifiable): string
     {
         $recipients = $notifiable->routeNotificationFor('mail', $this) ?: [];
 
