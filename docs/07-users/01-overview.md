@@ -268,13 +268,13 @@ The link that a user is sent is valid for 60 minutes. At the same time as the em
 
 #### Listening for verified email changes
 
-After the user verifies the new address and Filament saves it, Filament dispatches the `Filament\Auth\Events\EmailChanged` event. You may listen for it, for example in the `boot()` method of a service provider:
+After the user verifies the new address and Filament saves it, Filament dispatches the `Filament\Auth\Events\EmailChangeVerified` event. You may listen for it, for example in the `boot()` method of a service provider:
 
 ```php
-use Filament\Auth\Events\EmailChanged;
+use Filament\Auth\Events\EmailChangeVerified;
 use Illuminate\Support\Facades\Event;
 
-Event::listen(function (EmailChanged $event): void {
+Event::listen(function (EmailChangeVerified $event): void {
     $user = $event->getUser(); // The user, with the new email address
     $previousEmail = $event->getPreviousEmail();
 

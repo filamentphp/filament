@@ -5,7 +5,7 @@ namespace Filament\Auth\Events;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Queue\SerializesModels;
 
-class EmailChanged
+class EmailChangeVerified
 {
     use SerializesModels;
 

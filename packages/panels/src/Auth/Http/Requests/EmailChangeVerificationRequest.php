@@ -2,7 +2,7 @@
 
 namespace Filament\Auth\Http\Requests;
 
-use Filament\Auth\Events\EmailChanged;
+use Filament\Auth\Events\EmailChangeVerified;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Model;
@@ -88,7 +88,7 @@ class EmailChangeVerificationRequest extends FormRequest
             is_string($previousEmail) &&
             ($previousEmail !== '')
         ) {
-            event(new EmailChanged($user, $previousEmail));
+            event(new EmailChangeVerified($user, $previousEmail));
         }
 
         return true;

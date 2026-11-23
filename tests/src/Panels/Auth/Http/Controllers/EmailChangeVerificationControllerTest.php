@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Auth\Events\EmailChanged;
+use Filament\Auth\Events\EmailChangeVerified;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Tests\Fixtures\Models\User;
@@ -12,7 +12,7 @@ use League\Uri\Components\Query;
 uses(TestCase::class);
 
 it('can verify an email change using current and legacy cache keys', function (string $cacheKeyFormat): void {
-    Event::fake([EmailChanged::class]);
+    Event::fake([EmailChangeVerified::class]);
 
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();
@@ -43,8 +43,8 @@ it('can verify an email change using current and legacy cache keys', function (s
     expect($userToVerify->refresh())
         ->email->toBe($newEmail);
 
-    Event::assertDispatchedTimes(EmailChanged::class, 1);
-    Event::assertDispatched(EmailChanged::class, fn (EmailChanged $event): bool => $event->getUser()->is($userToVerify) && ($event->getPreviousEmail() === $previousEmail) && ($event->getUser()->getAttribute('email') === $newEmail));
+    Event::assertDispatchedTimes(EmailChangeVerified::class, 1);
+    Event::assertDispatched(EmailChangeVerified::class, fn (EmailChangeVerified $event): bool => $event->getUser()->is($userToVerify) && ($event->getPreviousEmail() === $previousEmail) && ($event->getUser()->getAttribute('email') === $newEmail));
 
     expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))->toBeFalse()
         ->and(cache()->has($verificationSignature))->toBeFalse();
@@ -77,7 +77,7 @@ it('can verify an email with a custom slug', function (): void {
 });
 
 it('cannot verify an email when signed in as another user', function (): void {
-    Event::fake([EmailChanged::class]);
+    Event::fake([EmailChangeVerified::class]);
 
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();
@@ -100,11 +100,11 @@ it('cannot verify an email when signed in as another user', function (): void {
     expect($userToVerify->refresh())
         ->email->not->toBe($newEmail);
 
-    Event::assertNotDispatched(EmailChanged::class);
+    Event::assertNotDispatched(EmailChangeVerified::class);
 });
 
 it('cannot verify an email change to an address that has been taken since the verification link was issued', function (): void {
-    Event::fake([EmailChanged::class]);
+    Event::fake([EmailChangeVerified::class]);
 
     $connection = ReadReplica::connection('CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT, email_verified_at TEXT)');
     $connection->getPdo()->exec("INSERT INTO users (id, email) VALUES (1, 'original@example.com'), (2, 'taken@example.com')");
@@ -133,11 +133,11 @@ it('cannot verify an email change to an address that has been taken since the ve
     expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))
         ->toBeFalse();
 
-    Event::assertNotDispatched(EmailChanged::class);
+    Event::assertNotDispatched(EmailChangeVerified::class);
 });
 
 it('cannot verify an email change with the same URL twice', function (): void {
-    Event::fake([EmailChanged::class]);
+    Event::fake([EmailChangeVerified::class]);
 
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();
@@ -158,7 +158,7 @@ it('cannot verify an email change with the same URL twice', function (): void {
     expect($userToVerify->refresh())
         ->email->toBe($newEmail);
 
-    Event::assertDispatchedTimes(EmailChanged::class, 1);
+    Event::assertDispatchedTimes(EmailChangeVerified::class, 1);
 
     expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))
         ->toBeFalse();
@@ -168,7 +168,7 @@ it('cannot verify an email change with the same URL twice', function (): void {
         ->get($verificationUrl)
         ->assertForbidden();
 
-    Event::assertDispatchedTimes(EmailChanged::class, 1);
+    Event::assertDispatchedTimes(EmailChangeVerified::class, 1);
 
     $userToVerify->update(['email' => fake()->email()]);
 
@@ -177,11 +177,11 @@ it('cannot verify an email change with the same URL twice', function (): void {
         ->get($verificationUrl)
         ->assertForbidden();
 
-    Event::assertDispatchedTimes(EmailChanged::class, 1);
+    Event::assertDispatchedTimes(EmailChangeVerified::class, 1);
 });
 
-it('does not dispatch `EmailChanged` when saving leaves the email address unchanged', function (): void {
-    Event::fake([EmailChanged::class]);
+it('does not dispatch `EmailChangeVerified` when saving leaves the email address unchanged', function (): void {
+    Event::fake([EmailChangeVerified::class]);
 
     $createdUser = User::factory()->create([
         'email' => 'user@example.com',
@@ -205,13 +205,13 @@ it('does not dispatch `EmailChanged` when saving leaves the email address unchan
     expect($userToVerify->refresh())
         ->email->toBe('user@example.com');
 
-    Event::assertNotDispatched(EmailChanged::class);
+    Event::assertNotDispatched(EmailChangeVerified::class);
 });
 
-it('does not dispatch `EmailChanged` when the authenticated user already saved the new email address', function (): void {
+it('does not dispatch `EmailChangeVerified` when the authenticated user already saved the new email address', function (): void {
     $this->freezeTime();
 
-    Event::fake([EmailChanged::class]);
+    Event::fake([EmailChangeVerified::class]);
 
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();
@@ -231,11 +231,11 @@ it('does not dispatch `EmailChanged` when the authenticated user already saved t
     expect($userToVerify->refresh())
         ->email->toBe($newEmail);
 
-    Event::assertNotDispatched(EmailChanged::class);
+    Event::assertNotDispatched(EmailChangeVerified::class);
 });
 
-it('does not dispatch `EmailChanged` when a model event prevents the email address from being saved', function (): void {
-    Event::fake([EmailChanged::class]);
+it('does not dispatch `EmailChangeVerified` when a model event prevents the email address from being saved', function (): void {
+    Event::fake([EmailChangeVerified::class]);
 
     $createdUser = User::factory()->create();
     $previousEmail = $createdUser->email;
@@ -258,7 +258,7 @@ it('does not dispatch `EmailChanged` when a model event prevents the email addre
     expect($userToVerify->refresh())
         ->email->toBe($previousEmail);
 
-    Event::assertNotDispatched(EmailChanged::class);
+    Event::assertNotDispatched(EmailChangeVerified::class);
 });
 
 class LowercasingEmailChangeUser extends User
