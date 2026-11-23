@@ -58,6 +58,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'passwordKey' => hash('sha256', $userToAuthenticate->getAuthPassword()),
                 'loginDataHash' => hash('sha256', serialize(Arr::except($livewire->get('data'), ['multiFactor']))),
             ]);
 

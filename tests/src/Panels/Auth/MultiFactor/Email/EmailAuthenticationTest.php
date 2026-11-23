@@ -86,6 +86,7 @@ describe('authentication flow', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'passwordKey' => hash('sha256', $userToAuthenticate->getAuthPassword()),
                 'loginDataHash' => hash('sha256', serialize(Arr::except($livewire->get('data'), ['multiFactor']))),
             ]);
 
@@ -162,6 +163,75 @@ describe('authentication flow', function (): void {
             );
 
         Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    });
+
+    it('will not resend the code from a challenge created before the user changed their password', function (): void {
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $userToAuthenticate->update([
+            'password' => Hash::make('new-password'),
+        ]);
+
+        $livewire->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        );
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $livewire
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'new-password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    });
+
+    it('will not resend the code after the user loses panel access', function (): void {
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+        Filament::auth()->getProvider()->setModel(RevocableEmailAuthenticationUser::class);
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $userToAuthenticate->update(['email_verified_at' => null]);
+
+        $livewire->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        );
+
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+
+        $this->assertGuest();
     });
 
     it('can not resend the code to the user more than twice per minute', function (): void {
@@ -721,6 +791,7 @@ describe('failure cases', function (): void {
             ->toBe([
                 'identifier' => $userToAuthenticate->getAuthIdentifier(),
                 'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+                'passwordKey' => hash('sha256', $userToAuthenticate->getAuthPassword()),
                 'loginDataHash' => hash('sha256', serialize(Arr::except($login->get('data'), ['multiFactor']))),
             ]);
 
@@ -1265,6 +1336,16 @@ class EmailAuthenticationUser extends User
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+}
+
+class RevocableEmailAuthenticationUser extends User
+{
+    protected $table = 'users';
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return parent::canAccessPanel($panel) && $this->hasVerifiedEmail();
     }
 }
 
