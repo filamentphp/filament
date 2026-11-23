@@ -40,6 +40,8 @@ trait HasRoutes
      */
     protected array $domains = [];
 
+    protected ?string $routeRegistrationDomain = null;
+
     protected string $path = '';
 
     public function path(string $path): static
@@ -106,12 +108,24 @@ trait HasRoutes
         return route($this->generateRouteName($name), $parameters, $absolute);
     }
 
+    public function registerRoutesForDomain(?string $domain, Closure $routes): void
+    {
+        $originalDomain = $this->routeRegistrationDomain;
+        $this->routeRegistrationDomain = $domain;
+
+        try {
+            $routes();
+        } finally {
+            $this->routeRegistrationDomain = $originalDomain;
+        }
+    }
+
     public function generateRouteName(string $name): string
     {
         $domain = '';
 
         if (count($this->domains) > 1) {
-            $domain = Filament::getCurrentDomain(testingDomain: Arr::first($this->domains)) . '.';
+            $domain = ($this->routeRegistrationDomain ?? Filament::getCurrentDomain(testingDomain: Arr::first($this->domains))) . '.';
         }
 
         return "filament.{$this->getId()}.{$domain}{$name}";

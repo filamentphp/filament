@@ -28,7 +28,7 @@ Route::name('filament.')
                     ->middleware($panel->getMiddleware())
                     ->name("{$panelId}." . ((filled($domain) && (count($domains) > 1)) ? "{$domain}." : ''))
                     ->prefix($panel->getPath())
-                    ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
+                    ->group(fn () => $panel->registerRoutesForDomain($domain, function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
                         foreach ($panel->getRoutes() as $routes) {
                             $routes($panel);
                         }
@@ -104,6 +104,7 @@ Route::name('filament.')
                                         ->group(function () use ($panel): void {
                                             if ($panel->isMultiFactorAuthenticationRequired()) {
                                                 Route::get($panel->getSetUpRequiredMultiFactorAuthenticationRouteSlug(), $panel->getSetUpRequiredMultiFactorAuthenticationRouteAction())
+                                                    ->middleware($panel->isEmailVerificationRequired() ? [$panel->getEmailVerifiedMiddleware()] : [])
                                                     ->name('set-up-required');
                                             }
                                         });
@@ -232,7 +233,7 @@ Route::name('filament.')
                                     }
                                 });
                         }
-                    });
+                    }));
             }
         }
     });
