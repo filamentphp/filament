@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Vai al contenuto',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Apri notifiche',
+            'label_with_unread_count' => '{1} Notifiche, :count notifica non letta|[2,*] Notifiche, :count notifiche non lette',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Tema',
+
             'dark' => [
                 'label' => 'Attiva tema scuro',
             ],
@@ -50,6 +57,13 @@ return [
 
         ],
 
+    ],
+    'navigation' => [
+        'label' => 'Navigazione laterale',
+    ],
+
+    'topbar' => [
+        'label' => 'Barra superiore',
     ],
 
     'avatar' => [
