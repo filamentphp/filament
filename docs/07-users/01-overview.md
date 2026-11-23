@@ -266,6 +266,26 @@ If you're using the `profile()` feature with the `emailChangeVerification()` fea
 
 The link that a user is sent is valid for 60 minutes. At the same time as the email to the new address is sent, an email to the old address is also sent, with a link to block the change. This is a security feature to potentially prevent a user from being affected by a malicious actor.
 
+#### Listening for verified email changes
+
+After the user verifies the new address and Filament saves it, Filament dispatches the `Filament\Auth\Events\EmailChangeVerified` event. You may listen for it, for example in the `boot()` method of a service provider:
+
+```php
+use Filament\Auth\Events\EmailChangeVerified;
+use Illuminate\Support\Facades\Event;
+
+Event::listen(function (EmailChangeVerified $event): void {
+    $user = $event->getUser(); // The user, with the new email address
+    $previousEmail = $event->getPreviousEmail();
+
+    // ...
+});
+```
+
+The previous address is no longer stored on the user model, including when a queued listener reloads the user, so use `getPreviousEmail()` to access it.
+
+Filament only dispatches this event when the new email address is saved to the database. Sending the verification email, blocking the change, saving an email address directly from the profile form, or a save that is cancelled or leaves the email address unchanged do not dispatch it.
+
 ### Using a sidebar on the profile page
 
 By default, the profile page does not use the standard page layout with a sidebar. This is so that it works with the [tenancy](tenancy) feature, otherwise it would not be accessible if the user had no tenants, since the sidebar links are routed to the current tenant.
