@@ -6,13 +6,40 @@ return [
 
         'heading' => 'Colonne',
 
+        'position' => 'Posizione :position di :count.',
+
+        'position_in_group' => 'Posizione :position di :count in :group.',
+
+        'reordered' => ':column spostata in posizione :position di :count.',
+
+        'reordered_deferred' => ':column spostata in posizione :position di :count. Applica le colonne per salvare le modifiche.',
+
+        'reordered_in_group' => ':column spostata in posizione :position di :count in :group.',
+
+        'reordered_in_group_deferred' => ':column spostata in posizione :position di :count in :group. Applica le colonne per salvare le modifiche.',
+
         'actions' => [
+
             'apply' => [
                 'label' => 'Applica colonne',
             ],
+
+            'move_up' => [
+                'label' => 'Sposta su :column',
+            ],
+
+            'move_down' => [
+                'label' => 'Sposta giù :column',
+            ],
+
+            'reorder' => [
+                'label' => 'Riordina colonna',
+            ],
+
             'reset' => [
                 'label' => 'Reimposta',
             ],
+
         ],
 
     ],
@@ -23,6 +50,38 @@ return [
             'label' => 'Azione|Azioni',
         ],
 
+        'editable' => [
+            'saving' => 'Salvataggio in corso...',
+            'saved' => 'Modifica salvata.',
+            'failure' => 'Non è stato possibile confermare il salvataggio. Ricarica la pagina prima di riprovare.',
+            'unavailable' => 'Questo elemento non è più modificabile.',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Sì',
+                'false' => 'No',
+            ],
+
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Caricamento...',
+
+            'no_options_message' => 'Nessuna opzione disponibile.',
+
+            'no_search_results_message' => 'Nessuna opzione corrisponde alla tua ricerca.',
+
+            'placeholder' => "Seleziona un'opzione",
+
+            'searching_message' => 'Ricerca...',
+
+            'search_prompt' => 'Digita per cercare...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -31,15 +90,7 @@ return [
             ],
 
             'more_list_items' => 'e altri :count',
-        ],
 
-        'select' => [
-            'loading_message' => 'Caricamento...',
-            'no_options_message' => 'Nessuna opzione disponibile.',
-            'no_search_results_message' => 'Nessuna opzione corrisponde alla tua ricerca.',
-            'placeholder' => "Seleziona un'opzione",
-            'searching_message' => 'Ricerca...',
-            'search_prompt' => 'Digita per cercare...',
         ],
 
     ],
@@ -104,6 +155,18 @@ return [
             'label' => 'Riordina record',
         ],
 
+        'reorder_record' => [
+            'label' => 'Riordina elemento :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Sposta su :label',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Sposta giù :label',
+        ],
+
         'filter' => [
             'label' => 'Filtro',
         ],
@@ -118,6 +181,10 @@ return [
 
         'column_manager' => [
             'label' => 'Mostra/Nascondi colonne',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Espandi/comprimi elemento :key',
         ],
 
     ],
@@ -162,10 +229,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Tutti',
+
             'relationship' => [
                 'empty_option_label' => 'Nessuno',
             ],
+
         ],
 
         'trashed' => [
@@ -205,7 +275,16 @@ return [
 
     ],
 
+    'loading' => 'Caricamento...',
+
     'reorder_indicator' => 'Trascina e rilascia i record in ordine.',
+
+    'reordering' => [
+        'position' => ':label, posizione :position di :count.',
+        'moved' => ':label spostato in posizione :position di :count.',
+    ],
+
+    'result_count' => '{0} Nessun risultato|{1} :count risultato|[2,*] :count risultati',
 
     'selection_indicator' => [
 

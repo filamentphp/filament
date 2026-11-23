@@ -2,6 +2,45 @@
 
 return [
 
+    'callout' => [
+
+        'statuses' => [
+            'danger' => 'Errore:',
+            'info' => 'Nota:',
+            'success' => 'Fatto:',
+            'warning' => 'Attenzione:',
+        ],
+
+    ],
+
+    'section' => [
+
+        'actions' => [
+
+            'collapse' => [
+                'label' => 'Comprimi sezione',
+            ],
+
+            'expand' => [
+                'label' => 'Espandi sezione',
+            ],
+
+        ],
+
+    ],
+
+    'tabs' => [
+
+        'actions' => [
+
+            'more' => [
+                'label' => 'Altre schede',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [
@@ -12,6 +51,19 @@ return [
 
             'next_step' => [
                 'label' => 'Successivo',
+            ],
+
+        ],
+
+        'header' => [
+
+            'step' => [
+
+                'statuses' => [
+                    'completed' => 'Completato',
+                    'upcoming' => 'Non completato',
+                ],
+
             ],
 
         ],
