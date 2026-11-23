@@ -1,5 +1,6 @@
 <?php
 
+use Facades\Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl as GenerateSignedUploadUrlFacade;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
@@ -20,6 +21,8 @@ use Illuminate\Validation\ValidationException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\MimeTypeDetection\ExtensionMimeTypeDetector;
+use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
+use Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\Features\SupportTesting\Testable;
 
@@ -800,24 +803,60 @@ class TestComponentWithMaxSizeFileUpload extends Livewire
     }
 }
 
-function uploadFileThroughLivewireAndSave(TestCase $testCase, string $fileName, string $contents): Testable
+function uploadFileThroughLivewireAndSave(TestCase $testCase, string $fileName, string $contents, string $temporaryDisk): Testable
 {
     $statePath = 'data.photo.' . Str::uuid();
+    $fileInfo = [['name' => $fileName, 'size' => strlen($contents), 'type' => 'image/gif']];
+    $component = livewire(TestComponentWithPreservedFileUpload::class);
 
-    $component = livewire(TestComponentWithPreservedFileUpload::class)
-        ->call('_startUpload', $statePath, [['name' => $fileName, 'size' => strlen($contents), 'type' => 'image/gif']], false);
+    if ($temporaryDisk === 's3') {
+        $s3Configuration = [
+            'driver' => 's3',
+            'key' => 'test-key',
+            'secret' => 'test-secret',
+            'region' => 'us-east-1',
+            'bucket' => 'test-bucket',
+        ];
+        config()->set('livewire.temporary_file_upload.disk', 's3');
+        config()->set('filesystems.disks.s3', $s3Configuration);
 
-    $uploadUrl = collect($component->effects['dispatches'])
-        ->firstWhere('name', 'upload:generatedSignedUrl')['params']['url'];
+        $temporaryStorage = Storage::disk('tmp-for-tests');
+        $originalUrlGenerator = GenerateSignedUploadUrlFacade::getFacadeRoot();
 
-    $temporaryPaths = $testCase
-        ->post($uploadUrl, ['files' => [UploadedFile::fake()->createWithContent($fileName, $contents)]])
-        ->assertOk()
-        ->json('paths');
+        try {
+            Storage::set('tmp-for-tests', Storage::build($s3Configuration));
+            // Livewire stubs S3 signing in tests, so restore the real signer.
+            GenerateSignedUploadUrlFacade::swap(app()->build(GenerateSignedUploadUrl::class));
+
+            $component->call('_startUpload', $statePath, $fileInfo, false);
+
+            $payload = collect($component->effects['dispatches'])
+                ->firstWhere('name', 'upload:generatedSignedUrlForS3')['params']['payload'];
+        } finally {
+            Storage::set('tmp-for-tests', $temporaryStorage);
+            GenerateSignedUploadUrlFacade::swap($originalUrlGenerator);
+        }
+
+        // Replace only the S3 PUT transport, keeping the server-generated signed reference.
+        $temporaryFileName = TemporaryUploadedFile::extractPathFromSignedPath($payload['path']);
+        $temporaryStorage->put(FileUploadConfiguration::path($temporaryFileName), $contents);
+        $temporaryPaths = [$payload['path']];
+    } else {
+        $component->call('_startUpload', $statePath, $fileInfo, false);
+
+        $uploadUrl = collect($component->effects['dispatches'])
+            ->firstWhere('name', 'upload:generatedSignedUrl')['params']['url'];
+
+        $temporaryPaths = $testCase
+            ->post($uploadUrl, ['files' => [UploadedFile::fake()->createWithContent($fileName, $contents)]])
+            ->assertOk()
+            ->json('paths');
+    }
 
     return $component
         ->call('_finishUpload', $statePath, $temporaryPaths, false)
-        ->call('save');
+        ->call('save')
+        ->assertHasNoErrors();
 }
 
 class TestComponentWithPreservedFileUpload extends Livewire
@@ -3091,32 +3130,32 @@ describe('`saveUploadedFile()` branches', function (): void {
         return TemporaryUploadedFile::createFromLivewire($temporaryFileName);
     };
 
-    it('does not allow preserved file names to escape the configured `directory()`', function (): void {
+    it('does not allow preserved file names to escape the configured `directory()`', function (string $temporaryDisk): void {
         Storage::fake('public');
         Storage::fake('tmp-for-tests');
         Storage::disk('public')->put('photos/1/me.gif', 'GIF89a uploaded by victim');
 
         $attackerFileName = 'x.y-meta' . str_replace('/', '_', base64_encode('../1/me.gif')) . '-';
 
-        uploadFileThroughLivewireAndSave($this, $attackerFileName, 'GIF89a uploaded by attacker');
+        uploadFileThroughLivewireAndSave($this, $attackerFileName, 'GIF89a uploaded by attacker', $temporaryDisk);
 
         expect(Storage::disk('public')->get('photos/1/me.gif'))
             ->toBe('GIF89a uploaded by victim');
 
         Storage::disk('public')->assertExists("photos/2/{$attackerFileName}");
-    });
+    })->with(['local', 's3']);
 
-    it('does not decode a preserved file name to a PHP extension after validation', function (): void {
+    it('does not decode a preserved file name to a PHP extension after validation', function (string $temporaryDisk): void {
         Storage::fake('public');
         Storage::fake('tmp-for-tests');
 
         $attackerFileName = 'x.y-meta' . base64_encode('shell.php') . '-';
 
-        uploadFileThroughLivewireAndSave($this, $attackerFileName, 'GIF89a <?php echo 1;');
+        uploadFileThroughLivewireAndSave($this, $attackerFileName, 'GIF89a <?php echo 1;', $temporaryDisk);
 
         Storage::disk('public')->assertMissing('photos/2/shell.php');
         Storage::disk('public')->assertExists("photos/2/{$attackerFileName}");
-    });
+    })->with(['local', 's3']);
 
     it('only stores uploads during `getState()` when the field and its containing schemas are enabled', function (bool $isSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled) use ($makeTemporaryUploadedFile): void {
         Storage::fake('public');
