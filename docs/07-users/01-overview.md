@@ -264,7 +264,9 @@ protected function getPasswordFormComponent(): Component
 
 If you're using the `profile()` feature with the `emailChangeVerification()` feature, users that change their email address from the profile form will be required to verify their new email address before they can log in with it. This is done by sending a verification email to the new address, which contains a link that the user must click to verify their new email address. The email address in the database is not updated until the user clicks the link in the email.
 
-The link that a user is sent is valid for 60 minutes. At the same time as the email to the new address is sent, an email to the old address is also sent, with a link to block the change. This is a security feature to potentially prevent a user from being affected by a malicious actor.
+The link that a user is sent is valid for 60 minutes by default, or the number of minutes configured in `auth.verification.expire`. At the same time as the email to the new address is sent, an email to the old address is also sent, with a link to block the change. This is a security feature to potentially prevent a user from being affected by a malicious actor.
+
+Email change verification requires a cache store that supports [Laravel's atomic locks](https://laravel.com/docs/cache#atomic-locks). If your application runs on multiple servers, they must share the same cache store so that verifying and blocking the same change cannot both succeed.
 
 #### Listening for verified email changes
 

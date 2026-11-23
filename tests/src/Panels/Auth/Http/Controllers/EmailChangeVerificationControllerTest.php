@@ -1,11 +1,15 @@
 <?php
 
 use Filament\Auth\Events\EmailChangeVerified;
+use Filament\Auth\Http\Requests\BlockEmailChangeVerificationRequest;
+use Filament\Auth\Http\Requests\EmailChangeVerificationRequest;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\ReadReplica;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\Events\CacheHit;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Event;
 use League\Uri\Components\Query;
 
@@ -179,6 +183,60 @@ it('cannot verify an email change with the same URL twice', function (): void {
 
     Event::assertDispatchedTimes(EmailChangeVerified::class, 1);
 });
+
+it('only allows one overlapping email change operation to succeed', function (bool $isFirstVerification, bool $isSecondVerification, string $cacheKeyFormat): void {
+    $user = User::factory()->create();
+    $newEmail = 'changed@example.com';
+    $oldEmail = $user->email;
+    $verificationUrl = Filament::getVerifyEmailChangeUrl($user, $newEmail);
+    $signature = Query::new($verificationUrl)->get('signature');
+    $cacheKey = "filament:auth:email_change:verification:{$signature}";
+
+    if ($cacheKeyFormat !== 'legacy') {
+        cache()->put($cacheKey, true, now()->addHour());
+    }
+
+    if ($cacheKeyFormat !== 'current') {
+        cache()->put($signature, true, now()->addHour());
+    }
+
+    $requests = [];
+
+    foreach ([$isFirstVerification, $isSecondVerification] as $isVerification) {
+        $requestClass = $isVerification ? EmailChangeVerificationRequest::class : BlockEmailChangeVerificationRequest::class;
+        $request = $requestClass::create($verificationUrl . '&verificationSignature=' . $signature);
+        $route = new Route('GET', 'email-change/{email}', static fn () => null);
+        $route->bind($request);
+        $route->setParameter('email', encrypt($newEmail));
+        $request->setRouteResolver(static fn (): Route => $route);
+        $request->setUserResolver(static fn (): User => $user);
+        $requests[] = $request;
+    }
+
+    $secondResult = null;
+    $hasOverlapped = false;
+
+    // Start the competing operation while the first is reading the pending request.
+    Event::listen(CacheHit::class, function (CacheHit $event) use ($cacheKey, $signature, $requests, &$secondResult, &$hasOverlapped): void {
+        if ($hasOverlapped || (! in_array($event->key, [$cacheKey, $signature], true))) {
+            return;
+        }
+
+        $hasOverlapped = true;
+        $secondResult = $requests[1]->fulfill();
+    });
+
+    $firstResult = $requests[0]->fulfill();
+
+    expect($hasOverlapped)->toBeTrue()
+        ->and((int) $firstResult + (int) $secondResult)->toBe(1)
+        ->and($user->refresh()->email)->toBe((($firstResult && $isFirstVerification) || ($secondResult && $isSecondVerification)) ? $newEmail : $oldEmail);
+})->with([
+    'verify and verify' => [true, true],
+    'verify and block' => [true, false],
+    'block and verify' => [false, true],
+    'block and block' => [false, false],
+])->with(['current', 'legacy', 'both']);
 
 it('does not dispatch `EmailChangeVerified` when saving leaves the email address unchanged', function (): void {
     Event::fake([EmailChangeVerified::class]);
