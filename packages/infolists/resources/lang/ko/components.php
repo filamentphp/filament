@@ -15,6 +15,11 @@ return [
 
         ],
 
+        'icon' => [
+            'true' => '예',
+            'false' => '아니오',
+        ],
+
         'key_value' => [
 
             'columns' => [

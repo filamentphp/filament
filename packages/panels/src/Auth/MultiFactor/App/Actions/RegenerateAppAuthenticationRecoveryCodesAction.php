@@ -163,6 +163,8 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                     ->modalCancelAction(false)
                     ->cancelParentActions(),
             ])
+            // Failed attempts must remain counted when the rate limiter uses the database cache store.
+            ->databaseTransaction(false)
             ->rateLimit(5);
     }
 }

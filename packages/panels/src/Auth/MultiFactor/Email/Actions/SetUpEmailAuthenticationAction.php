@@ -109,6 +109,8 @@ class SetUpEmailAuthenticationAction
                     ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_NOTIFICATION) ?? Heroicon::OutlinedLockClosed)
                     ->send();
             })
+            // Failed attempts must remain counted when the rate limiter uses the database cache store.
+            ->databaseTransaction(false)
             ->rateLimit(5);
     }
 }

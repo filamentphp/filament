@@ -133,6 +133,8 @@ class DisableAppAuthenticationAction
                     ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_NOTIFICATION) ?? Heroicon::OutlinedLockOpen)
                     ->send();
             })
+            // Failed attempts must remain counted when the rate limiter uses the database cache store.
+            ->databaseTransaction(false)
             ->rateLimit(5);
     }
 }

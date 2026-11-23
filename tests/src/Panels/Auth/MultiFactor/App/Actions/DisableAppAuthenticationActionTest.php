@@ -1,11 +1,13 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\RateLimiter as CacheRateLimiter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -526,6 +528,48 @@ describe('throttling', function (): void {
             ->assertHasFormErrors([
                 'password' => __('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.messages.rate_limited'),
             ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
+
+    it('cannot bypass password throttling by changing action arguments when actions use database transactions', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        config()->set('cache.default', 'database');
+        app()->forgetInstance(CacheRateLimiter::class);
+        RateLimiter::clearResolvedInstances();
+
+        Action::configureUsing(static fn (Action $action) => $action->databaseTransaction(), during: function () use ($appAuthentication, $user): void {
+            foreach (range(1, 5) as $attempt) {
+                livewire(EditProfile::class)
+                    ->callAction(
+                        TestAction::make('disableAppAuthentication')
+                            ->schemaComponent('app', schema: 'content')
+                            ->arguments(['nonce' => $attempt]),
+                        ['password' => "incorrect-password-{$attempt}"],
+                    )
+                    ->assertHasFormErrors([
+                        'password' => 'current_password',
+                    ]);
+            }
+
+            livewire(EditProfile::class)
+                ->callAction(
+                    TestAction::make('disableAppAuthentication')
+                        ->schemaComponent('app', schema: 'content')
+                        ->arguments(['nonce' => 6]),
+                    [
+                        'code' => $appAuthentication->getCurrentCode($user),
+                        'password' => 'password',
+                    ],
+                )
+                ->assertHasFormErrors([
+                    'password' => __('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.messages.rate_limited'),
+                ]);
+        });
 
         expect(filled($user->getAppAuthenticationSecret()))
             ->toBeTrue();

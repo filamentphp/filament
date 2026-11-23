@@ -25,9 +25,11 @@ use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Timebox;
 use LogicException;
 use SensitiveParameter;
 
@@ -66,10 +68,17 @@ class RequestPasswordReset extends SimplePage
         }
 
         $data = $this->form->getState();
+        $broker = Password::broker(Filament::getAuthPasswordBroker());
+        $credentials = $this->getCredentialsFromFormData($data);
+        $user = ($broker instanceof PasswordBroker) ? $broker->getUser($credentials) : null;
+        $canAccessPanel = (! ($user instanceof FilamentUser)) || $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
 
-        $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
-            $this->getCredentialsFromFormData($data),
-            function (CanResetPassword $user, #[SensitiveParameter] string $token): void {
+        $status = app(Timebox::class)->call(function () use ($broker, $credentials, $canAccessPanel): string {
+            if (! $canAccessPanel) {
+                return Password::RESET_LINK_SENT;
+            }
+
+            return $broker->sendResetLink($credentials, function (CanResetPassword $user, #[SensitiveParameter] string $token): void {
                 if (
                     ($user instanceof FilamentUser) &&
                     (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
@@ -89,8 +98,12 @@ class RequestPasswordReset extends SimplePage
                 $user->notify($notification);
 
                 event(new PasswordResetLinkSent($user));
-            },
-        );
+            });
+        }, (int) config('auth.timebox_duration', 200_000));
+
+        if ($status === Password::RESET_THROTTLED) {
+            $status = Password::RESET_LINK_SENT;
+        }
 
         if ($status !== Password::RESET_LINK_SENT) {
             $this->getFailureNotification($status)?->send();

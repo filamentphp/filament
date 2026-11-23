@@ -14,8 +14,13 @@ return [
 
             'label' => 'Gruppi',
 
+            'group' => [
+                'label' => 'Gruppo',
+            ],
+
             'block' => [
                 'label' => 'Separatore (OR)',
+                'picker_group' => 'Logica',
                 'or' => 'OR',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(Nessuna regola)',
+
+    'max_rules_reached_tooltip' => 'Hai raggiunto il massimo di :count regole.',
 
     'item_separators' => [
         'and' => 'AND',
@@ -237,6 +244,7 @@ return [
                     ],
 
                 ],
+
             ],
 
         ],

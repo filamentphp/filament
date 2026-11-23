@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => '본문으로 건너뛰기',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => '알림 열기',
+            'label_with_unread_count' => '{1} 알림, 읽지 않은 알림 :count개|[2,*] 알림, 읽지 않은 알림 :count개',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => '테마',
+
             'dark' => [
                 'label' => '다크 모드',
             ],
@@ -51,6 +58,13 @@ return [
         ],
 
     ],
+    'navigation' => [
+        'label' => '사이드바 내비게이션',
+    ],
+
+    'topbar' => [
+        'label' => '상단 바',
+    ],
 
     'avatar' => [
         'alt' => ':name 아바타',
@@ -58,6 +72,15 @@ return [
 
     'logo' => [
         'alt' => ':name 로고',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => '테넌트 검색',
+            'placeholder' => '검색',
+        ],
+
     ],
 
 ];

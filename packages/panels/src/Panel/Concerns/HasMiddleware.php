@@ -3,6 +3,8 @@
 namespace Filament\Panel\Concerns;
 
 use Filament\Http\Middleware\IdentifyTenant;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 
 trait HasMiddleware
@@ -123,8 +125,20 @@ trait HasMiddleware
 
     protected function registerLivewirePersistentMiddleware(): void
     {
-        Livewire::addPersistentMiddleware($this->livewirePersistentMiddleware);
+        app()->booted(function (): void {
+            $middleware = app(Router::class)->resolveMiddleware([
+                ...$this->livewirePersistentMiddleware,
+                $this->getEmailVerifiedMiddlewareName(),
+                $this->getMultiFactorAuthenticationRequiredMiddleware(),
+                ...($this->hasTenantBilling() ? [$this->getTenantBillingProvider()->getSubscribedMiddleware()] : []),
+            ]);
 
-        $this->livewirePersistentMiddleware = [];
+            Livewire::addPersistentMiddleware(array_map(
+                static fn (string $middleware): string => Str::before($middleware, ':'),
+                array_filter($middleware, 'is_string'),
+            ));
+
+            $this->livewirePersistentMiddleware = [];
+        });
     }
 }

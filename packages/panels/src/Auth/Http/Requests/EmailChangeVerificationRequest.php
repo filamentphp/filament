@@ -11,6 +11,10 @@ use Illuminate\Validation\Validator;
 
 class EmailChangeVerificationRequest extends FormRequest
 {
+    use Concerns\CanConsumeEmailChangeVerification;
+
+    protected bool $wasEmailUpdateRejected = false;
+
     public function authorize(): bool
     {
         $signature = $this->query('signature');
@@ -51,23 +55,25 @@ class EmailChangeVerificationRequest extends FormRequest
             ->useWritePdo()
             ->exists();
 
-        $signature = $this->query('signature');
-        $cacheKey = "filament:auth:email_change:verification:{$signature}";
-        $cache = cache();
+        $wasConsumed = $this->consumeEmailChangeVerification($this->query('signature'));
 
-        if ((! $cache->has($cacheKey)) || ((! $cache->forget($cacheKey)) && ($cache->get($cacheKey) !== null))) {
-            return false;
-        }
-
-        if ($isEmailTaken) {
+        if ($isEmailTaken || (! $wasConsumed)) {
             return false;
         }
 
         $previousEmail = $user->getOriginal('email');
 
-        $wasEmailChanged = $user->update([
+        $wasEmailUpdated = $user->update([
             'email' => $newEmail,
-        ]) && ($user->getOriginal('email') !== $previousEmail);
+        ]);
+
+        if (! $wasEmailUpdated) {
+            $this->wasEmailUpdateRejected = true;
+
+            return false;
+        }
+
+        $wasEmailChanged = $user->getOriginal('email') !== $previousEmail;
 
         if (method_exists($user, 'markEmailAsVerified')) {
             $user->markEmailAsVerified();
@@ -83,6 +89,11 @@ class EmailChangeVerificationRequest extends FormRequest
         }
 
         return true;
+    }
+
+    public function wasEmailUpdateRejected(): bool
+    {
+        return $this->wasEmailUpdateRejected;
     }
 
     public function withValidator(Validator $validator): Validator
