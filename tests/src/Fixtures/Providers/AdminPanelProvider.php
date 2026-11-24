@@ -67,6 +67,7 @@ use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
 use Filament\Tests\Fixtures\Pages\RadioBrowserTest;
 use Filament\Tests\Fixtures\Pages\RepeaterBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\RichEditorDocumentBoundaryBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMentionAttributesBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorStyleAttributesBrowserTest;
@@ -206,6 +207,7 @@ class AdminPanelProvider extends PanelProvider
                 RadioBrowserTest::class,
                 RepeaterBrowserTest::class,
                 RichEditorBrowserTest::class,
+                RichEditorDocumentBoundaryBrowserTest::class,
                 RichEditorMentionAttributesBrowserTest::class,
                 RichEditorMinimalControlsBrowserTest::class,
                 RichEditorStyleAttributesBrowserTest::class,
