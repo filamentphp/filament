@@ -22,6 +22,13 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 
     protected string | Closure $format = 'hex';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->string();
+    }
+
     public function format(string | Closure $format): static
     {
         $this->format = $format;
