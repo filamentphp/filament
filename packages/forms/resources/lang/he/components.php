@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'בלוק',
+            'position' => ':label, מיקום :position מתוך :count',
+            'moved' => ':label הועבר למיקום :position מתוך :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -104,9 +110,19 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'לא נמצאו בלוקים.',
+
+            'search_prompt' => 'חיפוש בלוקים',
+
+        ],
+
     ],
 
     'checkbox_list' => [
+
+        'required_description' => 'יש לבחור לפחות אפשרות אחת.',
 
         'actions' => [
 
@@ -128,7 +144,33 @@ return [
 
     ],
 
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'חודש',
+        ],
+
+        'year_input' => [
+            'label' => 'שנה',
+        ],
+
+        'hour_input' => [
+            'label' => 'שעה',
+        ],
+
+        'minute_input' => [
+            'label' => 'דקה',
+        ],
+
+        'second_input' => [
+            'label' => 'שנייה',
+        ],
+
+    ],
+
     'file_upload' => [
+
+        'placeholder' => 'לא הועלו קבצים',
 
         'actions' => [
 
@@ -282,6 +324,14 @@ return [
                 'label' => 'מחק שורה',
             ],
 
+            'move_down' => [
+                'label' => 'הזז מטה',
+            ],
+
+            'move_up' => [
+                'label' => 'הזז מעלה',
+            ],
+
             'reorder' => [
                 'label' => 'סדר רשומה מחדש',
             ],
@@ -310,6 +360,12 @@ return [
                 'label' => 'ערך',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'שורה',
+            'position' => ':label, מיקום :position מתוך :count',
+            'moved' => ':label הועבר למיקום :position מתוך :count',
         ],
 
     ],
@@ -370,6 +426,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'פריט',
+            'position' => ':label, מיקום :position מתוך :count',
+            'moved' => ':label הועבר למיקום :position מתוך :count',
+        ],
 
         'columns' => [
 
@@ -469,6 +531,10 @@ return [
 
                 ],
 
+            ],
+
+            'close_panel' => [
+                'label' => 'סגירת החלונית',
             ],
 
             'custom_block' => [
@@ -635,6 +701,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'מחיקת בלוק',
+                ],
+
+                'edit' => [
+                    'label' => 'עריכת בלוק',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'לא נמצאו בלוקים.',
+
+            'search_label' => 'חיפוש בלוקים',
+
+            'search_prompt' => 'חיפוש בלוקים',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'קבצים שהועלו חייבים להיות מסוג: :values.',
 
         'file_attachments_max_size_message' => 'קבצים שהועלו לא יכולים לחרוג מ-:max קילובייט.',
@@ -712,6 +800,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'נקה בחירה',
+            ],
+
             'create_option' => [
 
                 'label' => 'יצירה',
@@ -756,12 +848,18 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'הסר את :label',
+            ],
+
         ],
 
         'boolean' => [
             'true' => 'כן',
             'false' => 'לא',
         ],
+
+        'error_message' => 'לא ניתן היה לטעון את האפשרויות. נסה שוב.',
 
         'loading_message' => 'טוען...',
 
@@ -773,7 +871,11 @@ return [
 
         'placeholder' => 'בחר',
 
+        'required_description' => 'יש לבחור אפשרות.',
+
         'searching_message' => 'מחפש...',
+
+        'search_label' => 'חיפוש',
 
         'search_prompt' => 'התחל להקליד על מנת לחפש...',
 
@@ -819,6 +921,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'יש לבחור לפחות אפשרות אחת.',
 
         'boolean' => [
             'true' => 'כן',
