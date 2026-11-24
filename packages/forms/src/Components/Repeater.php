@@ -1688,9 +1688,9 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                             $extraItemActions,
                             fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                         );
-                        $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                        $itemCloneAction = $cloneAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
                         $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                        $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                        $itemDeleteAction = $deleteAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
                         $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                         $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
@@ -1760,7 +1760,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                     <?php if ($cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions) { ?>
                                         <ul class="fi-fo-repeater-item-header-end-actions">
                                             <?php foreach ($visibleExtraItemActions as $extraItemAction) { ?>
-                                                <li x-on:click.stop><?= $extraItemAction(['item' => $itemKey])->toHtml() ?></li>
+                                                <li x-on:click.stop><?= $extraItemAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true)->toHtml() ?></li>
                                             <?php } ?>
 
                                             <?php if ($cloneActionIsVisible) { ?>
@@ -1891,9 +1891,9 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                             $extraItemActions,
                             fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                         );
-                        $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                        $itemCloneAction = $cloneAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
                         $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                        $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                        $itemDeleteAction = $deleteAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
                         $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                         $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
@@ -1934,7 +1934,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
 
                                     <?php foreach ($visibleExtraItemActions as $extraItemAction) { ?>
                                         <li x-on:click.stop>
-                                            <?= $extraItemAction(['item' => $itemKey])->toHtml() ?>
+                                            <?= $extraItemAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true)->toHtml() ?>
                                         </li>
                                     <?php } ?>
 
@@ -2086,9 +2086,9 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                 $extraItemActions,
                                 fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                             );
-                            $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                            $itemCloneAction = $cloneAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
                             $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                            $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                            $itemDeleteAction = $deleteAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
                             $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
                             $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                             $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
@@ -2173,7 +2173,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                             <div class="fi-fo-table-repeater-actions">
                                                 <?php foreach ($visibleExtraItemActions as $extraItemAction) { ?>
                                                     <div x-on:click.stop>
-                                                        <?= $extraItemAction(['item' => $itemKey])->toHtml() ?>
+                                                        <?= $extraItemAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true)->toHtml() ?>
                                                     </div>
                                                 <?php } ?>
 
@@ -2308,7 +2308,19 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             ...($isVisuallyHidden ? ['tabindex' => -1, 'data-reorder-hidden' => true] : []),
             'data-reorder-direction' => $direction,
             'data-reorder-action' => ($action->getActionFunction() && (! $action->getLivewireEventClickHandler()) && blank($action->getParentActionCallLivewireClickHandler())) ? $action->getLivewireClickHandler() : null,
-            'aria-describedby' => $this->getId() . '-item-' . md5((string) $action->getArguments()['item']),
+            ...$this->getItemActionAttributes((string) $action->getArguments()['item']),
+        ];
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @return array<string, mixed>
+     */
+    protected function getItemActionAttributes(string $itemKey): array
+    {
+        return [
+            'aria-describedby' => $this->getId() . '-item-' . md5($itemKey),
         ];
     }
 

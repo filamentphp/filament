@@ -1802,6 +1802,40 @@ describe('item actions', function (): void {
 
         $undoRepeaterFake();
     });
+
+    it('describes each item action with the position of its item', function (Closure $configureRepeater): void {
+        $repeater = $configureRepeater(Repeater::make('people'))
+            ->cloneable()
+            ->extraItemActions([Action::make('flag')->icon('heroicon-m-flag')]);
+
+        $html = Schema::make(Livewire::make())
+            ->components([$repeater])
+            ->fill(['people' => ['first' => ['name' => 'Alex'], 'second' => ['name' => 'Sam']]])
+            ->toHtml();
+
+        $document = new DOMDocument;
+        $previous = libxml_use_internal_errors(true);
+        $document->loadHTML('<meta charset="UTF-8">' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        $xpath = new DOMXPath($document);
+
+        foreach (['flag', 'clone', 'delete'] as $actionName) {
+            $buttons = $xpath->query('//button[@*[name() = "wire:click" and starts-with(., "mountAction(\'' . $actionName . '\'")]]');
+
+            expect($buttons->length)->toBe(2);
+
+            foreach ($buttons as $index => $button) {
+                $description = $xpath->query('//*[@id="' . $button->getAttribute('aria-describedby') . '"]')->item(0);
+
+                expect($description?->textContent)->toBe('Item, position ' . ($index + 1) . ' of 2');
+            }
+        }
+    })->with([
+        'default' => [static fn (Repeater $repeater): Repeater => $repeater->schema([TextInput::make('name')])],
+        'simple' => [static fn (Repeater $repeater): Repeater => $repeater->simple(TextInput::make('name'))],
+        'table' => [static fn (Repeater $repeater): Repeater => $repeater->schema([TextInput::make('name')])->table([Repeater\TableColumn::make('Name')])],
+    ]);
 });
 
 describe('relationships', function (): void {

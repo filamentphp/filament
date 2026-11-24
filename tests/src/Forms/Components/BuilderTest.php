@@ -908,6 +908,44 @@ describe('action modifier callbacks', function (): void {
     });
 });
 
+describe('item action descriptions', function (): void {
+    it('describes each item action with the position of its item', function (): void {
+        $builder = Builder::make('content')
+            ->blocks([
+                Builder\Block::make('paragraph')->schema([TextInput::make('text')]),
+            ])
+            ->cloneable()
+            ->extraItemActions([Action::make('flag')->icon('heroicon-m-flag')]);
+
+        $html = Schema::make(Livewire::make())
+            ->components([$builder])
+            ->fill(['content' => [
+                'first' => ['type' => 'paragraph', 'data' => ['text' => 'Alpha']],
+                'second' => ['type' => 'paragraph', 'data' => ['text' => 'Beta']],
+            ]])
+            ->toHtml();
+
+        $document = new DOMDocument;
+        $previous = libxml_use_internal_errors(true);
+        $document->loadHTML('<meta charset="UTF-8">' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        $xpath = new DOMXPath($document);
+
+        foreach (['flag', 'clone', 'delete'] as $actionName) {
+            $buttons = $xpath->query('//button[@*[name() = "wire:click" and starts-with(., "mountAction(\'' . $actionName . '\'")]]');
+
+            expect($buttons->length)->toBe(2);
+
+            foreach ($buttons as $index => $button) {
+                $description = $xpath->query('//*[@id="' . $button->getAttribute('aria-describedby') . '"]')->item(0);
+
+                expect($description?->textContent)->toBe('Paragraph, position ' . ($index + 1) . ' of 2');
+            }
+        }
+    });
+});
+
 describe('block labels', function (): void {
     it('injects the `$index` of the item into the `Block::label()` `Closure`', function (): void {
         $block = Builder\Block::make('content')
