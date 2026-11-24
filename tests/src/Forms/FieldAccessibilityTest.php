@@ -20,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Text;
@@ -30,6 +31,7 @@ use Filament\Tests\Fixtures\Tables\PostsTable;
 use Filament\Tests\Fixtures\Tables\UsersTable;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
@@ -616,6 +618,20 @@ describe('required controls', function (): void {
         expect(CheckboxList::make('interests')->container($schema)->required()->getRequiredDescription())->toBe('Choose an interest.')
             ->and(ToggleButtons::make('days')->container($schema)->multiple()->required()->getRequiredDescription())->toBe('Choose an available day.');
     });
+
+    it('hides required marks from assistive technology', function (Closure $render): void {
+        $marks = fieldAccessibilityDocument($render())->query('//sup[contains(@class, "required-mark")]');
+
+        expect($marks->length)->toBe(1)
+            ->and($marks->item(0)->getAttribute('aria-hidden'))->toBe('true');
+    })->with([
+        'field' => [static fn (): string => Schema::make(Livewire::make())->components([TextInput::make('name')->required()])->toHtml()],
+        'field wrapper' => [static fn (): string => Blade::render('<x-filament-forms::field-wrapper id="name" label="Name" required />')],
+        'fused group' => [static fn (): string => Schema::make(Livewire::make())->components([FusedGroup::make([TextInput::make('name')->required()])->label('Name')])->toHtml()],
+        'fieldset' => [static fn (): string => Schema::make(Livewire::make())->components([Fieldset::make('Details')->markAsRequired()])->toHtml()],
+        'fieldset component' => [static fn (): string => Blade::render('<x-filament::fieldset label="Details" required />')],
+        'table repeater header' => [static fn (): string => Schema::make(Livewire::make())->components([Repeater::make('people')->schema([TextInput::make('name')])->table([Repeater\TableColumn::make('Name')->markAsRequired()])])->fill(['people' => [['name' => 'Alex']]])->toHtml()],
+    ]);
 
 });
 

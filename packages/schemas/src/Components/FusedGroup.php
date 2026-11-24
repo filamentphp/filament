@@ -400,7 +400,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                         <?php if (filled($label) && (! $labelSrOnly)) { ?>
                             <label <?php if (filled($id)) { ?>id="<?= e($id) ?>-label" <?php } ?>class="fi-fo-field-label">
                                 <span class="fi-fo-field-label-content">
-                                    <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup class="fi-fo-field-label-required-mark">*</sup><?php } ?>
+                                    <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup><?php } ?>
                                 </span>
                             </label>
                         <?php } ?>

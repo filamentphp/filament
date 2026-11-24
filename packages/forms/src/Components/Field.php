@@ -508,7 +508,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                                 <?php if (filled($label) && (! $labelSrOnly)) { ?>
                                     <span class="fi-fo-field-label-content">
-                                        <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup class="fi-fo-field-label-required-mark">*</sup>
+                                        <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup>
                                         <?php } ?>
                                     </span>
                                 <?php } ?>

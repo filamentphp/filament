@@ -2058,7 +2058,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                 ?>
                                 <th scope="col" <?= $thAttributes->toHtml() ?>>
                                     <?php if (! $column->isHeaderLabelHidden()) { ?>
-                                        <?= e($column->getLabel()) ?><?php if ($column->isMarkedAsRequired()) { ?><sup class="fi-fo-table-repeater-header-required-mark">*</sup><?php } ?>
+                                        <?= e($column->getLabel()) ?><?php if ($column->isMarkedAsRequired()) { ?><sup aria-hidden="true" class="fi-fo-table-repeater-header-required-mark">*</sup><?php } ?>
                                     <?php } else { ?>
                                         <span class="fi-sr-only">
                                             <?= e($column->getLabel()) ?>

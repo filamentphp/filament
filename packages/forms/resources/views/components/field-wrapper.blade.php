@@ -133,7 +133,7 @@
 
                         @if (filled($label) && (! $labelSrOnly))
                             <span class="fi-fo-field-label-content">
-                                {{ $label }}@if ($required && (! $isDisabled))<sup class="fi-fo-field-label-required-mark">*</sup>
+                                {{ $label }}@if ($required && (! $isDisabled))<sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup>
                                 @endif
                             </span>
                         @endif

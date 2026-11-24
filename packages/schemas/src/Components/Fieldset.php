@@ -67,7 +67,7 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
         ob_start(); ?>
         <fieldset <?= $attributes->toHtml() ?>>
             <?php if (filled($label)) { ?>
-                <legend><?= e($label) ?><?php if ($isRequired) { ?><sup class="fi-fieldset-label-required-mark">*</sup><?php } ?></legend>
+                <legend><?= e($label) ?><?php if ($isRequired) { ?><sup aria-hidden="true" class="fi-fieldset-label-required-mark">*</sup><?php } ?></legend>
             <?php } ?>
             <?= $this->getChildSchema()->toHtml() ?>
         </fieldset>

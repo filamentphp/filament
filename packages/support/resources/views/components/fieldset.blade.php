@@ -16,7 +16,7 @@
 >
     @if (filled($label))
         <legend>
-            {{ $label }}@if ($required)<sup class="fi-fieldset-label-required-mark">*</sup>
+            {{ $label }}@if ($required)<sup aria-hidden="true" class="fi-fieldset-label-required-mark">*</sup>
             @endif
         </legend>
     @endif
