@@ -7,6 +7,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Livewire\RichEditorFileAttachmentForm;
 use Filament\Tests\Fixtures\Models\MediaPostWithRichContent;
 use Filament\Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -131,8 +132,11 @@ describe('provider authorization', function () use ($makeTipTapDocument, $makeIm
             ->components([$editor])
             ->fill(['content' => $makeTipTapDocument([$makeImage($path)])]);
 
-        Storage::disk('tmp-for-tests')->put('livewire-tmp/copied.txt', 'Explicitly authorized copy');
-        $temporaryFile = TemporaryUploadedFile::createFromLivewire('copied.txt');
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->create('copied.txt'),
+        );
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", 'Explicitly authorized copy');
+        $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
         $provider = $editor->getFileAttachmentProvider();
         $editor->saveFileAttachmentFromAnotherRecordUsing(static function (string $file) use ($shouldCopy, $provider, $temporaryFile, $path, $record): ?string {
             if ((! $shouldCopy) || ($file !== $path)) {
