@@ -29,6 +29,18 @@ return [
 
     ],
 
+    'tabs' => [
+
+        'actions' => [
+
+            'more' => [
+                'label' => 'Weitere Tabs',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

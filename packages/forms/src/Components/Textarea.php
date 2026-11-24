@@ -32,6 +32,13 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
     protected bool | Closure $shouldAutosize = false;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->string();
+    }
+
     public function autosize(bool | Closure $condition = true): static
     {
         $this->shouldAutosize = $condition;
