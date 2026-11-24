@@ -1,9 +1,14 @@
 <?php
 
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
+use Filament\Tests\Fixtures\Resources\Departments\EditAuthorizationDepartmentResource;
+use Filament\Tests\Fixtures\Resources\Departments\Pages\EditDepartment;
 use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\OrderInvoiceResource;
@@ -15,6 +20,8 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
@@ -142,6 +149,36 @@ describe('URLs', function (): void {
 });
 
 describe('authorization', function (): void {
+    it('honors `getEditAuthorizationResponse()` overrides in resource and page authorization', function (): void {
+        $resource = EditAuthorizationDepartmentResource::class;
+        $page = EditDepartmentWithResponseAuthorization::class;
+        app()->bind(DepartmentPolicy::class . '::update', static fn (): bool => true);
+        $editable = Department::factory()->create(['name' => 'Editable']);
+        $readOnly = Department::factory()->create(['name' => 'Read only']);
+
+        expect($resource::getEditAuthorizationResponse($editable)->allowed())->toBeTrue()
+            ->and($resource::canEdit($editable))->toBeTrue()
+            ->and($resource::authorizeEdit($editable))->toBeNull()
+            ->and($resource::getEditAuthorizationResponse($readOnly)->message())->toBe('Editing is disabled by the resource.')
+            ->and($resource::canEdit($readOnly))->toBeFalse()
+            ->and($resource::canDelete($readOnly))->toBeTrue();
+
+        expect(fn () => $resource::authorizeEdit($readOnly))->toThrow(AuthorizationException::class, 'Editing is disabled by the resource.');
+
+        livewire($page, ['record' => $readOnly->getKey()])->assertForbidden();
+
+        expect(app($page)->getDefaultActionAuthorizationResponse(EditAction::make()->record($readOnly))->denied())->toBeTrue();
+
+        app()->bind(DepartmentPolicy::class . '::update', static fn (): Response => Response::denyAsNotFound('Policy denial.'));
+
+        expect($resource::getEditAuthorizationResponse($editable))
+            ->denied()->toBeTrue()
+            ->status()->toBe(404)
+            ->message()->toBe('Policy denial.');
+        expect($resource::canEdit($editable))->toBeFalse();
+        expect(fn () => $resource::authorizeEdit($editable))->toThrow(AuthorizationException::class, 'Policy denial.');
+    });
+
     it('denies an allowed authorization response if an overridden `can*()` method returns `false`', function (): void {
         $resource = new class extends PostResource
         {
@@ -196,3 +233,8 @@ describe('authorization', function (): void {
         app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
     });
 });
+
+class EditDepartmentWithResponseAuthorization extends EditDepartment
+{
+    protected static string $resource = EditAuthorizationDepartmentResource::class;
+}
