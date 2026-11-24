@@ -33,8 +33,11 @@ use Filament\Tests\Panels\Resources\TestCase;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
@@ -1024,6 +1027,279 @@ describe('multi-level nested resource authorization', function (): void {
             ->assertForbidden();
     });
 });
+
+describe('parent relationship membership', function (): void {
+    beforeEach(function (): void {
+        User::resolveRelationUsing('nestedPosts', static fn (User $user): HasMany => $user->posts()
+            ->join('users as reviewers', 'reviewers.id', '=', 'posts.sort')
+            ->where('reviewers.name', 'Allowed reviewer')
+            ->withGlobalScope('nested-post-membership', static fn (Builder $query): Builder => $query
+                ->where(fn (Builder $query): Builder => $query->where('is_published', true)->orWhere('rating', '>=', 4))
+                ->orderByRaw('posts.id + ?', [1]))
+            ->orderByRaw('posts.id + ?', [0]));
+
+        Team::resolveRelationUsing('nestedUsers', static fn (Team $team): BelongsToMany => $team->users()
+            ->wherePivotIn('role', ['member', 'owner'])
+            ->orderByRaw('users.id + ?', [0]));
+
+        $panel = Filament::getCurrentOrDefaultPanel();
+
+        Route::middleware([...$panel->getMiddleware(), ...$panel->getAuthMiddleware()])
+            ->name("filament.{$panel->getId()}.")
+            ->prefix($panel->getPath())
+            ->group(function () use ($panel): void {
+                ConstrainedUserPostResource::registerRoutes($panel);
+                ConstrainedTeamUserResource::registerRoutes($panel);
+                DeepNestedPostResource::registerRoutes($panel);
+            });
+    });
+
+    it('uses the full one-to-many relationship while retaining resource scopes', function (): void {
+        $author = User::factory()->create();
+        $reviewer = User::factory()->create(['name' => 'Allowed reviewer']);
+        $otherReviewer = User::factory()->create(['name' => 'Excluded reviewer']);
+        $included = Post::factory()->create(['author_id' => $author->id, 'sort' => $reviewer->id, 'is_published' => true, 'rating' => 1]);
+        $alternative = Post::factory()->create(['author_id' => $author->id, 'sort' => $reviewer->id, 'is_published' => false, 'rating' => 4]);
+        $excluded = collect([
+            Post::factory()->create(['author_id' => $author->id, 'sort' => $reviewer->id, 'is_published' => false, 'rating' => 3]),
+            Post::factory()->create(['author_id' => $author->id, 'sort' => $otherReviewer->id, 'is_published' => true]),
+            Post::factory()->create(['sort' => $reviewer->id, 'is_published' => false, 'rating' => 4]),
+            Post::factory()->create(['author_id' => $author->id, 'sort' => $reviewer->id, 'title' => 'resource-excluded']),
+        ]);
+
+        livewire(ListConstrainedUserPosts::class, ['parentRecord' => $author])
+            ->assertCanSeeTableRecords([$included, $alternative])
+            ->assertCanNotSeeTableRecords($excluded);
+
+        foreach ([$included, $alternative] as $post) {
+            livewire(EditConstrainedUserPost::class, ['parentRecord' => $author, 'record' => $post->id])
+                ->assertSuccessful();
+        }
+
+        livewire(EditConstrainedUserPost::class, ['parentRecord' => $author, 'record' => $alternative->id])
+            ->fillForm(['title' => 'Allowed relationship update'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+        expect($alternative->refresh()->title)->toBe('Allowed relationship update');
+
+        foreach ($excluded as $post) {
+            $this->get(ConstrainedUserPostResource::getUrl('edit', ['author' => $author, 'record' => $post]))->assertNotFound();
+        }
+
+        $component = livewire(EditConstrainedUserPost::class, ['parentRecord' => $author, 'record' => $included->id])
+            ->fillForm(['title' => 'must-not-save-archived-post']);
+        $included->update(['is_published' => false, 'rating' => 3]);
+
+        $component->call('save')->assertNotFound();
+        assertDatabaseMissing(Post::class, ['title' => 'must-not-save-archived-post']);
+    });
+
+    it('honors the parent relationship soft-delete choice', function (bool $withTrashed): void {
+        User::resolveRelationUsing('nestedPosts', static fn (User $user): HasMany => $withTrashed ? $user->posts()->withTrashed() : $user->posts());
+        $author = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => $author->id]);
+        $post->delete();
+
+        $response = $this->get(ConstrainedUserPostResource::getUrl('edit', ['author' => $author, 'record' => $post]));
+
+        $withTrashed ? $response->assertSuccessful() : $response->assertNotFound();
+    })->with([false, true]);
+
+    it('uses pivot membership for listing, resolution, and later saves', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->id]);
+        $included = User::factory()->create();
+        $excluded = User::factory()->create();
+        $unrelated = User::factory()->create();
+        $team->users()->attach($included, ['role' => 'member']);
+        $team->users()->attach($excluded, ['role' => 'withdrawn']);
+
+        livewire(ListConstrainedTeamUsers::class, ['parentRecord' => $team])
+            ->assertCanSeeTableRecords([$included])
+            ->assertCanNotSeeTableRecords([$excluded, $unrelated]);
+
+        foreach ([$excluded, $unrelated] as $user) {
+            $this->get(ConstrainedTeamUserResource::getUrl('edit', ['company' => $team->company, 'team' => $team, 'record' => $user]))->assertNotFound();
+        }
+
+        $component = livewire(EditConstrainedTeamUser::class, ['parentRecord' => $team, 'record' => $included->id])
+            ->fillForm(['name' => 'must-not-save-withdrawn-member']);
+        $team->users()->updateExistingPivot($included, ['role' => 'withdrawn']);
+
+        $component->call('save')->assertNotFound();
+        expect($included->refresh()->name)->not->toBe('must-not-save-withdrawn-member');
+    });
+
+    it('isolates relationship `orWhere()` clauses from the requested record key', function (): void {
+        User::resolveRelationUsing('nestedPosts', static fn (User $user): HasMany => $user->posts()
+            ->where('rating', 5)
+            ->orWhere('title', 'Explicitly included'));
+        $author = User::factory()->create();
+        $included = Post::factory()->create(['author_id' => $author->id, 'rating' => 5]);
+        $alternative = Post::factory()->create(['title' => 'Explicitly included']);
+        $excluded = Post::factory()->create(['author_id' => $author->id, 'rating' => 1]);
+
+        livewire(ListConstrainedUserPosts::class, ['parentRecord' => $author])
+            ->assertCanSeeTableRecords([$included, $alternative])
+            ->assertCanNotSeeTableRecords([$excluded]);
+        livewire(EditConstrainedUserPost::class, ['parentRecord' => $author, 'record' => $alternative->id])->assertSuccessful();
+        $this->get(ConstrainedUserPostResource::getUrl('edit', ['author' => $author, 'record' => $excluded]))->assertNotFound();
+    });
+
+    it('preserves the real inverse collection during record policy authorization', function (): void {
+        Gate::policy(User::class, NestedCollectionUserPolicy::class);
+        $team = Team::factory()->create();
+        $otherTeam = Team::factory()->create();
+        $unrelatedTeam = Team::factory()->create();
+        $user = User::factory()->create();
+        $user->teams()->attach([$team->id, $otherTeam->id]);
+        $team->users()->updateExistingPivot($user, ['role' => 'member']);
+        app()->instance('nested-expected-team-ids', [$team->id, $otherTeam->id]);
+        app()->instance('nested-unrelated-team-id', $unrelatedTeam->id);
+
+        $component = livewire(EditConstrainedTeamUser::class, ['parentRecord' => $team, 'record' => $user->id])
+            ->assertSuccessful();
+
+        expect($component->instance()->getRecord()->teams)->toBeInstanceOf(Collection::class)
+            ->and($component->instance()->getRecord()->teams->modelKeys())->toEqualCanonicalizing([$team->id, $otherTeam->id]);
+
+        $component->fillForm(['name' => 'Allowed collection policy update'])->call('save')->assertHasNoFormErrors();
+        expect($user->refresh()->name)->toBe('Allowed collection policy update');
+    });
+
+    it('keeps route-selected ancestors for breadcrumbs across to-one and to-many levels', function (): void {
+        Gate::policy(User::class, NestedCollectionUserPolicy::class);
+        $company = Company::factory()->create(['name' => 'Selected company']);
+        $team = Team::factory()->create(['company_id' => $company->id, 'name' => 'Selected team']);
+        $otherTeam = Team::factory()->create(['name' => 'Other team']);
+        $unrelatedTeam = Team::factory()->create();
+        $author = User::factory()->create(['name' => 'Nested author']);
+        $author->teams()->attach([$otherTeam->id, $team->id]);
+        $team->users()->updateExistingPivot($author, ['role' => 'member']);
+        $post = Post::factory()->create(['author_id' => $author->id]);
+        app()->instance('nested-expected-team-ids', [$team->id, $otherTeam->id]);
+        app()->instance('nested-unrelated-team-id', $unrelatedTeam->id);
+        app()->instance('nested-post-route-parameters', ['company' => $company->id, 'team' => $team->id, 'author' => $author->id]);
+
+        $this->get(DeepNestedPostResource::getUrl('edit', ['company' => $company, 'team' => $team, 'author' => $author, 'record' => $post]))
+            ->assertSuccessful()
+            ->assertSee(CompanyResource::getUrl('view', ['record' => $company]), escape: false)
+            ->assertSee(CompanyTeamResource::getUrl('view', ['company' => $company, 'record' => $team]), escape: false)
+            ->assertSee(ConstrainedTeamUserResource::getUrl('edit', ['company' => $company, 'team' => $team, 'record' => $author]), escape: false);
+
+        $component = livewire(EditDeepNestedPost::class, ['record' => $post->id])->assertSuccessful();
+        $page = $component->instance();
+
+        expect($page->getParentRecord()->teams)->toBeInstanceOf(Collection::class)
+            ->and($page->getParentRecord()->teams->modelKeys())->toEqualCanonicalizing([$team->id, $otherTeam->id])
+            ->and($page->getRecord()->author->is($author))->toBeTrue();
+
+        $component->set('data.title', 'Still nested')->assertSuccessful();
+        expect($component->instance()->getParentRecord()->teams)->toBeInstanceOf(Collection::class);
+
+        $team->users()->updateExistingPivot($author, ['role' => 'withdrawn']);
+        $component->call('save')->assertNotFound();
+        assertDatabaseMissing(Post::class, ['title' => 'Still nested']);
+    });
+});
+
+class NestedCollectionUserPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, User $record): bool
+    {
+        $parents = $record->teams;
+
+        return ($parents instanceof Collection)
+            && ($parents->pluck('id')->sort()->values()->all() === collect(app('nested-expected-team-ids'))->sort()->values()->all())
+            && ($parents->where('id', app('nested-unrelated-team-id'))->count() === 0)
+            && ($parents->firstWhere('id', app('nested-unrelated-team-id')) === null);
+    }
+}
+
+class ConstrainedUserPostResource extends UserPostResource
+{
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return UserResource::asParent(static::class)->relationship('nestedPosts')->inverseRelationship('author');
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withTrashed()->where('title', '!=', 'resource-excluded');
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListConstrainedUserPosts::route('/'),
+            'edit' => EditConstrainedUserPost::route('/{record}/edit'),
+        ];
+    }
+}
+
+class ListConstrainedUserPosts extends ListRecords
+{
+    protected static string $resource = ConstrainedUserPostResource::class;
+}
+
+class EditConstrainedUserPost extends EditRecord
+{
+    protected static string $resource = ConstrainedUserPostResource::class;
+}
+
+class ConstrainedTeamUserResource extends UserResource
+{
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return CompanyTeamResource::asParent(static::class)->relationship('nestedUsers')->inverseRelationship('teams');
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListConstrainedTeamUsers::route('/'),
+            'edit' => EditConstrainedTeamUser::route('/{record}/edit'),
+        ];
+    }
+}
+
+class ListConstrainedTeamUsers extends ListRecords
+{
+    protected static string $resource = ConstrainedTeamUserResource::class;
+}
+
+class EditConstrainedTeamUser extends EditRecord
+{
+    protected static string $resource = ConstrainedTeamUserResource::class;
+}
+
+class DeepNestedPostResource extends UserPostResource
+{
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return ConstrainedTeamUserResource::asParent(static::class)->relationship('posts')->inverseRelationship('author');
+    }
+
+    public static function getPages(): array
+    {
+        return ['edit' => EditDeepNestedPost::route('/{record}/edit')];
+    }
+}
+
+class EditDeepNestedPost extends EditRecord
+{
+    protected static string $resource = DeepNestedPostResource::class;
+
+    protected function getParentRecordRouteParameters(): array
+    {
+        return app('nested-post-route-parameters');
+    }
+}
 
 class NestedCompanyPolicy
 {
