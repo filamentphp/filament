@@ -226,6 +226,7 @@ class EditProfile extends Page
         return TextInput::make('name')
             ->label(__('filament-panels::pages/auth/edit-profile.form.name.label'))
             ->required()
+            ->string()
             ->maxLength(255)
             ->autofocus();
     }
@@ -261,6 +262,7 @@ class EditProfile extends Page
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
+            ->string()
             ->visible(fn (Get $get): bool => filled($get('password')))
             ->dehydrated(false);
     }

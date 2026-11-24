@@ -146,6 +146,7 @@ class Login extends SimplePage
             ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')
             ->required()
+            ->string()
             ->extraInputAttributes(['tabindex' => 2]);
     }
 

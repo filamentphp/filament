@@ -174,6 +174,7 @@ class ResetPassword extends SimplePage
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
+            ->string()
             ->dehydrated(false);
     }
 

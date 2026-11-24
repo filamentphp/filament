@@ -176,6 +176,7 @@ class Register extends SimplePage
         return TextInput::make('name')
             ->label(__('filament-panels::pages/auth/register.form.name.label'))
             ->required()
+            ->string()
             ->maxLength(255)
             ->autofocus();
     }
@@ -210,6 +211,7 @@ class Register extends SimplePage
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
+            ->string()
             ->dehydrated(false);
     }
 
