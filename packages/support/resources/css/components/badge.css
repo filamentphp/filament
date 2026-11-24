@@ -95,14 +95,26 @@
         mask-repeat: no-repeat;
     }
 
+    /* The icon is `aria-hidden` and never receives focus, so hover and focus
+       states are matched on the button and applied to the icon inside it. */
     &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
-        & .fi-badge-delete-btn-icon {
-            @apply focus-visible:text-gray-700/75 dark:hover:text-gray-300/75 dark:focus-visible:text-gray-300/75;
+        & .fi-badge-delete-btn {
+            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 rounded-md focus-visible:ring-2 focus-visible:ring-inset;
+
+            &:hover > .fi-badge-delete-btn-icon,
+            &:focus-visible > .fi-badge-delete-btn-icon {
+                @apply text-gray-700/75 dark:text-gray-300/75;
+            }
         }
 
-        &.fi-color .fi-badge-delete-btn-icon {
-            @apply hover:text-color-700/75 focus-visible:text-color-700/75 dark:hover:text-color-300/75 dark:focus-visible:text-color-300/75;
+        &.fi-color .fi-badge-delete-btn {
+            @apply focus-visible:ring-color-600 dark:focus-visible:ring-color-500;
+
+            &:hover > .fi-badge-delete-btn-icon,
+            &:focus-visible > .fi-badge-delete-btn-icon {
+                @apply text-color-700/75 dark:text-color-300/75;
+            }
         }
     }
 }
