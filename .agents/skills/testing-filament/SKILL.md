@@ -19,7 +19,8 @@ For bug fixes, add or retain a regression test when it covers supported behavior
 
 ## Organizing tests
 
-- Keep each test focused on one behavior and each test file focused on its owning component or feature. Separate scenarios only when combining them would obscure the behavior or introduce order-dependent state.
+- Put tests in the file for the component or feature whose implementation owns the changed behavior. When the same behavior is added independently to several components, test each in its own component test file rather than collecting them in a base-class test file. Use base-class tests for behavior implemented by that base class.
+- Keep each test focused on one behavior. Separate scenarios only when combining them would obscure the behavior or introduce order-dependent state.
 - Before inserting tests, read the file's existing organization. Place new cases beside related coverage, reusing an appropriate `describe()` group when present; add a focused group only when it improves organization. Keep basic rendering and common scenarios before specialized configuration and edge cases. Do not default to inserting tests immediately after `uses()` or at the top of the file.
 - Before adding a browser test, search the file for the same route and setup. Combine related assertions into one coherently named test and reuse the page; use another visit only when isolation or a state reset is required.
 

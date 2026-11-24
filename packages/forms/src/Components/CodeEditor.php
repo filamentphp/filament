@@ -20,6 +20,13 @@ class CodeEditor extends Field implements HasEmbeddedView
 
     protected Language | string | Closure | null $language = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->string();
+    }
+
     public function language(Language | string | Closure | null $language): static
     {
         $this->language = $language;

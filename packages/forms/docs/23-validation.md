@@ -487,9 +487,12 @@ Field::make('name')->startsWith(['a'])
 ### String
 
 The field must be a string. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-string)
+
 ```php
 Field::make('name')->string()
 ```
+
+`TextInput`, `Textarea`, `MarkdownEditor`, `CodeEditor`, `ColorPicker`, and `OneTimeCodeInput` validate their state as a string automatically, so you do not need to add `string()` to these fields. A `TextInput` configured with `numeric()` or `integer()` uses its numeric validation rules instead. `OneTimeCodeInput` also validates that the string is numeric and has the configured number of digits, preserving leading zeroes. `RichEditor` does not enforce a string type, as it supports both HTML strings and document arrays.
 
 ### Unique
 

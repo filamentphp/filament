@@ -66,6 +66,15 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     protected string | Closure | null $type = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->string(static fn (TextInput $component): bool => ! $component->isNumeric());
+        $this->rule('numeric', static fn (TextInput $component): bool => $component->isNumeric());
+        $this->rule('integer', static fn (TextInput $component): bool => $component->isInteger());
+    }
+
     public function currentPassword(bool | Closure $condition = true, ?string $guard = null): static
     {
         if (filled($guard)) {
@@ -90,10 +99,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     {
         $this->isInteger = $condition;
 
-        $this->numeric($condition);
-        $this->inputMode(static fn (TextInput $component): ?string => $component->isInteger() ? 'numeric' : null);
-        $this->step(static fn (TextInput $component): ?int => $component->isInteger() ? 1 : null);
-        $this->rule('integer', $condition);
+        $this->inputMode(static fn (TextInput $component): ?string => $component->isInteger() ? 'numeric' : ($component->isNumeric() ? 'decimal' : null));
+        $this->step(static fn (TextInput $component): int | string | null => $component->isInteger() ? 1 : ($component->isNumeric() ? 'any' : null));
 
         return $this;
     }
@@ -142,7 +149,6 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $this->isNumeric = $condition;
 
         $this->inputMode(static fn (TextInput $component): ?string => $component->isNumeric() ? 'decimal' : null);
-        $this->rule('numeric', $condition);
         $this->step(static fn (TextInput $component): ?string => $component->isNumeric() ? 'any' : null);
 
         return $this;
@@ -286,7 +292,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     public function isNumeric(): bool
     {
-        return (bool) $this->evaluate($this->isNumeric);
+        return $this->isInteger() || $this->evaluate($this->isNumeric);
     }
 
     public function isPassword(): bool

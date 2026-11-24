@@ -25,6 +25,7 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
     {
         parent::setUp();
 
+        $this->string();
         $this->rule('numeric'); // Integer validation does not allow leading zeros.
         $this->rule(static fn (OneTimeCodeInput $component): string => "digits:{$component->getLength()}");
     }
