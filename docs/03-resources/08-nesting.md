@@ -48,11 +48,15 @@ use App\Filament\Resources\Courses\CourseResource;
 protected static ?string $parentResource = CourseResource::class;
 ```
 
+Setting `$relatedResource` lets the relation manager or relation page reuse the nested resource's form, infolist, table configuration, and labels. It does not apply the resource's `getEloquentQuery()` to the table, which still queries the configured relationship. To add record constraints, use the table's [`modifyQueryUsing()`](managing-relationships#customizing-the-relation-manager-eloquent-query) method.
+
 ## Authorizing nested resources
 
 To access a nested resource, the user must be able to access the nested resource and every ancestor resource. By default, resource access is controlled by the `viewAny()` method of the resource's model policy. Filament checks access to every ancestor resource on the initial page load and again on every subsequent Livewire request.
 
 Operations on nested records are authorized independently using the nested resource's policy. For example, editing a lesson requires `update()` access to the lesson, but does not require `view()` or `update()` access to its course. This allows you to grant users permission to manage related records without also granting them permission to view or edit the parent records themselves.
+
+Relation managers and relation pages that set `$relatedResource` also delegate action authorization to that resource.
 
 The records in a nested resource URL must still belong to the configured relationship chain. Authorization determines whether the user may access each resource, while relationship scoping ensures that the requested records belong to one another.
 

@@ -30,6 +30,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Event;
@@ -99,7 +100,7 @@ abstract class Page extends BasePage
             throw (new ModelNotFoundException)->setModel(static::getResource()::getModel(), [$key]);
         }
 
-        if ($parentRecord) {
+        if ($parentRecord && (static::getResource()::getParentResourceRegistration()->getInverseRelationship($record) instanceof BelongsTo)) {
             $record->setRelation(static::getResource()::getParentResourceRegistration()->getInverseRelationshipName(), $parentRecord);
         }
 
@@ -297,7 +298,12 @@ abstract class Page extends BasePage
 
                 if ($parentResourceRegistration) {
                     $parentResource = $parentResourceRegistration->getParentResource();
-                    $parentRecord = $parentRecord->{$parentResourceRegistration->getInverseRelationshipName()};
+                    $parentRecord = $this->resolvedParentRecords[$parentResource]
+                        ?? $parentRecord->{$parentResourceRegistration->getInverseRelationshipName()};
+
+                    if (! ($parentRecord instanceof Model)) {
+                        break;
+                    }
                 }
             }
         }

@@ -30,6 +30,13 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
 
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.markdown-editor';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->string();
+    }
+
     /**
      * @return array<string | array<string>>
      */

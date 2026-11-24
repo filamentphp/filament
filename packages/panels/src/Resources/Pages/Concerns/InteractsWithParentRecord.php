@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Attributes\Locked;
 use Livewire\Livewire;
 
@@ -15,6 +16,11 @@ use function Filament\Support\original_request;
 trait InteractsWithParentRecord
 {
     protected bool $hasResolvedParentRecordForRequest = false;
+
+    /**
+     * @var array<class-string, Model>
+     */
+    protected array $resolvedParentRecords = [];
 
     #[Locked]
     public ?Model $parentRecord = null;
@@ -158,7 +164,9 @@ trait InteractsWithParentRecord
                     throw (new ModelNotFoundException)->setModel($parentResource::getModel(), [$parentRecordKey]);
                 }
 
-                if ($previousParentRecord) {
+                $this->resolvedParentRecords[$parentResource] = $parentRecord;
+
+                if ($previousParentRecord && ($previousParentResourceRegistration->getInverseRelationship($parentRecord) instanceof BelongsTo)) {
                     $parentRecord->setRelation(
                         $previousParentResourceRegistration->getInverseRelationshipName(),
                         $previousParentRecord,

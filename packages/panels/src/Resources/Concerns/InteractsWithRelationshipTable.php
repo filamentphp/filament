@@ -456,7 +456,10 @@ trait InteractsWithRelationshipTable
             ($relatedResource = static::getRelatedResource()) &&
             (blank($record) || ($record::class === $relatedResource::getModel()))
         ) {
-            $method = 'get' . Str::lcfirst($action) . 'AuthorizationResponse';
+            $method = match ($action) {
+                'update' => 'getEditAuthorizationResponse',
+                default => 'get' . Str::lcfirst($action) . 'AuthorizationResponse',
+            };
 
             return method_exists($relatedResource, $method)
                 ? $relatedResource::{$method}($record)

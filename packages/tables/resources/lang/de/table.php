@@ -6,10 +6,30 @@ return [
 
         'heading' => 'Spalten',
 
+        'position' => 'Position :position von :count.',
+
+        'position_in_group' => 'Position :position von :count in :group.',
+
+        'reordered' => ':column an Position :position von :count verschoben.',
+
+        'reordered_deferred' => ':column an Position :position von :count verschoben. Wenden Sie die Spalten an, um Ihre Änderungen zu speichern.',
+
+        'reordered_in_group' => ':column an Position :position von :count in :group verschoben.',
+
+        'reordered_in_group_deferred' => ':column an Position :position von :count in :group verschoben. Wenden Sie die Spalten an, um Ihre Änderungen zu speichern.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'Spalten anwenden',
+            ],
+
+            'move_up' => [
+                'label' => ':column nach oben verschieben',
+            ],
+
+            'move_down' => [
+                'label' => ':column nach unten verschieben',
             ],
 
             'reorder' => [
@@ -28,6 +48,13 @@ return [
 
         'actions' => [
             'label' => 'Aktion|Aktionen',
+        ],
+
+        'editable' => [
+            'saving' => 'Änderung wird gespeichert...',
+            'saved' => 'Änderung gespeichert.',
+            'failure' => 'Das Speichern konnte nicht bestätigt werden. Laden Sie die Seite neu, bevor Sie es erneut versuchen.',
+            'unavailable' => 'Dieser Eintrag kann nicht mehr bearbeitet werden.',
         ],
 
         'icon' => [
@@ -130,6 +157,14 @@ return [
 
         'reorder_record' => [
             'label' => 'Eintrag :key verschieben',
+        ],
+
+        'move_record_up' => [
+            'label' => ':label nach oben verschieben',
+        ],
+
+        'move_record_down' => [
+            'label' => ':label nach unten verschieben',
         ],
 
         'filter' => [
@@ -243,6 +278,11 @@ return [
     'loading' => 'Lädt...',
 
     'reorder_indicator' => 'Zum Sortieren die Einträge per Drag & Drop in die richtige Reihenfolge ziehen.',
+
+    'reordering' => [
+        'position' => ':label, Position :position von :count.',
+        'moved' => ':label an Position :position von :count verschoben.',
+    ],
 
     'result_count' => '{0} Keine Ergebnisse|{1} :count Ergebnis|[2,*] :count Ergebnisse',
 

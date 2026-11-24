@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => '(ODER) Trennung',
+                'picker_group' => 'Logik',
                 'or' => 'ODER',
             ],
 
