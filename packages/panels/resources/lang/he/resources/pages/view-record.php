@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'הצגה',
 
+    'navigation_label' => 'הצגה',
+
     'content' => [
 
         'tab' => [

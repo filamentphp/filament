@@ -6,10 +6,30 @@ return [
 
         'heading' => 'עמודות',
 
+        'position' => 'מיקום :position מתוך :count.',
+
+        'position_in_group' => 'מיקום :position מתוך :count בקבוצה :group.',
+
+        'reordered' => 'העמודה :column הועברה למיקום :position מתוך :count.',
+
+        'reordered_deferred' => 'העמודה :column הועברה למיקום :position מתוך :count. החל את העמודות כדי לשמור את השינויים.',
+
+        'reordered_in_group' => 'העמודה :column הועברה למיקום :position מתוך :count בקבוצה :group.',
+
+        'reordered_in_group_deferred' => 'העמודה :column הועברה למיקום :position מתוך :count בקבוצה :group. החל את העמודות כדי לשמור את השינויים.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'החל עמודות',
+            ],
+
+            'move_up' => [
+                'label' => 'הזז את :column למעלה',
+            ],
+
+            'move_down' => [
+                'label' => 'הזז את :column למטה',
             ],
 
             'reorder' => [
@@ -28,6 +48,13 @@ return [
 
         'actions' => [
             'label' => 'פעולה|פעולות',
+        ],
+
+        'editable' => [
+            'saving' => 'שומר שינוי...',
+            'saved' => 'השינוי נשמר.',
+            'failure' => 'לא ניתן היה לאשר את השמירה. רענן את הדף לפני שתנסה שוב.',
+            'unavailable' => 'לא ניתן עוד לערוך פריט זה.',
         ],
 
         'icon' => [
@@ -130,6 +157,14 @@ return [
 
         'reorder_record' => [
             'label' => 'שינוי סדר הפריט :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'הזז את :label למעלה',
+        ],
+
+        'move_record_down' => [
+            'label' => 'הזז את :label למטה',
         ],
 
         'filter' => [
@@ -243,6 +278,11 @@ return [
     'loading' => 'טוען...',
 
     'reorder_indicator' => 'גרור ושחרר רשומות כדי לסדר מחדש.',
+
+    'reordering' => [
+        'position' => ':label, מיקום :position מתוך :count.',
+        'moved' => ':label הועבר למיקום :position מתוך :count.',
+    ],
 
     'result_count' => '{0} אין תוצאות|{1} תוצאה אחת|[2,*] :count תוצאות',
 
