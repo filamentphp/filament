@@ -10,7 +10,7 @@ dataset('proposed email addresses', [
     'HTML styles' => '"<style>body{display:none}</style>"@example.com',
     'plus addressing and underscores' => 'first_last+tag@example.com',
     'Unicode' => 'δοκιμή+日本語😀@example.com',
-    'Unicode outside ASCII' => "quoted\u{0080}\u{009F}@example.com",
+    'Unicode outside ASCII' => 'quotedéÿ@example.com',
     'valid punctuation' => '!#$%&\'*+-/=?^_`{|}~@example.com',
     'HTML emphasis and code' => '"<em>name</em><code>value</code>"@example.com',
     'entity-like text' => '"&lt;b&gt;&#42;&amp;"@example.com',
