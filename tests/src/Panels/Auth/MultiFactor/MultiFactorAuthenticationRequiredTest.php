@@ -51,6 +51,18 @@ it('can render setup page with a custom slug', function (): void {
         ->assertSuccessful();
 });
 
+it('shows disabled providers in their configured order', function (): void {
+    Filament::setCurrentPanel('required-multi-factor-authentication');
+
+    $this->actingAs(User::factory()->create());
+
+    $this->get(Filament::getSetUpRequiredMultiFactorAuthenticationUrl())
+        ->assertSeeTextInOrder([
+            __('filament-panels::auth/multi-factor/email/provider.management_schema.actions.label'),
+            __('filament-panels::auth/multi-factor/app/provider.management_schema.actions.label'),
+        ]);
+});
+
 it('requires email verification before setting up required multi-factor authentication', function (): void {
     Filament::setCurrentPanel('slugs');
 
