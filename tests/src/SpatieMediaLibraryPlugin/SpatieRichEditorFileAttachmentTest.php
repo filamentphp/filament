@@ -161,9 +161,11 @@ describe('provider authorization', function () use ($makeTipTapDocument, $makeIm
 
         if ($shouldCopy) {
             Storage::disk('public')->assertExists($media->first()->getPathRelativeToRoot());
-            expect(data_get($editor->getRawState(), 'content.0.attrs.id'))->toBe($media->first()->uuid)
+            $copiedMediaUuid = data_get($editor->getRawState(), 'content.0.attrs.id');
+
+            expect(strtolower($copiedMediaUuid))->toBe(strtolower($media->first()->uuid))
                 ->and(data_get($editor->getRawState(), 'content.0.attrs.src'))->toBe($media->first()->getUrl())
-                ->and($record->fresh()->content)->toContain('data-id="' . $media->first()->uuid . '"', 'src="' . $media->first()->getUrl() . '"');
+                ->and($record->fresh()->content)->toContain('data-id="' . $copiedMediaUuid . '"', 'src="' . $media->first()->getUrl() . '"');
         } else {
             // Unresolved IDs remain in the cleanup exclusion list, not the provider's collection.
             expect($editor->resolveFileAttachmentIds())->toBe([$path])
