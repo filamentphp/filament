@@ -362,7 +362,7 @@ const LocalFilesPlugin = ({
                                     },
                                 )
 
-                                const wrapper = document.createElement('div')
+                                const wrapper = parsed.createElement('div')
                                 wrapper.innerHTML = cleanedHtml
 
                                 const slice = ProseMirrorDOMParser.fromSchema(
