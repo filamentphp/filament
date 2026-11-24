@@ -4,6 +4,7 @@ use Filament\Auth\Events\EmailChangeVerified;
 use Filament\Auth\Http\Requests\BlockEmailChangeVerificationRequest;
 use Filament\Auth\Http\Requests\EmailChangeVerificationRequest;
 use Filament\Facades\Filament;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\ReadReplica;
@@ -14,6 +15,28 @@ use Illuminate\Support\Facades\Event;
 use League\Uri\Components\Query;
 
 uses(TestCase::class);
+
+it('renders the verified email literally', function (string $newEmail): void {
+    $user = User::factory()->create();
+    $verificationUrl = Filament::getVerifyEmailChangeUrl($user, $newEmail);
+    $verificationSignature = Query::new($verificationUrl)->get('signature');
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
+
+    $this->actingAs($user)->get($verificationUrl)->assertRedirect(Filament::getProfileUrl());
+
+    $notifications = new Notifications;
+    $notifications->mount();
+    $notifications->pullNotifications();
+    $notification = $notifications->notifications->sole();
+
+    expect($notification->getBody())->toContain(e($newEmail));
+
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">' . $notification->toHtml());
+
+    expect($document->textContent)->toContain($newEmail)
+        ->and((new DOMXPath($document))->query('//a | //img | //em | //code | //style'))->toHaveCount(0);
+})->with('proposed email addresses');
 
 it('can verify an email change using current and legacy cache keys', function (string $cacheKeyFormat): void {
     Event::fake([EmailChangeVerified::class]);
