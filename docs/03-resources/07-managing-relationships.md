@@ -1111,7 +1111,7 @@ public function table(Table $table): Table
 
 ## Customizing the relation manager Eloquent query
 
-You can apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire relation manager. To do this, you can pass a function to the `modifyQueryUsing()` method of the table, inside which you can customize the query:
+The relation manager's table queries the owner's configured relationship. You can apply additional query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) using the table's `modifyQueryUsing()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -1126,6 +1126,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+If you reuse a resource through [`$relatedResource`](nesting#creating-a-nested-resource) on a relation manager or [relation page](#relation-pages), the table still queries the configured relationship, not the resource's `getEloquentQuery()`. Use `modifyQueryUsing()` to apply any additional record constraints. These constraints determine which records are available; resource authorization methods and model policies determine which operations are allowed.
 
 > [!CAUTION]
 > `modifyQueryUsing()` scopes the query for records that already belong to the relationship — the table listing, and actions that operate on its rows, such as `DetachAction`, `DissociateAction`, and bulk actions. It is **not** applied to the records available to `AttachAction` or `AssociateAction`, since those records are outside the relationship by definition.
