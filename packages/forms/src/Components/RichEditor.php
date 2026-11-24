@@ -18,6 +18,7 @@ use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorDocumentNormalizer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
@@ -39,6 +40,7 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
+use Tiptap\Core\Extension;
 use Tiptap\Editor;
 
 use function Filament\Support\generate_icon_html;
@@ -505,7 +507,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 $attachmentIds = [];
 
                 $component->getTipTapEditor()
-                    ->setContent($value)
+                    ->setContent(app(RichEditorDocumentNormalizer::class)($value))
                     ->descendants(function (object $node) use (&$attachmentIds): void {
                         if ($node->type !== 'image') {
                             return;
@@ -546,10 +548,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
         $this->rawState(
             $this->getTipTapEditor()
-                ->setContent($this->getRawState() ?? [
+                ->setContent(app(RichEditorDocumentNormalizer::class)($this->getRawState() ?? [
                     'type' => 'doc',
                     'content' => [],
-                ])
+                ]))
                 ->descendants(function (object &$node) use (&$fileAttachmentIds): void {
                     if ($node->type !== 'image') {
                         return;
@@ -657,7 +659,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $ids = [];
 
         $this->getTipTapEditor()
-            ->setContent($originalContent)
+            ->setContent(app(RichEditorDocumentNormalizer::class)($originalContent))
             ->descendants(function (object $node) use (&$ids): void {
                 if ($node->type !== 'image') {
                     return;
@@ -808,10 +810,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     public function getTipTapEditor(): Editor
     {
-        return RichContentRenderer::make()
+        $configuration = RichContentRenderer::make()
             ->plugins($this->getPlugins())
             ->linkProtocols($this->getLinkProtocols())
-            ->getEditor();
+            ->getTipTapPhpConfiguration();
+
+        $configuration['extensions'] = array_values(array_filter(
+            $configuration['extensions'],
+            static fn (Extension $extension): bool => ! in_array($extension::$name, ['renderedCustomBlock', 'rawHtmlMergeTag'], strict: true),
+        ));
+
+        return app(Editor::class, ['configuration' => $configuration]);
     }
 
     /**
@@ -1547,7 +1556,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 }
 
                 $textLength = Str::length($this->getTipTapEditor()
-                    ->setContent($value)
+                    ->setContent(app(RichEditorDocumentNormalizer::class)($value))
                     ->getText());
 
                 if ($textLength > $maxLength) {
@@ -1565,7 +1574,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 }
 
                 $textLength = Str::length($this->getTipTapEditor()
-                    ->setContent($value)
+                    ->setContent(app(RichEditorDocumentNormalizer::class)($value))
                     ->getText());
 
                 if ($textLength < $minLength) {
@@ -1583,7 +1592,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 }
 
                 $textLength = Str::length($this->getTipTapEditor()
-                    ->setContent($value)
+                    ->setContent(app(RichEditorDocumentNormalizer::class)($value))
                     ->getText());
 
                 if ($textLength !== $length) {
