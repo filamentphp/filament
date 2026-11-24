@@ -358,6 +358,30 @@ describe('configuration and state', function (): void {
     });
 
     describe('file attachments', function (): void {
+        it('resolves raw disk paths without a provider and honors custom resolver refusals', function (string $visibility): void {
+            $storage = Storage::fake('local');
+            $path = 'attachments/harmless.txt';
+            $storage->put($path, 'Disk attachment');
+            $editor = RichEditor::make('content')
+                ->fileAttachmentsDisk('local')
+                ->fileAttachmentsVisibility($visibility)
+                ->container(Schema::make(Livewire::make()));
+            $url = $visibility === 'private'
+                ? $storage->temporaryUrl($path, now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour())
+                : $storage->url($path);
+
+            expect($editor->getFileAttachmentUrl($path))->toBe($url)
+                ->and($editor->getFileAttachmentUrl('missing.txt'))->toBeNull();
+
+            $editor->getFileAttachmentUrlUsing(static fn (): ?string => null);
+
+            expect($editor->getFileAttachmentUrl($path))->toBeNull();
+
+            $editor->getFileAttachmentUrlUsing(null);
+
+            expect($editor->getFileAttachmentUrl($path))->toBe($url);
+        })->with(['public', 'private']);
+
         it('does not persist attachments through `saveUploadedFileAttachmentAndGetUrl()` when the editor is disabled', function (string $editorClass, bool $isSchemaDisabled, bool $isChildSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled): void {
             Storage::fake('tmp-for-tests');
             Storage::fake('public');

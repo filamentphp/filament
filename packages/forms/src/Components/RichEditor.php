@@ -57,7 +57,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
-    use Concerns\HasFileAttachments;
+    use Concerns\HasFileAttachments {
+        Concerns\HasFileAttachments::getFileAttachmentUrl as private getBaseFileAttachmentUrl;
+    }
     use Concerns\HasLoadingPlaceholder;
     use Concerns\HasMaxHeight;
     use Concerns\HasMinHeight;
@@ -588,6 +590,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
                     $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
                     $node->attrs->src = $this->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
+
+                    $fileAttachmentIds[] = $fileAttachmentIdFromAnotherRecord;
                 })
                 ->getDocument(),
         );
@@ -971,6 +975,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     public function getFileAttachmentProvider(): ?FileAttachmentProvider
     {
         return $this->getContentAttribute()?->getFileAttachmentProvider();
+    }
+
+    public function getFileAttachmentUrl(mixed $file): ?string
+    {
+        if ($this->getFileAttachmentUrlUsing || (! $this->getFileAttachmentProvider())) {
+            return $this->getBaseFileAttachmentUrl($file);
+        }
+
+        return $this->getDefaultFileAttachmentUrl($file);
     }
 
     public function getDefaultFileAttachmentUrl(mixed $file): ?string

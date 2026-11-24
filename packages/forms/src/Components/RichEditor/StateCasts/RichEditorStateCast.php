@@ -95,7 +95,9 @@ class RichEditorStateCast implements StateCast
                     return;
                 }
 
-                $node->attrs->src = $this->richEditor->getFileAttachmentUrl($node->attrs->id) ?? $this->richEditor->getFileAttachmentUrlFromAnotherRecord($node->attrs->id) ?? $node->attrs->src ?? null;
+                $node->attrs->src = $this->richEditor->getFileAttachmentUrl($node->attrs->id)
+                    ?? $this->richEditor->getFileAttachmentUrlFromAnotherRecord($node->attrs->id)
+                    ?? ($this->richEditor->getFileAttachmentProvider() ? null : ($node->attrs->src ?? null));
             });
 
         $editor->descendants(function (object &$node): void {
