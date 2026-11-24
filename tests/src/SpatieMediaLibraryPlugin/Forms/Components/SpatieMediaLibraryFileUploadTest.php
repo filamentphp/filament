@@ -455,6 +455,9 @@ describe('integration', function (): void {
             ->usingFileName('excluded.txt')
             ->toMediaCollection('avatars');
 
+        $permittedMedia->refresh();
+        $excludedMedia->refresh();
+
         SpatieMediaLibraryFileUpload::configureUsing(
             static fn (SpatieMediaLibraryFileUpload $component) => $component
                 ->filterMediaUsing(static fn (Collection $media): Collection => $media->take(1)),
@@ -646,6 +649,8 @@ describe('integration', function (): void {
             ->withCustomProperties(['allowed' => true])
             ->toMediaCollection('avatars');
 
+        $media->refresh();
+
         $component = livewire(FilteredSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
             ->assertFormSet(['avatar' => [$media->uuid]])
             ->set('data.avatar', [strtoupper($media->uuid) => strtoupper($media->uuid)])
@@ -731,7 +736,10 @@ describe('reordering', function (): void {
             ->withProperties(['order_column' => 9])
             ->toMediaCollection('avatars');
 
-        $originalExcludedOrder = [$firstExcludedMedia->order_column, $secondExcludedMedia->order_column];
+        $firstPermittedMedia->refresh();
+        $secondPermittedMedia->refresh();
+
+        $originalExcludedOrder = [$firstExcludedMedia->fresh()->order_column, $secondExcludedMedia->fresh()->order_column];
 
         livewire(FilteredSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
             ->assertFormSet(['avatar' => [
@@ -749,8 +757,8 @@ describe('reordering', function (): void {
 
         expect([$firstExcludedMedia->fresh()->order_column, $secondExcludedMedia->fresh()->order_column])
             ->toBe($originalExcludedOrder);
-        expect($secondPermittedMedia->fresh()->order_column)->toBe(1);
-        expect($firstPermittedMedia->fresh()->order_column)->toBe(2);
+        expect((int) $secondPermittedMedia->fresh()->order_column)->toBe(1);
+        expect((int) $firstPermittedMedia->fresh()->order_column)->toBe(2);
     });
 
     it('only updates stored media order when the dynamic `reorderable()` condition is `true`', function (): void {
