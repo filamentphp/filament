@@ -25,7 +25,7 @@ it('redirects the user to the setup page if they have not set up multi-factor au
         ->assertRedirect(Filament::getSetUpRequiredMultiFactorAuthenticationUrl());
 });
 
-it('can render setup page', function (): void {
+it('can render the setup page with disabled providers in their configured order', function (): void {
     Filament::setCurrentPanel('required-multi-factor-authentication');
 
     $user = User::factory()->create();
@@ -35,7 +35,11 @@ it('can render setup page', function (): void {
     expect(Filament::getSetUpRequiredMultiFactorAuthenticationUrl())->toEndWith('/multi-factor-authentication/set-up');
 
     $this->get(Filament::getSetUpRequiredMultiFactorAuthenticationUrl())
-        ->assertSuccessful();
+        ->assertSuccessful()
+        ->assertSeeTextInOrder([
+            __('filament-panels::auth/multi-factor/email/provider.management_schema.actions.label'),
+            __('filament-panels::auth/multi-factor/app/provider.management_schema.actions.label'),
+        ]);
 });
 
 it('can render setup page with a custom slug', function (): void {

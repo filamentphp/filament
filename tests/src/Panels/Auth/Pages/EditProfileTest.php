@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\Notifications\NoticeOfEmailChangeRequest;
 use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Auth\Notifications\VerifyEmailChange;
@@ -52,6 +54,18 @@ it('can retrieve data', function (): void {
             'email' => $this->user->email,
         ]);
 });
+
+it('shows enabled multi-factor authentication providers first and preserves configured order for ties', function (bool $isEmailEnabled): void {
+    Filament::getCurrentOrDefaultPanel()->multiFactorAuthentication([AppAuthentication::make(), EmailAuthentication::make()]);
+    $this->user->toggleEmailAuthentication($isEmailEnabled);
+
+    $appLabel = __('filament-panels::auth/multi-factor/app/provider.management_schema.actions.label');
+    $emailLabel = __('filament-panels::auth/multi-factor/email/provider.management_schema.actions.label');
+
+    $this->get(Filament::getProfileUrl())
+        ->assertSuccessful()
+        ->assertSeeTextInOrder($isEmailEnabled ? [$emailLabel, $appLabel] : [$appLabel, $emailLabel]);
+})->with([false, true]);
 
 describe('saving profile', function (): void {
     it('can save name', function (): void {
