@@ -104,6 +104,12 @@ abstract class Resource
             if ($panel?->hasTenancy()) {
                 $query->withoutGlobalScope($panel->getTenancyScopeName());
             }
+        } elseif (
+            ($panel = Filament::getCurrentPanel())?->hasTenancy() &&
+            static::getModel()::hasGlobalScope($panel->getTenancyScopeName())
+        ) {
+            // Use this resource's ownership relationship, not the first resource registered for the model.
+            $query->withGlobalScope($panel->getTenancyScopeName(), static::getTenancyModelGlobalScope($panel));
         }
 
         return $query; /** @phpstan-ignore return.type */
