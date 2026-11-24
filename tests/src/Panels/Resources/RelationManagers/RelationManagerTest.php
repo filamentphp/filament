@@ -32,7 +32,9 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
+use Filament\Tests\Fixtures\Resources\Departments\CustomUpdateAuthorizationDepartmentResource;
 use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
+use Filament\Tests\Fixtures\Resources\Departments\EditAuthorizationDepartmentResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicketWithContentTabs;
@@ -84,6 +86,50 @@ describe('rendering and authorization', function (): void {
 
         livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
             ->assertCanSeeTableRecords($ticket->departments);
+    });
+
+    it('delegates edit authorization to the related resource', function (string $relationManager): void {
+        app()->bind(DepartmentPolicy::class . '::update', static fn (): bool => true);
+        $ticket = Ticket::factory()->create();
+        $editable = Department::factory()->create(['name' => 'Editable']);
+        $readOnly = Department::factory()->create(['name' => 'Read only']);
+        $ticket->departments()->attach([$editable->getKey(), $readOnly->getKey()]);
+
+        $component = livewire($relationManager, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->assertActionVisible(TestAction::make(EditAction::class)->table($editable))
+            ->assertActionHidden(TestAction::make(EditAction::class)->table($readOnly))
+            ->mountAction(TestAction::make(EditAction::class)->table($readOnly))
+            ->assertActionNotMounted();
+
+        expect($component->instance()->getAuthorizationResponse('update', $readOnly)->message())->toBe('Editing is disabled by the resource.');
+
+        app()->bind(DepartmentPolicy::class . '::update', static fn (): Response => Response::denyAsNotFound('Policy denial.'));
+
+        expect($component->instance()->getAuthorizationResponse('update', $editable))
+            ->denied()->toBeTrue()
+            ->status()->toBe(404)
+            ->message()->toBe('Policy denial.');
+
+        $component
+            ->assertActionHidden(TestAction::make(EditAction::class)->table($editable))
+            ->assertActionVisible(TestAction::make(DeleteAction::class)->table($readOnly))
+            ->callAction(TestAction::make(DeleteAction::class)->table($readOnly));
+
+        expect($readOnly->fresh()->trashed())->toBeTrue();
+    })->with([
+        'resource edit hook' => [EditResourceAuthorizationDepartmentsRelationManager::class],
+        'ignores noncanonical update hook' => [CustomUpdateResourceAuthorizationDepartmentsRelationManager::class],
+    ]);
+
+    it('honors relationship table `getEditAuthorizationResponse()` overrides', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $department = $ticket->departments->first();
+
+        livewire(EditAuthorizationDepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->assertActionHidden(TestAction::make(EditAction::class)->table($department))
+            ->mountAction(TestAction::make(EditAction::class)->table($department))
+            ->assertActionNotMounted()
+            ->assertActionVisible(TestAction::make(DeleteAction::class)->table($department));
     });
 
     it('resolves record URLs and actions without leaking record context between records', function (bool $isTableLazyLoaded, string $actionHierarchy): void {
@@ -2138,5 +2184,25 @@ class LegacyTitleDepartmentsRelationManager extends DepartmentsWithAttachActionR
     public function table(Table $table): Table
     {
         return parent::table($table)->headerActions([AttachAction::make()->preloadRecordSelect()]);
+    }
+}
+
+class EditResourceAuthorizationDepartmentsRelationManager extends DepartmentsRelationManager
+{
+    protected static ?string $relatedResource = EditAuthorizationDepartmentResource::class;
+}
+
+class CustomUpdateResourceAuthorizationDepartmentsRelationManager extends DepartmentsRelationManager
+{
+    protected static ?string $relatedResource = CustomUpdateAuthorizationDepartmentResource::class;
+}
+
+class EditAuthorizationDepartmentsRelationManager extends DepartmentsRelationManager
+{
+    protected function getEditAuthorizationResponse(Model $record): Response
+    {
+        $response = parent::getEditAuthorizationResponse($record);
+
+        return $response->denied() ? $response : Response::deny();
     }
 }
