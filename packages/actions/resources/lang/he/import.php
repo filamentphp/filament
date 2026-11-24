@@ -17,7 +17,7 @@ return [
                 'placeholder' => 'העלה קובץ CSV',
 
                 'rules' => [
-                    'duplicate_columns' => '{0} The file must not contain more than one empty column header.|{1,*} The file must not contain duplicate column headers: :columns.',
+                    'duplicate_columns' => '{0} הקובץ לא יכול להכיל יותר מכותרת עמודה ריקה אחת.|{1,*} הקובץ לא יכול להכיל כותרות עמודה כפולות: :columns.',
                 ],
 
             ],
@@ -78,7 +78,7 @@ return [
     'failure_csv' => [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'שגיאה',
-        'system_error' => 'שגיאה מערכת, נא צור קשר עם התמיכה.',
+        'system_error' => 'שגיאת מערכת, נא צור קשר עם התמיכה.',
         'column_mapping_required_for_new_record' => 'העמודה :attribute לא מופתה לעמודה בקובץ, אך היא נדרשת ליצירת רשומות חדשות.',
     ],
 

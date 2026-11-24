@@ -3,7 +3,7 @@
 return [
 
     'messages' => [
-        'uploading_file' => 'מעלה קבצים...',
+        'uploading_file' => 'מעלה קובץ...',
     ],
 
 ];
