@@ -358,6 +358,30 @@ describe('configuration and state', function (): void {
     });
 
     describe('file attachments', function (): void {
+        it('resolves raw disk paths without a provider and honors custom resolver refusals', function (string $visibility): void {
+            $storage = Storage::fake('local');
+            $path = 'attachments/harmless.txt';
+            $storage->put($path, 'Disk attachment');
+            $editor = RichEditor::make('content')
+                ->fileAttachmentsDisk('local')
+                ->fileAttachmentsVisibility($visibility)
+                ->container(Schema::make(Livewire::make()));
+            $url = $visibility === 'private'
+                ? $storage->temporaryUrl($path, now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour())
+                : $storage->url($path);
+
+            expect($editor->getFileAttachmentUrl($path))->toBe($url)
+                ->and($editor->getFileAttachmentUrl('missing.txt'))->toBeNull();
+
+            $editor->getFileAttachmentUrlUsing(static fn (): ?string => null);
+
+            expect($editor->getFileAttachmentUrl($path))->toBeNull();
+
+            $editor->getFileAttachmentUrlUsing(null);
+
+            expect($editor->getFileAttachmentUrl($path))->toBe($url);
+        })->with(['public', 'private']);
+
         it('does not persist attachments through `saveUploadedFileAttachmentAndGetUrl()` when the editor is disabled', function (string $editorClass, bool $isSchemaDisabled, bool $isChildSchemaDisabled, bool $isParentDisabled, bool $isFieldDisabled): void {
             Storage::fake('tmp-for-tests');
             Storage::fake('public');
@@ -1922,6 +1946,78 @@ describe('custom block grouping', function (): void {
 });
 
 describe('browser interactions', function (): void {
+    it('normalizes persisted documents before JSON, HTML-backed and disabled editors render and reload', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $preview = base64_encode('<span data-untrusted-preview="true">Untrusted preview</span>');
+        $document = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'blockquote',
+                    'content' => [
+                        ['type' => true, 'attrs' => ['id' => 'callout', 'preview' => $preview]],
+                        [
+                            'type' => 'paragraph',
+                            'content' => [[
+                                'type' => 'text',
+                                'text' => 'Preserved sibling',
+                                'marks' => [['type' => true], ['type' => 'bold']],
+                                'content' => [['type' => 'customBlock', 'attrs' => ['id' => 'callout', 'preview' => $preview]]],
+                            ]],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'callout',
+                        'config' => ['message' => 'Trusted server preview'],
+                        'label' => 'Untrusted label',
+                        'preview' => $preview,
+                        'shouldApplyProseStylingToPreview' => true,
+                    ],
+                ],
+            ],
+        ];
+        $post = Post::factory()->create([
+            'json' => ['content' => $document],
+            'content' => json_encode($document),
+        ]);
+
+        $page = visit('/rich-editor-document-boundary-browser-test?record=' . $post->getKey());
+
+        foreach (['json', 'html', 'disabled'] as $storage) {
+            $editor = '[data-testid="' . $storage . '-boundary-editor"]';
+            $page->assertSeeIn($editor . ' [data-testid="rich-editor-custom-block"]', 'Trusted server preview')
+                ->assertSeeIn($editor, 'Preserved sibling');
+        }
+
+        $page->assertMissing('[data-untrusted-preview]')
+            ->assertDontSee('Untrusted label')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="save-boundary-editors"]')
+            ->assertSeeIn('[data-testid="boundary-save-count"]', '1');
+
+        $post->refresh();
+
+        expect($post->content)->toContain('Preserved sibling', 'data-type="customBlock"')
+            ->not->toContain('data-preview', 'Untrusted label', $preview)
+            ->and(json_encode($post->json))->not->toContain('"preview"', 'Untrusted label', $preview);
+
+        $page->refresh();
+
+        foreach (['json', 'html', 'disabled'] as $storage) {
+            $editor = '[data-testid="' . $storage . '-boundary-editor"]';
+            $page->assertSeeIn($editor . ' [data-testid="rich-editor-custom-block"]', 'Trusted server preview')
+                ->assertSeeIn($editor, 'Preserved sibling');
+        }
+
+        $page->assertMissing('[data-untrusted-preview]')->assertNoSmoke();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
+
     it('can render `RichEditor` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
@@ -2248,6 +2344,46 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
+    it('keeps clipboard HTML inert until schema parsing', function (bool $canAttachFiles): void {
+        RichEditor::configureUsing(static fn (RichEditor $component) => $component->fileAttachments($canAttachFiles));
+
+        $this->actingAs(User::factory()->create());
+
+        $content = '[data-testid="default-rich-editor"] [role="textbox"]';
+        $image = $content . ' img[alt="Pasted illustration"]';
+
+        $page = visit('/rich-editor-browser-test')
+            ->fill($content, 'Replace this text')
+            ->keys($content, 'ControlOrMeta+a')
+            ->assertScript('window.getSelection().toString()', 'Replace this text');
+
+        $page->script(<<<'JS'
+            const bytes = Uint8Array.from(atob('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'), (character) => character.charCodeAt(0))
+            const url = URL.createObjectURL(new Blob([bytes], { type: 'image/gif' }))
+            const clipboard = new DataTransfer()
+            clipboard.setData('text/html', `<p>Pasted text.</p><img src="${url}" alt="Pasted illustration" onload="window.clipboardImageHandlerExecuted = true" onerror="window.clipboardImageHandlerExecuted = true"><audio src="data:audio/wav;base64,broken" onerror="window.clipboardMediaHandlerExecuted = true"></audio>`)
+            document.querySelector('[data-testid="default-rich-editor"] [role="textbox"]').dispatchEvent(new ClipboardEvent('paste', {
+                clipboardData: clipboard,
+                bubbles: true,
+                cancelable: true,
+            }))
+            JS);
+
+        $page
+            ->assertSeeIn($content, 'Pasted text.')
+            ->assertDontSeeIn($content, 'Replace this text')
+            ->assertVisible($image)
+            ->assertScript("document.querySelector('{$image}')?.naturalWidth", 1)
+            ->assertAttributeMissing($image, 'onload')
+            ->assertAttributeMissing($image, 'onerror')
+            ->assertNotPresent($content . ' audio')
+            ->assertScript('typeof window.clipboardImageHandlerExecuted', 'undefined')
+            ->assertScript('typeof window.clipboardMediaHandlerExecuted', 'undefined')
+            ->assertAttribute($content, 'contenteditable', 'true')
+            ->assertEnabled('[data-testid="save-editor"]')
+            ->assertNoSmoke();
+    })->with(['attachments enabled' => [true], 'attachments disabled' => [false]]);
+
     it('does not render custom block previews from imported HTML', function (): void {
         $this->actingAs(User::factory()->create());
 
@@ -2530,6 +2666,62 @@ describe('preventing file attachment tampering', function (): void {
         Storage::disk('local')->put('uploads/original.jpg', 'original');
         Storage::disk('local')->put('uploads/evil.jpg', 'evil');
     });
+
+    it('never saves or resolves attachment IDs hidden outside the field document tree', function (string $shape, bool $isJson): void {
+        $image = ['type' => 'image', 'attrs' => ['id' => 'uploads/evil.jpg', 'src' => '/foreign']];
+        $document = match ($shape) {
+            'renderedCustomBlock', 'rawHtmlMergeTag' => [
+                'type' => 'doc',
+                'content' => [[
+                    'type' => $shape,
+                    'html' => '<img data-id="uploads/evil.jpg" src="/foreign">',
+                ]],
+            ],
+            'image below text' => [
+                'type' => 'doc',
+                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Visible text', 'content' => [$image]]]]],
+            ],
+            'top-level text' => ['type' => 'text', 'text' => 'Invalid root', 'content' => [$image]],
+        };
+        $post = Post::factory()->create(['content' => '<p>Original</p>']);
+        $resolvedIds = [];
+        $editor = RichEditor::make('content')
+            ->json($isJson)
+            ->preventFileAttachmentPathTampering()
+            ->getFileAttachmentUrlUsing(function (string $file) use (&$resolvedIds): string {
+                $resolvedIds[] = $file;
+
+                return "/resolved/{$file}";
+            });
+        $schema = Schema::make(Livewire::make())
+            ->model($post)
+            ->statePath('data')
+            ->components([$editor])
+            ->fill();
+
+        $editor->rawState($document);
+        $state = $schema->getState();
+        $post->update(['content' => $isJson ? json_encode($state['content']) : $state['content']]);
+
+        expect($post->fresh()->content)->not->toContain('uploads/evil.jpg', '/foreign')
+            ->and($resolvedIds)->toBe([]);
+
+        $editor->rawState($document);
+
+        expect($editor->resolveFileAttachmentIds())->toBe([])
+            ->and(json_encode($editor->getRawState()))->not->toContain('uploads/evil.jpg', '/foreign')
+            ->and($resolvedIds)->toBe([]);
+
+        // Original stored content must not authorize the hidden image either.
+        $post->update(['content' => json_encode($document)]);
+
+        expect($editor->getOriginalFileAttachmentPaths())->toBe([]);
+
+        // A visible foreign image must still fail attachment validation.
+        $editor->rawState(['type' => 'doc', 'content' => [$image]]);
+
+        expect(fn () => $schema->getState())->toThrow(ValidationException::class);
+    })->with(['renderedCustomBlock', 'rawHtmlMergeTag', 'image below text', 'top-level text'])->with([false, true]);
 
     it('allows a tampered `data-id` to overwrite the record when `preventFileAttachmentPathTampering()` is not used', function (): void {
         $post = Post::factory()->create([

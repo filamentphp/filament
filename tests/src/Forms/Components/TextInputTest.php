@@ -7,6 +7,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
 
 use function Filament\Tests\livewire;
 
@@ -14,6 +15,82 @@ uses(TestCase::class);
 
 beforeEach(function (): void {
     Artisan::call('filament:assets');
+});
+
+describe('state type validation', function (): void {
+    it('validates textual, numeric, and integer state', function (string $mode, mixed $state, bool $isValid): void {
+        $input = TextInput::make('value');
+
+        if ($mode !== 'text') {
+            $input->{$mode}();
+        }
+
+        $validator = Validator::make(['value' => $state], ['value' => $input->getValidationRules()]);
+
+        expect($validator->passes())->toBe($isValid);
+
+        if (($mode === 'text') && (! $isValid)) {
+            expect($validator->failed()['value'])->toHaveKey('String');
+        }
+    })->with([
+        'text accepts strings' => ['text', 'hello', true],
+        'text accepts numeric strings' => ['text', '012345', true],
+        'text accepts empty strings' => ['text', '', true],
+        'text accepts null' => ['text', null, true],
+        'text rejects integers' => ['text', 123, false],
+        'text rejects arrays' => ['text', ['hello'], false],
+        'numeric accepts integers' => ['numeric', 123, true],
+        'numeric accepts numeric strings' => ['numeric', '123.45', true],
+        'numeric rejects text' => ['numeric', 'hello', false],
+        'numeric rejects arrays' => ['numeric', [123], false],
+        'integer accepts integers' => ['integer', 123, true],
+        'integer accepts integer strings' => ['integer', '123', true],
+        'integer rejects decimals' => ['integer', '123.45', false],
+        'integer rejects text' => ['integer', 'hello', false],
+        'integer rejects arrays' => ['integer', [123], false],
+    ]);
+
+    it('reevaluates dynamic numeric and integer conditions', function (string $mode, bool $usesClosure): void {
+        $isNumeric = false;
+        $input = TextInput::make('value');
+
+        if ($usesClosure) {
+            $input->{$mode}(static function () use (&$isNumeric): bool {
+                return $isNumeric;
+            });
+        }
+
+        foreach ([false, true, false] as $isNumeric) {
+            if (! $usesClosure) {
+                $input->{$mode}($isNumeric);
+            }
+
+            expect(Validator::make(['value' => 123], ['value' => $input->getValidationRules()])->passes())->toBe($isNumeric)
+                ->and(Validator::make(['value' => 'hello'], ['value' => $input->getValidationRules()])->passes())->toBe(! $isNumeric)
+                ->and(Validator::make(['value' => '123.45'], ['value' => $input->getValidationRules()])->passes())->toBe(($mode === 'numeric') || (! $isNumeric));
+        }
+    })->with(['numeric', 'integer'])->with([true, false]);
+
+    it('preserves explicit `numeric()` validation when toggling `integer()`', function (bool $usesClosure): void {
+        $isInteger = false;
+        $input = TextInput::make('value')->numeric();
+
+        if ($usesClosure) {
+            $input->integer(static function () use (&$isInteger): bool {
+                return $isInteger;
+            });
+        }
+
+        foreach ([false, true, false] as $isInteger) {
+            if (! $usesClosure) {
+                $input->integer($isInteger);
+            }
+
+            expect(Validator::make(['value' => 123], ['value' => $input->getValidationRules()])->passes())->toBeTrue()
+                ->and(Validator::make(['value' => '123.45'], ['value' => $input->getValidationRules()])->passes())->toBe(! $isInteger)
+                ->and(Validator::make(['value' => 'hello'], ['value' => $input->getValidationRules()])->passes())->toBeFalse();
+        }
+    })->with([true, false]);
 });
 
 describe('`email()`', function (): void {

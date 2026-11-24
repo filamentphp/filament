@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
 
 use function Filament\Tests\livewire;
 
@@ -28,6 +29,22 @@ it('can set and get state', function (): void {
         ->assertSchemaStateSet(['code' => '123456']);
 });
 
+it('rejects array state by default', function (): void {
+    $field = OneTimeCodeInput::make('value')->container(Schema::make(Livewire::make()));
+    $validator = Validator::make(['value' => ['unexpected']], ['value' => $field->getValidationRules()]);
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->failed()['value'])->toHaveKey('String');
+});
+
+it('accepts string and nullable state by default', function (): void {
+    $field = OneTimeCodeInput::make('value')->container(Schema::make(Livewire::make()));
+
+    foreach (['012345', '', null] as $state) {
+        expect(Validator::make(['value' => $state], ['value' => $field->getValidationRules()])->passes())->toBeTrue();
+    }
+});
+
 it('validates numeric input', function (): void {
     livewire(TestComponentWithOneTimeCodeInputValidation::class)
         ->fillForm(['code' => 'abcdef'])
@@ -42,12 +59,12 @@ it('validates digit length', function (): void {
         ->assertHasFormErrors(['code']);
 });
 
-it('passes validation with valid code', function (): void {
+it('passes validation with valid code', function (string $code): void {
     livewire(TestComponentWithOneTimeCodeInputValidation::class)
-        ->fillForm(['code' => '123456'])
+        ->fillForm(['code' => $code])
         ->call('save')
         ->assertHasNoFormErrors();
-});
+})->with(['123456', '012345', '000000']);
 
 describe('length', function (): void {
     it('defaults `getLength()` to `6`', function (): void {

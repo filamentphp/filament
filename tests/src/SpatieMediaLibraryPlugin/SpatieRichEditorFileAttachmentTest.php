@@ -7,7 +7,9 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Livewire\RichEditorFileAttachmentForm;
 use Filament\Tests\Fixtures\Models\MediaPostWithRichContent;
 use Filament\Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\MediaCollections\Models\Observers\MediaObserver;
 use Spatie\MediaLibrary\Support\FileRemover\DefaultFileRemover;
@@ -45,6 +47,132 @@ $makeParagraph = static function (string $text): array {
 beforeEach(function (): void {
     Storage::fake('tmp-for-tests');
     Storage::fake('public');
+});
+
+describe('provider authorization', function () use ($makeTipTapDocument, $makeImage): void {
+    it('does not resolve rejected IDs as disk paths in the field or renderer', function (?string $source) use ($makeTipTapDocument, $makeImage): void {
+        $storage = Storage::fake('local');
+        $path = 'outside-provider/harmless.txt';
+        $storage->put($path, 'Not a provider attachment');
+        $record = MediaPostWithRichContent::create(['title' => 'Original']);
+        $editor = RichEditor::make('content')
+            ->fileAttachmentsDisk('local')
+            ->fileAttachmentsVisibility('private');
+        $schema = Schema::make(Livewire::make())
+            ->model($record)
+            ->statePath('data')
+            ->components([$editor]);
+        $schema->getComponents();
+        $provider = $editor->getFileAttachmentProvider();
+        $renderer = $record->getRichContentAttribute('content')->getRenderer();
+
+        expect($storage->exists($path))->toBeTrue()
+            ->and($provider->getFileAttachmentUrl($path))->toBeNull();
+
+        Storage::partialMock()->shouldNotReceive('disk');
+
+        expect($editor->getFileAttachmentUrl($path))->toBeNull()
+            ->and($renderer->getFileAttachmentUrl($path))->toBeNull();
+
+        $schema->fill(['content' => $makeTipTapDocument([$makeImage($path, $source)])]);
+
+        expect(data_get($editor->getRawState(), 'content.0.attrs.src'))->toBeNull();
+    })->with([null, 'https://existing.test/harmless.txt']);
+
+    it('resolves provider-owned IDs in the field, renderer, and hydrated content', function () use ($makeTipTapDocument, $makeImage): void {
+        $record = MediaPostWithRichContent::create(['title' => 'Original']);
+        $media = $record->addMediaFromString('Owned attachment')->usingFileName('owned.txt')->toMediaCollection('content');
+        $record->getRichContentAttribute('content')->fileAttachmentsVisibility('public');
+        $editor = RichEditor::make('content');
+        Schema::make(Livewire::make())
+            ->model($record)
+            ->statePath('data')
+            ->components([$editor])
+            ->fill(['content' => $makeTipTapDocument([$makeImage($media->uuid, 'https://existing.test/stale.txt')])]);
+
+        expect($editor->getFileAttachmentProvider()->getFileAttachmentUrl($media->uuid))->toBe($media->getUrl())
+            ->and($editor->getFileAttachmentUrl($media->uuid))->toBe($media->getUrl())
+            ->and($record->getRichContentAttribute('content')->getRenderer()->getFileAttachmentUrl($media->uuid))->toBe($media->getUrl())
+            ->and(data_get($editor->getRawState(), 'content.0.attrs.src'))->toBe($media->getUrl());
+    });
+
+    it('keeps `getFileAttachmentUrlUsing()` authoritative over providers and disks', function (?string $url, bool $isProviderOwned): void {
+        $storage = Storage::fake('local');
+        $record = MediaPostWithRichContent::create(['title' => 'Original']);
+        $media = $record->addMediaFromString('Owned attachment')->usingFileName('owned.txt')->toMediaCollection('content');
+        $id = $isProviderOwned ? $media->uuid : 'outside-provider/harmless.txt';
+        $storage->put($id, 'Disk fallback must not be used');
+        $editor = RichEditor::make('content')
+            ->fileAttachmentsDisk('local')
+            ->fileAttachmentsVisibility('private')
+            ->getFileAttachmentUrlUsing(static fn (string $file): ?string => $url === null ? null : $url . $file)
+            ->container(Schema::make(Livewire::make())->model($record));
+
+        Storage::partialMock()->shouldNotReceive('disk');
+
+        expect($editor->getFileAttachmentUrl($id))->toBe($url === null ? null : $url . $id);
+    })->with([null, 'https://custom.test/'])->with([true, false]);
+
+    it('preserves authorized cross-record copies through saving while cleaning up unused media', function (bool $shouldCopy) use ($makeTipTapDocument, $makeImage): void {
+        Media::observe(app(MediaObserver::class));
+        config()->set('media-library.file_remover_class', DefaultFileRemover::class);
+
+        $storage = Storage::fake('local');
+        $path = 'outside-provider/harmless.txt';
+        $storage->put($path, 'Not a provider attachment');
+        $record = MediaPostWithRichContent::create(['title' => 'Original'])->fresh();
+        $unusedMedia = $record->addMediaFromString('Unused attachment')->usingFileName('unused.txt')->toMediaCollection('content');
+        $record->getRichContentAttribute('content')->fileAttachmentsVisibility('public');
+        $editor = RichEditor::make('content')
+            ->fileAttachmentsDisk('local')
+            ->fileAttachmentsVisibility('public');
+        $schema = Schema::make(Livewire::make())
+            ->model($record)
+            ->statePath('data')
+            ->components([$editor])
+            ->fill(['content' => $makeTipTapDocument([$makeImage($path)])]);
+
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->create('copied.txt'),
+        );
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", 'Explicitly authorized copy');
+        $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+        $provider = $editor->getFileAttachmentProvider();
+        $editor->saveFileAttachmentFromAnotherRecordUsing(static function (string $file) use ($shouldCopy, $provider, $temporaryFile, $path, $record): ?string {
+            if ((! $shouldCopy) || ($file !== $path)) {
+                return null;
+            }
+
+            $id = $provider->saveUploadedFileAttachment($temporaryFile);
+
+            // Include the newly copied media in the collection inspected by cleanup.
+            $record->load('media');
+
+            return $id;
+        });
+
+        $record->update($schema->getState());
+        $media = $record->fresh()->getMedia('content');
+
+        expect($media)->toHaveCount($shouldCopy ? 1 : 0)
+            ->and($editor->getFileAttachmentProvider()->getFileAttachmentUrl($path))->toBeNull()
+            ->and($editor->getFileAttachmentUrl($path))->toBeNull();
+        Storage::disk('public')->assertMissing($unusedMedia->getPathRelativeToRoot());
+
+        if ($shouldCopy) {
+            Storage::disk('public')->assertExists($media->first()->getPathRelativeToRoot());
+            $copiedMediaUuid = data_get($editor->getRawState(), 'content.0.attrs.id');
+
+            expect(strtolower($copiedMediaUuid))->toBe(strtolower($media->first()->uuid))
+                ->and(data_get($editor->getRawState(), 'content.0.attrs.src'))->toBe($media->first()->getUrl())
+                ->and($record->fresh()->content)->toContain('data-id="' . $copiedMediaUuid . '"', 'src="' . $media->first()->getUrl() . '"');
+        } else {
+            // Unresolved IDs remain in the cleanup exclusion list, not the provider's collection.
+            expect($editor->resolveFileAttachmentIds())->toBe([$path])
+                ->and(data_get($editor->getRawState(), 'content.0.attrs.id'))->toBe($path)
+                ->and(data_get($editor->getRawState(), 'content.0.attrs.src'))->toBeNull();
+        }
+    })->with([false, true]);
 });
 
 describe('create', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {

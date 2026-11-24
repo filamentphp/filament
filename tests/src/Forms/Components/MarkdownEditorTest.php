@@ -6,6 +6,8 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 use function Filament\Tests\livewire;
@@ -229,6 +231,24 @@ describe('toolbar buttons', function (): void {
 });
 
 describe('file attachments', function (): void {
+    it('resolves raw disk paths and honors custom resolver refusals', function (): void {
+        $storage = Storage::fake('public');
+        $path = 'attachments/harmless.txt';
+        $storage->put($path, 'Disk attachment');
+        $editor = MarkdownEditor::make('content')->fileAttachmentsDisk('public');
+
+        expect($editor->getFileAttachmentUrl($path))->toBe($storage->url($path))
+            ->and($editor->getFileAttachmentUrl('missing.txt'))->toBeNull();
+
+        $editor->getFileAttachmentUrlUsing(static fn (): ?string => null);
+
+        expect($editor->getFileAttachmentUrl($path))->toBeNull();
+
+        $editor->getFileAttachmentUrlUsing(null);
+
+        expect($editor->getFileAttachmentUrl($path))->toBe($storage->url($path));
+    });
+
     test('`hasFileAttachments()` returns `true` by default', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -542,6 +562,22 @@ describe('placeholder', function (): void {
 });
 
 describe('validation', function (): void {
+    it('rejects array state by default', function (): void {
+        $field = MarkdownEditor::make('value')->container(Schema::make(Livewire::make()));
+        $validator = Validator::make(['value' => ['unexpected']], ['value' => $field->getValidationRules()]);
+
+        expect($validator->fails())->toBeTrue()
+            ->and($validator->failed()['value'])->toHaveKey('String');
+    });
+
+    it('accepts string and nullable state by default', function (): void {
+        $field = MarkdownEditor::make('value')->container(Schema::make(Livewire::make()));
+
+        foreach (['012345', '', null] as $state) {
+            expect(Validator::make(['value' => $state], ['value' => $field->getValidationRules()])->passes())->toBeTrue();
+        }
+    });
+
     test('fields can be required', function (): void {
         $errors = [];
 

@@ -18,11 +18,14 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
+use Filament\Tests\Fixtures\Resources\Departments\CustomUpdateAuthorizationDepartmentResource;
+use Filament\Tests\Fixtures\Resources\Departments\EditAuthorizationDepartmentResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ManageTicketDepartments;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\Pages\ManageUserPosts;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
 
 use function Filament\Tests\livewire;
 
@@ -56,6 +59,50 @@ it('uses a fluent `recordTitleAttribute()` override with a nested related resour
 });
 
 describe('authorization', function (): void {
+    it('delegates edit authorization to the related resource', function (string $page): void {
+        app()->bind(DepartmentPolicy::class . '::update', static fn (): bool => true);
+        $ticket = Ticket::factory()->create();
+        $editable = Department::factory()->create(['name' => 'Editable']);
+        $readOnly = Department::factory()->create(['name' => 'Read only']);
+        $ticket->departments()->attach([$editable->getKey(), $readOnly->getKey()]);
+
+        $component = livewire($page, ['record' => $ticket->getKey()])
+            ->assertActionVisible(TestAction::make(EditAction::class)->table($editable))
+            ->assertActionHidden(TestAction::make(EditAction::class)->table($readOnly))
+            ->mountAction(TestAction::make(EditAction::class)->table($readOnly))
+            ->assertActionNotMounted();
+
+        expect($component->instance()->getAuthorizationResponse('update', $readOnly)->message())->toBe('Editing is disabled by the resource.');
+
+        app()->bind(DepartmentPolicy::class . '::update', static fn (): Response => Response::denyAsNotFound('Policy denial.'));
+
+        expect($component->instance()->getAuthorizationResponse('update', $editable))
+            ->denied()->toBeTrue()
+            ->status()->toBe(404)
+            ->message()->toBe('Policy denial.');
+
+        $component
+            ->assertActionHidden(TestAction::make(EditAction::class)->table($editable))
+            ->assertActionVisible(TestAction::make(DeleteAction::class)->table($readOnly))
+            ->callAction(TestAction::make(DeleteAction::class)->table($readOnly));
+
+        expect($readOnly->fresh()->trashed())->toBeTrue();
+    })->with([
+        'resource edit hook' => [ManageDepartmentsWithEditResourceAuthorization::class],
+        'ignores noncanonical update hook' => [ManageDepartmentsWithCustomUpdateResourceAuthorization::class],
+    ]);
+
+    it('honors relationship table `getEditAuthorizationResponse()` overrides', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $department = $ticket->departments->first();
+
+        livewire(ManageDepartmentsWithEditAuthorization::class, ['record' => $ticket->getKey()])
+            ->assertActionHidden(TestAction::make(EditAction::class)->table($department))
+            ->mountAction(TestAction::make(EditAction::class)->table($department))
+            ->assertActionNotMounted()
+            ->assertActionVisible(TestAction::make(DeleteAction::class)->table($department));
+    });
+
     it('can render page if the policy `viewAny()` returns `true`', function (): void {
         app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 
@@ -268,5 +315,25 @@ class ManageUserPostsWithRecordTitle extends ManageUserPosts
     public function table(Table $table): Table
     {
         return parent::table($table)->recordTitleAttribute('title');
+    }
+}
+
+class ManageDepartmentsWithEditResourceAuthorization extends ManageTicketDepartments
+{
+    protected static ?string $relatedResource = EditAuthorizationDepartmentResource::class;
+}
+
+class ManageDepartmentsWithCustomUpdateResourceAuthorization extends ManageTicketDepartments
+{
+    protected static ?string $relatedResource = CustomUpdateAuthorizationDepartmentResource::class;
+}
+
+class ManageDepartmentsWithEditAuthorization extends ManageTicketDepartments
+{
+    protected function getEditAuthorizationResponse(Model $record): Response
+    {
+        $response = parent::getEditAuthorizationResponse($record);
+
+        return $response->denied() ? $response : Response::deny();
     }
 }

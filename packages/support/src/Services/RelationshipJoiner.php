@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Services;
 
+use Illuminate\Contracts\Database\Query\Expression as ExpressionContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -9,6 +10,7 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use LogicException;
 
 class RelationshipJoiner
 {
@@ -35,15 +37,13 @@ class RelationshipJoiner
             $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
 
             if ($firstRelationshipJoinClause) {
-                $firstRelationshipJoinClause->type = 'left';
-
                 // Any "where" clauses that are scoped to the pivot table need to be moved to the join.
                 // It's expected that any scopes that don't apply to the pivot table do not have
                 // a `column` attribute set.
                 $relationshipQueryPivotWheres = Arr::where(
                     $relationshipQuery->getQuery()->wheres,
                     function (array $where) use ($relationship): bool {
-                        if (! array_key_exists('column', $where)) {
+                        if (! is_string($where['column'] ?? null)) {
                             return false;
                         }
 
@@ -51,6 +51,50 @@ class RelationshipJoiner
                     },
                 );
 
+                $query = $relationshipQuery->getQuery();
+
+                if (array_sum(array_map($this->countWhereBindings(...), $relationshipQueryPivotWheres))) {
+                    /** @var string | ExpressionContract $firstRelationshipJoinTable */
+                    $firstRelationshipJoinTable = $firstRelationshipJoinClause->table;
+
+                    // A derived first join can have table bindings absent from its `JoinClause`.
+                    if (! is_string($firstRelationshipJoinTable)) {
+                        throw new LogicException('Unable to preserve relationship query bindings.');
+                    }
+
+                    $whereBindings = $query->getRawBindings()['where'];
+                    $remainingWhereBindings = [];
+                    $pivotBindings = [];
+
+                    foreach ($query->wheres as $whereIndex => $where) {
+                        $bindingCount = $this->countWhereBindings($where);
+
+                        if ($bindingCount > count($whereBindings)) {
+                            throw new LogicException('Unable to preserve relationship query bindings.');
+                        }
+
+                        $bindings = array_splice($whereBindings, 0, $bindingCount);
+
+                        if (array_key_exists($whereIndex, $relationshipQueryPivotWheres)) {
+                            array_push($pivotBindings, ...$bindings);
+                        } else {
+                            array_push($remainingWhereBindings, ...$bindings);
+                        }
+                    }
+
+                    if (count($whereBindings)) {
+                        throw new LogicException('Unable to preserve relationship query bindings.');
+                    }
+
+                    $joinBindings = $query->getRawBindings()['join'];
+                    array_splice($joinBindings, count($firstRelationshipJoinClause->getBindings()), 0, $pivotBindings);
+
+                    $firstRelationshipJoinClause->addBinding($pivotBindings, 'where');
+                    $query->setBindings($joinBindings, 'join');
+                    $query->setBindings($remainingWhereBindings, 'where');
+                }
+
+                $firstRelationshipJoinClause->type = 'left';
                 $firstRelationshipJoinClause->wheres = array_merge(
                     $firstRelationshipJoinClause->wheres,
                     $relationshipQueryPivotWheres,
@@ -102,5 +146,27 @@ class RelationshipJoiner
         }
 
         return $relationshipQuery;
+    }
+
+    /**
+     * @param  array<string, mixed>  $where
+     */
+    private function countWhereBindings(array $where): int
+    {
+        // Expressions can conceal compiled subquery bindings that are no longer stored per clause.
+        foreach (Arr::flatten(Arr::except($where, ['query'])) as $value) {
+            if ($value instanceof ExpressionContract) {
+                throw new LogicException('Unable to preserve relationship query bindings.');
+            }
+        }
+
+        return match ($where['type']) {
+            'Basic' => 1,
+            'In', 'NotIn' => count($where['values']),
+            'between' => 2,
+            'Null', 'NotNull', 'Column', 'betweenColumns', 'InRaw', 'NotInRaw' => 0,
+            'Nested' => array_sum(array_map($this->countWhereBindings(...), $where['query']->wheres)),
+            default => throw new LogicException('Unable to preserve relationship query bindings.'),
+        };
     }
 }

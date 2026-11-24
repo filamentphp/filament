@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => 'או (OR)',
+                'picker_group' => 'לוגיקה',
                 'or' => 'או',
             ],
 

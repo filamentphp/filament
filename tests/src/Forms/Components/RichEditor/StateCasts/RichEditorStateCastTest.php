@@ -6,8 +6,13 @@ use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\PostWithRichContent;
+use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
+use Tiptap\Editor;
+use Tiptap\Marks\Bold;
+use Tiptap\Nodes\Paragraph;
 
 uses(TestCase::class);
 
@@ -125,7 +130,7 @@ describe('`set()`', function (): void {
         expect($src)->toBe('https://other.test/uploads/shared.jpg');
     });
 
-    it('keeps the existing `src` when both resolvers return `null`', function (): void {
+    it('keeps the existing `src` without a provider when both resolvers return `null`', function (): void {
         $editor = makeStateCastEditor();
 
         $editor->getFileAttachmentUrlUsing(static fn (): ?string => null);
@@ -145,6 +150,35 @@ describe('`set()`', function (): void {
 
         expect($src)->toBe('https://existing.test/file.jpg');
     });
+
+    it('only hydrates provider-backed images from trusted resolver URLs', function (?string $customUrl, ?string $crossRecordUrl, ?string $expectedUrl): void {
+        $editor = makeStateCastEditor();
+        $editor->getContainer()->model(new PostWithRichContent);
+        $editor->getFileAttachmentUrlFromAnotherRecordUsing(static fn (): ?string => $crossRecordUrl);
+
+        if ($customUrl !== null) {
+            $editor->getFileAttachmentUrlUsing(static fn (): string => $customUrl);
+        }
+
+        expect($editor->getFileAttachmentProvider()->getFileAttachmentUrl('rejected-id'))->toBeNull();
+
+        $cast = new RichEditorStateCast($editor);
+        $result = $cast->set('<p><img src="https://existing.test/file.jpg" data-id="rejected-id" /></p>');
+        $imageAttributes = null;
+
+        walkStateCastResult($result, function (array $node) use (&$imageAttributes): void {
+            if (($node['type'] ?? null) === 'image') {
+                $imageAttributes = $node['attrs'];
+            }
+        });
+
+        expect($imageAttributes)->toMatchArray(['id' => 'rejected-id', 'src' => $expectedUrl]);
+    })->with([
+        'provider rejection' => [null, null, null],
+        'custom URL' => ['https://custom.test/file.jpg', null, 'https://custom.test/file.jpg'],
+        'authorized cross-record URL' => [null, 'https://other.test/file.jpg', 'https://other.test/file.jpg'],
+        'custom URL takes precedence' => ['https://custom.test/file.jpg', 'https://other.test/file.jpg', 'https://custom.test/file.jpg'],
+    ]);
 
     it('does not attempt to resolve image `src` when `data-id` is blank', function (): void {
         $calls = 0;
@@ -685,6 +719,117 @@ it('preserves mentions with missing attributes during state casting', function (
     'omitted' => [[]],
     'null' => [['attrs' => null]],
 ]);
+
+describe('document boundary', function (): void {
+    it('preserves bound editors and valid string-typed plugin nodes and marks through hydration and storage', function (): void {
+        $editor = makeStateCastEditor()->json()->plugins([
+            new class extends TestRichContentPlugin
+            {
+                public function getTipTapPhpExtensions(): array
+                {
+                    return [app(StateCastPluginNode::class), app(StateCastPluginMark::class)];
+                }
+            },
+        ]);
+        $cast = app(RichEditorStateCast::class, ['richEditor' => $editor]);
+        $document = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'pluginParagraph',
+                'content' => [['type' => 'text', 'text' => 'Plugin content', 'marks' => [['type' => 'pluginBold']]]],
+            ]],
+        ];
+        $boundEditor = $editor->getTipTapEditor();
+        app()->bind(Editor::class, static fn (): Editor => $boundEditor);
+
+        expect($cast->get($cast->set($document)))->toBe($document)
+            ->and($editor->getTipTapEditor())->toBe($boundEditor);
+
+        $editor->json(false);
+
+        expect($cast->get($document))->toBe('<p><strong>Plugin content</strong></p>');
+    });
+
+    it('drops nested non-string node types without losing valid siblings or trusting previews', function (string $direction, bool $isEncoded): void {
+        $cast = app(RichEditorStateCast::class, ['richEditor' => makeStateCastEditor()->json()]);
+        $untrustedNodes = array_map(static fn (mixed $type): array => [
+            'type' => $type,
+            'attrs' => [
+                'id' => 'unknown-block',
+                'label' => 'Untrusted label',
+                'preview' => base64_encode('<span data-untrusted-preview="true">Marker</span>'),
+                'shouldApplyProseStylingToPreview' => true,
+            ],
+            'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Discarded subtree']]]],
+        ], [true, false, 1, 1.5, null, ['customBlock'], (object) ['name' => 'customBlock']]);
+        $document = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'blockquote',
+                'content' => [
+                    ...$untrustedNodes,
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Preserved sibling']]],
+                ],
+            ]],
+        ];
+
+        $result = $cast->{$direction}($isEncoded ? json_encode($document) : $document);
+
+        expect($result['content'][0]['content'])->toBe([
+            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Preserved sibling']]],
+        ])
+            ->and(json_encode($result))->not->toContain('preview', 'Untrusted label', 'Discarded subtree');
+    })->with(['get', 'set'])->with([false, true]);
+
+    it('drops non-string mark types while preserving text and valid marks', function (string $direction): void {
+        $cast = app(RichEditorStateCast::class, ['richEditor' => makeStateCastEditor()->json()]);
+        $untrustedMarks = array_map(static fn (mixed $type): array => ['type' => $type], [true, false, 1, 1.5, null, ['bold'], (object) ['name' => 'bold']]);
+
+        $result = $cast->{$direction}([
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'content' => [[
+                    'type' => 'text',
+                    'text' => 'Preserved text',
+                    'marks' => [...$untrustedMarks, ['type' => 'bold']],
+                ]],
+            ]],
+        ]);
+
+        expect($result['content'][0]['content'][0])->toBe([
+            'type' => 'text',
+            'text' => 'Preserved text',
+            'marks' => [['type' => 'bold']],
+        ]);
+    })->with(['get', 'set']);
+
+    it('fails closed for malformed document roots', function (string $direction, mixed $document): void {
+        $cast = app(RichEditorStateCast::class, ['richEditor' => makeStateCastEditor()->json()]);
+
+        expect($cast->{$direction}($document))
+            ->toBe(['type' => 'doc', 'content' => []]);
+    })->with(['get', 'set'])->with([
+        'boolean type' => [['type' => true, 'content' => [['type' => 'paragraph']]]],
+        'integer type' => [['type' => 1, 'content' => []]],
+        'array type' => [['type' => ['doc'], 'content' => []]],
+        'missing type' => [['content' => [['type' => 'paragraph']]]],
+        'non-document type' => [['type' => 'text', 'text' => 'Root text', 'content' => [['type' => 'image', 'attrs' => ['id' => 'foreign.jpg']]]]],
+        'list' => [[['type' => 'paragraph']]],
+        'scalar' => [true],
+        'encoded root' => ['{"type":true,"content":[{"type":"paragraph"}]}'],
+    ]);
+});
+
+class StateCastPluginNode extends Paragraph
+{
+    public static $name = 'pluginParagraph';
+}
+
+class StateCastPluginMark extends Bold
+{
+    public static $name = 'pluginBold';
+}
 
 class StateCastCustomBlock extends RichContentCustomBlock
 {

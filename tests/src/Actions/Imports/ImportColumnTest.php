@@ -115,6 +115,21 @@ describe('relationship columns', function (): void {
         'repeated and missing values' => ['A,A,Missing', true],
     ]);
 
+    it('cannot resolve records excluded by related constraints before pivot constraints', function () use ($makeColumn): void {
+        $user = User::factory()->create();
+        $excludedTeam = Team::factory()->create(['name' => 'Excluded']);
+        $includedTeam = Team::factory()->create(['name' => 'Included']);
+        $user->teams()->attach([$excludedTeam->getKey(), $includedTeam->getKey()], ['role' => 'member']);
+        $scopedUser = Mockery::mock(User::class)->makePartial();
+        $scopedUser->shouldReceive('teams')->andReturnUsing(static fn (): BelongsToMany => $user->teams()
+            ->where('teams.name', '!=', 'Excluded')
+            ->withPivotValue('role', 'member'));
+        $column = $makeColumn($scopedUser)->multiple()->relationship();
+
+        expect($scopedUser->teams()->get()->modelKeys())->toBe([$includedTeam->getKey()])
+            ->and($column->resolveRelatedRecords([$excludedTeam->getKey(), $includedTeam->getKey()])->modelKeys())->toBe([$includedTeam->getKey()]);
+    });
+
     it('preserves the selected columns in SQL Server relationship coverage probes', function () use ($makeColumn): void {
         $connection = app(SqlServerConnection::class, ['pdo' => $this->app['db']->connection()->getPdo()]);
         $this->app['config']->set('database.connections.import_sqlsrv', ['driver' => 'sqlsrv']);

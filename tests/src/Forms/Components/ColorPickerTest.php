@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
 
 use function Filament\Tests\livewire;
 
@@ -261,6 +262,24 @@ describe('state', function (): void {
         livewire(TestComponentWithColorPicker::class)
             ->fillForm(['color' => '#ff0000'])
             ->assertSchemaStateSet(['color' => '#ff0000']);
+    });
+});
+
+describe('validation', function (): void {
+    it('rejects array state by default', function (): void {
+        $field = ColorPicker::make('value')->container(Schema::make(Livewire::make()));
+        $validator = Validator::make(['value' => ['unexpected']], ['value' => $field->getValidationRules()]);
+
+        expect($validator->fails())->toBeTrue()
+            ->and($validator->failed()['value'])->toHaveKey('String');
+    });
+
+    it('accepts string and nullable state by default', function (): void {
+        $field = ColorPicker::make('value')->container(Schema::make(Livewire::make()));
+
+        foreach (['012345', '', null] as $state) {
+            expect(Validator::make(['value' => $state], ['value' => $field->getValidationRules()])->passes())->toBeTrue();
+        }
     });
 });
 

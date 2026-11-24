@@ -10,6 +10,7 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire as LivewireFixture;
 use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
 use Filament\Tests\Fixtures\Models\MediaPost;
+use Filament\Tests\Fixtures\Models\MediaPostWithConversions;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
+use Spatie\MediaLibrary\Conversions\ImageGenerators\Image;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Filament\Tests\livewire;
@@ -443,6 +445,34 @@ describe('integration', function (): void {
         expect($record->getMedia('avatars')->first()->file_name)->toEndWith('.jpg');
     });
 
+    it('applies the media filter before selecting abandoned files to delete', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $permittedMedia = $record->addMediaFromString('permitted')
+            ->usingFileName('permitted.txt')
+            ->toMediaCollection('avatars');
+        $excludedMedia = $record->addMediaFromString('excluded')
+            ->usingFileName('excluded.txt')
+            ->toMediaCollection('avatars');
+
+        $permittedMedia->refresh();
+        $excludedMedia->refresh();
+
+        SpatieMediaLibraryFileUpload::configureUsing(
+            static fn (SpatieMediaLibraryFileUpload $component) => $component
+                ->filterMediaUsing(static fn (Collection $media): Collection => $media->take(1)),
+            during: function () use ($record, $permittedMedia): void {
+                livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+                    ->assertFormSet(['avatar' => $permittedMedia->uuid])
+                    ->call('save')
+                    ->assertHasNoFormErrors();
+            },
+        );
+
+        expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
+            ->toBe([$permittedMedia->uuid, $excludedMedia->uuid]);
+    });
+
     it('does not affect media in other collections', function (): void {
         $record = MediaPost::factory()->create();
 
@@ -568,8 +598,91 @@ describe('integration', function (): void {
         // Resolving the file is scoped to the current record's media, so the other
         // record's file name and URL are never resolved.
         expect($uploadedFiles[$otherRecordMedia->uuid]['name'] ?? null)->toBeNull();
+        expect($uploadedFiles[$otherRecordMedia->uuid]['size'] ?? null)->toBeNull();
+        expect($uploadedFiles[$otherRecordMedia->uuid]['type'] ?? null)->toBeNull();
         expect($uploadedFiles[$otherRecordMedia->uuid]['url'] ?? null)->toBeNull();
     });
+
+    it('does not expose media outside the field scope when its UUID is submitted', function (string $collection, string $form): void {
+        $record = MediaPost::factory()->create();
+
+        $media = $record->addMediaFromString('excluded-content')
+            ->usingFileName('excluded.txt')
+            ->usingName('Excluded media')
+            ->withCustomProperties(['allowed' => false])
+            ->toMediaCollection($collection);
+
+        $component = livewire($form, ['record' => $record->fresh()])
+            ->set('data.avatar', [$media->uuid => $media->uuid])
+            ->instance();
+
+        $uploadedFiles = $component->form->getComponents()[0]->getUploadedFiles();
+
+        expect($uploadedFiles[$media->uuid]['name'] ?? null)->toBeNull();
+        expect($uploadedFiles[$media->uuid]['size'] ?? null)->toBeNull();
+        expect($uploadedFiles[$media->uuid]['type'] ?? null)->toBeNull();
+        expect($uploadedFiles[$media->uuid]['url'] ?? null)->toBeNull();
+    })->with([
+        'same record, other collection' => ['documents', SpatieMediaLibraryFileUploadForm::class],
+        'same collection, filter-excluded' => ['avatars', FilteredSpatieMediaLibraryFileUploadForm::class],
+    ]);
+
+    it('resolves permitted media metadata and original or conversion URLs', function (?string $conversion, string $expectedFile, string $visibility, bool $supportsTemporaryUrls): void {
+        $this->freezeTime();
+
+        config()->set('media-library.image_generators', [Image::class]);
+        config()->set('media-library.queue_conversions_by_default', false);
+        config()->set('media-library.version_urls', false);
+
+        Storage::fake('public', ['url' => 'https://media.example']);
+
+        // Laravel binds the URL builder to the filesystem adapter, so it cannot be `static`.
+        Storage::disk('public')->buildTemporaryUrlsUsing(
+            fn (string $path, DateTimeInterface $expiration): string => $supportsTemporaryUrls
+                ? "https://signed.example/{$path}?expires={$expiration->getTimestamp()}"
+                : throw new RuntimeException('This driver does not support creating temporary URLs.'),
+        );
+
+        $record = MediaPostWithConversions::create(['title' => 'Post with permitted media']);
+        $media = $record->addMedia(UploadedFile::fake()->image('avatar.jpg'))
+            ->usingName('Permitted media')
+            ->withCustomProperties(['allowed' => true])
+            ->toMediaCollection('avatars');
+
+        $media->refresh();
+
+        $component = livewire(FilteredSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->assertFormSet(['avatar' => [$media->uuid]])
+            ->set('data.avatar', [strtoupper($media->uuid) => strtoupper($media->uuid)])
+            ->instance();
+
+        $field = $component->form->getComponents()[0]
+            ->disk('public')
+            ->visibility($visibility)
+            ->conversion($conversion);
+
+        $expectedPath = "{$media->getKey()}/{$expectedFile}";
+        Storage::disk('public')->assertExists($expectedPath);
+
+        $expectedUrl = (($visibility === 'private') && $supportsTemporaryUrls)
+            ? "https://signed.example/{$expectedPath}?expires=" . now()->addMinutes(30)->endOfHour()->getTimestamp()
+            : "https://media.example/{$expectedPath}";
+
+        expect($field->getUploadedFiles()[strtoupper($media->uuid)])->toBe([
+            'name' => 'Permitted media',
+            'size' => $media->size,
+            'type' => 'image/jpeg',
+            'url' => $expectedUrl,
+        ]);
+    })->with([
+        'original' => [null, 'avatar.jpg'],
+        'generated conversion' => ['thumb', 'conversions/avatar-thumb.webp'],
+        'missing conversion falls back to original' => ['missing', 'avatar.jpg'],
+    ])->with([
+        'public URL' => ['public', true],
+        'private temporary URL' => ['private', true],
+        'unsupported temporary URL falls back to permanent URL' => ['private', false],
+    ]);
 });
 
 describe('reordering', function (): void {
@@ -597,6 +710,55 @@ describe('reordering', function (): void {
 
         expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
             ->toBe([$secondMedia->fresh()->uuid, $firstMedia->fresh()->uuid]);
+    });
+
+    it('ignores filter-excluded media submitted in reverse order while reordering permitted media', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $firstPermittedMedia = $record->addMediaFromString('first-permitted')
+            ->usingFileName('first-permitted.txt')
+            ->withCustomProperties(['allowed' => true])
+            ->withProperties(['order_column' => 1])
+            ->toMediaCollection('avatars');
+        $secondPermittedMedia = $record->addMediaFromString('second-permitted')
+            ->usingFileName('second-permitted.txt')
+            ->withCustomProperties(['allowed' => true])
+            ->withProperties(['order_column' => 2])
+            ->toMediaCollection('avatars');
+        $firstExcludedMedia = $record->addMediaFromString('first-excluded')
+            ->usingFileName('first-excluded.txt')
+            ->withCustomProperties(['allowed' => false])
+            ->withProperties(['order_column' => 7])
+            ->toMediaCollection('avatars');
+        $secondExcludedMedia = $record->addMediaFromString('second-excluded')
+            ->usingFileName('second-excluded.txt')
+            ->withCustomProperties(['allowed' => false])
+            ->withProperties(['order_column' => 9])
+            ->toMediaCollection('avatars');
+
+        $firstPermittedMedia->refresh();
+        $secondPermittedMedia->refresh();
+
+        $originalExcludedOrder = [$firstExcludedMedia->fresh()->order_column, $secondExcludedMedia->fresh()->order_column];
+
+        livewire(FilteredSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->assertFormSet(['avatar' => [
+                $firstPermittedMedia->uuid,
+                $secondPermittedMedia->uuid,
+            ]])
+            ->set('data.avatar', [
+                $secondExcludedMedia->uuid => $secondExcludedMedia->uuid,
+                strtoupper($secondPermittedMedia->uuid) => strtoupper($secondPermittedMedia->uuid),
+                $firstExcludedMedia->uuid => $firstExcludedMedia->uuid,
+                $firstPermittedMedia->uuid => $firstPermittedMedia->uuid,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect([$firstExcludedMedia->fresh()->order_column, $secondExcludedMedia->fresh()->order_column])
+            ->toBe($originalExcludedOrder);
+        expect((int) $secondPermittedMedia->fresh()->order_column)->toBe(1);
+        expect((int) $firstPermittedMedia->fresh()->order_column)->toBe(2);
     });
 
     it('only updates stored media order when the dynamic `reorderable()` condition is `true`', function (): void {
@@ -819,5 +981,18 @@ class SingleReorderableSpatieMediaLibraryFileUploadForm extends ReorderableSpati
             ])
             ->model($this->record)
             ->statePath('data');
+    }
+}
+
+class FilteredSpatieMediaLibraryFileUploadForm extends ReorderableSpatieMediaLibraryFileUploadForm
+{
+    public function form(Schema $form): Schema
+    {
+        $form = parent::form($form);
+
+        $form->getComponents()[0]
+            ->filterMediaUsing(static fn (Collection $media): Collection => $media->where('custom_properties.allowed', true));
+
+        return $form;
     }
 }

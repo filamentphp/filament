@@ -25,7 +25,7 @@ class EmailChangeVerificationController
         Notification::make()
             ->title(__('filament-panels::auth/http/controllers/email-change-verification-controller.notifications.verified.title'))
             ->body(__('filament-panels::auth/http/controllers/email-change-verification-controller.notifications.verified.body', [
-                'email' => decrypt($request->route('email')),
+                'email' => e(decrypt($request->route('email'))),
             ]))
             ->success()
             ->send();

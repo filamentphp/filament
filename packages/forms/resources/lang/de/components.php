@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Block',
+            'position' => ':label, Position :position von :count',
+            'moved' => ':label an Position :position von :count verschoben',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -116,6 +122,8 @@ return [
 
     'checkbox_list' => [
 
+        'required_description' => 'Wählen Sie mindestens eine Option aus.',
+
         'actions' => [
 
             'deselect_all' => [
@@ -161,6 +169,8 @@ return [
     ],
 
     'file_upload' => [
+
+        'placeholder' => 'Keine Dateien hochgeladen',
 
         'actions' => [
 
@@ -314,6 +324,14 @@ return [
                 'label' => 'Zeile löschen',
             ],
 
+            'move_down' => [
+                'label' => 'Nach unten verschieben',
+            ],
+
+            'move_up' => [
+                'label' => 'Nach oben verschieben',
+            ],
+
             'reorder' => [
                 'label' => 'Zeile neu ordnen',
             ],
@@ -342,6 +360,12 @@ return [
                 'label' => 'Wert',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Zeile',
+            'position' => ':label, Position :position von :count',
+            'moved' => ':label an Position :position von :count verschoben',
         ],
 
     ],
@@ -402,6 +426,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Eintrag',
+            'position' => ':label, Position :position von :count',
+            'moved' => ':label an Position :position von :count verschoben',
+        ],
 
         'columns' => [
 
@@ -829,6 +859,8 @@ return [
             'false' => 'Nein',
         ],
 
+        'error_message' => 'Die Optionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.',
+
         'loading_message' => 'Lädt...',
 
         'max_items_message' => 'Es können nur :count ausgewählt werden.',
@@ -838,6 +870,8 @@ return [
         'no_search_results_message' => 'Die Suche ergab keine Treffer.',
 
         'placeholder' => 'Wählen Sie eine Option',
+
+        'required_description' => 'Wählen Sie eine Option aus.',
 
         'searching_message' => 'Sucht...',
 
@@ -887,6 +921,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Wählen Sie mindestens eine Option aus.',
 
         'boolean' => [
             'true' => 'Ja',

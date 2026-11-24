@@ -10,6 +10,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Tests\livewire;
@@ -162,6 +163,24 @@ describe('extra Alpine attributes', function (): void {
 
         expect($bag)->toBeInstanceOf(ComponentAttributeBag::class);
         expect($bag->get('x-data'))->toBe('{}');
+    });
+});
+
+describe('validation', function (): void {
+    it('rejects array state by default', function (): void {
+        $field = CodeEditor::make('value')->container(Schema::make(Livewire::make()));
+        $validator = Validator::make(['value' => ['unexpected']], ['value' => $field->getValidationRules()]);
+
+        expect($validator->fails())->toBeTrue()
+            ->and($validator->failed()['value'])->toHaveKey('String');
+    });
+
+    it('accepts string and nullable state by default', function (): void {
+        $field = CodeEditor::make('value')->container(Schema::make(Livewire::make()));
+
+        foreach (['012345', '', null] as $state) {
+            expect(Validator::make(['value' => $state], ['value' => $field->getValidationRules()])->passes())->toBeTrue();
+        }
     });
 });
 

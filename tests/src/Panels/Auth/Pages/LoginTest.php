@@ -608,6 +608,22 @@ describe('validation', function (): void {
             ->assertHasFormErrors(['password' => ['required']]);
     });
 
+    it('can validate `password` is a string whether or not the email is registered', function (string $email): void {
+        User::factory()->create(['email' => 'registered@example.com']);
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $email,
+                'password' => ['password'],
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['password' => ['string']])
+            ->assertHasNoFormErrors(['email']);
+    })->with([
+        'registered email' => 'registered@example.com',
+        'unregistered email' => 'unregistered@example.com',
+    ]);
+
 });
 
 it('can fill the login form, authenticate, and redirect to the dashboard', function (): void {

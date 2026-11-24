@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\RichEditor\StateCasts;
 
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\RichEditorDocumentNormalizer;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Illuminate\Contracts\Support\Htmlable;
 use Tiptap\Editor;
@@ -19,10 +20,10 @@ class RichEditorStateCast implements StateCast
     public function get(mixed $state): string | array
     {
         $editor = $this->richEditor->getTipTapEditor()
-            ->setContent($state ?? [
+            ->setContent(app(RichEditorDocumentNormalizer::class)($state ?? [
                 'type' => 'doc',
                 'content' => [],
-            ]);
+            ]));
 
         if ($this->richEditor->getFileAttachmentsVisibility() === 'private') {
             $editor->descendants(function (object &$node): void {
@@ -70,7 +71,7 @@ class RichEditorStateCast implements StateCast
         $originalFileAttachmentPaths = $shouldPreventTampering ? $this->richEditor->getOriginalFileAttachmentPaths() : [];
 
         $editor = $this->richEditor->getTipTapEditor()
-            ->setContent($state ?? [
+            ->setContent(app(RichEditorDocumentNormalizer::class)($state ?? [
                 'type' => 'doc',
                 'content' => [
                     [
@@ -78,7 +79,7 @@ class RichEditorStateCast implements StateCast
                         'content' => [],
                     ],
                 ],
-            ])
+            ]))
             ->descendants(function (object &$node) use ($shouldPreventTampering, $originalFileAttachmentPaths): void {
                 if ($node->type !== 'image') {
                     return;
@@ -94,7 +95,9 @@ class RichEditorStateCast implements StateCast
                     return;
                 }
 
-                $node->attrs->src = $this->richEditor->getFileAttachmentUrl($node->attrs->id) ?? $this->richEditor->getFileAttachmentUrlFromAnotherRecord($node->attrs->id) ?? $node->attrs->src ?? null;
+                $node->attrs->src = $this->richEditor->getFileAttachmentUrl($node->attrs->id)
+                    ?? $this->richEditor->getFileAttachmentUrlFromAnotherRecord($node->attrs->id)
+                    ?? ($this->richEditor->getFileAttachmentProvider() ? null : ($node->attrs->src ?? null));
             });
 
         $editor->descendants(function (object &$node): void {
