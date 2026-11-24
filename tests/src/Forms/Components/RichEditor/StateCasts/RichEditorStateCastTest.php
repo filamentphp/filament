@@ -6,6 +6,7 @@ use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
@@ -129,7 +130,7 @@ describe('`set()`', function (): void {
         expect($src)->toBe('https://other.test/uploads/shared.jpg');
     });
 
-    it('keeps the existing `src` when both resolvers return `null`', function (): void {
+    it('keeps the existing `src` without a provider when both resolvers return `null`', function (): void {
         $editor = makeStateCastEditor();
 
         $editor->getFileAttachmentUrlUsing(static fn (): ?string => null);
@@ -149,6 +150,35 @@ describe('`set()`', function (): void {
 
         expect($src)->toBe('https://existing.test/file.jpg');
     });
+
+    it('only hydrates provider-backed images from trusted resolver URLs', function (?string $customUrl, ?string $crossRecordUrl, ?string $expectedUrl): void {
+        $editor = makeStateCastEditor();
+        $editor->getContainer()->model(new PostWithRichContent);
+        $editor->getFileAttachmentUrlFromAnotherRecordUsing(static fn (): ?string => $crossRecordUrl);
+
+        if ($customUrl !== null) {
+            $editor->getFileAttachmentUrlUsing(static fn (): string => $customUrl);
+        }
+
+        expect($editor->getFileAttachmentProvider()->getFileAttachmentUrl('rejected-id'))->toBeNull();
+
+        $cast = new RichEditorStateCast($editor);
+        $result = $cast->set('<p><img src="https://existing.test/file.jpg" data-id="rejected-id" /></p>');
+        $imageAttributes = null;
+
+        walkStateCastResult($result, function (array $node) use (&$imageAttributes): void {
+            if (($node['type'] ?? null) === 'image') {
+                $imageAttributes = $node['attrs'];
+            }
+        });
+
+        expect($imageAttributes)->toMatchArray(['id' => 'rejected-id', 'src' => $expectedUrl]);
+    })->with([
+        'provider rejection' => [null, null, null],
+        'custom URL' => ['https://custom.test/file.jpg', null, 'https://custom.test/file.jpg'],
+        'authorized cross-record URL' => [null, 'https://other.test/file.jpg', 'https://other.test/file.jpg'],
+        'custom URL takes precedence' => ['https://custom.test/file.jpg', 'https://other.test/file.jpg', 'https://custom.test/file.jpg'],
+    ]);
 
     it('does not attempt to resolve image `src` when `data-id` is blank', function (): void {
         $calls = 0;

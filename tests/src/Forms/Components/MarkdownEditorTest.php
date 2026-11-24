@@ -6,6 +6,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -230,6 +231,24 @@ describe('toolbar buttons', function (): void {
 });
 
 describe('file attachments', function (): void {
+    it('resolves raw disk paths and honors custom resolver refusals', function (): void {
+        $storage = Storage::fake('public');
+        $path = 'attachments/harmless.txt';
+        $storage->put($path, 'Disk attachment');
+        $editor = MarkdownEditor::make('content')->fileAttachmentsDisk('public');
+
+        expect($editor->getFileAttachmentUrl($path))->toBe($storage->url($path))
+            ->and($editor->getFileAttachmentUrl('missing.txt'))->toBeNull();
+
+        $editor->getFileAttachmentUrlUsing(static fn (): ?string => null);
+
+        expect($editor->getFileAttachmentUrl($path))->toBeNull();
+
+        $editor->getFileAttachmentUrlUsing(null);
+
+        expect($editor->getFileAttachmentUrl($path))->toBe($storage->url($path));
+    });
+
     test('`hasFileAttachments()` returns `true` by default', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
