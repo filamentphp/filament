@@ -54,8 +54,11 @@ class RelationshipJoiner
                 $query = $relationshipQuery->getQuery();
 
                 if (array_sum(array_map($this->countWhereBindings(...), $relationshipQueryPivotWheres))) {
+                    /** @var string | ExpressionContract $firstRelationshipJoinTable */
+                    $firstRelationshipJoinTable = $firstRelationshipJoinClause->table;
+
                     // A derived first join can have table bindings absent from its `JoinClause`.
-                    if (! is_string($firstRelationshipJoinClause->table)) {
+                    if (! is_string($firstRelationshipJoinTable)) {
                         throw new LogicException('Unable to preserve relationship query bindings.');
                     }
 
