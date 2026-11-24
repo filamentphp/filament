@@ -5,7 +5,12 @@ use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Auth\Notifications\VerifyEmailChange;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
 use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Notifications\Livewire\Notifications;
+use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Notifications\NotificationMailbox;
+use Filament\Schemas\Components\Component;
 use Filament\Tests\Fixtures\Models\ProfileEmailChangeMailUser;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\EditProfileWithCustomRedirect;
@@ -399,6 +404,44 @@ describe('saving profile', function (): void {
         });
     });
 
+    it('renders the proposed email literally in the verification sent notification', function (string $newEmail): void {
+        Notification::fake();
+
+        Filament::getCurrentOrDefaultPanel()
+            ->profile(EditProfileWithCustomEmailField::class)
+            ->emailChangeVerification();
+
+        __('filament-panels::auth/pages/edit-profile.notifications.email_change_verification_sent');
+
+        app('translator')->addLines([
+            'auth/pages/edit-profile.notifications.email_change_verification_sent.title' => 'Sent to :email',
+        ], 'en', 'filament-panels');
+
+        livewire(EditProfileWithCustomEmailField::class)
+            ->fillForm([
+                'email' => $newEmail,
+                'currentPassword' => 'password',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        app(NotificationMailbox::class)->flush();
+
+        $notifications = new Notifications;
+        $notifications->mount();
+        $notifications->pullNotifications();
+        $notification = $notifications->notifications->sole(static fn (FilamentNotification $notification): bool => str_starts_with($notification->getTitle(), 'Sent to '));
+
+        expect($notification->getTitle())->toBe('Sent to ' . e($newEmail))
+            ->and($notification->getBody())->toContain(e($newEmail));
+
+        $document = new DOMDocument;
+        @$document->loadHTML('<?xml encoding="UTF-8">' . $notification->toHtml());
+
+        expect(substr_count($document->textContent, $newEmail))->toBe(2)
+            ->and((new DOMXPath($document))->query('//a | //img | //em | //code | //style'))->toHaveCount(0);
+    })->with('proposed email addresses');
+
     it('keeps the queued email change notice addressed to the original mailbox', function (bool $hasCustomMailRoute): void {
         Queue::fake();
 
@@ -626,3 +669,11 @@ it('can validate', function (array $formData, array $errors): void {
         ['currentPassword' => ['current_password']],
     ],
 ]);
+
+class EditProfileWithCustomEmailField extends EditProfile
+{
+    protected function getEmailFormComponent(): Component
+    {
+        return TextInput::make('email')->required();
+    }
+}

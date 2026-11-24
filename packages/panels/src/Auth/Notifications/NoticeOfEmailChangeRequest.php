@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
 class NoticeOfEmailChangeRequest extends Notification implements ShouldQueue
 {
@@ -30,12 +31,20 @@ class NoticeOfEmailChangeRequest extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject(__('filament-panels::auth/notifications/notice-of-email-change-request.subject'))
-            ->line(__('filament-panels::auth/notifications/notice-of-email-change-request.lines.0', ['email' => $this->newEmail]))
-            ->line(__('filament-panels::auth/notifications/notice-of-email-change-request.lines.1', ['email' => $this->newEmail]))
-            ->line(__('filament-panels::auth/notifications/notice-of-email-change-request.lines.2', ['email' => $this->newEmail]))
-            ->line(__('filament-panels::auth/notifications/notice-of-email-change-request.lines.3', ['email' => $this->newEmail]))
-            ->action(__('filament-panels::auth/notifications/notice-of-email-change-request.action'), $this->blockVerificationUrl);
+        $message = (new MailMessage)
+            ->subject(__('filament-panels::auth/notifications/notice-of-email-change-request.subject'));
+
+        foreach (range(0, 3) as $lineIndex) {
+            $line = __("filament-panels::auth/notifications/notice-of-email-change-request.lines.{$lineIndex}", ['email' => $this->newEmail]);
+
+            // HTML paragraphs bypass Markdown. Protect backslashes and line breaks from renderer normalization.
+            $message->line(new HtmlString('<p>' . strtr(e($line), [
+                '\\' => '&#92;',
+                "\r" => '&#13;',
+                "\n" => '&#10;',
+            ]) . '</p>'));
+        }
+
+        return $message->action(__('filament-panels::auth/notifications/notice-of-email-change-request.action'), $this->blockVerificationUrl);
     }
 }

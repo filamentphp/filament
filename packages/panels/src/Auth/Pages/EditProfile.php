@@ -419,8 +419,8 @@ class EditProfile extends Page
     {
         return FilamentNotification::make()
             ->success()
-            ->title(__('filament-panels::auth/pages/edit-profile.notifications.email_change_verification_sent.title', ['email' => $newEmail]))
-            ->body(__('filament-panels::auth/pages/edit-profile.notifications.email_change_verification_sent.body', ['email' => $newEmail]));
+            ->title(__('filament-panels::auth/pages/edit-profile.notifications.email_change_verification_sent.title', ['email' => e($newEmail)]))
+            ->body(__('filament-panels::auth/pages/edit-profile.notifications.email_change_verification_sent.body', ['email' => e($newEmail)]));
     }
 
     protected function getSavedNotificationTitle(): ?string
