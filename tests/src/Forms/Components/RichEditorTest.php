@@ -2248,6 +2248,46 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
+    it('keeps clipboard HTML inert until schema parsing', function (bool $canAttachFiles): void {
+        RichEditor::configureUsing(static fn (RichEditor $component) => $component->fileAttachments($canAttachFiles));
+
+        $this->actingAs(User::factory()->create());
+
+        $content = '[data-testid="default-rich-editor"] [role="textbox"]';
+        $image = $content . ' img[alt="Pasted illustration"]';
+
+        $page = visit('/rich-editor-browser-test')
+            ->fill($content, 'Replace this text')
+            ->keys($content, 'ControlOrMeta+a')
+            ->assertScript('window.getSelection().toString()', 'Replace this text');
+
+        $page->script(<<<'JS'
+            const bytes = Uint8Array.from(atob('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'), (character) => character.charCodeAt(0))
+            const url = URL.createObjectURL(new Blob([bytes], { type: 'image/gif' }))
+            const clipboard = new DataTransfer()
+            clipboard.setData('text/html', `<p>Pasted text.</p><img src="${url}" alt="Pasted illustration" onload="window.clipboardImageHandlerExecuted = true" onerror="window.clipboardImageHandlerExecuted = true"><audio src="data:audio/wav;base64,broken" onerror="window.clipboardMediaHandlerExecuted = true"></audio>`)
+            document.querySelector('[data-testid="default-rich-editor"] [role="textbox"]').dispatchEvent(new ClipboardEvent('paste', {
+                clipboardData: clipboard,
+                bubbles: true,
+                cancelable: true,
+            }))
+            JS);
+
+        $page
+            ->assertSeeIn($content, 'Pasted text.')
+            ->assertDontSeeIn($content, 'Replace this text')
+            ->assertVisible($image)
+            ->assertScript("document.querySelector('{$image}')?.naturalWidth", 1)
+            ->assertAttributeMissing($image, 'onload')
+            ->assertAttributeMissing($image, 'onerror')
+            ->assertNotPresent($content . ' audio')
+            ->assertScript('typeof window.clipboardImageHandlerExecuted', 'undefined')
+            ->assertScript('typeof window.clipboardMediaHandlerExecuted', 'undefined')
+            ->assertAttribute($content, 'contenteditable', 'true')
+            ->assertEnabled('[data-testid="save-editor"]')
+            ->assertNoSmoke();
+    })->with(['attachments enabled' => [true], 'attachments disabled' => [false]]);
+
     it('does not render custom block previews from imported HTML', function (): void {
         $this->actingAs(User::factory()->create());
 
