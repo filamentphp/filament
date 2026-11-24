@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Resource\Concerns;
 
+use Closure;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
@@ -141,7 +142,12 @@ trait BelongsToTenant
             return;
         }
 
-        $model::addGlobalScope($panel->getTenancyScopeName(), function (Builder $query) use ($panel): void {
+        $model::addGlobalScope($panel->getTenancyScopeName(), static::getTenancyModelGlobalScope($panel));
+    }
+
+    protected static function getTenancyModelGlobalScope(Panel $panel): Closure
+    {
+        return function (Builder $query) use ($panel): void {
             if (Filament::getCurrentPanel() !== $panel) {
                 return;
             }
@@ -153,7 +159,7 @@ trait BelongsToTenant
             }
 
             static::scopeEloquentQueryToTenant($query, $tenant);
-        });
+        };
     }
 
     public static function observeTenancyModelCreation(Panel $panel): void

@@ -11,6 +11,7 @@ use Filament\Tests\Fixtures\Resources\Tenancy\HasOneThroughOwnedPosts\HasOneThro
 use Filament\Tests\Fixtures\Resources\Tenancy\NonTenantScopedUsers\NonTenantScopedUserResource;
 use Filament\Tests\Fixtures\Resources\Tenancy\TenantScopedUsers\TenantScopedUserResource;
 use Filament\Tests\Panels\Pages\TestCase;
+use Illuminate\Database\Eloquent\Builder;
 
 uses(TestCase::class);
 
@@ -59,6 +60,68 @@ it('can scope a resource to the current tenant', function (): void {
     expect($results->pluck('id')->toArray())
         ->toContain($userInTenant->id)
         ->not->toContain($userNotInTenant->id);
+});
+
+it('scopes each resource sharing a model through its own tenant ownership relationship', function (bool $shouldRegisterLooserRelationshipFirst): void {
+    $team = Team::factory()->create();
+    $otherTeam = Team::factory()->create();
+
+    $owner = User::factory()->create();
+    $owner->teams()->attach($team, ['role' => 'owner']);
+
+    $member = User::factory()->create();
+    $member->teams()->attach($team, ['role' => 'member']);
+    $member->teams()->attach($otherTeam, ['role' => 'owner']);
+
+    $otherOwner = User::factory()->create();
+    $otherOwner->teams()->attach($otherTeam, ['role' => 'owner']);
+
+    $resources = $shouldRegisterLooserRelationshipFirst
+        ? [TenantScopedUserResource::class, OwnedTeamScopedUserResource::class]
+        : [OwnedTeamScopedUserResource::class, TenantScopedUserResource::class];
+
+    $panel = Panel::make()
+        ->id('shared-model-tenancy')
+        ->tenant(Team::class)
+        ->resources($resources);
+
+    Filament::setCurrentPanel($panel);
+    Filament::setTenant($team);
+    $panel->bootTenancy();
+
+    $ownedUsersQuery = OwnedTeamScopedUserResource::getEloquentQuery();
+    $usersQuery = TenantScopedUserResource::getEloquentQuery();
+
+    expect($ownedUsersQuery->pluck('id')->all())->toBe([$owner->id])
+        ->and($usersQuery->orderBy('id')->pluck('id')->all())->toBe([$owner->id, $member->id])
+        ->and(OwnedTeamScopedUserResource::resolveRecordRouteBinding($owner->id))->toBeSameModel($owner)
+        ->and(OwnedTeamScopedUserResource::resolveRecordRouteBinding($member->id))->toBeNull()
+        ->and(OwnedTeamScopedUserResource::resolveRecordRouteBinding($otherOwner->id))->toBeNull()
+        ->and(TenantScopedUserResource::resolveRecordRouteBinding($member->id))->toBeSameModel($member)
+        ->and(TenantScopedUserResource::resolveRecordRouteBinding($otherOwner->id))->toBeNull();
+
+    // Model queries retain the first registered resource's scope.
+    expect(User::query()->orderBy('id')->pluck('id')->all())
+        ->toBe($shouldRegisterLooserRelationshipFirst ? [$owner->id, $member->id] : [$owner->id]);
+
+    Filament::setTenant($otherTeam);
+
+    expect($ownedUsersQuery->orderBy('id')->pluck('id')->all())->toBe([$member->id, $otherOwner->id])
+        ->and($usersQuery->pluck('id')->all())->toBe([$member->id, $otherOwner->id]);
+})->with([
+    'looser relationship first' => true,
+    'stricter relationship first' => false,
+]);
+
+it('allows a resource override to remove the named tenant scope after calling `parent::getEloquentQuery()`', function (): void {
+    $team = Team::factory()->create();
+    $userNotInTenant = User::factory()->create();
+
+    Filament::setTenant($team);
+    TenantScopedUserResource::registerTenancyModelGlobalScope(Filament::getCurrentOrDefaultPanel());
+
+    expect(OwnedTeamScopedUserResource::getEloquentQuery()->find($userNotInTenant->id))->toBeNull()
+        ->and(UnscopedOwnedTeamUserResource::getEloquentQuery()->find($userNotInTenant->id))->toBeSameModel($userNotInTenant);
 });
 
 it('can register tenancy for a configured resource', function (): void {
@@ -159,3 +222,17 @@ it('can scope a resource to the current tenant through a `HasOneThrough` ownersh
         ->toContain($postInTenant->getKey())
         ->not->toContain($postNotInTenant->getKey());
 });
+
+class OwnedTeamScopedUserResource extends TenantScopedUserResource
+{
+    protected static ?string $tenantOwnershipRelationshipName = 'ownedTeams';
+}
+
+class UnscopedOwnedTeamUserResource extends OwnedTeamScopedUserResource
+{
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScope(Filament::getCurrentOrDefaultPanel()->getTenancyScopeName());
+    }
+}
