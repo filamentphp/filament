@@ -1477,6 +1477,101 @@ describe('authorization', function (): void {
             expect($action->isVisible())->toBeFalse();
         });
     });
+
+    describe('feedback-only URLs', function (): void {
+        it('does not evaluate or serialize a denied feedback URL', function (string $feedback): void {
+            $wasUrlEvaluated = false;
+            $action = Action::make('download')
+                ->authorize(static fn (): Response => Response::deny('Private download denied.'))
+                ->{$feedback}()
+                ->url(static function () use (&$wasUrlEvaluated): string {
+                    $wasUrlEvaluated = true;
+
+                    return '/private/download?signature=configured-secret';
+                });
+
+            expect($action->getUrl())->toBeNull()
+                ->and($action->toArray()['url'])->toBeNull()
+                ->and($wasUrlEvaluated)->toBeFalse();
+        })->with(['authorizationNotification', 'authorizationTooltip']);
+
+        it('honors authorization feedback when rendering URL actions', function (string $feedback, string $view, bool $shouldPostToUrl, bool $isAllowed): void {
+            $url = '/private/download?signature=configured-secret';
+            $action = Action::make('download')
+                ->{$view}()
+                ->icon(Heroicon::OutlinedArrowDownTray)
+                ->authorize(static fn (): Response => $isAllowed ? Response::allow() : Response::deny('Private download denied.'))
+                ->{$feedback}()
+                ->url($url, shouldOpenInNewTab: true)
+                ->postToUrl($shouldPostToUrl);
+
+            $html = $action->toHtml();
+
+            if ($isAllowed) {
+                expect($html)
+                    ->toContain($shouldPostToUrl ? '<form' : '<a')
+                    ->toContain(($shouldPostToUrl ? 'action' : 'href') . '="' . $url . '"')
+                    ->not->toContain('wire:click=');
+
+                if (! $shouldPostToUrl) {
+                    expect($html)->toContain('target="_blank"');
+                }
+
+                expect($action->getUrl())->toBe($url)
+                    ->and($action->toArray()['url'])->toBe($url);
+
+                return;
+            }
+
+            expect($html)
+                ->not->toContain($url)
+                ->not->toContain('<form')
+                ->not->toContain('href=')
+                ->toContain('<button');
+
+            expect($action->getUrl())->toBeNull()
+                ->and($action->toArray()['url'])->toBeNull()
+                ->and($action->isVisible())->toBeTrue();
+
+            if ($feedback === 'authorizationNotification') {
+                expect($html)->toContain('wire:click="mountAction(')
+                    ->and($action->isDisabled())->toBeFalse();
+            } else {
+                expect($html)->not->toContain('wire:click=')
+                    ->and($action->isDisabled())->toBeTrue()
+                    ->and($action->getTooltip())->toBe('Private download denied.');
+            }
+        })->with(['authorizationNotification', 'authorizationTooltip'])
+            ->with(['button', 'link', 'iconButton', 'badge', 'grouped'])
+            ->with([false, true])
+            ->with([false, true]);
+
+        it('honors default authorization and URLs for feedback actions', function (string $feedback, bool $isAllowed, bool $shouldPostToUrl): void {
+            $component = app(AuthorizationFeedbackUrlActions::class);
+            $component->isAllowed = $isAllowed;
+            $component->shouldPostToUrl = $shouldPostToUrl;
+
+            $action = $component->downloadAction()->livewire($component)
+                ->authorizationNotification(false)
+                ->{$feedback}();
+
+            expect($action->getUrl())->toBe($isAllowed ? '/private/download?signature=default-secret' : null)
+                ->and($action->toArray()['url'])->toBe($isAllowed ? '/private/download?signature=default-secret' : null);
+
+            if ($isAllowed) {
+                expect($action->toHtml())->toContain(($shouldPostToUrl ? 'action' : 'href') . '="/private/download?signature=default-secret"');
+            } else {
+                expect($action->toHtml())->not->toContain('default-secret')->not->toContain('<form');
+            }
+        })->with(['authorizationNotification', 'authorizationTooltip'])->with([false, true])->with([false, true]);
+
+        it('delivers the denial notification through the URL action mount handler', function (bool $shouldPostToUrl): void {
+            livewire(AuthorizationFeedbackUrlActions::class, ['shouldPostToUrl' => $shouldPostToUrl])
+                ->mountAction('download')
+                ->assertActionNotMounted()
+                ->assertNotified('Private download denied.');
+        })->with([false, true]);
+    });
 });
 describe('authorization enforcement', function (): void {
     // These tests prove that INVOKING a hidden, disabled, or unauthorized action is a
@@ -2460,6 +2555,35 @@ describe('record visibility and authorization', function (): void {
             ->and($action->isAuthorized())->toBeFalse();
     });
 });
+
+class AuthorizationFeedbackUrlActions extends Actions
+{
+    public bool $isAllowed = false;
+
+    public bool $shouldPostToUrl = false;
+
+    protected function getHeaderActions(): array
+    {
+        return [$this->downloadAction()];
+    }
+
+    public function downloadAction(): Action
+    {
+        return Action::make('download')
+            ->authorizationNotification()
+            ->postToUrl($this->shouldPostToUrl);
+    }
+
+    public function getDefaultActionAuthorizationResponse(Action $action): ?Response
+    {
+        return $this->isAllowed ? Response::allow() : Response::deny('Private download denied.');
+    }
+
+    public function getDefaultActionUrl(Action $action): ?string
+    {
+        return '/private/download?signature=default-secret';
+    }
+}
 
 class RestoredActions extends Actions
 {
