@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Throwable;
@@ -47,14 +48,18 @@ class DissociateBulkAction extends BulkAction
         $this->action(function (): void {
             $this->process(function (DissociateBulkAction $action, EloquentCollection | Collection | LazyCollection $records, Table $table): void {
                 if (! $action->shouldFetchSelectedRecords()) {
-                    /** @var HasMany $relationship */
+                    /** @var HasMany | MorphMany $relationship */
                     $relationship = $table->getRelationship();
 
                     try {
+                        $attributes = [$relationship->getQualifiedForeignKeyName() => null];
+
+                        if ($relationship instanceof MorphMany) {
+                            $attributes[$relationship->getQualifiedMorphType()] = null;
+                        }
+
                         $action->reportBulkProcessingSuccessfulRecordsCount(
-                            $action->getSelectedRecordsQuery()->update([
-                                $relationship->getQualifiedForeignKeyName() => null,
-                            ]),
+                            $action->getSelectedRecordsQuery()->update($attributes),
                         );
                     } catch (Throwable $exception) {
                         $action->reportCompleteBulkProcessingFailure();

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('images', function (Blueprint $table): void {
             $table->id();
-            $table->morphs('imageable');
+            $table->nullableMorphs('imageable');
             $table->string('url');
             $table->string('alt_text')->nullable();
             $table->timestamps();
