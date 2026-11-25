@@ -617,7 +617,9 @@ You can access various additional utilities if your action is defined in a schem
 - `$schemaState` - The current value of the schema that this action belongs to, like the current repeater item.
 - `$schemaGet` - A function for retrieving values from the schema data. Validation is not run on form fields.
 - `$schemaSet` - A function for setting values in the schema data.
-- `$schemaOperation` - The current operation being performed by the schema. Usually `create`, `edit`, or `view`.
+- `$schemaOperation` - The current operation of the schema containing the action. This may be `create`, `edit`, `view`, or a custom operation name.
+
+For actions inside another action's modal schema, `$schemaOperation` is the containing modal's operation. For example, an action defined in a `manage` modal's schema receives `manage`, while components in its own nested `edit` modal receive `manage.edit`. See [using the current operation in a modal schema](modals#using-the-current-operation-in-a-modal-schema).
 
 For more information, please visit the [Schemas section](../schemas/overview#component-utility-injection).
 
