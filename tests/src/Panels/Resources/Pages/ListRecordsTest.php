@@ -8,10 +8,12 @@ use Filament\Tests\Models\User;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPosts;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPostsWithDisabledEditAction;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPostsWithDynamicTabs;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource\Pages\ListUsersWithRelationshipInViewAction;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Js;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
@@ -27,6 +29,33 @@ it('can render users page', function () {
     $this->get(UserResource::getUrl('index'))
         ->assertSuccessful();
 });
+
+it('preserves dynamic resource tab keys across HTML and JavaScript boundaries', function (string $tabKey): void {
+    $post = Post::factory()->create(['title' => $tabKey]);
+    $otherPost = Post::factory()->create(['title' => 'Other category']);
+    $livewire = livewire(ListPostsWithDynamicTabs::class)
+        ->assertCanSeeTableRecords([$post, $otherPost]);
+
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">' . $livewire->html());
+    $xpath = new DOMXPath($document);
+    $button = $xpath->query('//*[@data-testid="stored-tab-' . $post->getKey() . '"]')->item(0);
+
+    expect($button->getAttribute('wire:click'))->toBe('$set(\'activeTab\', ' . Js::from($tabKey) . ')')
+        ->and($xpath->query('//*[@data-key-marker]')->length)->toBe(0);
+
+    $livewire->set('activeTab', $tabKey)
+        ->assertSet('activeTab', $tabKey)
+        ->assertCanSeeTableRecords([$post])
+        ->assertCanNotSeeTableRecords([$otherPost]);
+})->with([
+    'literal' => 'published',
+    'numeric' => '12',
+    'punctuation' => 'in-progress:review@one+two,three=value~end',
+    'Unicode and backslash' => '雪 & café\\archive',
+    'quotes and markup' => 'category" data-key-marker="yes"><span data-key-marker="yes">\'&',
+    'entity-shaped' => 'category&quot;&amp;&#39;\\雪',
+]);
 
 it('does not save relationships when calling a table `ViewAction` with a disabled form', function (): void {
     $user = User::factory()->create();

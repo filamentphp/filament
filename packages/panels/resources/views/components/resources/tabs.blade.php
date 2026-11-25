@@ -21,7 +21,7 @@
                 :badge-icon-position="$tab->getBadgeIconPosition()"
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
-                :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                :wire:click="'$set(\'activeTab\', ' . \Illuminate\Support\Js::from(filled($tabKey) ? $tabKey : null) . ')'"
                 :attributes="$tab->getExtraAttributeBag()"
             >
                 {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}

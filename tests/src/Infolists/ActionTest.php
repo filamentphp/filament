@@ -202,4 +202,4 @@ it('can address actions in repeated items without unsafe keys leaking into click
     }
 
     expect(array_unique($componentKeys))->toHaveCount(count($items));
-})->with(["part'one", 'a.b', '{first}', ''])->with(['array', 'collection', 'generator']);
+})->with(["part'one", 'a.b', '{first}', '', 'key&#39;value', 'key\\value', 'key${globalThis[99]=true}'])->with(['array', 'collection', 'generator']);

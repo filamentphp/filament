@@ -181,6 +181,8 @@ it('validates unsafe repeater item keys and removes disabled values', function (
     expect(fn () => $form->getState())->toThrow(ValidationException::class);
 
     $state = $repeater->getState();
+    expect(array_keys($state))->not->toContain($itemKey);
+
     $state[array_key_last($state)]['url'] = 'https://example.com';
     $repeater->state($state);
 
@@ -188,7 +190,7 @@ it('validates unsafe repeater item keys and removes disabled values', function (
         ['url' => 'https://filamentphp.com'],
         ['url' => 'https://example.com'],
     ]]);
-})->with(['a.b', '', '*', '\\*', '{first}', '\\{last}', 'part\\', 'a"']);
+})->with(['a.b', '', '*', '\\*', '{first}', '\\{last}', 'part\\', 'a"', 'key&#39;value', 'key&value', 'key\\value', 'key${globalThis[99]=true}', 'key value', 'key:value', 'key/value', "key\xFF"]);
 
 it('adds a repeater item with defaults when `generateUuidUsing()` returns an unsafe key', function (): void {
     Form::make(Livewire::make()->data(['items' => []]))->statePath('data')->schema([
@@ -235,6 +237,10 @@ it('preserves safe string relationship identities and rejects unsafe identities 
 
     $form->loadStateFromRelationships();
     $state = $repeater->getState();
+    expect(array_keys($state))->toBe(['record-' . $recordKey])
+        ->and($repeater->getChildComponentContainers()['record-' . $recordKey]->getComponents()[0]->getStatePath())
+        ->toBe('data.posts.record-' . $recordKey . '.content');
+
     $state[array_key_first($state)]['content'] = 'Updated';
     $repeater->state($state);
     $form->saveRelationships();
@@ -242,7 +248,22 @@ it('preserves safe string relationship identities and rejects unsafe identities 
     expect($post->fresh()->content)->toBe('Updated')
         ->and($user->posts()->count())->toBe(1);
 })->with([
-    'literal backslash' => ['part\\one', true],
+    'integer-shaped' => ['123', true],
+    'UUID' => ['550e8400-e29b-41d4-a716-446655440000', true],
+    'ULID' => ['01ARZ3NDEKTSV4RRFFQ69G5FAV', true],
+    'Unicode' => ['café-雪', true],
+    'combining Unicode' => ["cafe\u{0301}_雪", true],
+    'ordinary string' => ['order_123-abc', true],
+    'at sign' => ['part@one', true],
+    'plus sign' => ['part+one', true],
+    'comma' => ['part,one', true],
+    'equals sign' => ['part=one', true],
+    'tilde' => ['part~one', true],
+    'entity-shaped' => ['part&#39;&amp;one', false],
+    'literal backslash' => ['part\\one', false],
+    'ampersand' => ['part&one', false],
+    'template expression' => ['part${globalThis[99]=true}', false],
+    'whitespace' => ['part one', false],
     'dot' => ['part.one', false],
     'quote' => ['part"one', false],
 ]);

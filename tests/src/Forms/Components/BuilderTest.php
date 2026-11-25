@@ -27,6 +27,8 @@ it('validates unsafe builder item keys and removes disabled values', function (s
     expect(fn () => $form->getState())->toThrow(ValidationException::class);
 
     $state = $builder->getState();
+    expect(array_keys($state))->not->toContain($itemKey);
+
     $state[array_key_last($state)]['data']['url'] = 'https://example.com';
     $builder->state($state);
 
@@ -34,7 +36,7 @@ it('validates unsafe builder item keys and removes disabled values', function (s
         ['type' => 'link', 'data' => ['url' => 'https://filamentphp.com']],
         ['type' => 'link', 'data' => ['url' => 'https://example.com']],
     ]]);
-})->with(['a.b', '', '*', '\\*', '{first}', '\\{last}', 'part\\', 'a"']);
+})->with(['a.b', '', '*', '\\*', '{first}', '\\{last}', 'part\\', 'a"', 'key&#39;value', 'key\\value', 'key${globalThis[99]=true}']);
 
 it('adds a builder block with defaults when `generateUuidUsing()` returns an unsafe key', function (): void {
     Form::make(Livewire::make()->data(['items' => []]))->statePath('data')->schema([
