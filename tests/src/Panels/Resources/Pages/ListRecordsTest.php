@@ -37,6 +37,7 @@ use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Features\SupportTesting\Testable;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
@@ -395,6 +396,55 @@ it('re-authorizes resource access on Livewire updates when the policy returns a 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
+it('re-authorizes custom page access before Livewire interactions after mount', function (Closure $interact): void {
+    $post = Post::factory()->create();
+    Gate::define('access-list-posts', fn (): bool => true);
+
+    $component = livewire(ListPostsWithPageAuthorization::class)
+        ->assertSuccessful();
+
+    Gate::define('access-list-posts', fn (): Response => Response::denyAsNotFound());
+
+    $interact($component, $post)->assertNotFound();
+
+    expect($post->fresh()->trashed())->toBeFalse();
+})->with([
+    'search' => [fn (Testable $component): Testable => $component->set('tableSearch', 'changed search')],
+    'pagination' => [fn (Testable $component): Testable => $component->call('setPage', 2)],
+    'action' => [fn (Testable $component, Post $post): Testable => $component->call('mountAction', 'delete', [], ['table' => true, 'recordKey' => (string) $post->getKey()])],
+    'polling' => [fn (Testable $component): Testable => $component->call('$refresh')],
+]);
+
+it('runs custom page authorization once on mount and each authorized hydration', function (): void {
+    $authorizationCount = 0;
+    Gate::define('access-list-posts', function () use (&$authorizationCount): bool {
+        $authorizationCount++;
+
+        return true;
+    });
+
+    $matchingPost = Post::factory()->create(['title' => 'Matching title']);
+    $otherPost = Post::factory()->create(['title' => 'Other title']);
+
+    $component = livewire(ListPostsWithPageAuthorization::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$matchingPost, $otherPost]);
+
+    expect($authorizationCount)->toBe(1);
+
+    $component
+        ->set('tableSearch', 'Matching title')
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords([$otherPost]);
+
+    expect($authorizationCount)->toBe(2);
+
+    $component->call('$refresh')->assertSuccessful();
+
+    expect($authorizationCount)->toBe(3);
+});
+
 it('does not save relationships when a view-only user calls the `ViewAction`', function (string $pageClass): void {
     $ticket = Ticket::factory()->create();
     $originalDepartment = Department::factory()->create();
@@ -617,5 +667,13 @@ class CreateAuthorizationTicketResource extends TicketResource
         $response = parent::getCreateAuthorizationResponse();
 
         return $response->denied() ? $response : Response::deny('Resource hook denial.');
+    }
+}
+
+class ListPostsWithPageAuthorization extends ListPosts
+{
+    protected function authorizeAccess(): void
+    {
+        Gate::authorize('access-list-posts');
     }
 }
