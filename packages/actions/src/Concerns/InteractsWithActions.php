@@ -114,6 +114,11 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      */
     protected ?array $cachedMountedActions = null;
 
+    /**
+     * @var array<Action> | null
+     */
+    protected ?array $resolvingMountedActions = null;
+
     protected bool $hasActionsModalRendered = false;
 
     /**
@@ -697,6 +702,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     #[Unexposed]
     public function getMountedActions(): array
     {
+        if ($this->resolvingMountedActions !== null) {
+            return $this->resolvingMountedActions;
+        }
+
         if (blank($this->mountedActions ?? [])) {
             return [];
         }
@@ -732,6 +741,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $actionNestingIndex ??= (count($this->mountedActions) - 1);
 
+        if ($this->resolvingMountedActions !== null) {
+            return $this->resolvingMountedActions[$actionNestingIndex] ?? null;
+        }
+
         if (array_key_exists($actionNestingIndex, $this->cachedMountedActions ?? [])) {
             return $this->cachedMountedActions[$actionNestingIndex];
         }
@@ -748,7 +761,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     {
         $actionNestingIndex = $action->getNestingIndex();
 
-        return ($actionNestingIndex !== null) && (($this->cachedMountedActions[$actionNestingIndex] ?? null) === $action);
+        return ($actionNestingIndex !== null) && ((($this->resolvingMountedActions ?? $this->cachedMountedActions)[$actionNestingIndex] ?? null) === $action);
     }
 
     /**
@@ -757,10 +770,32 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      */
     protected function cacheMountedActions(array $mountedActions): array
     {
+        $this->resolvingMountedActions = [];
+
         try {
-            return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+            $actions = $this->resolvingMountedActions = $this->resolveActions($mountedActions);
+
+            // A fresh mount handles authorization notifications itself. Restoring an
+            // existing stack must not expose even a notification-enabled denied action.
+            if (
+                ($this->mountActionNestingLevel === 0) &&
+                ($action = Arr::last($actions)) &&
+                ($action->isDisabled() || (! $action->isAuthorized()))
+            ) {
+                throw new ActionNotResolvableException('The mounted action is not available.');
+            }
+
+            if (empty($actions)) {
+                $this->forgetCachedMountedActionSchemas();
+            }
+
+            return $this->cachedMountedActions = $actions;
         } catch (ActionNotResolvableException) {
+            $this->forgetCachedMountedActionSchemas();
+
             return $this->cachedMountedActions = [];
+        } finally {
+            $this->resolvingMountedActions = null;
         }
     }
 
@@ -773,6 +808,13 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $resolvedActions = [];
 
         foreach ($actions as $actionNestingIndex => $action) {
+            if (
+                ($parentAction = Arr::last($resolvedActions)) &&
+                ($parentAction->isDisabled() || (! $parentAction->isAuthorized()))
+            ) {
+                throw new ActionNotResolvableException('The parent action is not available.');
+            }
+
             if (blank($action['name'] ?? null)) {
                 throw new ActionNotResolvableException('An action tried to resolve without a name.');
             }
@@ -786,7 +828,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             }
 
             if (! $resolvedAction) {
-                continue;
+                return [];
             }
 
             $resolvedAction->mountedParentAction(Arr::last($resolvedActions));
@@ -799,6 +841,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             $resolvedAction->boot();
 
             $resolvedActions[] = $resolvedAction;
+
+            if ($this->resolvingMountedActions !== null) {
+                $this->resolvingMountedActions = $resolvedActions;
+            }
 
             if ($isMounting) {
                 $this->cacheSchema(
