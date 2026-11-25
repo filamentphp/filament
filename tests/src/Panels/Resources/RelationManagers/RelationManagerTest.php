@@ -79,6 +79,24 @@ describe('rendering and authorization', function (): void {
             ->assertSuccessful();
     });
 
+    it('does not expose a denied action form through schema lookup or pagination', function (string $method, array $arguments): void {
+        app()->bind(DepartmentPolicy::class . '::create', static fn (): bool => false);
+
+        $component = livewire(DepartmentsRelationManager::class, [
+            'ownerRecord' => Ticket::factory()->create(),
+            'pageClass' => EditTicket::class,
+        ])
+            ->call('mountAction', 'create', [], ['table' => true])
+            ->assertSet('mountedActions', [])
+            ->call($method, ...$arguments);
+
+        expect($component->instance()->discoveredSchemaNames)->not->toContain('form')
+            ->and($component->instance()->getSchemaComponent('form.name'))->toBeNull();
+    })->with([
+        'partial render' => ['partiallyRenderSchemaComponent', ['form.name']],
+        'pagination hook' => ['setPage', ['form', 'interactsWithSchemas']],
+    ]);
+
     it('can list departments', function (): void {
         $ticket = Ticket::factory()
             ->hasAttached(Department::factory(10))
