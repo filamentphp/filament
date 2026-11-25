@@ -2265,8 +2265,13 @@ describe('relationship persistence', function (): void {
             ->assertNoAccessibilityIssues();
         $page->inDarkMode()->assertNoAccessibilityIssues();
 
+        $configuration = $post->fresh()->config;
+
         expect($post->fresh()->is_published)->toBeTrue()
-            ->and($post->fresh()->config)->toBe([['type' => 'paragraph', 'data' => ['text' => 'Exact block content']]])
+            ->and($configuration)->toHaveCount(1)
+            ->and($configuration[0])->toHaveCount(2)
+            ->and($configuration[0]['type'])->toBe('paragraph')
+            ->and($configuration[0]['data'])->toBe(['text' => 'Exact block content'])
             ->and($post->fresh()->content)->toBe('Updated Original markdown')
             ->and($post->fresh()->title)->toBe($recordKey);
     })->with([
