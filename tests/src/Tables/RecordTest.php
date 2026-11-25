@@ -52,8 +52,13 @@ describe('single-record relationship aggregates', function (): void {
         $table = $component->instance()->getTable();
 
         expect(array_keys($table->getVisibleColumns()))->toBe($hidesAggregate ? ['name'] : ['name', 'tickets_count']);
-        expect($component->instance()->getTableRecords()->firstWhere('name', 'Restricted')->getAttribute('tickets_count'))
-            ->toBe($hidesAggregate ? null : 2);
+        $aggregate = $component->instance()->getTableRecords()->firstWhere('name', 'Restricted')->getAttribute('tickets_count');
+
+        if ($hidesAggregate) {
+            expect($aggregate)->toBeNull();
+        } else {
+            expect($aggregate)->toEqual(2);
+        }
 
         foreach ([$restricted, $editable] as $department) {
             $key = (string) (($recordSource === 'pivot')
@@ -75,7 +80,7 @@ describe('single-record relationship aggregates', function (): void {
             expect($department->fresh()->name)->toBe($department->is($restricted) ? 'Restricted' : 'Updated');
         }
 
-        expect($ticket->departments()->pluck('quantity')->all())->toBe([7, 7]);
+        expect($ticket->departments()->pluck('quantity')->all())->toEqual([7, 7]);
     })->with(['query', 'relationship', 'pivot'])->with([false, true])->with(['inline', 'action']);
 });
 
