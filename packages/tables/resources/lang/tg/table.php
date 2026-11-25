@@ -6,10 +6,34 @@ return [
 
         'heading' => 'Сутунҳо',
 
+        'position' => 'Мавқеи :position аз :count.',
+
+        'position_in_group' => 'Мавқеи :position аз :count дар :group.',
+
+        'reordered' => ':column ба мавқеи :position аз :count гузаронида шуд.',
+
+        'reordered_deferred' => ':column ба мавқеи :position аз :count гузаронида шуд. Барои нигоҳ доштани тағйирот сутунҳоро татбиқ кунед.',
+
+        'reordered_in_group' => ':column ба мавқеи :position аз :count дар :group гузаронида шуд.',
+
+        'reordered_in_group_deferred' => ':column ба мавқеи :position аз :count дар :group гузаронида шуд. Барои нигоҳ доштани тағйирот сутунҳоро татбиқ кунед.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'Татбиқ кардани сутунҳо',
+            ],
+
+            'move_up' => [
+                'label' => 'Ба боло гузарондани :column',
+            ],
+
+            'move_down' => [
+                'label' => 'Ба поён гузарондани :column',
+            ],
+
+            'reorder' => [
+                'label' => 'Ҷойивазкунии сутун',
             ],
 
             'reset' => [
@@ -23,7 +47,23 @@ return [
     'columns' => [
 
         'actions' => [
-            'label' => 'Амал|Амалҳо',
+            'label' => '{1} Амал|[2,*] Амалҳо',
+        ],
+
+        'editable' => [
+            'saving' => 'Тағйирот нигоҳ дошта мешавад...',
+            'saved' => 'Тағйирот нигоҳ дошта шуд.',
+            'failure' => 'Нигоҳ доштан тасдиқ нашуд. Пеш аз кӯшиши дубора саҳифаро аз нав бор кунед.',
+            'unavailable' => 'Ин элементро дигар таҳрир кардан мумкин нест.',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Ҳа',
+                'false' => 'Не',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +155,18 @@ return [
             'label' => 'Тағйир додани тартиб',
         ],
 
+        'reorder_record' => [
+            'label' => 'Ҷойивазкунии элементи :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Ба боло гузарондани :label',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Ба поён гузарондани :label',
+        ],
+
         'filter' => [
             'label' => 'Филтр',
         ],
@@ -129,6 +181,10 @@ return [
 
         'column_manager' => [
             'label' => 'Идоракунии сутунҳо',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Кушодан/пинҳон кардани элементи :key',
         ],
 
     ],
@@ -202,7 +258,6 @@ return [
 
             'group' => [
                 'label' => 'Гурӯҳбандӣ аз рӯи',
-                'placeholder' => 'Гурӯҳбандӣ аз рӯи',
             ],
 
             'direction' => [
@@ -220,11 +275,20 @@ return [
 
     ],
 
+    'loading' => 'Бор шуда истодааст...',
+
     'reorder_indicator' => 'Барои тағйир додани тартиб сабтҳоро кашола кунед.',
+
+    'reordering' => [
+        'position' => ':label, мавқеи :position аз :count.',
+        'moved' => ':label ба мавқеи :position аз :count гузаронида шуд.',
+    ],
+
+    'result_count' => '{0} Натиҷа нест|{1} :count натиҷа|[2,*] :count натиҷа',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 сабт интихоб шуд|:count сабт интихоб шуд',
+        'selected_count' => ':count сабт интихоб шуд|:count сабт интихоб шуд',
 
         'actions' => [
 

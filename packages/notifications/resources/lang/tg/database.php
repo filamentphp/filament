@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Огоҳиномаҳо',
 
+        'unread_label' => 'Огоҳиномаи хонданашуда',
+
         'actions' => [
 
             'clear' => [
