@@ -117,7 +117,7 @@ export class Select {
         this.openId = 0
         this.isDestroyed = false
 
-        // Central repository for option labels
+        // Only configured labels belong here; fallback values must render as text.
         this.labelRepository = {}
 
         this.isOpen = false
@@ -800,7 +800,7 @@ export class Select {
             labelElement.classList.add('fi-wrapped')
         }
 
-        if (this.isHtmlAllowed) {
+        if (this.isHtmlAllowed && filled(this.labelRepository[value])) {
             labelElement.innerHTML = label
         } else {
             labelElement.textContent = label
@@ -810,7 +810,10 @@ export class Select {
         badge.appendChild(labelContainer)
 
         // Add a cross button to remove the selection
-        const removeButton = this.createRemoveButton(value, label)
+        const removeButton = this.createRemoveButton(
+            value,
+            labelElement.textContent,
+        )
         badge.appendChild(removeButton)
 
         return badge
@@ -823,10 +826,7 @@ export class Select {
         removeButton.className = 'fi-badge-delete-btn'
         removeButton.setAttribute(
             'aria-label',
-            this.removeButtonLabel.replace(
-                ':label',
-                this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label,
-            ),
+            this.removeButtonLabel.replace(':label', () => label),
         )
 
         const removeButtonIcon = document.createElement('span')
@@ -970,7 +970,7 @@ export class Select {
             selectedLabel = this.state
         }
 
-        return selectedLabel
+        return filled(selectedLabel) ? selectedLabel : value
     }
 
     // Helper method to add single selection display
@@ -979,7 +979,7 @@ export class Select {
         const labelContainer = document.createElement('span')
         labelContainer.className = 'fi-select-input-value-label'
 
-        if (this.isHtmlAllowed) {
+        if (this.isHtmlAllowed && filled(this.labelRepository[this.state])) {
             labelContainer.innerHTML = selectedLabel
         } else {
             labelContainer.textContent = selectedLabel
@@ -1154,6 +1154,7 @@ export class Select {
                             const value = this.state
                             const renderVersion = ++this.selectedDisplayVersion
                             delete this.labelRepository[this.state]
+                            this.initialOptionLabel = null
 
                             // Get the new label
                             const newLabel = await this.getOptionLabelUsing()
@@ -1187,6 +1188,10 @@ export class Select {
     updateOptionLabelInList(value, newLabel) {
         // Update the label in the repository
         this.labelRepository[value] = newLabel
+
+        if (value === this.initialState) {
+            this.initialOptionLabel = newLabel
+        }
 
         // Find the option in the list
         const options = this.getVisibleOptions()

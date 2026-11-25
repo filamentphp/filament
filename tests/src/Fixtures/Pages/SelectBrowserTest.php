@@ -10,6 +10,8 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\HtmlString;
+use Livewire\Attributes\Url;
 
 class SelectBrowserTest extends Page
 {
@@ -23,6 +25,13 @@ class SelectBrowserTest extends Page
 
     public bool $isSelectDisabled = false;
 
+    #[Url]
+    public bool $fallbackLabels = false;
+
+    public bool $hasFallbackLabel = true;
+
+    public const FALLBACK_VALUE = '<svg onload="window.fallbackMarker = true"></svg> & literal';
+
     public function mount(): void
     {
         $this->form->fill();
@@ -30,6 +39,28 @@ class SelectBrowserTest extends Page
 
     public function form(Schema $form): Schema
     {
+        if ($this->fallbackLabels) {
+            return $form->statePath('data')->schema([
+                Select::make('single')->label('Unmatched single')->allowHtml()
+                    ->options(['known' => '<b>Known &amp; trusted</b>'])
+                    ->default(self::FALLBACK_VALUE)
+                    ->extraAttributes(['data-testid' => 'fallback-single']),
+                Select::make('multiple')->label('Mixed multiple')->allowHtml()->multiple()
+                    ->getOptionLabelsUsing(static fn (): array => ['known' => '<b>Known &amp; trusted</b>', self::FALLBACK_VALUE => null])
+                    ->default(['known', self::FALLBACK_VALUE])
+                    ->extraAttributes(['data-testid' => 'fallback-multiple']),
+                Select::make('refreshed')->label('Callback label')->allowHtml()->searchable()
+                    ->getOptionLabelUsing(fn (): ?HtmlString => $this->hasFallbackLabel ? new HtmlString('<b>Callback &amp; trusted</b>') : null)
+                    ->getSearchResultsUsing(static fn (): array => [])
+                    ->default(self::FALLBACK_VALUE)
+                    ->suffixAction(Action::make('refreshLabel')->label('Refresh label')->icon(Heroicon::OutlinedArrowPath)->action(function (Select $component): void {
+                        $this->hasFallbackLabel = false;
+                        $component->refreshSelectedOptionLabel();
+                    }))
+                    ->extraAttributes(['data-testid' => 'fallback-refreshed']),
+            ]);
+        }
+
         return $form
             ->schema([
                 Select::make('status')
