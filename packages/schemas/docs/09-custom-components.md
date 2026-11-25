@@ -101,6 +101,8 @@ Inside the Blade view, you may access the current operation, usually `create`, `
 </p>
 ```
 
+In an [action modal schema](../actions/modals#using-the-current-operation-in-a-modal-schema), `$operation` is the full mounted action name chain, such as `edit` or `manage.edit`. Compare the exact full string, not just its suffix or the action's class.
+
 ### Accessing the current Livewire component instance in the Blade view
 
 Inside the Blade view, you may access the current Livewire component instance using `$this`:

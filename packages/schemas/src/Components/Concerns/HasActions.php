@@ -82,6 +82,10 @@ trait HasActions
         }
 
         foreach ($modalActionNames ?? [] as $modalActionName) {
+            if ($action->isDisabled() || (! $action->isAuthorized())) {
+                return null;
+            }
+
             $action = $action->getModalAction($modalActionName);
 
             if (! $action) {
