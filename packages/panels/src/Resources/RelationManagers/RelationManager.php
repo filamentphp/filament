@@ -47,6 +47,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -393,7 +394,11 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
         return match (true) {
             $action instanceof AssociateAction, $action instanceof AttachAction, $action instanceof DetachAction, $action instanceof DetachBulkAction, $action instanceof DissociateAction, $action instanceof DissociateBulkAction, $action instanceof ImportAction => $this->isReadOnly() ? Response::deny() : null,
-            $action instanceof CreateAction => $this->isReadOnly() ? Response::deny() : $this->getCreateAuthorizationResponse(),
+            $action instanceof CreateAction => $this->isReadOnly() ? Response::deny() : (
+                ($action->getModel() === $this->getTable()->getModel())
+                    ? $this->getCreateAuthorizationResponse()
+                    : Gate::inspect('create', $action->getModel())
+            ),
             $action instanceof DeleteAction => $this->isReadOnly() ? Response::deny() : $this->getDeleteAuthorizationResponse($action->getRecord()),
             $action instanceof DeleteBulkAction => $this->isReadOnly() ? Response::deny() : $this->getDeleteAnyAuthorizationResponse(),
             $action instanceof EditAction => $this->isReadOnly() ? Response::deny() : $this->getEditAuthorizationResponse($action->getRecord()),
