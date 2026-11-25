@@ -6,10 +6,12 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
@@ -1490,6 +1492,107 @@ describe('authorization enforcement', function (): void {
             ->assertDispatched('enforcement-authorized-called');
     });
 });
+describe('mounted action restoration', function (): void {
+    it('rejects unavailable restored actions without rendering modals or retaining schemas', function (string $restriction, bool $isNested): void {
+        $stack = [['name' => 'restricted', 'arguments' => [], 'context' => []]];
+
+        if ($isNested) {
+            $stack[] = ['name' => 'registered', 'arguments' => [], 'context' => []];
+        }
+
+        $component = livewire(RestoredActions::class, ['restriction' => $restriction])
+            ->set('mountedActions', $stack)
+            ->call('$refresh')
+            ->assertDontSee('Restricted modal contents')
+            ->call('callMountedAction')
+            ->assertNotDispatched('child-called');
+
+        expect($component->instance()->getMountedActions())->toBe([])
+            ->and($component->instance()->getSchema('mountedActionSchema0'))->toBeNull()
+            ->and($component->instance()->getSchema('mountedActionSchema1'))->toBeNull();
+    })->with(['hidden', 'invisible', 'disabled', 'unauthorized', 'notification', 'tooltip'])->with([false, true]);
+
+    it('rejects partially resolvable stacks and forgets earlier schemas', function (array $stack): void {
+        $component = livewire(RestoredActions::class)
+            ->set('mountedActions', array_map(static fn (string $name): array => [
+                'name' => $name, 'arguments' => [], 'context' => [],
+            ], $stack))
+            ->call('$refresh')
+            ->assertDontSee('Restricted modal contents');
+
+        expect($component->instance()->getMountedActions())->toBe([])
+            ->and($component->instance()->getSchema('mountedActionSchema0'))->toBeNull()
+            ->and($component->instance()->getSchema('mountedActionSchema1'))->toBeNull();
+    })->with([
+        'missing child' => [['restricted', 'missing']],
+        'missing root' => [['missing', 'restricted']],
+    ]);
+
+    it('rechecks parent access before mounting children', function (string $child): void {
+        $component = livewire(RestoredActions::class)->mountAction('restricted');
+
+        $component->set('restriction', 'notification')
+            ->call('mountAction', $child, [], $child === 'schemaChild' ? ['schemaComponent' => 'mountedActionSchema0.value'] : [])
+            ->call('callMountedAction')
+            ->assertNotDispatched('child-called');
+
+        expect($component->instance()->getSchema('mountedActionSchema0'))->toBeNull();
+    })->with(['footer', 'registered', 'schemaChild']);
+
+    it('revokes an existing stack without exposing its schemas or rerunning fill hooks', function (): void {
+        $component = livewire(RestoredActions::class)
+            ->mountAction('restricted')
+            ->mountAction('registered')
+            ->assertSet('fillCount', 1);
+
+        $component->set('restriction', 'notification')
+            ->call('callSchemaComponentMethod', 'mountedActionSchema0.items', 'add')
+            ->call('callMountedAction')
+            ->assertSet('fillCount', 1)
+            ->assertSet('mountedActions', [])
+            ->assertNotDispatched('child-called');
+
+        expect($component->instance()->getSchema('mountedActionSchema0'))->toBeNull()
+            ->and($component->instance()->getSchema('mountedActionSchema1'))->toBeNull();
+    });
+
+    it('restores authorized actions with editable data without rerunning mount or fill hooks', function (): void {
+        livewire(RestoredActions::class)
+            ->mountAction('restricted')
+            ->assertSet('fillCount', 1)
+            ->fillForm(['value' => 'changed'])
+            ->call('$refresh')
+            ->assertSet('fillCount', 1)
+            ->assertSet('mountCount', 1)
+            ->assertSchemaStateSet(['value' => 'changed'])
+            ->mountAction('registered')
+            ->call('callMountedAction')
+            ->assertDispatched('child-called')
+            ->assertSet('mountedActions.0.data.value', 'changed');
+    });
+
+    it('preserves authorization notifications on a fresh mount', function (): void {
+        livewire(RestoredActions::class, ['restriction' => 'notification'])
+            ->mountAction('restricted')
+            ->assertActionNotMounted()
+            ->assertNotified('Access revoked');
+    });
+
+    it('supports mounted action utility injection while checking availability', function (bool $isNested): void {
+        $component = livewire(RestoredActions::class, ['restriction' => 'injected'])
+            ->mountAction('restricted')
+            ->fillForm(['value' => 'edited parent value']);
+
+        if ($isNested) {
+            $component->mountAction('registered');
+        }
+
+        $component->call('$refresh')->assertSet('mountCount', 1);
+
+        expect($component->instance()->getMountedActions())->toHaveCount($isNested ? 2 : 1);
+    })->with([false, true]);
+});
+
 describe('table action registration context', function (): void {
     it('does not mount non-record table actions with a supplied record', function (string $name): void {
         $post = Post::factory()->create();
@@ -2318,6 +2421,54 @@ describe('record visibility and authorization', function (): void {
             ->and($action->isAuthorized())->toBeFalse();
     });
 });
+
+class RestoredActions extends Actions
+{
+    public string $restriction = '';
+
+    public int $fillCount = 0;
+
+    public int $mountCount = 0;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('restricted')
+                ->modalDescription('Restricted modal contents')
+                ->hidden(fn (): bool => $this->restriction === 'hidden')
+                ->visible(fn (): bool => $this->restriction !== 'invisible')
+                ->disabled(fn (array $mountedActions): bool => ($this->restriction === 'disabled') || (
+                    ($this->restriction === 'injected') &&
+                    (($mountedActions[0]->getArguments()['deny'] ?? false) === true)
+                ))
+                ->authorize(fn (): Response => in_array($this->restriction, ['unauthorized', 'notification', 'tooltip']) ? Response::deny('Access revoked') : Response::allow())
+                ->authorizationNotification(fn (): bool => $this->restriction === 'notification')
+                ->authorizationTooltip(fn (): bool => $this->restriction === 'tooltip')
+                ->afterFormFilled(function (): void {
+                    $this->fillCount++;
+                })
+                ->mountUsing(function (Schema $schema): void {
+                    $this->mountCount++;
+                    $schema->fill();
+                })
+                ->schema([
+                    TextInput::make('value')->registerActions([
+                        Action::make('schemaChild')->action(fn () => $this->dispatch('child-called')),
+                    ]),
+                    Repeater::make('items')->simple(TextInput::make('item')),
+                ])
+                ->extraModalFooterActions([
+                    Action::make('footer')->action(fn () => $this->dispatch('child-called')),
+                ])
+                ->registerModalActions([
+                    Action::make('registered')
+                        ->requiresConfirmation()
+                        ->disabled(fn (array $mountedActions): bool => ($this->restriction === 'injected') && blank($mountedActions[0]->getRawData()['value'] ?? null))
+                        ->action(fn () => $this->dispatch('child-called')),
+                ]),
+        ];
+    }
+}
 
 class FormLifecycleActions extends Actions
 {

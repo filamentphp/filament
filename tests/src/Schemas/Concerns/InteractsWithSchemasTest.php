@@ -367,6 +367,42 @@ it('can add items to a list field in a mounted action form', function (): void {
         ->assertSchemaStateSet(['roles' => ['viewer', 'creator', 'editor']]);
 });
 
+it('checks every parent of a dotted schema action path', function (string $restriction): void {
+    $component = livewire(TestComponentWithDottedActions::class, ['restriction' => $restriction])
+        ->call('mountAction', 'outer.middle.child', [], ['schemaComponent' => 'form.value']);
+
+    if ($restriction === '') {
+        $component->assertDispatched('dotted-child-called');
+    } else {
+        $component->assertNotDispatched('dotted-child-called');
+    }
+})->with(['', 'hidden', 'invisible', 'disabled', 'unauthorized', 'notification']);
+
+class TestComponentWithDottedActions extends Livewire
+{
+    public string $restriction = '';
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            TextInput::make('value')->registerActions([
+                Action::make('outer')->registerModalActions([
+                    Action::make('middle')
+                        ->hidden(fn (): bool => $this->restriction === 'hidden')
+                        ->visible(fn (): bool => $this->restriction !== 'invisible')
+                        ->disabled(fn (): bool => $this->restriction === 'disabled')
+                        ->authorize(fn (): bool => ! in_array($this->restriction, ['unauthorized', 'notification']))
+                        ->authorizationNotification(fn (): bool => $this->restriction === 'notification')
+                        ->authorizationMessage('Access revoked')
+                        ->registerModalActions([
+                            Action::make('child')->action(fn () => $this->dispatch('dotted-child-called')),
+                        ]),
+                ]),
+            ]),
+        ])->statePath('data');
+    }
+}
+
 class TestComponentWithListFields extends Livewire
 {
     public function mount(): void
