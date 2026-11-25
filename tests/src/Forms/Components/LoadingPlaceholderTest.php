@@ -7,6 +7,7 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\PhoneInput;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Slider;
@@ -44,6 +45,7 @@ it('renders custom async loading content and can restore the default', function 
     FileUpload::class,
     KeyValue::class,
     MarkdownEditor::class,
+    PhoneInput::class,
     RichEditor::class,
     Select::class,
     Slider::class,

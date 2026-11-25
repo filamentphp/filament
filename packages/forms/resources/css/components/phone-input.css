@@ -1,0 +1,52 @@
+.fi-fo-phone-input {
+    &
+        .fi-async-component-loading
+        > .fi-loading-placeholder-content
+        > .fi-loading-placeholder {
+        @apply justify-self-start ps-3 pe-8 leading-6;
+    }
+
+    & .fi-input-wrp-content {
+        @apply flex;
+    }
+
+    & .fi-fo-phone-input-country-btn {
+        @apply flex shrink-0 items-center gap-x-1.5 rounded-s-lg ps-3 text-sm text-gray-950 outline-none disabled:text-gray-500 dark:text-white dark:disabled:text-gray-400;
+
+        &:focus-visible {
+            @apply outline-primary-600 dark:outline-primary-500 outline-2 -outline-offset-2 outline-solid;
+        }
+
+        & .fi-icon {
+            @apply size-4 text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-fo-phone-input-country-flag {
+        @apply h-3.5 w-5 shrink-0 rounded-xs object-cover;
+    }
+
+    & .fi-fo-phone-input-panel {
+        @apply absolute z-20 max-h-60 w-72 max-w-[calc(100vw-2rem)];
+    }
+
+    & .fi-fo-phone-input-search-ctn {
+        @apply sticky top-0 z-10 border-b border-gray-100 bg-white dark:border-white/5 dark:bg-gray-900;
+    }
+
+    & .fi-fo-phone-input-country {
+        @apply cursor-pointer;
+
+        & .fi-fo-phone-input-country-name {
+            @apply flex-1 truncate;
+        }
+
+        & .fi-fo-phone-input-country-calling-code {
+            @apply text-gray-500 dark:text-gray-400;
+        }
+    }
+
+    & .fi-fo-phone-input-message {
+        @apply px-3 py-2 text-sm text-gray-500 dark:text-gray-400;
+    }
+}

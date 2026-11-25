@@ -1523,6 +1523,29 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/phone-input/simple': {
+        url: 'forms/fields/phone-input',
+        selector: '#phoneInput',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/phone-input/countries': {
+        url: 'forms/fields/phone-input',
+        selector: '#phoneInputCountries',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#phoneInputCountries [aria-haspopup="listbox"]')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/file-upload/simple': {
         url: 'forms/fields/file-upload',
         selector: '#fileUpload',
