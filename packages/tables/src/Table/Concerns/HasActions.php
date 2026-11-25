@@ -130,16 +130,26 @@ trait HasActions
             return null;
         }
 
+        $column = Arr::last($this->getColumns(), static fn (Column $column): bool => $column->getAction() === $action);
+
         if (
             filled($this->getLivewire()->getMountedTableActionRecordKey()) &&
             (! Arr::first($this->getActions(), static fn (Action | ActionGroup $recordAction): bool => ($recordAction === $action) ||
                 (($recordAction instanceof ActionGroup) && in_array($action, $recordAction->getFlatActions(), strict: true)))) &&
-            (! Arr::first($this->getColumns(), static fn (Column $column): bool => $column->getAction() === $action))
+            (! $column)
         ) {
             return null;
         }
 
         $mountedRecord = $this->getLivewire()->getMountedTableActionRecord();
+
+        if ($column && $mountedRecord) {
+            $column->record($mountedRecord);
+        }
+
+        if ($column?->isHidden()) {
+            return null;
+        }
 
         if (($actionGroup = $action->getRootGroup()) instanceof HasRecord) {
             $actionGroup->record($mountedRecord);
