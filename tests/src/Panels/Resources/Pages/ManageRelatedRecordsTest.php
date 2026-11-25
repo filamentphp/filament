@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Departments\CustomUpdateAuthorizationDepartmentResource;
+use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
 use Filament\Tests\Fixtures\Resources\Departments\EditAuthorizationDepartmentResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ManageTicketDepartments;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
@@ -59,6 +60,49 @@ it('uses a fluent `recordTitleAttribute()` override with a nested related resour
 });
 
 describe('authorization', function (): void {
+    it('authorizes `CreateAction` using its model', function (bool $isCrossModel, bool $ownerAllowed, bool $actionAllowed, ?bool $authorization, bool $expectedAllowed): void {
+        $ownerResponse = $ownerAllowed ? Response::allow('Owner grant.') : Response::deny('Owner denial.');
+        $actionResponse = $actionAllowed ? Response::allow('Action grant.') : Response::denyAsNotFound('Action denial.', 'action-denied');
+        app()->bind(DepartmentPolicy::class . '::create', static fn (): Response => $ownerResponse);
+        app()->bind(TicketPolicy::class . '::create', static fn (): Response => $actionResponse);
+        $ticket = Ticket::factory()->create();
+
+        CreateAction::configureUsing(
+            static fn (CreateAction $action) => $action
+                ->model($isCrossModel ? Ticket::class : Department::class)
+                ->authorize($authorization),
+            during: function () use ($ticket, $isCrossModel, $authorization, $expectedAllowed, $ownerResponse, $actionResponse): void {
+                $component = livewire(ManageTicketDepartments::class, ['record' => $ticket->getKey()])
+                    ->{$expectedAllowed ? 'assertActionVisible' : 'assertActionHidden'}('create');
+                $action = $component->instance()->getAction('create');
+
+                expect($action->getUrl())->toBeNull();
+
+                if ($authorization === null) {
+                    expect($action->getAuthorizationResponse())->toBe($isCrossModel ? $actionResponse : $ownerResponse);
+                }
+
+                $component->mountAction('create')
+                    ->{$expectedAllowed ? 'assertActionMounted' : 'assertActionNotMounted'}();
+            },
+        );
+    })->with('create action authorization subjects');
+
+    it('preserves protected create authorization overrides only for the table model', function (bool $isCrossModel): void {
+        $ticket = Ticket::factory()->create();
+
+        CreateAction::configureUsing(
+            static fn (CreateAction $action) => $action->model($isCrossModel ? Ticket::class : Department::class),
+            during: function () use ($ticket, $isCrossModel): void {
+                $component = livewire(ManageDepartmentsWithCreateAuthorization::class, ['record' => $ticket->getKey()])
+                    ->{$isCrossModel ? 'assertActionVisible' : 'assertActionHidden'}('create');
+
+                expect($component->instance()->getAction('create')->getUrl())
+                    ->toBe($isCrossModel ? null : DepartmentResource::getUrl('create'));
+            },
+        );
+    })->with([false, true]);
+
     it('delegates edit authorization to the related resource', function (string $page): void {
         app()->bind(DepartmentPolicy::class . '::update', static fn (): bool => true);
         $ticket = Ticket::factory()->create();
@@ -335,5 +379,17 @@ class ManageDepartmentsWithEditAuthorization extends ManageTicketDepartments
         $response = parent::getEditAuthorizationResponse($record);
 
         return $response->denied() ? $response : Response::deny();
+    }
+}
+
+class ManageDepartmentsWithCreateAuthorization extends ManageTicketDepartments
+{
+    protected static ?string $relatedResource = DepartmentResource::class;
+
+    protected function getCreateAuthorizationResponse(): Response
+    {
+        $response = parent::getCreateAuthorizationResponse();
+
+        return $response->denied() ? $response : Response::deny('Relationship hook denial.');
     }
 }

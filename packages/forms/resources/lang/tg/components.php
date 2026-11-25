@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Блок',
+            'position' => ':label, мавқеи :position аз :count',
+            'moved' => ':label ба мавқеи :position аз :count гузаронида шуд',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -104,9 +110,19 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Ягон блоке, ки ба дархости шумо мувофиқат кунад, ёфт нашуд.',
+
+            'search_prompt' => 'Ҷустуҷӯи блокҳо',
+
+        ],
+
     ],
 
     'checkbox_list' => [
+
+        'required_description' => 'Ҳадди ақал як вариантро интихоб кунед.',
 
         'actions' => [
 
@@ -122,9 +138,55 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Интихоби ранг',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Моҳ',
+        ],
+
+        'year_input' => [
+            'label' => 'Сол',
+        ],
+
+        'hour_input' => [
+            'label' => 'Соат',
+        ],
+
+        'minute_input' => [
+            'label' => 'Дақиқа',
+        ],
+
+        'second_input' => [
+            'label' => 'Сония',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'placeholder' => 'Ягон файл боргузорӣ нашудааст',
+
+        'actions' => [
+
+            'download' => [
+                'label' => 'Боргирӣ',
+            ],
+
+            'open' => [
+                'label' => 'Дар варақаи нав кушодан',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Муҳаррири расм',
 
             'actions' => [
 
@@ -262,8 +324,28 @@ return [
                 'label' => 'Нест кардани сатр',
             ],
 
+            'move_down' => [
+                'label' => 'Ба поён гузарондан',
+            ],
+
+            'move_up' => [
+                'label' => 'Ба боло гузарондан',
+            ],
+
             'reorder' => [
                 'label' => 'Ҷойивазкунии сатр',
+            ],
+
+        ],
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Амалҳо',
+            ],
+
+            'reorder' => [
+                'label' => 'Ҷойивазкунӣ',
             ],
 
         ],
@@ -278,6 +360,12 @@ return [
                 'label' => 'Қимат',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Сатр',
+            'position' => ':label, мавқеи :position аз :count',
+            'moved' => ':label ба мавқеи :position аз :count гузаронида шуд',
         ],
 
     ],
@@ -331,13 +419,31 @@ return [
     'radio' => [
 
         'boolean' => [
-            'true' => 'Да',
-            'false' => 'Нет',
+            'true' => 'Ҳа',
+            'false' => 'Не',
         ],
 
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Элемент',
+            'position' => ':label, мавқеи :position аз :count',
+            'moved' => ':label ба мавқеи :position аз :count гузаронида шуд',
+        ],
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Амалҳо',
+            ],
+
+            'reorder' => [
+                'label' => 'Ҷойивазкунӣ',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -425,6 +531,10 @@ return [
 
                 ],
 
+            ],
+
+            'close_panel' => [
+                'label' => 'Пӯшидани панел',
             ],
 
             'custom_block' => [
@@ -588,6 +698,29 @@ return [
                 ],
 
             ],
+
+        ],
+
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Нест кардани блок',
+                ],
+
+                'edit' => [
+                    'label' => 'Таҳрири блок',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'Ягон блоке, ки ба дархости шумо мувофиқат кунад, ёфт нашуд.',
+
+            'search_label' => 'Ҷустуҷӯи блокҳо',
+
+            'search_prompt' => 'Ҷустуҷӯи блокҳо',
+
         ],
 
         'file_attachments_accepted_file_types_message' => 'Файлҳои боршаванда бояд аз навъи: :values бошанд.',
@@ -601,6 +734,10 @@ return [
             'no_search_results_message' => 'Ягон интихобе, ки ба дархости шумо мувофиқат кунад, ёфт нашуд.',
             'search_prompt' => 'Барои ҷустуҷӯ матнро ворид кунед...',
             'searching_message' => 'Ҷустуҷӯ...',
+        ],
+
+        'toolbar' => [
+            'label' => 'Панели абзорҳои муҳаррир',
         ],
 
         'tools' => [
@@ -663,6 +800,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'Пок кардани интихоб',
+            ],
+
             'create_option' => [
 
                 'label' => 'Эҷод кардан',
@@ -707,12 +848,18 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Хориҷ кардани :label',
+            ],
+
         ],
 
         'boolean' => [
             'true' => 'Ҳа',
             'false' => 'Не',
         ],
+
+        'error_message' => 'Вариантҳоро бор кардан муяссар нашуд. Лутфан дубора кӯшиш кунед.',
 
         'loading_message' => 'Боркунӣ...',
 
@@ -724,7 +871,11 @@ return [
 
         'placeholder' => 'Интихоб кунед',
 
+        'required_description' => 'Як вариантро интихоб кунед.',
+
         'searching_message' => 'Ҷустуҷӯ...',
+
+        'search_label' => 'Ҷустуҷӯ',
 
         'search_prompt' => 'Барои ҷустуҷӯ матнро ворид кунед...',
 
@@ -741,6 +892,11 @@ return [
         ],
 
         'placeholder' => 'Барчаспи нав',
+
+        'tag_added' => 'Илова шуд: :tag',
+
+        'tag_removed' => 'Хориҷ шуд: :tag',
+
     ],
 
     'text_input' => [
@@ -765,6 +921,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Ҳадди ақал як вариантро интихоб кунед.',
 
         'boolean' => [
             'true' => 'Ҳа',

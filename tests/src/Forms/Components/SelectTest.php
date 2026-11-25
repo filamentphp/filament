@@ -16,6 +16,7 @@ use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\SelectBrowserTest;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,6 +27,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema as DatabaseSchema;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -805,6 +808,44 @@ describe('option labels', function (): void {
                 return true;
             });
     });
+
+    it('can fetch a single option label without trusting its fallback through the exposed method', function (string $component, string $field): void {
+        $fallback = '<em>Unmatched & literal</em>';
+
+        livewire($component)->fillForm([$field => $fallback])
+            ->assertFormComponentExists($field, function (Select $select) use ($fallback): bool {
+                expect($select->getOptionLabel())->toBe($fallback)
+                    ->and($select->getLivewire()->callSchemaComponentMethod(
+                        $select->getKey(),
+                        'getOptionLabel',
+                        ['withDefault' => false],
+                    ))->toBeNull();
+
+                return true;
+            });
+    })->with([
+        'static' => [TestSelectWithFlatOptions::class, 'category'],
+        'grouped' => [TestSelectWithGroupedOptions::class, 'product'],
+        'callback' => [TestComponentWithSelectCustomSearchResults::class, 'number'],
+    ]);
+
+    it('excludes fallback labels from multiple select transport without changing `getOptionLabels()`', function (string $source, bool $allowsHtml): void {
+        $fallback = '<em>Unmatched & literal</em>';
+        $select = Select::make('categories')->multiple()->allowHtml($allowsHtml)
+            ->options($source === 'grouped' ? ['Group' => ['known' => '<b>Known</b>']] : ['known' => '<b>Known</b>']);
+
+        if ($source === 'callback') {
+            $select->getOptionLabelsUsing(static fn (): array => ['known' => '<b>Known</b>', $fallback => null]);
+        }
+
+        Schema::make(Livewire::make())->statePath('data')->components([$select])
+            ->fill(['categories' => ['known', $fallback]]);
+
+        expect($select->getOptionLabels())->toBe(['known' => '<b>Known</b>', $fallback => $fallback])
+            ->and($select->getOptionLabelsForJs())->toBe([
+                ['label' => '<b>Known</b>', 'value' => 'known', 'isDisabled' => false],
+            ]);
+    })->with(['static', 'grouped', 'callback'])->with([false, true]);
 });
 
 describe('validation', function (): void {
@@ -2245,9 +2286,83 @@ describe('rendering', function (): void {
             ->assertSeeHtml('Books')
             ->assertDontSeeHtml('Electronics');
     });
+
+    it('omits fallback labels from initial select configuration without changing public getters', function (string $source, bool $isMultiple, bool $allowsHtml): void {
+        $fallback = '<em>Unmatched & literal</em>';
+        $select = Select::make('category')->native(false)->multiple($isMultiple)->allowHtml($allowsHtml)
+            ->options($source === 'grouped' ? ['Group' => ['known' => 'Known']] : ['known' => 'Known']);
+
+        if ($source === 'callback') {
+            $select->getOptionLabelUsing(static fn (): ?string => null)
+                ->getOptionLabelsUsing(static fn (): array => [$fallback => null]);
+        }
+
+        Schema::make(livewire(RenderSelectWithNonNative::class)->instance())
+            ->statePath('data')->components([$select])
+            ->fill(['category' => $isMultiple ? [$fallback] : $fallback]);
+
+        expect($isMultiple ? $select->getOptionLabels() : $select->getOptionLabel())
+            ->toBe($isMultiple ? [$fallback => $fallback] : $fallback);
+
+        expect($select->toEmbeddedHtml())
+            ->toContain('initialOptionLabel: null,')
+            ->toContain('initialOptionLabels: [],');
+    })->with(['static', 'grouped', 'callback'])->with([false, true])->with([false, true]);
+
+    it('preserves configured HTML labels in initial select configuration', function (bool $usesHtmlString, bool $isMultiple, bool $allowsHtml): void {
+        $label = $usesHtmlString ? new HtmlString('<b>Configured</b>') : '<b>Configured</b>';
+        $select = Select::make('category')->native(false)->multiple($isMultiple)->allowHtml($allowsHtml)
+            ->options(['known' => $label]);
+
+        Schema::make(livewire(RenderSelectWithNonNative::class)->instance())
+            ->statePath('data')->components([$select])
+            ->fill(['category' => $isMultiple ? ['known'] : 'known']);
+
+        expect($isMultiple ? $select->getOptionLabels() : $select->getOptionLabel())
+            ->toBe($isMultiple ? ['known' => $label] : (string) $label);
+
+        $configuration = $isMultiple
+            ? 'initialOptionLabels: ' . Js::from([['label' => $label, 'value' => 'known', 'isDisabled' => false]])
+            : 'initialOptionLabel: ' . Js::from((string) $label);
+
+        expect($select->toEmbeddedHtml())->toContain($configuration);
+    })->with([false, true])->with([false, true])->with([false, true]);
 });
 
 describe('browser interactions', function (): void {
+    it('renders unmatched HTML-like select state as text while preserving configured HTML labels in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
+        $fallback = SelectBrowserTest::FALLBACK_VALUE;
+        $single = '[data-testid="fallback-single"] [role="combobox"]';
+        $refreshed = '[data-testid="fallback-refreshed"] button[aria-haspopup="listbox"]';
+        $page = visit('/select-browser-test?fallbackLabels=1');
+
+        $page->assertSeeIn($single, $fallback)
+            ->assertScript('document.querySelector(\'' . $single . '\').textContent', $fallback)
+            ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="fallback-multiple"] [data-value]\')).some(badge => badge.textContent === ' . Js::from($fallback) . ')', true)
+            ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="fallback-multiple"] button[aria-label]\')).some(button => button.getAttribute("aria-label").endsWith(' . Js::from($fallback) . '))', true)
+            ->assertSeeIn('[data-testid="fallback-multiple"] b', 'Known & trusted')
+            ->assertSeeIn('[data-testid="fallback-multiple"] [data-value="42"]', '42')
+            ->assertScript('document.querySelector(\'[data-testid="fallback-multiple"] [data-value="42"] button\').getAttribute("aria-label").endsWith("42")', true)
+            ->assertSeeIn('[data-testid="fallback-text"] [data-value="known"]', '<b>Known &amp; trusted</b>')
+            ->assertScript('document.querySelector(\'[data-testid="fallback-text"] [data-value="known"] button\').getAttribute("aria-label").endsWith("<b>Known &amp; trusted</b>")', true)
+            ->assertMissing('[data-testid="fallback-text"] b')
+            ->click('[data-testid="fallback-multiple"] button[aria-label="Load values"]')
+            ->assertSeeIn('[data-testid="fallback-multiple"] b', 'Fetched & trusted')
+            ->assertScript('document.querySelector(\'[data-testid="fallback-multiple"] [data-value="fetched"] button\').getAttribute("aria-label").endsWith("Fetched & trusted")', true)
+            ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="fallback-multiple"] [data-value]\')).some(badge => badge.textContent === ' . Js::from($fallback) . ')', true)
+            ->assertSeeIn('[data-testid="fallback-multiple"] [data-value="42"]', '42')
+            ->assertSeeIn($refreshed . ' b', 'Callback & trusted')
+            ->click('[data-testid="fallback-refreshed"] button[aria-label="Refresh label"]')
+            ->assertSeeIn($refreshed, $fallback)
+            ->assertScript('document.querySelector(\'' . $refreshed . '\').textContent', $fallback)
+            ->assertScript('window.fallbackMarker ?? null', null)
+            ->assertMissing('[data-testid^="fallback-"] svg[onload]')
+            ->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
+
     it('can select, search, and clear options in select dropdowns in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 

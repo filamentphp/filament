@@ -16,6 +16,7 @@ use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersResetAction;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersTriggerAction;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
@@ -262,6 +263,31 @@ describe('action configuration and rendering', function (): void {
 });
 
 describe('browser interactions', function (): void {
+    it('renders unmatched URL-bound custom filter select state as text while preserving configured HTML', function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        $value = '<span data-testid="untrusted-filter-marker">Unmatched & literal</span>';
+        $select = '[data-testid="title-filter"] [role="combobox"]';
+        $url = PostResource::getUrl('html-filter', ['filters' => ['title' => ['value' => $value]]]);
+        $page = visit($url);
+
+        $page->assertSeeIn($select, $value)
+            ->assertMissing('[data-testid="untrusted-filter-marker"]')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()
+            ->assertSeeIn($select, $value)
+            ->assertMissing('[data-testid="untrusted-filter-marker"]')
+            ->assertNoAccessibilityIssues();
+
+        visit(PostResource::getUrl('html-filter', ['filters' => ['title' => ['value' => 'known']]]))
+            ->assertSeeIn($select . ' b[data-testid="trusted-title-label"]', 'Known & trusted')
+            ->assertNoSmoke();
+    });
+
     it('renders a customized `filtersResetAction()` accessibly', function (): void {
         Artisan::call('filament:assets');
 

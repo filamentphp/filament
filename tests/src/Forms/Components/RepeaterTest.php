@@ -821,6 +821,14 @@ describe('item schemas', function (): void {
         'multiple trailing backslashes' => ['part\\\\'],
         'quote stripped from state paths' => ['a"'],
         'control character stripped from state paths' => ["a\na"],
+        'character reference' => ['key&#39;value'],
+        'ampersand' => ['key&value'],
+        'embedded backslash' => ['key\\value'],
+        'template expression' => ['key${globalThis[99]=true}'],
+        'embedded whitespace' => ['key value'],
+        'colon' => ['key:value'],
+        'slash' => ['key/value'],
+        'invalid UTF-8' => ["key\xFF"],
     ]);
 
     it('uses numeric replacement keys when UUID generation is disabled', function (): void {
@@ -2222,6 +2230,56 @@ describe('relationship ordering and mutation', function (): void {
 });
 
 describe('relationship persistence', function (): void {
+    it('hydrates polls and edits relationship descendants with supported record keys', function (string $recordKey): void {
+        Artisan::call('filament:assets');
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $post = Post::factory()->create([
+            'author_id' => $user->id,
+            'title' => $recordKey,
+            'is_published' => false,
+            'config' => [],
+            'content' => 'Original markdown',
+        ]);
+
+        $page = visit('/relationship-key-browser-test');
+        $livewire = 'Livewire.find(document.querySelector("[data-testid=save-relationship]").closest("[wire\\\\:id]").getAttribute("wire:id"))';
+        $page->assertScript('Object.keys(' . $livewire . '.get("data").posts)', ['record-' . $recordKey])
+            ->assertScript('Object.values(' . $livewire . '.get("data").posts)[0].content', 'Original markdown');
+        $control = $page->script('document.querySelector("[data-testid=poll-control]").textContent');
+        $stamp = $page->script('document.querySelector("[data-testid=poll-stamp]").textContent');
+        $page->assertScript('document.querySelector("[data-testid=poll-stamp]").textContent !== ' . json_encode($stamp), true)
+            ->assertScript('document.querySelector("[data-testid=poll-control]").textContent', $control)
+            ->assertAttribute('[data-testid="published-toggle"]', 'aria-checked', 'false')
+            ->click('[data-testid="published-toggle"]')
+            ->assertAttribute('[data-testid="published-toggle"]', 'aria-checked', 'true')
+            ->click('[data-testid="post-builder"] button:has-text("Add to config")')
+            ->click('[data-testid="post-builder"] button:has-text("Paragraph")')
+            ->assertScript('document.querySelector("[data-testid=block-text]").getAttribute("wire:model").includes(' . json_encode($recordKey) . ')', true)
+            ->fill('[data-testid="block-text"]', 'Exact block content')
+            ->keys('[data-testid="post-markdown"] textarea[aria-label="Content"]', 'ControlOrMeta+Home')
+            ->typeSlowly('[data-testid="post-markdown"] textarea[aria-label="Content"]', 'Updated ', 0)
+            ->click('[data-testid="save-relationship"]')
+            ->assertPresent('[data-testid="relationship-saved"]')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+
+        $configuration = $post->fresh()->config;
+
+        expect($post->fresh()->is_published)->toBeTrue()
+            ->and($configuration)->toHaveCount(1)
+            ->and($configuration[0])->toHaveCount(2)
+            ->and($configuration[0]['type'])->toBe('paragraph')
+            ->and($configuration[0]['data'])->toBe(['text' => 'Exact block content'])
+            ->and($post->fresh()->content)->toBe('Updated Original markdown')
+            ->and($post->fresh()->title)->toBe($recordKey);
+    })->with([
+        'Unicode letters and separators' => 'order_123-café雪',
+        'UUID' => '550e8400-e29b-41d4-a716-446655440000',
+        'supported punctuation' => 'order@café+雪,123=value~end',
+    ]);
+
     it('preserves safe string record keys and rejects unsafe keys before changing related records', function (string $recordKey, bool $isSafe): void {
         $user = User::factory()->create();
         $user = RepeaterUserWithStringKeyPosts::findOrFail($user->id);
@@ -2251,7 +2309,22 @@ describe('relationship persistence', function (): void {
         expect($post->fresh()->content)->toBe('Updated')
             ->and($user->posts()->count())->toBe(1);
     })->with([
-        'literal backslash' => ['part\\one', true],
+        'integer-shaped' => ['123', true],
+        'UUID' => ['550e8400-e29b-41d4-a716-446655440000', true],
+        'ULID' => ['01ARZ3NDEKTSV4RRFFQ69G5FAV', true],
+        'Unicode' => ['café-雪', true],
+        'combining Unicode' => ["cafe\u{0301}_雪", true],
+        'ordinary string' => ['order_123-abc', true],
+        'at sign' => ['part@one', true],
+        'plus sign' => ['part+one', true],
+        'comma' => ['part,one', true],
+        'equals sign' => ['part=one', true],
+        'tilde' => ['part~one', true],
+        'entity-shaped' => ['part&#39;&amp;one', false],
+        'literal backslash' => ['part\\one', false],
+        'ampersand' => ['part&one', false],
+        'template expression' => ['part${globalThis[99]=true}', false],
+        'whitespace' => ['part one', false],
         'dot' => ['part.one', false],
         'quote' => ['part"one', false],
     ]);

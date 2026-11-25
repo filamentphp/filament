@@ -969,13 +969,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $state = $this->getState();
         $relatedRecord = $this->getRelatedRecord();
         // Reuse the options evaluated above: a closure, such as a query, would otherwise run 2 or 3 times for every cell.
-        $optionLabel = $this->resolveOptionLabel(options: $options);
+        $optionLabel = $this->resolveOptionLabel(withDefault: $isNative, options: $options);
         $optionsForJs = $isNative ? [] : $this->transformOptionsForJs($options);
 
         if ((! $isNative) && filled($state)) {
             $value = (string) (($state instanceof BackedEnum) ? $state->value : $state);
             $optionLabel = $this->getOptionLabelFromOptionsForJs($value, $optionsForJs)
-                ?? $this->getOptionLabelFromOptionsForJs($value, $this->transformOptionsForJs([$value => $optionLabel]))
+                ?? (($optionLabel !== null) ? $this->getOptionLabelFromOptionsForJs($value, $this->transformOptionsForJs([$value => $optionLabel])) : null)
                 ?? $optionLabel;
         }
 

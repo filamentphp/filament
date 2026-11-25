@@ -35,6 +35,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 
@@ -279,7 +280,9 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
         if ($action instanceof CreateAction) {
-            return $this->getCreateAuthorizationResponse();
+            return ($action->getModel() === $this->getTable()->getModel())
+                ? $this->getCreateAuthorizationResponse()
+                : Gate::inspect('create', $action->getModel());
         }
 
         if ($action->getTable()) {

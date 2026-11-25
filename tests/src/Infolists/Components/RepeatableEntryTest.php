@@ -409,7 +409,10 @@ describe('item collections', function (): void {
             expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
         }
 
-        expect($get('/items.part\\one.name'))->toBe('Backslash item');
+        $backslashItemStatePath = $entry->getItems()['part\\one']->getStatePath();
+
+        expect($backslashItemStatePath)->not->toContain('\\')
+            ->and($get("/{$backslashItemStatePath}.name"))->toBe('Backslash item');
     });
 
     it('updates `getItems()` to reflect a new item count', function (): void {
