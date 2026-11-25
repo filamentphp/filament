@@ -2345,12 +2345,22 @@ describe('browser interactions', function (): void {
             ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="fallback-multiple"] [data-value]\')).some(badge => badge.textContent === ' . Js::from($fallback) . ')', true)
             ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="fallback-multiple"] button[aria-label]\')).some(button => button.getAttribute("aria-label").endsWith(' . Js::from($fallback) . '))', true)
             ->assertSeeIn('[data-testid="fallback-multiple"] b', 'Known & trusted')
+            ->assertSeeIn('[data-testid="fallback-multiple"] [data-value="42"]', '42')
+            ->assertScript('document.querySelector(\'[data-testid="fallback-multiple"] [data-value="42"] button\').getAttribute("aria-label").endsWith("42")', true)
+            ->assertSeeIn('[data-testid="fallback-text"] [data-value="known"]', '<b>Known &amp; trusted</b>')
+            ->assertScript('document.querySelector(\'[data-testid="fallback-text"] [data-value="known"] button\').getAttribute("aria-label").endsWith("<b>Known &amp; trusted</b>")', true)
+            ->assertMissing('[data-testid="fallback-text"] b')
+            ->click('[data-testid="fallback-multiple"] button[aria-label="Load values"]')
+            ->assertSeeIn('[data-testid="fallback-multiple"] b', 'Fetched & trusted')
+            ->assertScript('document.querySelector(\'[data-testid="fallback-multiple"] [data-value="fetched"] button\').getAttribute("aria-label").endsWith("Fetched & trusted")', true)
+            ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="fallback-multiple"] [data-value]\')).some(badge => badge.textContent === ' . Js::from($fallback) . ')', true)
+            ->assertSeeIn('[data-testid="fallback-multiple"] [data-value="42"]', '42')
             ->assertSeeIn($refreshed . ' b', 'Callback & trusted')
             ->click('[data-testid="fallback-refreshed"] button[aria-label="Refresh label"]')
             ->assertSeeIn($refreshed, $fallback)
             ->assertScript('document.querySelector(\'' . $refreshed . '\').textContent', $fallback)
             ->assertScript('window.fallbackMarker ?? null', null)
-            ->assertMissing('[data-testid="fallback-single"] svg')
+            ->assertMissing('[data-testid^="fallback-"] svg[onload]')
             ->assertNoAccessibilityIssues();
 
         $page->inDarkMode()->assertNoAccessibilityIssues();

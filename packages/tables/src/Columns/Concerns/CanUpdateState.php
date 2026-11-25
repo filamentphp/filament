@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
+use function Livewire\invade;
+
 trait CanUpdateState
 {
     // Security: Inline editing requires explicit `authorize()` configuration
@@ -146,8 +148,21 @@ trait CanUpdateState
         if ($hasRelationship) {
             $columnName = $this->getFullAttributeName($record);
             $columnRelationshipName = $this->getRelationshipName($record);
+            $relationshipsToLoad = [$columnRelationshipName];
+
+            // Match record resolution without adding display-column eager loads.
+            if ($this->hasTable() && ($query = $this->getTable()->getQuery(isResolvingRecord: true))) {
+                $query = invade($this->getLivewire())->applyFiltersToTableQuery($query, isResolvingRecord: true);
+
+                foreach ($query->applyScopes()->getEagerLoads() as $relationshipName => $constraints) {
+                    if (($relationshipName === $columnRelationshipName) || str_starts_with($columnRelationshipName, "{$relationshipName}.")) {
+                        $relationshipsToLoad[$relationshipName] = $constraints;
+                    }
+                }
+            }
+
             $recordToUpdate = Arr::get(
-                $record->load($columnRelationshipName),
+                $record->load($relationshipsToLoad),
                 $columnRelationshipName,
             );
             $relatedRecord = $recordToUpdate instanceof Model ? $recordToUpdate : null;

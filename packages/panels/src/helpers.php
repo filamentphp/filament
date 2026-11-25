@@ -77,14 +77,14 @@ if (! function_exists('Filament\get_authorization_response')) {
                 : "Strict authorization mode is enabled, but no [{$actionValue}()] method was found on [{$policyClass}].");
         }
 
-        /** @var bool | Response | null $response */
+        /** @var mixed $response */
         $response = invade(Gate::forUser($user))->callBeforeCallbacks( /** @phpstan-ignore-line */
             $user,
-            $action,
+            $actionValue,
             [$model],
         );
 
-        if ($response === false) {
+        if (($response !== null) && (! $response)) {
             return Response::deny();
         }
 
