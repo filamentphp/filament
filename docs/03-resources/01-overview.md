@@ -201,6 +201,8 @@ TextInput::make('password')
     ->visibleOn(Operation::Create),
 ```
 
+In action modal forms, the operation uses the mounted action name, not necessarily the resource page's operation. A default `EditAction` modal uses `edit`, a renamed `EditAction::make('updateAuthor')` uses `updateAuthor`, and an `edit` action nested inside a `manage` action uses `manage.edit`. These methods match the entire operation, so `hiddenOn(Operation::Edit)` does not match `manage.edit`. See [using the current operation in a modal schema](../actions/modals#using-the-current-operation-in-a-modal-schema).
+
 ## Resource tables
 
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records).
