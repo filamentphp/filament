@@ -2,11 +2,11 @@
 
 use Filament\Upgrade\Rector\FixGetSetClosureTypesRector;
 use Filament\Upgrade\Rector\MoveImportedClassesRector;
+use Filament\Upgrade\Rector\RemoveTraitUseRector;
 use Filament\Upgrade\Rector\SecondaryToGrayColorRector;
 use Filament\Upgrade\Rector\SimpleMethodChangesRector;
 use Filament\Upgrade\Rector\SimplePropertyChangesRector;
 use Rector\Config\RectorConfig;
-use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
