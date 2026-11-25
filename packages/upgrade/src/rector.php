@@ -18,6 +18,7 @@ use Filament\Support\Colors\Color;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
 use Filament\Upgrade\Rector;
+use Filament\Upgrade\Rector\AddInterfaceByTraitRector;
 use Filament\Upgrade\Rector\AddTraitByTraitRector;
 use Filament\Widgets\Widget;
 use Rector\Config\RectorConfig;
@@ -27,7 +28,6 @@ use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
-use Rector\Transform\Rector\Class_\AddInterfaceByTraitRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
