@@ -57,7 +57,8 @@ export default function selectFormComponent({
                 clearButtonLabel,
                 element: this.$refs.select,
                 errorMessage,
-                getOptionLabelUsing: () => this.$getOptionLabel(),
+                getOptionLabelUsing: () =>
+                    this.$getOptionLabel({ withDefault: false }),
                 getOptionLabelsUsing: () => this.$getOptionLabelsForJs(),
                 getOptionsUsing: optionRequests.wrap((request) =>
                     request(this.$wire, 'callSchemaComponentMethod', [

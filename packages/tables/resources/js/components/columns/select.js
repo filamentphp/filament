@@ -64,6 +64,7 @@ export default function selectTableColumn({
                             name,
                             recordKey,
                             'getOptionLabel',
+                            { withDefault: false },
                         ),
                     getOptionsUsing: optionRequests.wrap((request) =>
                         request(this.$wire, 'callTableColumnMethod', [
