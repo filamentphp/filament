@@ -419,16 +419,16 @@ export default function table({
             })
         },
 
+        getRecordCheckboxes() {
+            return Array.from(
+                this.$root?.querySelectorAll(
+                    'input[type="checkbox"].fi-ta-record-checkbox',
+                ) ?? [],
+            ).filter((checkbox) => checkbox.closest('.fi-ta') === this.$root)
+        },
+
         getRecordsOnPage() {
-            const keys = []
-
-            for (let checkbox of this.$root?.getElementsByClassName(
-                'fi-ta-record-checkbox',
-            ) ?? []) {
-                keys.push(checkbox.value)
-            }
-
-            return keys
+            return this.getRecordCheckboxes().map((checkbox) => checkbox.value)
         },
 
         selectRecords(keys) {
@@ -643,33 +643,32 @@ export default function table({
             this.$root?.addEventListener(
                 'click',
                 (event) =>
-                    event.target?.matches('.fi-ta-record-checkbox') &&
+                    event.target?.matches(
+                        'input[type="checkbox"].fi-ta-record-checkbox',
+                    ) &&
+                    event.target.closest('.fi-ta') === this.$root &&
                     this.handleCheckboxClick(event, event.target),
                 { signal },
             )
         },
 
         handleCheckboxClick(event, checkbox) {
-            if (!this.lastChecked) {
-                this.lastChecked = checkbox
+            if (!this.lastCheckedRecord) {
+                this.lastCheckedRecord = checkbox
 
                 return
             }
 
             if (event.shiftKey) {
-                let checkboxes = Array.from(
-                    this.$root?.getElementsByClassName(
-                        'fi-ta-record-checkbox',
-                    ) ?? [],
-                )
+                let checkboxes = this.getRecordCheckboxes()
 
-                if (!checkboxes.includes(this.lastChecked)) {
-                    this.lastChecked = checkbox
+                if (!checkboxes.includes(this.lastCheckedRecord)) {
+                    this.lastCheckedRecord = checkbox
 
                     return
                 }
 
-                let start = checkboxes.indexOf(this.lastChecked)
+                let start = checkboxes.indexOf(this.lastCheckedRecord)
                 let end = checkboxes.indexOf(checkbox)
 
                 let range = [start, end].sort((a, b) => a - b)
@@ -693,7 +692,7 @@ export default function table({
                 }
             }
 
-            this.lastChecked = checkbox
+            this.lastCheckedRecord = checkbox
         },
 
         toggleFiltersDropdown() {
