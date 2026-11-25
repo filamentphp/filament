@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithCustomFiltersRemoveAllAction;
@@ -35,6 +36,7 @@ use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
@@ -410,6 +412,59 @@ it('does not save forged field or relationship state when an `EditAction` schema
     'enabled schema' => false,
 ]);
 
+it('authorizes `CreateAction` using its model', function (bool $isCrossModel, bool $ownerAllowed, bool $actionAllowed, ?bool $authorization, bool $expectedAllowed): void {
+    $ownerResponse = $ownerAllowed ? Response::allow('Owner grant.') : Response::deny('Owner denial.');
+    $actionResponse = $actionAllowed ? Response::allow('Action grant.') : Response::denyAsNotFound('Action denial.', 'action-denied');
+    app()->bind(TicketPolicy::class . '::create', static fn (): Response => $ownerResponse);
+    app()->bind(DepartmentPolicy::class . '::create', static fn (): Response => $actionResponse);
+
+    CreateAction::configureUsing(
+        static fn (CreateAction $action) => $action
+            ->model(static fn (): string => $isCrossModel ? Department::class : Ticket::class)
+            ->authorize($authorization),
+        during: function () use ($isCrossModel, $authorization, $expectedAllowed, $ownerResponse, $actionResponse): void {
+            $component = livewire(ListTickets::class)
+                ->{$expectedAllowed ? 'assertActionVisible' : 'assertActionHidden'}('create');
+            $action = $component->instance()->getAction('create');
+
+            expect($action->getUrl())->toBe($isCrossModel ? null : TicketResource::getUrl('create'));
+
+            if ($authorization === null) {
+                expect($action->getAuthorizationResponse())->toBe($isCrossModel ? $actionResponse : $ownerResponse);
+            }
+
+            $component->mountAction('create')
+                ->{$expectedAllowed ? 'assertActionMounted' : 'assertActionNotMounted'}();
+        },
+    );
+})->with('create action authorization subjects');
+
+it('preserves resource create authorization overrides only for the resource model', function (bool $isCrossModel): void {
+    CreateAction::configureUsing(
+        static fn (CreateAction $action) => $action->model($isCrossModel ? Department::class : Ticket::class),
+        during: function () use ($isCrossModel): void {
+            livewire(ListTicketsWithCreateAuthorization::class)
+                ->{$isCrossModel ? 'assertActionVisible' : 'assertActionHidden'}('create');
+        },
+    );
+})->with([false, true]);
+
+it('uses action Gate semantics for cross-model create authorization without a policy', function (?bool $gateResult): void {
+    if ($gateResult !== null) {
+        Gate::define('create', static fn (User $user, string $model): bool => ($model === TicketMessage::class) && $gateResult);
+    }
+
+    CreateAction::configureUsing(
+        static fn (CreateAction $action) => $action->model(TicketMessage::class),
+        during: function () use ($gateResult): void {
+            livewire(ListTickets::class)
+                ->{$gateResult ? 'assertActionVisible' : 'assertActionHidden'}('create')
+                ->mountAction('create')
+                ->{$gateResult ? 'assertActionMounted' : 'assertActionNotMounted'}();
+        },
+    );
+})->with([null, false, true]);
+
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 
@@ -515,5 +570,22 @@ class ListTicketsWithEditableColumns extends ListTickets
                     ->updateStateUsing(fn (): bool => true)
                     ->authorize(true),
             ]);
+    }
+}
+
+class ListTicketsWithCreateAuthorization extends ListTickets
+{
+    protected static string $resource = CreateAuthorizationTicketResource::class;
+}
+
+class CreateAuthorizationTicketResource extends TicketResource
+{
+    protected static ?string $slug = 'tickets';
+
+    public static function getCreateAuthorizationResponse(): Response
+    {
+        $response = parent::getCreateAuthorizationResponse();
+
+        return $response->denied() ? $response : Response::deny('Resource hook denial.');
     }
 }
