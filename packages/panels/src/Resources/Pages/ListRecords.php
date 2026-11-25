@@ -68,6 +68,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function authorizeAccess(): void {}
 
     #[Unexposed]
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
+    #[Unexposed]
     public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb ?? __('filament-panels::resources/pages/list-records.breadcrumb');
