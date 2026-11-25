@@ -18,6 +18,8 @@ use function Livewire\store;
  */
 trait HasFormComponentActions
 {
+    protected bool $isMountingFormComponentAction = false;
+
     /**
      * @var array<string> | null
      */
@@ -132,7 +134,13 @@ trait HasFormComponentActions
         $this->mountedFormComponentActionsComponents[] = $component;
         $this->mountedFormComponentActionsData[] = [];
 
-        $action = $this->getMountedFormComponentAction();
+        $this->isMountingFormComponentAction = true;
+
+        try {
+            $action = $this->getMountedFormComponentAction();
+        } finally {
+            $this->isMountingFormComponentAction = false;
+        }
 
         if (! $action) {
             $this->unmountFormComponentAction();
@@ -206,13 +214,38 @@ trait HasFormComponentActions
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
         $actionName = $this->mountedFormComponentActions[$actionNestingIndex] ?? null;
 
-        if (blank($actionName)) {
+        $action = null;
+
+        if (
+            filled($actionName) &&
+            ((! $actionNestingIndex) || $this->getMountedFormComponentAction($actionNestingIndex - 1))
+        ) {
+            $action = $this->getMountedFormComponentActionComponent($actionNestingIndex)
+                ?->getAction($actionName)
+                ?->arguments($this->mountedFormComponentActionsArguments[$actionNestingIndex] ?? []);
+        }
+
+        if ((! $action) || $action->isDisabled()) {
+            $shouldResetMountedActions = (! $this->isMountingFormComponentAction) || ($actionNestingIndex !== array_key_last($this->mountedFormComponentActions));
+
+            foreach (array_keys($this->cachedForms ?? []) as $formName) {
+                if (
+                    str_starts_with($formName, 'mountedFormComponentActionForm') &&
+                    ($shouldResetMountedActions || ($formName === "mountedFormComponentActionForm{$actionNestingIndex}"))
+                ) {
+                    unset($this->cachedForms[$formName]);
+                }
+            }
+
+            if ($shouldResetMountedActions && count($this->mountedFormComponentActions)) {
+                $this->resetMountedFormComponentActionProperties();
+                $this->closeFormComponentActionModal();
+            }
+
             return null;
         }
 
-        return $this->getMountedFormComponentActionComponent($actionNestingIndex)
-            ?->getAction($actionName)
-            ?->arguments($this->mountedFormComponentActionsArguments[$actionNestingIndex] ?? []);
+        return $action;
     }
 
     protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Form
@@ -280,7 +313,12 @@ trait HasFormComponentActions
 
     public function unmountFormComponentAction(bool $shouldCancelParentActions = true, bool $shouldCloseModal = true): void
     {
-        $action = $this->getMountedFormComponentAction();
+        // Resolve without availability checks, as the action may have disabled itself while running.
+        $actionNestingIndex = array_key_last($this->mountedFormComponentActions);
+        $actionName = $this->mountedFormComponentActions[$actionNestingIndex] ?? null;
+        $action = filled($actionName) ? $this->getMountedFormComponentActionComponent($actionNestingIndex)
+            ?->getAction($actionName)
+            ?->arguments($this->mountedFormComponentActionsArguments[$actionNestingIndex] ?? []) : null;
 
         if (! ($shouldCancelParentActions && $action)) {
             $this->popMountedFormComponentAction();

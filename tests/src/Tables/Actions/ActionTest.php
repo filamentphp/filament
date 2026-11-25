@@ -1,7 +1,10 @@
 <?php
 
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -259,6 +262,70 @@ it('can state whether a table action exists with a given configuration', functio
         ->assertTableActionExists('attachMultiple', fn (AttachAction $action) => $action->isMultiple())
         ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
 });
+
+it('only restores available table action chains and their forms', function (string $restriction, array $mountedActions): void {
+    $component = livewire(RestoredTableActions::class, ['restriction' => $restriction])
+        ->set('mountedTableActions', $mountedActions)
+        ->call('$refresh');
+
+    expect($component->instance()->getMountedTableAction() !== null)->toBe($restriction === '');
+
+    if (($restriction === '') && (count($mountedActions) > 1)) {
+        $component->call('callMountedTableAction')->assertDispatched('restored-table-child-called')
+            ->assertSet('mountedTableActions', []);
+    }
+
+    if ($restriction !== '') {
+        $component->assertDontSee('Table restoration secret')
+            ->call('callMountedTableAction')->assertNotDispatched('restored-table-child-called')
+            ->assertSet('mountedTableActions', []);
+
+        expect($component->instance()->getForm('mountedTableActionForm'))->toBeNull();
+    }
+})->with(['', 'hidden', 'invisible', 'disabled', 'unauthorized'])->with([
+    'root' => [['restricted']],
+    'nested' => [['restricted', 'child']],
+    'sparse nested' => [[1 => 'restricted', 2 => 'child']],
+]);
+
+it('preserves parent edits when mounting an unavailable table child', function (string $actionName): void {
+    livewire(RestoredTableActions::class)
+        ->mountTableAction('restricted')
+        ->setTableActionData(['value' => 'edited value'])
+        ->call('mountTableAction', $actionName)
+        ->call('$refresh')
+        ->assertSet('mountedTableActions', ['restricted'])
+        ->assertTableActionDataSet(['value' => 'edited value']);
+})->with(['missing', 'unavailable']);
+
+class RestoredTableActions extends PostsTable
+{
+    public string $restriction = '';
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)->headerActions([
+            Action::make('restricted')
+                ->modalDescription('Table restoration secret')
+                ->hidden(fn (): bool => $this->restriction === 'hidden')
+                ->visible(fn (): bool => $this->restriction !== 'invisible')
+                ->disabled(fn (): bool => $this->restriction === 'disabled')
+                ->authorize(fn (): bool => $this->restriction !== 'unauthorized')
+                ->form([TextInput::make('value')])
+                ->extraModalFooterActions([
+                    Action::make('unavailable')->disabled(),
+                    Action::make('child')
+                        ->requiresConfirmation()
+                        ->disabled(fn (): bool => $this->restriction === 'completed')
+                        ->cancelParentActions()
+                        ->action(function (): void {
+                            $this->restriction = 'completed';
+                            $this->dispatch('restored-table-child-called');
+                        }),
+                ]),
+        ]);
+    }
+}
 
 it('can replicate a record', function () {
     $post = Post::factory()->create();

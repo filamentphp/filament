@@ -160,13 +160,15 @@ When this function is run, the state of the `title` field will be updated, and t
 
 ### Injecting the current form operation
 
-If you're writing a form for a panel resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$operation` parameter:
+Use the `$operation` parameter to read the component's form operation, usually `create`, `edit` or `view` in a panel resource or relation manager:
 
 ```php
 function (string $operation) {
     // ...
 }
 ```
+
+In an [action modal form](../actions/modals#using-the-current-operation-in-a-modal-form), this is the mounted action name chain for that form, such as `edit` or `manage.edit`. Compare the exact full string, not just its suffix or the action's class.
 
 > Outside the panel, you can set a form's operation by using the `operation()` method on the form definition.
 

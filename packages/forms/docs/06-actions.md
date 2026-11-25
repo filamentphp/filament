@@ -240,3 +240,5 @@ Action::make('copyCostToPrice')
 ```
 
 Form component actions also have access to [all utilities that apply to actions](../actions/advanced#action-utility-injection) in general.
+
+Injecting `$operation` into a form component action's callback reads the operation of the form containing its component, not the action's own modal form. Fields inside the action's modal instead read that [modal form's operation](../actions/modals#using-the-current-operation-in-a-modal-form).

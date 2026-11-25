@@ -55,6 +55,8 @@ trait InteractsWithActions
 
     protected bool $hasActionsModalRendered = false;
 
+    protected bool $isMountingAction = false;
+
     /**
      * @param  array<string, mixed>  $arguments
      */
@@ -162,7 +164,13 @@ trait InteractsWithActions
         $this->mountedActionsArguments[] = $arguments;
         $this->mountedActionsData[] = [];
 
-        $action = $this->getMountedAction();
+        $this->isMountingAction = true;
+
+        try {
+            $action = $this->getMountedAction();
+        } finally {
+            $this->isMountingAction = false;
+        }
 
         if (! $action) {
             $this->unmountAction();
@@ -254,11 +262,28 @@ trait InteractsWithActions
 
     public function getMountedAction(): ?Action
     {
-        if (! count($this->mountedActions ?? [])) {
-            return null;
+        $action = null;
+
+        for ($actionNestingIndex = 0; $actionNestingIndex < count($this->mountedActions ?? []); $actionNestingIndex++) {
+            $action = $this->getAction(array_slice($this->mountedActions, 0, $actionNestingIndex + 1));
+
+            if ((! $action) || $action->isDisabled()) {
+                unset($this->cachedForms['mountedActionForm']);
+
+                if ((! $this->isMountingAction) || ($actionNestingIndex < (count($this->mountedActions) - 1))) {
+                    $this->resetMountedActionProperties();
+                    $this->closeActionModal();
+                }
+
+                return null;
+            }
         }
 
-        return $this->getAction($this->mountedActions);
+        if (! $action) {
+            unset($this->cachedForms['mountedActionForm']);
+        }
+
+        return $action;
     }
 
     /**
@@ -400,7 +425,8 @@ trait InteractsWithActions
 
     public function unmountAction(bool $shouldCancelParentActions = true, bool $shouldCloseModal = true): void
     {
-        $action = $this->getMountedAction();
+        // Resolve without availability checks, as the action may have disabled itself while running.
+        $action = count($this->mountedActions ?? []) ? $this->getAction($this->mountedActions) : null;
 
         if (! ($shouldCancelParentActions && $action)) {
             $this->popMountedAction();

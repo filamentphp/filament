@@ -63,3 +63,7 @@ Inside your view, you may access the Eloquent record using the `$getRecord()` fu
     {{ $getRecord()->name }}
 </div>
 ```
+
+## Accessing the current operation
+
+Inside your view, you may read the component's form operation using `$getContainer()->getOperation()`, usually `create`, `edit` or `view` in a panel resource. In an [action modal form](../../actions/modals#using-the-current-operation-in-a-modal-form), this is the mounted action name chain for that form, such as `edit` or `manage.edit`. Compare the exact full string, not just its suffix or the action's class.

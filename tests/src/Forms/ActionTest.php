@@ -126,6 +126,96 @@ it('can state whether a form component action exists', function () {
         ->assertFormComponentActionDoesNotExist('textInput', 'doesNotExist');
 });
 
+it('only restores available form component action chains', function (string $restriction, bool $isNested): void {
+    $component = livewire(RestoredFormActions::class, ['restriction' => $restriction])
+        ->set([
+            'mountedFormComponentActionsComponents' => $isNested ? ['textInput', 'nested-value'] : ['textInput'],
+            'mountedFormComponentActions' => $isNested ? ['restricted', 'child'] : ['restricted'],
+        ])
+        ->call('$refresh');
+
+    expect($component->instance()->getMountedFormComponentAction() !== null)->toBe($restriction === '');
+
+    if (($restriction === '') && $isNested) {
+        $component->call('callMountedFormComponentAction')->assertDispatched('restored-form-child-called')
+            ->assertSet('mountedFormComponentActions', []);
+    }
+
+    if ($restriction !== '') {
+        $component->call('callMountedFormComponentAction')->assertNotDispatched('restored-form-child-called')
+            ->assertSet('mountedFormComponentActions', []);
+
+        expect($component->instance()->getForm('mountedFormComponentActionForm0'))->toBeNull()
+            ->and($component->instance()->getForm('mountedFormComponentActionForm1'))->toBeNull();
+    }
+})->with(['', 'hidden', 'invisible', 'disabled', 'unauthorized'])->with([false, true]);
+
+it('preserves parent edits when mounting an unavailable form component child', function (string $actionName, bool $isNested): void {
+    $component = livewire(RestoredFormActions::class)
+        ->call('mountFormComponentAction', 'textInput', 'restricted')
+        ->setFormComponentActionData(['value' => 'edited value']);
+
+    if ($isNested) {
+        $component->call('mountFormComponentAction', 'nested-value', 'child')
+            ->setFormComponentActionData(['child_value' => 'edited child value']);
+    }
+
+    $component->call('mountFormComponentAction', $isNested ? 'child-value' : 'nested-value', $actionName)
+        ->call('$refresh')
+        ->assertSet('mountedFormComponentActions', $isNested ? ['restricted', 'child'] : ['restricted'])
+        ->assertSet('mountedFormComponentActionsData.0.value', 'edited value');
+
+    if ($isNested) {
+        $component->assertFormComponentActionDataSet(['child_value' => 'edited child value']);
+    }
+})->with(['missing', 'unavailable'])->with([false, true]);
+
+it('honors named parent cancellation when a fresh form component child is disabled', function (): void {
+    livewire(RestoredFormActions::class)
+        ->call('mountFormComponentAction', 'textInput', 'restricted')
+        ->setFormComponentActionData(['value' => 'edited value'])
+        ->call('mountFormComponentAction', 'nested-value', 'child')
+        ->call('mountFormComponentAction', 'child-value', 'canceling-unavailable')
+        ->assertSet('mountedFormComponentActions', ['restricted'])
+        ->assertFormComponentActionDataSet(['value' => 'edited value']);
+});
+
+class RestoredFormActions extends Actions
+{
+    public string $restriction = '';
+
+    public function form(Form $form): Form
+    {
+        return $form->statePath('data')->schema([
+            TextInput::make('textInput')->key('textInput')->registerActions([
+                Action::make('restricted')
+                    ->hidden(fn (): bool => $this->restriction === 'hidden')
+                    ->visible(fn (): bool => $this->restriction !== 'invisible')
+                    ->disabled(fn (): bool => $this->restriction === 'disabled')
+                    ->authorize(fn (): bool => $this->restriction !== 'unauthorized')
+                    ->form([
+                        TextInput::make('value')->key('nested-value')->registerActions([
+                            Action::make('unavailable')->disabled(),
+                            Action::make('child')
+                                ->form([
+                                    TextInput::make('child_value')->key('child-value')->registerActions([
+                                        Action::make('unavailable')->disabled(),
+                                        Action::make('canceling-unavailable')->disabled()->cancelParentActions('child'),
+                                    ]),
+                                ])
+                                ->disabled(fn (): bool => $this->restriction === 'completed')
+                                ->cancelParentActions()
+                                ->action(function (): void {
+                                    $this->restriction = 'completed';
+                                    $this->dispatch('restored-form-child-called');
+                                }),
+                        ]),
+                    ]),
+            ]),
+        ]);
+    }
+}
+
 it('refreshes a selected record before mounting its field action', function (bool $shouldRevokeSelection, bool $isNested): void {
     $author = User::factory()->create(['name' => 'Eligible author']);
     $livewire = livewire(SelectionRefreshFormActions::class)->instance();

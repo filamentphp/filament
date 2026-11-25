@@ -153,6 +153,8 @@ Forms\Components\TextInput::make('password')
     ->visibleOn('create'),
 ```
 
+Operation names match the exact full string. In an [action modal form](../../actions/modals#using-the-current-operation-in-a-modal-form), `hiddenOn('edit')` matches a standalone action named `edit`, but not an `edit` action nested under `manage`, whose operation is `manage.edit`. Use `hiddenOn(['edit', 'manage.edit'])` to match either value. The array lists alternatives; the form still has only one operation string. The same operation-name matching applies to `visibleOn()` and `disabledOn()`.
+
 ## Resource tables
 
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):

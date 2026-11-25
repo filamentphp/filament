@@ -44,6 +44,8 @@ trait HasActions
 
     protected int | string | null $cachedMountedTableActionRecordKey = null;
 
+    protected bool $isMountingTableAction = false;
+
     /**
      * @var mixed
      */
@@ -182,7 +184,13 @@ trait HasActions
             $this->mountedTableActionRecord($record);
         }
 
-        $action = $this->getMountedTableAction();
+        $this->isMountingTableAction = true;
+
+        try {
+            $action = $this->getMountedTableAction();
+        } finally {
+            $this->isMountingTableAction = false;
+        }
 
         if (! $action) {
             $this->unmountTableAction();
@@ -260,11 +268,29 @@ trait HasActions
 
     public function getMountedTableAction(): ?Action
     {
-        if (! count($this->mountedTableActions ?? [])) {
-            return null;
+        $action = null;
+
+        for ($actionNestingIndex = 0; $actionNestingIndex < count($this->mountedTableActions ?? []); $actionNestingIndex++) {
+            $action = $this->getTable()->getAction(array_slice($this->mountedTableActions, 0, $actionNestingIndex + 1));
+
+            if ((! $action) || $action->isDisabled()) {
+                unset($this->cachedForms['mountedTableActionForm']);
+
+                if ((! $this->isMountingTableAction) || ($actionNestingIndex < (count($this->mountedTableActions) - 1))) {
+                    $this->resetMountedTableActionProperties();
+                    $this->mountedTableActionRecord(null);
+                    $this->closeTableActionModal();
+                }
+
+                return null;
+            }
         }
 
-        return $this->getTable()->getAction($this->mountedTableActions);
+        if (! $action) {
+            unset($this->cachedForms['mountedTableActionForm']);
+        }
+
+        return $action;
     }
 
     public function getMountedTableActionForm(?Action $mountedAction = null): ?Form
@@ -324,7 +350,8 @@ trait HasActions
 
     public function unmountTableAction(bool $shouldCancelParentActions = true, bool $shouldCloseModal = true): void
     {
-        $action = $this->getMountedTableAction();
+        // Resolve without availability checks, as the action may have disabled itself while running.
+        $action = count($this->mountedTableActions ?? []) ? $this->getTable()->getAction($this->mountedTableActions) : null;
 
         if (! ($shouldCancelParentActions && $action)) {
             $this->popMountedTableAction();

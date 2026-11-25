@@ -1,5 +1,8 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
@@ -119,6 +122,68 @@ it('can mount a nested action with nested arguments', function () {
         ->assertDispatched('nested-called', arguments: [
             'payload' => $payload,
         ]);
+});
+
+describe('mounted action restoration', function (): void {
+    it('only restores available action chains and their forms', function (string $restriction, array $mountedActions): void {
+        $component = livewire(RestoredPageActions::class, ['restriction' => $restriction])
+            ->set('mountedActions', $mountedActions)
+            ->call('$refresh');
+
+        if ($restriction === '') {
+            expect($component->instance()->getMountedAction())->not->toBeNull();
+
+            if (count($mountedActions) > 1) {
+                $component->call('callMountedAction')->assertDispatched('restored-child-called')
+                    ->assertSet('mountedActions', []);
+            }
+
+            return;
+        }
+
+        $component->assertDontSee('Restoration secret')
+            ->call('callMountedAction')
+            ->assertNotDispatched('restored-child-called')
+            ->assertSet('mountedActions', []);
+
+        expect($component->instance()->getMountedAction())->toBeNull()
+            ->and($component->instance()->getForm('mountedActionForm'))->toBeNull();
+    })->with(['', 'hidden', 'invisible', 'disabled', 'unauthorized'])->with([
+        'root' => [['restricted']],
+        'nested' => [['restricted', 'child']],
+        'sparse nested' => [[1 => 'restricted', 2 => 'child']],
+    ]);
+
+    it('preserves edited data and lifecycle counts, then rejects revoked parent access', function (): void {
+        $component = livewire(RestoredPageActions::class)
+            ->mountAction('restricted')
+            ->setActionData(['value' => 'edited value'])
+            ->call('$refresh')
+            ->assertActionDataSet(['value' => 'edited value'])
+            ->assertSet('fillCount', 1)
+            ->assertSet('mountCount', 1)
+            ->call('mountAction', 'child')
+            ->set('restriction', 'disabled')
+            ->call('callMountedAction')
+            ->assertNotDispatched('restored-child-called')
+            ->assertSet('mountedActions', []);
+
+        expect($component->instance()->getMountedAction())->toBeNull()
+            ->and($component->instance()->getForm('mountedActionForm'))->toBeNull();
+    });
+
+    it('preserves parent edits when mounting an unavailable child', function (string $actionName): void {
+        livewire(RestoredPageActions::class)
+            ->mountAction('restricted')
+            ->setActionData(['value' => 'edited value'])
+            ->call('mountAction', $actionName)
+            ->call('$refresh')
+            ->assertSet('mountedActions', ['restricted'])
+            ->assertActionDataSet(['value' => 'edited value'])
+            ->assertSet('mountCount', 1)
+            ->assertSet('fillCount', 1);
+    })->with(['missing', 'unavailable']);
+
 });
 
 it('can call an action with arguments', function () {
@@ -349,3 +414,43 @@ it('will assert that a notification was not sent', function () {
         ->callAction('shows-notification-with-id')
         ->assertNotNotified('A notification');
 });
+
+class RestoredPageActions extends Actions
+{
+    public string $restriction = '';
+
+    public int $mountCount = 0;
+
+    public int $fillCount = 0;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('restricted')
+                ->modalDescription('Restoration secret')
+                ->hidden(fn (): bool => $this->restriction === 'hidden')
+                ->visible(fn (): bool => $this->restriction !== 'invisible')
+                ->disabled(fn (): bool => $this->restriction === 'disabled')
+                ->authorize(fn (): bool => $this->restriction !== 'unauthorized')
+                ->mountUsing(function (Form $form): void {
+                    $this->mountCount++;
+                    $form->fill();
+                })
+                ->afterFormFilled(function (): void {
+                    $this->fillCount++;
+                })
+                ->form([TextInput::make('value')])
+                ->extraModalFooterActions([
+                    Action::make('unavailable')->disabled(),
+                    Action::make('child')
+                        ->requiresConfirmation()
+                        ->disabled(fn (): bool => $this->restriction === 'completed')
+                        ->cancelParentActions()
+                        ->action(function (): void {
+                            $this->restriction = 'completed';
+                            $this->dispatch('restored-child-called');
+                        }),
+                ]),
+        ];
+    }
+}

@@ -48,6 +48,27 @@ Action::make('updateAuthor')
 
 <AutoScreenshot name="actions/modal/form" alt="Modal with form" />
 
+### Using the current operation in a modal form
+
+By default, a modal form's operation is the action name used to mount it. For example, `Filament\Actions\EditAction::make()` uses `edit`, while `Filament\Actions\EditAction::make('updateAuthor')` uses `updateAuthor`, not `edit`.
+
+For [nested actions](#opening-another-modal-from-an-extra-footer-action), the operation includes the mounted parent action names, separated by dots. An `edit` action opened inside a `manage` action uses `manage.edit`. A further `confirm` action opened inside it uses `manage.edit.confirm`.
+
+Page actions, table actions, and form component actions have separate mounted action chains. A form component action opened from a field in a page or table action's modal uses its own form component action chain, not the surrounding page or table action names. Its modal form's operation includes the form component action names up to that modal's nesting level.
+
+A form has one operation string. Operation-name conditions match the entire value, not an action class or a name suffix. For example, `disabledOn('edit')` does not disable a field in a `manage.edit` modal. To support both standalone and nested edit modals, list both operations:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('reference')
+    ->disabledOn(['edit', 'manage.edit'])
+```
+
+The array lists alternatives to match; it does not give the form multiple operations. The same exact operation-name matching applies to `hiddenOn()` and `visibleOn()`. These methods also accept a Livewire component class to match the component containing the form, which is separate from matching an action's class.
+
+When you [inject `$operation` into a form component's callback](../forms/advanced#injecting-the-current-form-operation), or read `$getContainer()->getOperation()` in its Blade view, you receive that component's form operation, not the operation of the resource page containing the modal.
+
 ### Filling the form with existing data
 
 You may fill the form with existing data, using the `fillForm()` method:

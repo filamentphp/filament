@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -99,6 +100,72 @@ it('can state whether a form component action exists', function () {
         ->assertInfolistActionExists('textEntry', 'exists')
         ->assertInfolistActionDoesNotExist('textEntry', 'doesNotExist');
 });
+
+it('only restores available infolist action chains and their forms', function (string $restriction, array $mountedActions): void {
+    $component = livewire(RestoredInfolistActions::class, ['restriction' => $restriction])
+        ->set('mountedInfolistActionsInfolist', 'infolist')
+        ->set('mountedInfolistActionsComponent', 'textEntry')
+        ->set('mountedInfolistActions', $mountedActions)
+        ->call('$refresh');
+
+    expect($component->instance()->getMountedInfolistAction() !== null)->toBe($restriction === '');
+
+    if (($restriction === '') && (count($mountedActions) > 1)) {
+        $component->call('callMountedInfolistAction')->assertDispatched('restored-infolist-child-called')
+            ->assertSet('mountedInfolistActions', []);
+    }
+
+    if ($restriction !== '') {
+        $component->call('callMountedInfolistAction')->assertNotDispatched('restored-infolist-child-called')
+            ->assertSet('mountedInfolistActions', []);
+
+        expect($component->instance()->getForm('mountedInfolistActionForm'))->toBeNull();
+    }
+})->with(['', 'hidden', 'invisible', 'disabled', 'unauthorized'])->with([
+    'root' => [['restricted']],
+    'nested' => [['restricted', 'child']],
+    'sparse nested' => [[1 => 'restricted', 2 => 'child']],
+]);
+
+it('preserves parent edits when mounting an unavailable infolist child', function (string $actionName): void {
+    livewire(RestoredInfolistActions::class)
+        ->mountInfolistAction('textEntry', 'restricted')
+        ->setInfolistActionData(['value' => 'edited value'])
+        ->call('mountInfolistAction', $actionName)
+        ->call('$refresh')
+        ->assertSet('mountedInfolistActions', ['restricted'])
+        ->assertInfolistActionDataSet(['value' => 'edited value']);
+})->with(['missing', 'unavailable']);
+
+class RestoredInfolistActions extends Actions
+{
+    public string $restriction = '';
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->state([])->schema([
+            TextEntry::make('textEntry')->key('textEntry')->registerActions([
+                Action::make('restricted')
+                    ->hidden(fn (): bool => $this->restriction === 'hidden')
+                    ->visible(fn (): bool => $this->restriction !== 'invisible')
+                    ->disabled(fn (): bool => $this->restriction === 'disabled')
+                    ->authorize(fn (): bool => $this->restriction !== 'unauthorized')
+                    ->form([TextInput::make('value')])
+                    ->extraModalFooterActions([
+                        Action::make('unavailable')->disabled(),
+                        Action::make('child')
+                            ->form([TextInput::make('child_value')])
+                            ->disabled(fn (): bool => $this->restriction === 'completed')
+                            ->cancelParentActions()
+                            ->action(function (): void {
+                                $this->restriction = 'completed';
+                                $this->dispatch('restored-infolist-child-called');
+                            }),
+                    ]),
+            ]),
+        ]);
+    }
+}
 
 it('can address actions in repeated items without unsafe keys leaking into click handlers', function (string $itemKey, string $stateType): void {
     $items = [

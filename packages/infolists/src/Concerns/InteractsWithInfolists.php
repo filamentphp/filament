@@ -21,6 +21,8 @@ trait InteractsWithInfolists
 {
     protected bool $hasInfolistsModalRendered = false;
 
+    protected bool $isMountingInfolistAction = false;
+
     /**
      * @var array<string, Infolist>
      */
@@ -178,7 +180,13 @@ trait InteractsWithInfolists
             $this->mountedInfolistActionsInfolist = $infolist;
         }
 
-        $action = $this->getMountedInfolistAction();
+        $this->isMountingInfolistAction = true;
+
+        try {
+            $action = $this->getMountedInfolistAction();
+        } finally {
+            $this->isMountingInfolistAction = false;
+        }
 
         if (! $action) {
             $this->unmountInfolistAction();
@@ -258,11 +266,32 @@ trait InteractsWithInfolists
 
     public function getMountedInfolistAction(): ?Action
     {
-        if (! count($this->mountedInfolistActions ?? [])) {
-            return null;
+        $action = null;
+
+        for ($actionNestingIndex = 0; $actionNestingIndex < count($this->mountedInfolistActions ?? []); $actionNestingIndex++) {
+            $action = $this->getMountedInfolistActionComponent()?->getAction(array_slice($this->mountedInfolistActions, 0, $actionNestingIndex + 1));
+
+            if ((! $action) || $action->isDisabled()) {
+                unset($this->cachedForms['mountedInfolistActionForm']);
+
+                if ((! $this->isMountingInfolistAction) || ($actionNestingIndex < (count($this->mountedInfolistActions) - 1))) {
+                    $this->mountedInfolistActions = [];
+                    $this->mountedInfolistActionsData = [];
+                    $this->mountedInfolistActionsComponent = null;
+                    $this->mountedInfolistActionsInfolist = null;
+
+                    $this->dispatch('close-modal', id: "{$this->getId()}-infolist-action");
+                }
+
+                return null;
+            }
         }
 
-        return $this->getMountedInfolistActionComponent()?->getAction($this->mountedInfolistActions);
+        if (! $action) {
+            unset($this->cachedForms['mountedInfolistActionForm']);
+        }
+
+        return $action;
     }
 
     public function getMountedInfolistActionComponent(): ?Component
@@ -298,7 +327,8 @@ trait InteractsWithInfolists
 
     public function unmountInfolistAction(bool $shouldCancelParentActions = true, bool $shouldCloseModal = true): void
     {
-        $action = $this->getMountedInfolistAction();
+        // Resolve without availability checks, as the action may have disabled itself while running.
+        $action = count($this->mountedInfolistActions ?? []) ? $this->getMountedInfolistActionComponent()?->getAction($this->mountedInfolistActions) : null;
 
         if (! ($shouldCancelParentActions && $action)) {
             array_pop($this->mountedInfolistActions);
