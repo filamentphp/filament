@@ -1,5 +1,8 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
@@ -209,6 +212,93 @@ describe('heading and description', function (): void {
 
         expect($table->getDescription())->toBe('All blog posts');
     });
+});
+
+describe('read-only mode', function (): void {
+    it('defaults to writable and preserves configuration across `readOnly()` changes', function (bool $configureWhileReadOnly): void {
+        $post = Post::factory()->create();
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->isReadOnly())->toBeFalse();
+
+        $columnAction = Action::make('column');
+        $headerAction = Action::make('header');
+        $recordAction = Action::make('record');
+        $bulkAction = BulkAction::make('bulk');
+        $emptyAction = Action::make('empty');
+
+        $table->readOnly(condition: $configureWhileReadOnly)
+            ->columns([Tables\Columns\TextColumn::make('title')->action($columnAction)])
+            ->headerActions([$headerAction])
+            ->recordActions([$recordAction])
+            ->recordAction('record')
+            ->toolbarActions([$bulkAction])
+            ->emptyStateActions([ActionGroup::make([ActionGroup::make([$emptyAction])])])
+            ->reorderable('sort')
+            ->selectable();
+
+        expect($table->readOnly())->toBe($table)
+            ->and($table->isReadOnly())->toBeTrue()
+            ->and($table->getFlatActions())->toBe([])
+            ->and($table->getFlatBulkActions())->toBe([])
+            ->and($table->getHeaderActions())->toBe([])
+            ->and($table->getRecordActions())->toBe([])
+            ->and($table->getToolbarActions())->toBe([])
+            ->and($table->getEmptyStateActions())->toBe([])
+            ->and($table->getRecordAction($post))->toBeNull()
+            ->and($table->isReorderable())->toBeFalse()
+            ->and($table->isSelectionEnabled())->toBeTrue()
+            ->and($table->getFiltersApplyAction()->isDisabled())->toBeFalse()
+            ->and($table->getFiltersResetAction()->isDisabled())->toBeFalse();
+
+        $table->readOnly(false);
+
+        expect($table->isReadOnly())->toBeFalse()
+            ->and($table->getAction('column'))->toBe($columnAction)
+            ->and($table->getHeaderActions())->toBe([$headerAction])
+            ->and($table->getRecordActions())->toBe([$recordAction])
+            ->and($table->getToolbarActions())->toBe([$bulkAction])
+            ->and($table->getAction('empty'))->toBe($emptyAction)
+            ->and($table->getBulkAction('bulk'))->toBe($bulkAction)
+            ->and($table->getRecordAction($post))->toBe('record')
+            ->and($table->isReorderable())->toBeTrue();
+    })->with([false, true]);
+
+    it('blocks already mounted actions when a `readOnly()` closure changes', function (bool $isNested): void {
+        $post = Post::factory()->create(['content' => 'Original']);
+        $livewire = livewire(TableTestComponent::class)->instance();
+        $isReadOnly = false;
+        $mutation = static fn () => $post->update(['content' => 'Changed']);
+
+        $livewire->getTable()
+            ->readOnly(function () use (&$isReadOnly): bool {
+                return $isReadOnly;
+            })
+            ->headerActions([
+                Action::make('mutate')->requiresConfirmation()->action($mutation)
+                    ->extraModalFooterActions([Action::make('nested')->requiresConfirmation()->action($mutation)]),
+            ]);
+
+        $livewire->mountAction('mutate', context: ['table' => true]);
+
+        if ($isNested) {
+            $livewire->mountAction('nested');
+        }
+
+        expect($livewire->getMountedAction()->getName())->toBe($isNested ? 'nested' : 'mutate');
+
+        $isReadOnly = true;
+        $livewire->callMountedAction();
+
+        expect($post->fresh()->content)->toBe('Original')
+            ->and($livewire->getMountedActions())->toBe([])
+            ->and($livewire->getMountedAction())->toBeNull();
+
+        $isReadOnly = false;
+        $livewire->callMountedAction();
+
+        expect($post->fresh()->content)->toBe('Changed');
+    })->with([false, true]);
 });
 
 describe('empty state', function (): void {

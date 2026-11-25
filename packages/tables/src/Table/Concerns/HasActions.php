@@ -32,7 +32,7 @@ trait HasActions
      */
     public function getFlatActions(): array
     {
-        return $this->flatActions;
+        return $this->isReadOnly() ? [] : $this->flatActions;
     }
 
     /**
@@ -40,7 +40,7 @@ trait HasActions
      */
     public function getFlatBulkActions(): array
     {
-        return $this->flatBulkActions;
+        return $this->isReadOnly() ? [] : $this->flatBulkActions;
     }
 
     public function hasAction(string $name): bool

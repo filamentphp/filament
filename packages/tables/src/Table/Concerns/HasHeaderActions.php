@@ -99,7 +99,7 @@ trait HasHeaderActions
      */
     public function getHeaderActions(): array
     {
-        return $this->headerActions;
+        return $this->isReadOnly() ? [] : $this->headerActions;
     }
 
     /**

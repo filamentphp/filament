@@ -81,10 +81,7 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
         $tableConfiguration::configure($table);
 
         $table
-            ->headerActions([])
-            ->recordActions([])
-            ->toolbarActions([])
-            ->emptyStateActions([])
+            ->readOnly()
             ->selectable()
             ->trackDeselectedRecords(false)
             ->currentSelectionLivewireProperty('state')

@@ -22,6 +22,10 @@ trait HasColumns
     #[Exposed]
     public function callTableColumnAction(string $name, string $recordKey): mixed
     {
+        if ($this->getTable()->isReadOnly()) {
+            return null;
+        }
+
         $record = $this->getTableRecord($recordKey);
 
         if (! $record) {

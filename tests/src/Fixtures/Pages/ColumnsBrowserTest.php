@@ -43,6 +43,9 @@ class ColumnsBrowserTest extends Page implements HasTable
     public bool $editableColumns = false;
 
     #[Url]
+    public bool $readOnly = false;
+
+    #[Url]
     public string $saveScenario = 'success';
 
     #[Url]
@@ -50,6 +53,8 @@ class ColumnsBrowserTest extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        $table->readOnly(fn (): bool => $this->readOnly);
+
         if ($this->selectFallbackLabels) {
             return $table->query(Post::query())->columns([
                 Tables\Columns\SelectColumn::make('title')->label('Unmatched select')

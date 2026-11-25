@@ -542,6 +542,38 @@ public function table(Table $table): Table
 }
 ```
 
+## Making a table read-only
+
+You can use `readOnly()` to prevent a table from running configured actions, reordering records, or saving inline column edits:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->readOnly();
+}
+```
+
+Header, record, toolbar, bulk, empty-state, and column actions are hidden and cannot be invoked through the table, including actions that only display information. Inline editing controls are disabled. Searching, sorting, filtering, pagination, record selection, and navigation URLs remain available.
+
+You can pass a boolean or a function to `readOnly()` to control it conditionally. Setting `readOnly(false)` restores the configured capabilities without needing to define them again:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->readOnly(fn (): bool => ! auth()->user()->can('updateAny', Post::class));
+}
+```
+
+> [!WARNING]
+> Read-only mode controls the table's built-in execution paths. It does not replace authorization for your application, prevent navigation to editing pages, or restrict custom Livewire methods.
+
 ## Customizing the table header
 
 You can add a heading to a table using the `$table->heading()` method:

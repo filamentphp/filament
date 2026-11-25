@@ -1,6 +1,16 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
+use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Livewire\PostsReorderableTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Tables\PostsTableWithSessionPersistence;
@@ -65,6 +75,169 @@ it('preserves an unsaved relationship parent on subsequent requests', function (
     ])
         ->set('tableSearch', 'search')
         ->assertSuccessful();
+});
+
+describe('selection-only capabilities', function (): void {
+    it('does not reorder persisted records even when reordering is requested directly', function (): void {
+        $firstPost = Post::factory()->create(['sort' => 12]);
+        $secondPost = Post::factory()->create(['sort' => 27]);
+
+        $component = livewire(TableSelectLivewireComponent::class, [
+            'tableConfiguration' => base64_encode(TableSelectCapabilityConfiguration::class),
+        ])->call('reorderTable', [$secondPost->getKey(), $firstPost->getKey()]);
+
+        expect([$firstPost->fresh()->sort, $secondPost->fresh()->sort])->toBe([12, 27]);
+
+        $component->call('toggleTableReordering')
+            ->call('moveTableRecord', (string) $firstPost->getKey(), 'down')
+            ->assertDontSeeHtml('wire:click="toggleTableReordering"')
+            ->assertDontSeeHtml('data-table-reorder-direction=');
+
+        expect($component->instance()->isTableReordering())->toBeFalse()
+            ->and($component->instance()->getTable()->isReorderable())->toBeFalse()
+            ->and([$firstPost->fresh()->sort, $secondPost->fresh()->sort])->toBe([12, 27]);
+    });
+
+    it('cannot invoke callable column actions', function (): void {
+        $post = Post::factory()->create(['content' => 'Original']);
+
+        $component = livewire(TableSelectLivewireComponent::class, [
+            'tableConfiguration' => base64_encode(TableSelectCapabilityConfiguration::class),
+        ])->call('callTableColumnAction', 'title', (string) $post->getKey());
+
+        expect($post->fresh()->content)->toBe('Original');
+
+        $component->assertDontSeeHtml('callTableColumnAction(');
+    });
+
+    it('preserves closure-backed columns without executable actions', function (string $configuration): void {
+        $post = Post::factory()->create(['title' => 'Selectable post', 'content' => 'Original']);
+
+        $component = livewire(TableSelectLivewireComponent::class, [
+            'tableConfiguration' => base64_encode($configuration),
+            'state' => [],
+        ])->assertCanSeeTableRecords([$post])
+            ->call('callTableColumnAction', 'title', (string) $post->getKey())
+            ->call('mountAction', 'columnMutation', [], ['table' => true, 'recordKey' => (string) $post->getKey()])
+            ->call('callMountedAction')
+            ->assertSet('mountedActions', [])
+            ->assertDontSeeHtml('callTableColumnAction(')
+            ->assertDontSeeHtml('columnMutation');
+
+        $table = $component->instance()->getTable();
+
+        expect($post->fresh()->content)->toBe('Original')
+            ->and(array_keys($table->getColumns()))->toBe(['title', 'content'])
+            ->and($table->getAction('columnMutation'))->toBeNull();
+    })->with([TableSelectStackConfiguration::class, TableSelectGroupConfiguration::class]);
+
+    it('cannot resolve, mount, or call configured actions', function (string $name, bool $hasRecord, bool $isBulk): void {
+        $post = Post::factory()->create(['content' => 'Original']);
+        $context = ['table' => true, 'bulk' => $isBulk];
+
+        if ($hasRecord) {
+            $context['recordKey'] = (string) $post->getKey();
+        }
+
+        $component = livewire(TableSelectLivewireComponent::class, [
+            'tableConfiguration' => base64_encode(TableSelectCapabilityConfiguration::class),
+            'state' => [(string) $post->getKey()],
+        ])->call('mountAction', $name, [], $context)
+            ->call('callMountedAction');
+
+        expect($post->fresh()->content)->toBe('Original');
+
+        $component->assertSet('mountedActions', [])
+            ->set('mountedActions', [['name' => $name, 'arguments' => [], 'context' => $context]])
+            ->call('callMountedAction')
+            ->assertSet('mountedActions', []);
+
+        $table = $component->instance()->getTable();
+
+        expect($post->fresh()->content)->toBe('Original')
+            ->and($table->getAction($name))->toBeNull()
+            ->and($table->getBulkAction($name))->toBeNull();
+
+        expect(fn () => $component->instance()->getAction([['name' => $name, 'context' => $context]]))
+            ->toThrow(ActionNotResolvableException::class);
+    })->with([
+        'column with record' => ['columnMutation', true, false],
+        'column without record' => ['columnMutation', false, false],
+        'empty state' => ['emptyMutation', false, false],
+        'nested empty state group' => ['groupedEmptyMutation', false, false],
+        'header' => ['headerMutation', false, false],
+        'record' => ['recordMutation', true, false],
+        'bulk' => ['bulkMutation', false, true],
+    ]);
+
+    it('preserves selection, labels, search, sort, filters, and pagination', function (): void {
+        $alpha = Post::factory()->create(['title' => 'Alpha selection', 'is_published' => true]);
+        $zulu = Post::factory()->create(['title' => 'Zulu selection', 'is_published' => true]);
+        $draft = Post::factory()->create(['title' => 'Draft selection', 'is_published' => false]);
+
+        $component = livewire(TableSelectLivewireComponent::class, [
+            'tableConfiguration' => base64_encode(TableSelectCapabilityConfiguration::class),
+            'state' => [],
+        ])->assertCanSeeTableRecords([$alpha, $zulu, $draft])
+            ->set('state', [(string) $zulu->getKey()])
+            ->searchTable('selection')
+            ->filterTable('published')
+            ->sortTable('title', 'desc')
+            ->assertCanSeeTableRecords([$zulu, $alpha], inOrder: true)
+            ->assertCanNotSeeTableRecords([$draft])
+            ->assertSet('state', [(string) $zulu->getKey()])
+            ->set('tableRecordsPerPage', 1)
+            ->assertCanSeeTableRecords([$zulu])
+            ->assertCanNotSeeTableRecords([$alpha])
+            ->call('setPage', 2)
+            ->assertCanSeeTableRecords([$alpha])
+            ->assertCanNotSeeTableRecords([$zulu])
+            ->set('state', [])
+            ->assertSet('state', []);
+
+        expect($component->instance()->getTable()->getRecordTitle($alpha))->toBe('Alpha selection')
+            ->and($component->instance()->getAllSelectableTableRecordKeys())->toEqualCanonicalizing([(string) $alpha->getKey(), (string) $zulu->getKey()]);
+
+        $component->searchTable('no matches')
+            ->assertCanNotSeeTableRecords([$alpha, $zulu, $draft])
+            ->assertDontSee('Empty mutation')
+            ->assertDontSee('Grouped empty mutation');
+    });
+
+    it('restores mutation capabilities on the ordinary owner when `readOnly()` becomes false', function (string $configuration): void {
+        $firstPost = Post::factory()->create(['sort' => 12, 'content' => 'Original']);
+        $secondPost = Post::factory()->create(['sort' => 27, 'content' => 'Original']);
+        $component = livewire(TableSelectCapabilityOwner::class, ['configuration' => $configuration, 'isReadOnly' => true])
+            ->assertDontSeeHtml('callTableColumnAction(')
+            ->assertDontSeeHtml('columnMutation')
+            ->set('isReadOnly', false)
+            ->assertSeeHtml('callTableColumnAction(')
+            ->assertSeeHtml('columnMutation')
+            ->call('reorderTable', [$secondPost->getKey(), $firstPost->getKey()]);
+
+        expect([$firstPost->fresh()->sort, $secondPost->fresh()->sort])->toBe([2, 1]);
+
+        $component->call('callTableColumnAction', 'title', (string) $firstPost->getKey());
+
+        expect($firstPost->fresh()->content)->toBe('Callable mutation');
+
+        foreach (['columnMutation', 'emptyMutation', 'groupedEmptyMutation'] as $name) {
+            $firstPost->update(['content' => 'Original']);
+            $context = ['table' => true];
+
+            if ($name === 'columnMutation') {
+                $context['recordKey'] = (string) $firstPost->getKey();
+            }
+
+            $component->call('mountAction', $name, [], $context)
+                ->assertSet('mountedActions.0.name', $name)
+                ->call('callMountedAction');
+
+            expect($firstPost->fresh()->content)->toBe('Action mutation');
+        }
+
+        expect($component->instance()->getTable()->isReorderable())->toBeTrue();
+    })->with([TableSelectCapabilityConfiguration::class, TableSelectStackConfiguration::class, TableSelectGroupConfiguration::class]);
 });
 
 describe('session persistence', function (): void {
@@ -138,3 +311,71 @@ describe('session persistence', function (): void {
             ->and(session()->get($livewire->getTablePerPageSessionKey()))->toBe(25);
     });
 });
+
+class TableSelectCapabilityConfiguration
+{
+    public static function configure(Table $table): Table
+    {
+        $mutation = static fn () => Post::query()->update(['content' => 'Action mutation']);
+
+        return $table
+            ->query(Post::query())
+            ->recordTitleAttribute('title')
+            ->columns(static::columns())
+            ->filters([Filter::make('published')->query(static fn (Builder $query): Builder => $query->where('is_published', true))])
+            ->reorderable('sort')
+            ->paginationPageOptions([1, 10])
+            ->defaultPaginationPageOption(10)
+            ->headerActions([Action::make('headerMutation')->requiresConfirmation()->action($mutation)])
+            ->recordActions([Action::make('recordMutation')->requiresConfirmation()->action($mutation)])
+            ->toolbarActions([BulkAction::make('bulkMutation')->requiresConfirmation()->action($mutation)])
+            ->emptyStateActions([
+                Action::make('emptyMutation')->requiresConfirmation()->action($mutation),
+                ActionGroup::make([
+                    ActionGroup::make([
+                        Action::make('groupedEmptyMutation')->requiresConfirmation()->action($mutation),
+                    ]),
+                ]),
+            ]);
+    }
+
+    protected static function columns(): array
+    {
+        return [
+            TextColumn::make('title')
+                ->searchable()
+                ->sortable()
+                ->action(static fn (Post $record) => $record->update(['content' => 'Callable mutation'])),
+            TextColumn::make('content')
+                ->action(Action::make('columnMutation')->requiresConfirmation()->action(static fn () => Post::query()->update(['content' => 'Action mutation']))),
+        ];
+    }
+}
+
+class TableSelectStackConfiguration extends TableSelectCapabilityConfiguration
+{
+    protected static function columns(): array
+    {
+        return [Stack::make(static fn (): array => parent::columns())->collapsible()];
+    }
+}
+
+class TableSelectGroupConfiguration extends TableSelectCapabilityConfiguration
+{
+    protected static function columns(): array
+    {
+        return [ColumnGroup::make('Post', static fn (): array => parent::columns())];
+    }
+}
+
+class TableSelectCapabilityOwner extends PostsReorderableTable
+{
+    public string $configuration = TableSelectCapabilityConfiguration::class;
+
+    public bool $isReadOnly = false;
+
+    public function table(Table $table): Table
+    {
+        return $this->configuration::configure($table->readOnly(fn (): bool => $this->isReadOnly));
+    }
+}
