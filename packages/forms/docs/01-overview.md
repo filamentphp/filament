@@ -33,6 +33,7 @@ Form field classes can be found in the `Filament\Forms\Components` namespace. Th
 - [Toggle buttons](toggle-buttons)
 - [Slider](slider)
 - [Code editor](code-editor)
+- [Date range picker](date-range-picker)
 - [Hidden](hidden)
 
 You may also [create your own custom fields](custom-fields) to edit data however you wish.

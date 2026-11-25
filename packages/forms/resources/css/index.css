@@ -3,6 +3,7 @@
 @import './components/checkbox-list.css' layer(components);
 @import './components/code-editor.css' layer(components);
 @import './components/color-picker.css' layer(components);
+@import './components/date-range-picker.css' layer(components);
 @import './components/date-time-picker.css' layer(components);
 @import './components/field.css' layer(components);
 @import './components/file-upload.css' layer(components);

@@ -2,6 +2,7 @@
 
 use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DateRangePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
@@ -40,6 +41,7 @@ it('renders custom async loading content and can restore the default', function 
 })->with([
     CodeEditor::class,
     ColorPicker::class,
+    DateRangePicker::class,
     DateTimePicker::class,
     FileUpload::class,
     KeyValue::class,

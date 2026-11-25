@@ -144,6 +144,64 @@ return [
 
     ],
 
+    'date_range_picker' => [
+
+        'month_select' => [
+            'label' => 'Mês',
+        ],
+
+        'year_input' => [
+            'label' => 'Ano',
+        ],
+
+        'previous_month_button' => [
+            'label' => 'Mês anterior',
+        ],
+
+        'next_month_button' => [
+            'label' => 'Próximo mês',
+        ],
+
+        'presets' => [
+
+            'label' => 'Períodos predefinidos',
+
+            'today' => [
+                'label' => 'Hoje',
+            ],
+
+            'yesterday' => [
+                'label' => 'Ontem',
+            ],
+
+            'week_to_date' => [
+                'label' => 'Esta semana',
+            ],
+
+            'past_7_days' => [
+                'label' => 'Últimos 7 dias',
+            ],
+
+            'past_30_days' => [
+                'label' => 'Últimos 30 dias',
+            ],
+
+            'month_to_date' => [
+                'label' => 'Este mês',
+            ],
+
+            'previous_month' => [
+                'label' => 'Mês passado',
+            ],
+
+            'year_to_date' => [
+                'label' => 'Este ano',
+            ],
+
+        ],
+
+    ],
+
     'date_time_picker' => [
 
         'month_select' => [
