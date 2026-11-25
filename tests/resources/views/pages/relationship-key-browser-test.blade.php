@@ -2,7 +2,9 @@
     <form wire:submit="save">
         {{ $this->form }}
 
-        <x-filament::button type="submit" data-testid="save-relationship">Save</x-filament::button>
+        <x-filament::button type="submit" data-testid="save-relationship">
+            Save
+        </x-filament::button>
     </form>
 
     @if ($isSaved)
