@@ -349,7 +349,7 @@ trait HasBulkActions
                         <?php } ?>
                         <?= $this->generateMorphMarkerHtml(isEnd: true); ?>
 
-                        <?php $linkArguments = ['color' => 'danger', 'tag' => 'button', 'attributes' => new ComponentAttributeBag(['x-on:click' => 'deselectAllRecords'])];
+                        <?php $linkArguments = ['color' => 'danger', 'tag' => 'button', 'attributes' => new ComponentAttributeBag(['x-on:click' => 'deselectAllRecords']), 'isDisabledDuringLoading' => false];
                 ob_start(); ?>
                             <?= e(__('filament-tables::table.selection_indicator.actions.deselect_all.label')); ?>
 

@@ -35,3 +35,47 @@ it('selects only query-eligible records across pages and preserves explicit dese
 
     $page->inDarkMode()->assertNoAccessibilityIssues();
 });
+
+it('keeps the deselect-all button enabled while the table polls', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $post = Post::factory()->create(['is_published' => true]);
+
+    $page = visit('/table-query-selection-browser-test?pollSelection=1');
+
+    $page
+        ->click("tbody input[type=\"checkbox\"][value=\"{$post->id}\"]")
+        ->assertVisible('button:has-text("Deselect all")');
+
+    $stayedEnabled = $page->script(<<<'JS'
+        new Promise((resolve) => {
+            const button = [...document.querySelectorAll('button')].find((element) => element.textContent.trim() === 'Deselect all');
+            const pollSelector = '[data-testid="selection-poll"]';
+            const initialCount = Number(document.querySelector(pollSelector).textContent);
+            let wasDisabled = button.getAttribute('aria-disabled') === 'true';
+
+            const observer = new MutationObserver((mutations) => {
+                wasDisabled ||= button.getAttribute('aria-disabled') === 'true'
+                    || mutations.some((mutation) => mutation.target === button && mutation.oldValue === 'true');
+
+                if (Number(document.querySelector(pollSelector).textContent) > initialCount) {
+                    observer.disconnect();
+                    resolve(!wasDisabled);
+                }
+            });
+
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['aria-disabled'],
+                attributeOldValue: true,
+                characterData: true,
+                childList: true,
+                subtree: true,
+            });
+        })
+        JS);
+
+    expect($stayedEnabled)->toBeTrue();
+});
