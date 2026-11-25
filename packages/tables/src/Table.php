@@ -16,6 +16,7 @@ class Table extends ViewComponent implements HasEmbeddedView
     use HasLoadingPlaceholder;
     use Table\Concerns\BelongsToLivewire;
     use Table\Concerns\CanBeLazyLoaded;
+    use Table\Concerns\CanBeReadOnly;
     use Table\Concerns\CanBeRendered;
     use Table\Concerns\CanBeStackedOnMobile;
     use Table\Concerns\CanBeStriped;

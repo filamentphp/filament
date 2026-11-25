@@ -22,6 +22,10 @@ trait HasRecordAction
      */
     public function getRecordAction(Model | array $record): ?string
     {
+        if ($this->isReadOnly()) {
+            return null;
+        }
+
         $action = $this->evaluate(
             $this->recordAction,
             namedInjections: [

@@ -719,6 +719,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             return [];
         }
 
+        if (($this->mountedActions[0]['context']['table'] ?? false) && ($this instanceof HasTable) && $this->getTable()->isReadOnly()) {
+            return [];
+        }
+
         if (array_key_exists(count($this->mountedActions) - 1, $this->cachedMountedActions ?? [])) {
             return $this->cachedMountedActions;
         }
@@ -745,6 +749,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     public function getMountedAction(?int $actionNestingIndex = null): ?Action
     {
         if (! count($this->mountedActions ?? [])) {
+            return null;
+        }
+
+        if (($this->mountedActions[0]['context']['table'] ?? false) && ($this instanceof HasTable) && $this->getTable()->isReadOnly()) {
             return null;
         }
 
