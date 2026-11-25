@@ -60,6 +60,7 @@ use Filament\Tests\Fixtures\Pages\OneTimeCodeInputSubmitOnCompletionBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
 use Filament\Tests\Fixtures\Pages\RadioBrowserTest;
+use Filament\Tests\Fixtures\Pages\RelationshipKeyBrowserTest;
 use Filament\Tests\Fixtures\Pages\RepeaterBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorDocumentBoundaryBrowserTest;
@@ -195,6 +196,7 @@ class AdminPanelProvider extends PanelProvider
                 PartialRenderingBrowserTest::class,
                 QueryBuilderTableBrowserTest::class,
                 RadioBrowserTest::class,
+                RelationshipKeyBrowserTest::class,
                 RepeaterBrowserTest::class,
                 RichEditorBrowserTest::class,
                 RichEditorDocumentBoundaryBrowserTest::class,
