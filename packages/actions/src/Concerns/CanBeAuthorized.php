@@ -34,7 +34,7 @@ trait CanBeAuthorized
     public function authorize(mixed $abilities, Model | string | array | null $arguments = null): static
     {
         $abilities = match (true) {
-            $abilities instanceof BackedEnum => $abilities->value,
+            $abilities instanceof BackedEnum => (string) $abilities->value,
             $abilities instanceof UnitEnum => $abilities->name,
             default => $abilities,
         };

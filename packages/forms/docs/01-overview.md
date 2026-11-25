@@ -245,6 +245,8 @@ Toggle::make('is_admin')
     ->disabled(fn (string $operation): bool => in_array($operation, ['edit', 'view']))
 ```
 
+Operation-name checks match the exact full string, not an action class or a name suffix. In an [action modal schema](../actions/modals#using-the-current-operation-in-a-modal-schema), a normally mounted action named `edit` has the operation `edit`, but an `edit` action opened under `manage` has `manage.edit`. Deeper mounted chains include all parent names, such as `manage.users.edit`. Use `disabledOn(['edit', 'manage.edit'])` to match either of those exact values. The array lists alternatives to match; the schema still has only one operation string.
+
 > [!WARNING]
 > The `disabledOn()` method will overwrite any previous calls to the `disabled()` method, and vice versa.
 
@@ -400,6 +402,8 @@ Toggle::make('is_admin')
 Toggle::make('is_admin')
     ->visibleOn(['create', 'edit'])
 ```
+
+Like [`disabledOn()`](#disabling-a-field-based-on-the-current-operation), `hiddenOn()` and `visibleOn()` match exact operation names, including the full mounted action chain in [action modals](../actions/modals#using-the-current-operation-in-a-modal-schema). For example, `hiddenOn('edit')` does not match `manage.edit`; use `hiddenOn(['edit', 'manage.edit'])` to match either value. Passing an array does not give the schema multiple operations.
 
 > [!NOTE]
 > The `visibleOn()` method will overwrite any previous calls to the `visible()` method, and vice versa.
@@ -1122,13 +1126,15 @@ function (?Model $record) {
 
 ### Injecting the current operation
 
-If you're writing a schema for a panel resource or relation manager, and you wish to check if a schema is `create`, `edit` or `view`, use the `$operation` parameter:
+Use the `$operation` parameter to read the component's schema operation, usually `create`, `edit` or `view` in a panel resource or relation manager:
 
 ```php
 function (string $operation) {
     // ...
 }
 ```
+
+In an [action modal schema](../actions/modals#using-the-current-operation-in-a-modal-schema), this is the full mounted action name chain, such as `edit` or `manage.edit`. Compare the exact full string, not just its suffix or the action's class.
 
 > [!NOTE]
 > You can manually set a schema's operation using the `$schema->operation()` method.

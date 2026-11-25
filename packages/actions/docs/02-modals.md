@@ -105,6 +105,25 @@ Action::make('viewUser')
 
 <AutoScreenshot name="actions/modal/schema" alt="Modal with schema layout" />
 
+#### Using the current operation in a modal schema
+
+By default, a modal schema's operation is the action name used to mount it. For example, `EditAction::make()` uses `edit`, while `EditAction::make('updateAuthor')` uses `updateAuthor`, not `edit`.
+
+For [nested actions](#opening-another-modal-from-an-extra-footer-action), the operation includes the mounted parent action names, separated by dots. An `edit` action opened inside a `manage` action uses `manage.edit`. A further `confirm` action opened inside it uses `manage.edit.confirm`.
+
+A schema has one operation, and operation conditions match the entire value. For example, `disabledOn('edit')` does not disable a field in a `manage.edit` modal. To support both standalone and nested edit modals, list both operations:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('reference')
+    ->disabledOn(['edit', 'manage.edit'])
+```
+
+The same exact matching applies to `hiddenOn()`, `visibleOn()`, and `readOnlyOn()`. The operation is based on the mounted action names, not the action classes or the resource page containing the action.
+
+When you inject `$operation` into a schema component's callback, or read `$operation` in its Blade view, you receive this same value. This differs from [injecting `$schemaOperation` into an action callback](overview#injecting-utilities-from-a-schema), which reads the operation of the schema containing the action, not its own modal schema.
+
 #### Rendering a form in a modal
 
 You may use [form field](../forms) to create action modal forms. The data from the form is available in the `$data` array of the `action()` closure:

@@ -120,6 +120,11 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      */
     protected ?array $cachedMountedActions = null;
 
+    /**
+     * @var array<Action> | null
+     */
+    protected ?array $resolvingMountedActions = null;
+
     protected bool $hasActionsModalRendered = false;
 
     /**
@@ -510,7 +515,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 $this->flushCachedTableRecords();
             }
 
-            if ($action->isDisabled()) {
+            if ($action->isDisabled() || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled()))) {
                 $this->unmountAction(cancelParentActions: false);
 
                 return null;
@@ -645,7 +650,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $action->mergeArguments($arguments);
 
-        if ($action->isDisabled()) {
+        if ($action->isDisabled() || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled()))) {
             return null;
         }
 
@@ -894,7 +899,15 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     #[Unexposed]
     public function getMountedActions(): array
     {
+        if ($this->resolvingMountedActions !== null) {
+            return $this->resolvingMountedActions;
+        }
+
         if (blank($this->mountedActions ?? [])) {
+            return [];
+        }
+
+        if (($this->mountedActions[0]['context']['table'] ?? false) && ($this instanceof HasTable) && $this->getTable()->isReadOnly()) {
             return [];
         }
 
@@ -927,7 +940,15 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             return null;
         }
 
+        if (($this->mountedActions[0]['context']['table'] ?? false) && ($this instanceof HasTable) && $this->getTable()->isReadOnly()) {
+            return null;
+        }
+
         $actionNestingIndex ??= (count($this->mountedActions) - 1);
+
+        if ($this->resolvingMountedActions !== null) {
+            return $this->resolvingMountedActions[$actionNestingIndex] ?? null;
+        }
 
         if (array_key_exists($actionNestingIndex, $this->cachedMountedActions ?? [])) {
             return $this->cachedMountedActions[$actionNestingIndex];
@@ -945,7 +966,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     {
         $actionNestingIndex = $action->getNestingIndex();
 
-        return ($actionNestingIndex !== null) && (($this->cachedMountedActions[$actionNestingIndex] ?? null) === $action);
+        return ($actionNestingIndex !== null) && ((($this->resolvingMountedActions ?? $this->cachedMountedActions)[$actionNestingIndex] ?? null) === $action);
     }
 
     /**
@@ -954,10 +975,32 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      */
     protected function cacheMountedActions(array $mountedActions): array
     {
+        $this->resolvingMountedActions = [];
+
         try {
-            return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+            $actions = $this->resolvingMountedActions = $this->resolveActions($mountedActions);
+
+            // A fresh mount handles authorization notifications itself. Restoring an
+            // existing stack must not expose even a notification-enabled denied action.
+            if (
+                ($this->mountActionNestingLevel === 0) &&
+                ($action = Arr::last($actions)) &&
+                ($action->isDisabled() || (! $action->isAuthorized()) || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled())))
+            ) {
+                throw new ActionNotResolvableException('The mounted action is not available.');
+            }
+
+            if (empty($actions)) {
+                $this->forgetCachedMountedActionSchemas();
+            }
+
+            return $this->cachedMountedActions = $actions;
         } catch (ActionNotResolvableException) {
+            $this->forgetCachedMountedActionSchemas();
+
             return $this->cachedMountedActions = [];
+        } finally {
+            $this->resolvingMountedActions = null;
         }
     }
 
@@ -970,20 +1013,33 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $resolvedActions = [];
 
         foreach ($actions as $actionNestingIndex => $action) {
+            if (
+                ($parentAction = Arr::last($resolvedActions)) &&
+                ($parentAction->isDisabled() || (! $parentAction->isAuthorized()))
+            ) {
+                throw new ActionNotResolvableException('The parent action is not available.');
+            }
+
             if (blank($action['name'] ?? null)) {
                 throw new ActionNotResolvableException('An action tried to resolve without a name.');
             }
+
+            $column = null;
 
             if (filled($action['context']['schemaComponent'] ?? null)) {
                 $resolvedAction = $this->resolveSchemaComponentAction($action, $resolvedActions);
             } elseif ($this instanceof HasTable && filled($action['context']['table'] ?? null)) {
                 $resolvedAction = $this->resolveTableAction($action, $resolvedActions);
+
+                if (blank($resolvedActions)) {
+                    $column = Arr::last($this->getTable()->getColumns(), static fn (Column $column): bool => $column->getAction() === $resolvedAction);
+                }
             } else {
                 $resolvedAction = $this->resolveAction($action, $resolvedActions);
             }
 
             if (! $resolvedAction) {
-                continue;
+                return [];
             }
 
             $resolvedAction->mountedParentAction(Arr::last($resolvedActions));
@@ -992,10 +1048,22 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 $resolvedAction->mergeArguments($action['arguments']);
             }
 
+            if ($column && ($record = $resolvedAction->getRecord())) {
+                $column->record($record);
+            }
+
+            if ($column?->isHidden()) {
+                throw new ActionNotResolvableException("Action [{$action['name']}] belongs to a hidden table column.");
+            }
+
             $resolvedAction->nestingIndex($actionNestingIndex);
             $resolvedAction->boot();
 
             $resolvedActions[] = $resolvedAction;
+
+            if ($this->resolvingMountedActions !== null) {
+                $this->resolvingMountedActions = $resolvedActions;
+            }
 
             if ($isMounting) {
                 $this->cacheSchema(
@@ -1115,7 +1183,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $schemaName = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaName);
+        $schema = $this->getCachedSchema($schemaName);
 
         if (! $schema) {
             throw new ActionNotResolvableException("Schema [{$schemaName}] not found.");

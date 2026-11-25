@@ -181,13 +181,15 @@ function (?Model $record) {
 
 ### Injecting the current operation
 
-If you're writing a schema for a panel resource or relation manager, and you wish to check if a schema is `create`, `edit` or `view`, use the `$operation` parameter:
+Use the `$operation` parameter to read the component's schema operation, usually `create`, `edit` or `view` in a panel resource or relation manager:
 
 ```php
 function (string $operation) {
     // ...
 }
 ```
+
+In an [action modal schema](../actions/modals#using-the-current-operation-in-a-modal-schema), this is the full mounted action name chain, such as `edit` or `manage.edit`. Compare the exact full string, not just its suffix or the action's class.
 
 > [!NOTE]
 > You can manually set a schema's operation using the `$schema->operation()` method.

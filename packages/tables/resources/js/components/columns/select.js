@@ -60,6 +60,7 @@ export default function selectTableColumn({
                             name,
                             recordKey,
                             'getOptionLabel',
+                            { withDefault: false },
                         ),
                     getOptionsUsing: () =>
                         Livewire.fireAction(

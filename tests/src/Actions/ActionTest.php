@@ -6,10 +6,12 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
@@ -22,11 +24,15 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -1290,6 +1296,41 @@ describe('authorization', function (): void {
         expect($action->getAuthorizationResponse()->message())->toBe('Nope.');
     });
 
+    it('checks direct enum abilities through Gate in `authorize()`', function (UnitEnum $ability, string $expectedAbility, bool $isAllowed): void {
+        $record = new Post;
+        $response = $isAllowed ? Response::allow('Allowed by Gate') : Response::denyWithStatus(404, 'Denied by Gate');
+        $wasAbilityChecked = false;
+
+        Gate::define($expectedAbility, static function (User $user, Post $argumentRecord, string $context) use ($record, $response, &$wasAbilityChecked): Response {
+            $wasAbilityChecked = true;
+
+            expect($argumentRecord)->toBe($record)
+                ->and($context)->toBe('context');
+
+            return $response;
+        });
+
+        $action = Action::make('test')->record($record);
+
+        expect($action->authorize(abilities: $ability, arguments: ['context']))->toBe($action)
+            ->and($action->isAuthorized())->toBe($isAllowed)
+            ->and($wasAbilityChecked)->toBeTrue();
+
+        $wasAbilityChecked = false;
+
+        expect($action->getAuthorizationResponse()->allowed())->toBe($isAllowed)
+            ->and($wasAbilityChecked)->toBeTrue();
+
+        if (! $isAllowed) {
+            expect($action->getAuthorizationResponse())->toBe($response);
+        }
+    })->with([
+        'unit enum' => [fn (): ActionUnitAbility => ActionUnitAbility::publish, 'publish'],
+        'string-backed enum' => [StringBackedEnum::One, 'one'],
+        'integer-backed enum' => [IntegerBackedEnum::One, '1'],
+        'zero-backed enum' => [IntegerBackedEnum::Zero, '0'],
+    ])->with([true, false]);
+
     it('can chain `authorizationMessage()` to set a fallback message', function (): void {
         $action = Action::make('test')
             ->authorizationMessage('Custom fallback.');
@@ -1436,6 +1477,101 @@ describe('authorization', function (): void {
             expect($action->isVisible())->toBeFalse();
         });
     });
+
+    describe('feedback-only URLs', function (): void {
+        it('does not evaluate or serialize a denied feedback URL', function (string $feedback): void {
+            $wasUrlEvaluated = false;
+            $action = Action::make('download')
+                ->authorize(static fn (): Response => Response::deny('Private download denied.'))
+                ->{$feedback}()
+                ->url(static function () use (&$wasUrlEvaluated): string {
+                    $wasUrlEvaluated = true;
+
+                    return '/private/download?signature=configured-secret';
+                });
+
+            expect($action->getUrl())->toBeNull()
+                ->and($action->toArray()['url'])->toBeNull()
+                ->and($wasUrlEvaluated)->toBeFalse();
+        })->with(['authorizationNotification', 'authorizationTooltip']);
+
+        it('honors authorization feedback when rendering URL actions', function (string $feedback, string $view, bool $shouldPostToUrl, bool $isAllowed): void {
+            $url = '/private/download?signature=configured-secret';
+            $action = Action::make('download')
+                ->{$view}()
+                ->icon(Heroicon::OutlinedArrowDownTray)
+                ->authorize(static fn (): Response => $isAllowed ? Response::allow() : Response::deny('Private download denied.'))
+                ->{$feedback}()
+                ->url($url, shouldOpenInNewTab: true)
+                ->postToUrl($shouldPostToUrl);
+
+            $html = $action->toHtml();
+
+            if ($isAllowed) {
+                expect($html)
+                    ->toContain($shouldPostToUrl ? '<form' : '<a')
+                    ->toContain(($shouldPostToUrl ? 'action' : 'href') . '="' . $url . '"')
+                    ->not->toContain('wire:click=');
+
+                if (! $shouldPostToUrl) {
+                    expect($html)->toContain('target="_blank"');
+                }
+
+                expect($action->getUrl())->toBe($url)
+                    ->and($action->toArray()['url'])->toBe($url);
+
+                return;
+            }
+
+            expect($html)
+                ->not->toContain($url)
+                ->not->toContain('<form')
+                ->not->toContain('href=')
+                ->toContain('<button');
+
+            expect($action->getUrl())->toBeNull()
+                ->and($action->toArray()['url'])->toBeNull()
+                ->and($action->isVisible())->toBeTrue();
+
+            if ($feedback === 'authorizationNotification') {
+                expect($html)->toContain('wire:click="mountAction(')
+                    ->and($action->isDisabled())->toBeFalse();
+            } else {
+                expect($html)->not->toContain('wire:click=')
+                    ->and($action->isDisabled())->toBeTrue()
+                    ->and($action->getTooltip())->toBe('Private download denied.');
+            }
+        })->with(['authorizationNotification', 'authorizationTooltip'])
+            ->with(['button', 'link', 'iconButton', 'badge', 'grouped'])
+            ->with([false, true])
+            ->with([false, true]);
+
+        it('honors default authorization and URLs for feedback actions', function (string $feedback, bool $isAllowed, bool $shouldPostToUrl): void {
+            $component = app(AuthorizationFeedbackUrlActions::class);
+            $component->isAllowed = $isAllowed;
+            $component->shouldPostToUrl = $shouldPostToUrl;
+
+            $action = $component->downloadAction()->livewire($component)
+                ->authorizationNotification(false)
+                ->{$feedback}();
+
+            expect($action->getUrl())->toBe($isAllowed ? '/private/download?signature=default-secret' : null)
+                ->and($action->toArray()['url'])->toBe($isAllowed ? '/private/download?signature=default-secret' : null);
+
+            if ($isAllowed) {
+                expect($action->toHtml())->toContain(($shouldPostToUrl ? 'action' : 'href') . '="/private/download?signature=default-secret"');
+            } else {
+                expect($action->toHtml())->not->toContain('default-secret')->not->toContain('<form');
+            }
+        })->with(['authorizationNotification', 'authorizationTooltip'])->with([false, true])->with([false, true]);
+
+        it('delivers the denial notification through the URL action mount handler', function (bool $shouldPostToUrl): void {
+            livewire(AuthorizationFeedbackUrlActions::class, ['shouldPostToUrl' => $shouldPostToUrl])
+                ->mountAction('download')
+                ->assertActionNotMounted()
+                ->assertNotified('Private download denied.');
+        })->with([false, true]);
+    });
 });
 describe('authorization enforcement', function (): void {
     // These tests prove that INVOKING a hidden, disabled, or unauthorized action is a
@@ -1490,6 +1626,107 @@ describe('authorization enforcement', function (): void {
             ->assertDispatched('enforcement-authorized-called');
     });
 });
+describe('mounted action restoration', function (): void {
+    it('rejects unavailable restored actions without rendering modals or retaining schemas', function (string $restriction, bool $isNested): void {
+        $stack = [['name' => 'restricted', 'arguments' => [], 'context' => []]];
+
+        if ($isNested) {
+            $stack[] = ['name' => 'registered', 'arguments' => [], 'context' => []];
+        }
+
+        $component = livewire(RestoredActions::class, ['restriction' => $restriction])
+            ->set('mountedActions', $stack)
+            ->call('$refresh')
+            ->assertDontSee('Restricted modal contents')
+            ->call('callMountedAction')
+            ->assertNotDispatched('child-called');
+
+        expect($component->instance()->getMountedActions())->toBe([])
+            ->and($component->instance()->getSchema('mountedActionSchema0'))->toBeNull()
+            ->and($component->instance()->getSchema('mountedActionSchema1'))->toBeNull();
+    })->with(['hidden', 'invisible', 'disabled', 'unauthorized', 'notification', 'tooltip'])->with([false, true]);
+
+    it('rejects partially resolvable stacks and forgets earlier schemas', function (array $stack): void {
+        $component = livewire(RestoredActions::class)
+            ->set('mountedActions', array_map(static fn (string $name): array => [
+                'name' => $name, 'arguments' => [], 'context' => [],
+            ], $stack))
+            ->call('$refresh')
+            ->assertDontSee('Restricted modal contents');
+
+        expect($component->instance()->getMountedActions())->toBe([])
+            ->and($component->instance()->getSchema('mountedActionSchema0'))->toBeNull()
+            ->and($component->instance()->getSchema('mountedActionSchema1'))->toBeNull();
+    })->with([
+        'missing child' => [['restricted', 'missing']],
+        'missing root' => [['missing', 'restricted']],
+    ]);
+
+    it('rechecks parent access before mounting children', function (string $child): void {
+        $component = livewire(RestoredActions::class)->mountAction('restricted');
+
+        $component->set('restriction', 'notification')
+            ->call('mountAction', $child, [], $child === 'schemaChild' ? ['schemaComponent' => 'mountedActionSchema0.value'] : [])
+            ->call('callMountedAction')
+            ->assertNotDispatched('child-called');
+
+        expect($component->instance()->getSchema('mountedActionSchema0'))->toBeNull();
+    })->with(['footer', 'registered', 'schemaChild']);
+
+    it('revokes an existing stack without exposing its schemas or rerunning fill hooks', function (): void {
+        $component = livewire(RestoredActions::class)
+            ->mountAction('restricted')
+            ->mountAction('registered')
+            ->assertSet('fillCount', 1);
+
+        $component->set('restriction', 'notification')
+            ->call('callSchemaComponentMethod', 'mountedActionSchema0.items', 'add')
+            ->call('callMountedAction')
+            ->assertSet('fillCount', 1)
+            ->assertSet('mountedActions', [])
+            ->assertNotDispatched('child-called');
+
+        expect($component->instance()->getSchema('mountedActionSchema0'))->toBeNull()
+            ->and($component->instance()->getSchema('mountedActionSchema1'))->toBeNull();
+    });
+
+    it('restores authorized actions with editable data without rerunning mount or fill hooks', function (): void {
+        livewire(RestoredActions::class)
+            ->mountAction('restricted')
+            ->assertSet('fillCount', 1)
+            ->fillForm(['value' => 'changed'])
+            ->call('$refresh')
+            ->assertSet('fillCount', 1)
+            ->assertSet('mountCount', 1)
+            ->assertSchemaStateSet(['value' => 'changed'])
+            ->mountAction('registered')
+            ->call('callMountedAction')
+            ->assertDispatched('child-called')
+            ->assertSet('mountedActions.0.data.value', 'changed');
+    });
+
+    it('preserves authorization notifications on a fresh mount', function (): void {
+        livewire(RestoredActions::class, ['restriction' => 'notification'])
+            ->mountAction('restricted')
+            ->assertActionNotMounted()
+            ->assertNotified('Access revoked');
+    });
+
+    it('supports mounted action utility injection while checking availability', function (bool $isNested): void {
+        $component = livewire(RestoredActions::class, ['restriction' => 'injected'])
+            ->mountAction('restricted')
+            ->fillForm(['value' => 'edited parent value']);
+
+        if ($isNested) {
+            $component->mountAction('registered');
+        }
+
+        $component->call('$refresh')->assertSet('mountCount', 1);
+
+        expect($component->instance()->getMountedActions())->toHaveCount($isNested ? 2 : 1);
+    })->with([false, true]);
+});
+
 describe('table action registration context', function (): void {
     it('does not mount non-record table actions with a supplied record', function (string $name): void {
         $post = Post::factory()->create();
@@ -2319,6 +2556,83 @@ describe('record visibility and authorization', function (): void {
     });
 });
 
+class AuthorizationFeedbackUrlActions extends Actions
+{
+    public bool $isAllowed = false;
+
+    public bool $shouldPostToUrl = false;
+
+    protected function getHeaderActions(): array
+    {
+        return [$this->downloadAction()];
+    }
+
+    public function downloadAction(): Action
+    {
+        return Action::make('download')
+            ->authorizationNotification()
+            ->postToUrl($this->shouldPostToUrl);
+    }
+
+    public function getDefaultActionAuthorizationResponse(Action $action): ?Response
+    {
+        return $this->isAllowed ? Response::allow() : Response::deny('Private download denied.');
+    }
+
+    public function getDefaultActionUrl(Action $action): ?string
+    {
+        return '/private/download?signature=default-secret';
+    }
+}
+
+class RestoredActions extends Actions
+{
+    public string $restriction = '';
+
+    public int $fillCount = 0;
+
+    public int $mountCount = 0;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('restricted')
+                ->modalDescription('Restricted modal contents')
+                ->hidden(fn (): bool => $this->restriction === 'hidden')
+                ->visible(fn (): bool => $this->restriction !== 'invisible')
+                ->disabled(fn (array $mountedActions): bool => ($this->restriction === 'disabled') || (
+                    ($this->restriction === 'injected') &&
+                    (($mountedActions[0]->getArguments()['deny'] ?? false) === true)
+                ))
+                ->authorize(fn (): Response => in_array($this->restriction, ['unauthorized', 'notification', 'tooltip']) ? Response::deny('Access revoked') : Response::allow())
+                ->authorizationNotification(fn (): bool => $this->restriction === 'notification')
+                ->authorizationTooltip(fn (): bool => $this->restriction === 'tooltip')
+                ->afterFormFilled(function (): void {
+                    $this->fillCount++;
+                })
+                ->mountUsing(function (Schema $schema): void {
+                    $this->mountCount++;
+                    $schema->fill();
+                })
+                ->schema([
+                    TextInput::make('value')->registerActions([
+                        Action::make('schemaChild')->action(fn () => $this->dispatch('child-called')),
+                    ]),
+                    Repeater::make('items')->simple(TextInput::make('item')),
+                ])
+                ->extraModalFooterActions([
+                    Action::make('footer')->action(fn () => $this->dispatch('child-called')),
+                ])
+                ->registerModalActions([
+                    Action::make('registered')
+                        ->requiresConfirmation()
+                        ->disabled(fn (array $mountedActions): bool => ($this->restriction === 'injected') && blank($mountedActions[0]->getRawData()['value'] ?? null))
+                        ->action(fn () => $this->dispatch('child-called')),
+                ]),
+        ];
+    }
+}
+
 class FormLifecycleActions extends Actions
 {
     public array $observedState = [];
@@ -2401,4 +2715,9 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
     {
         return view('livewire.table');
     }
+}
+
+enum ActionUnitAbility
+{
+    case publish;
 }

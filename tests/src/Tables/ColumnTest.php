@@ -1,7 +1,9 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Testing\TestAction;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Icons\Heroicon;
@@ -630,6 +632,150 @@ describe('column properties and assertions', function (): void {
             ->callTableAction('column-action-object', $post)
             ->assertDispatched('column-action-object-called');
     });
+
+    it('enforces column visibility before mounting or calling an action object', function (bool $isHidden, bool $isGrouped, bool $hasModal): void {
+        $post = Post::factory()->create();
+
+        $component = livewire(ColumnActionsTable::class, compact('isHidden', 'isGrouped', 'hasModal'))
+            ->call('mountAction', 'column-action', [], ['table' => true, 'recordKey' => $post->getKey()]);
+
+        if ($isHidden) {
+            $component->assertNotDispatched('column-action-called')
+                ->assertActionNotMounted()
+                ->call('callMountedAction')
+                ->assertNotDispatched('column-action-called');
+
+            return;
+        }
+
+        if ($hasModal) {
+            $component->assertActionMounted(TestAction::make('column-action')->table($post))
+                ->assertNotDispatched('column-action-called')
+                ->callMountedAction();
+        }
+
+        $component->assertDispatched('column-action-called', recordKey: $post->getKey());
+    })->with([false, true])->with([false, true])->with([false, true]);
+
+    it('evaluates column visibility with the requested record for object and callable actions', function (bool $isCallable): void {
+        $visiblePost = Post::factory()->create(['is_published' => true]);
+        $hiddenPost = Post::factory()->create(['is_published' => false]);
+
+        $component = livewire(ColumnActionsTable::class, ['isDynamic' => true]);
+
+        foreach ([$hiddenPost, $visiblePost, $hiddenPost] as $post) {
+            if ($isCallable) {
+                $component->callTableColumnAction('content', $post);
+            } else {
+                $component->call('mountAction', 'column-action', [], ['table' => true, 'recordKey' => $post->getKey()]);
+            }
+
+            $component->assertActionNotMounted();
+
+            if ($post->is_published) {
+                $component->assertDispatched('column-action-called', recordKey: $post->getKey());
+            } else {
+                $component->assertNotDispatched('column-action-called');
+            }
+        }
+    })->with([false, true]);
+
+    it('refuses hidden callable column actions', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(ColumnActionsTable::class, ['isHidden' => true])
+            ->callTableColumnAction('content', $post)
+            ->assertNotDispatched('column-action-called');
+    });
+
+    it('does not bypass hidden column availability by omitting the record key', function (): void {
+        livewire(ColumnActionsTable::class, ['isHidden' => true, 'hasModal' => true])
+            ->call('mountAction', 'column-action', [], ['table' => true])
+            ->assertActionNotMounted()
+            ->assertNotDispatched('column-action-called');
+    });
+
+    it('checks column visibility against an action-bound record without a context record key', function (bool $isPublished, bool $isRecordArgumentDependent): void {
+        $post = Post::factory()->create(['is_published' => $isPublished]);
+
+        $component = livewire(ColumnActionsTable::class, ['isDynamic' => true, 'boundRecordKey' => $post->getKey(), 'isRecordArgumentDependent' => $isRecordArgumentDependent])
+            ->call('mountAction', 'column-action', ['post' => $post->getKey()], ['table' => true])
+            ->assertActionNotMounted();
+
+        if ($isPublished) {
+            $component->assertDispatched('column-action-called', recordKey: $post->getKey());
+        } else {
+            $component->assertNotDispatched('column-action-called');
+        }
+    })->with([false, true])->with([false, true]);
+
+    it('rechecks column visibility for the current user before submitting a mounted action', function (): void {
+        $post = Post::factory()->create();
+        $this->actingAs($post->author);
+
+        $component = livewire(ColumnActionsTable::class, ['isUserDependent' => true, 'hasModal' => true])
+            ->mountTableAction('column-action', $post)
+            ->assertActionMounted(TestAction::make('column-action')->table($post));
+
+        $this->actingAs(User::factory()->create());
+
+        $component->call('callMountedAction')
+            ->assertNotDispatched('column-action-called');
+    });
+
+    it('preserves authorization for visible column action objects', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(ColumnActionsTable::class, ['isAuthorized' => false, 'hasModal' => true])
+            ->call('mountAction', 'column-action', [], ['table' => true, 'recordKey' => $post->getKey()])
+            ->assertActionNotMounted()
+            ->call('callMountedAction')
+            ->assertNotDispatched('column-action-called');
+    });
+
+    it('keeps ordinary record actions separate from hidden columns with the same action name', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(ColumnActionsTable::class, ['isHidden' => true, 'hasDuplicateRecordAction' => true])
+            ->callTableAction('column-action', $post)
+            ->assertDispatched('record-action-called', recordKey: $post->getKey())
+            ->assertNotDispatched('column-action-called');
+    });
+
+    it('uses the winning column action when column action names are duplicated', function (bool $isHidden, bool $isActionReused): void {
+        $post = Post::factory()->create();
+        $component = livewire(ColumnActionsTable::class, ['isHidden' => ! $isHidden, 'hasDuplicateColumnAction' => true, 'isActionReused' => $isActionReused])
+            ->call('mountAction', 'column-action', [], ['table' => true, 'recordKey' => $post->getKey()]);
+
+        if ($isHidden) {
+            $component->assertActionNotMounted()->assertNotDispatched('column-action-called')->assertNotDispatched('duplicate-column-action-called');
+        } else {
+            $component->assertDispatched($isActionReused ? 'column-action-called' : 'duplicate-column-action-called');
+        }
+    })->with([false, true])->with([false, true]);
+
+    it('does not carry column ownership into actions reused or cloned on another table', function (bool $isCloned): void {
+        $post = Post::factory()->create();
+        $source = livewire(ColumnActionsTable::class, ['isHidden' => true])->instance();
+        $action = $source->getTable()->getAction('column-action');
+        $calledRecordKeys = [];
+        $action->action(function (Post $record) use (&$calledRecordKeys): void {
+            $calledRecordKeys[] = $record->getKey();
+        });
+        $target = livewire(ColumnActionsTable::class)->instance();
+
+        $target->getTable()->columns([
+            TextColumn::make('title')->action($isCloned ? $action->getClone() : $action),
+        ]);
+        $target->mountAction('column-action', context: ['table' => true, 'recordKey' => $post->getKey()]);
+
+        expect($calledRecordKeys)->toBe([$post->getKey()]);
+
+        $target->getTable()->columns([])->recordActions([$isCloned ? $action->getClone() : $action]);
+        $target->mountAction('column-action', context: ['table' => true, 'recordKey' => $post->getKey()]);
+
+        expect($calledRecordKeys)->toBe([$post->getKey(), $post->getKey()]);
+    })->with([false, true]);
 
     it('can state whether a column has the correct value with Eloquent records', function (): void {
         $post = Post::factory()->create();
@@ -2403,6 +2549,64 @@ it('can search records using table-level searchable columns with relationship ca
         ->assertCanSeeTableRecords($matchingPosts)
         ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
+
+class ColumnActionsTable extends PostsTable
+{
+    public bool $isHidden = false;
+
+    public bool $isGrouped = false;
+
+    public bool $hasModal = false;
+
+    public bool $isDynamic = false;
+
+    public bool $isUserDependent = false;
+
+    public bool $isAuthorized = true;
+
+    public bool $hasDuplicateRecordAction = false;
+
+    public bool $hasDuplicateColumnAction = false;
+
+    public bool $isActionReused = false;
+
+    public ?int $boundRecordKey = null;
+
+    public bool $isRecordArgumentDependent = false;
+
+    public function table(Table $table): Table
+    {
+        $isHidden = fn (?Post $record): bool => $this->isHidden
+            || ($this->isDynamic && ($record?->is_published === false))
+            || ($this->isUserDependent && (auth()->id() !== $record?->author_id));
+        $callback = fn (Post $record) => $this->dispatch('column-action-called', recordKey: $record->getKey());
+        $action = Action::make('column-action')
+            ->requiresConfirmation($this->hasModal)
+            ->authorize($this->isAuthorized)
+            ->record($this->isRecordArgumentDependent
+                ? static fn (array $arguments): ?Post => Post::find($arguments['post'] ?? null)
+                : ($this->boundRecordKey ? Post::find($this->boundRecordKey) : null))
+            ->action($callback);
+        $columns = [
+            TextColumn::make('title')
+                ->hidden($isHidden)
+                ->action($action),
+            TextColumn::make('content')->hidden($isHidden)->action($callback),
+        ];
+
+        if ($this->hasDuplicateColumnAction) {
+            $columns[] = TextColumn::make('rating')
+                ->hidden(! $this->isHidden)
+                ->action($this->isActionReused ? $action : Action::make('column-action')->action(fn () => $this->dispatch('duplicate-column-action-called')));
+        }
+
+        return $table->query(Post::query())
+            ->columns($this->isGrouped ? [Tables\Columns\ColumnGroup::make('Post', $columns)] : $columns)
+            ->recordActions($this->hasDuplicateRecordAction ? [
+                Action::make('column-action')->action(fn (Post $record) => $this->dispatch('record-action-called', recordKey: $record->getKey())),
+            ] : []);
+    }
+}
 
 class RenderColumnsWithRelatedRecords extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {

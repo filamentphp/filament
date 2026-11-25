@@ -14,8 +14,13 @@ return [
 
             'label' => 'Гурӯҳҳо',
 
+            'group' => [
+                'label' => 'Гурӯҳ',
+            ],
+
             'block' => [
                 'label' => 'Дизюнксия (Ё)',
+                'picker_group' => 'Мантиқ',
                 'or' => 'Ё',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(Қоидаҳо вуҷуд надоранд)',
+
+    'max_rules_reached_tooltip' => 'Шумо ба ҳадди аксари :count қоида расидед.',
 
     'item_separators' => [
         'and' => 'ВА',

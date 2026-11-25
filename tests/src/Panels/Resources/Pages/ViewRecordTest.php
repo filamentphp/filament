@@ -26,6 +26,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -328,6 +329,8 @@ it('modal action does not return URL when modal is explicitly set', function ():
 });
 
 it('create action with custom model and modal opens modal instead of redirecting', function (): void {
+    Gate::define('create', static fn (User $user, string $model): bool => $model === User::class);
+
     $post = Post::factory()->create();
 
     livewire(ViewPost::class, [
