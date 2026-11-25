@@ -389,12 +389,10 @@ trait HasComponents
                     continue;
                 }
 
-                if (is_string($component)) {
-                    $component = Text::make($component);
-                }
-
                 if (! $component instanceof Component) {
-                    $component = Html::make($component);
+                    $component = (($component instanceof Htmlable) || ($component === null))
+                        ? Html::make($component)
+                        : Text::make($component);
                 }
 
                 $component = $component->container($this);

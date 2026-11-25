@@ -67,6 +67,7 @@ use Filament\Tests\Fixtures\Pages\RichEditorMentionAttributesBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorStyleAttributesBrowserTest;
 use Filament\Tests\Fixtures\Pages\SchemaComponentScopeBrowserTest;
+use Filament\Tests\Fixtures\Pages\SchemaContentBrowserTest;
 use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectBrowserTest;
@@ -150,6 +151,7 @@ class AdminPanelProvider extends PanelProvider
                 Actions::class,
                 AsyncComponentBrowserTest::class,
                 SchemaComponentScopeBrowserTest::class,
+                SchemaContentBrowserTest::class,
                 ScopedActionsBrowserTest::class,
                 AfterStateUpdatedJsBrowserTest::class,
                 AuthorizableSettings::class,
