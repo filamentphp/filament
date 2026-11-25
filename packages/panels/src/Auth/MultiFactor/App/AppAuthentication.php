@@ -424,7 +424,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
 
                         $fail(__('filament-panels::auth/multi-factor/app/provider.login_form.code.messages.invalid'));
                     };
-                }),
+                }, fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode'))),
             TextInput::make('recoveryCode')
                 ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.label'))
                 ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))

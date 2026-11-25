@@ -250,6 +250,44 @@ describe('authentication flow', function (): void {
 
         $this->assertAuthenticatedAs($userToAuthenticate);
     });
+
+    it('will authenticate the user with a valid recovery code while an invalid one-time code is still entered', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->assertNoRedirect()
+            // The user typed a wrong one-time code before switching to a recovery code, and it's still in the field.
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'code' => '000000',
+                ],
+            ], 'multiFactorChallengeForm')
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'recoveryCode' => Arr::first($recoveryCodes),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasNoErrors()
+            ->assertRedirect(Filament::getUrl());
+
+        $this->assertAuthenticatedAs($userToAuthenticate);
+
+        expect($userToAuthenticate->fresh()->getAppAuthenticationRecoveryCodes())
+            ->toHaveCount(count($recoveryCodes) - 1);
+    });
 });
 
 describe('failure cases', function (): void {

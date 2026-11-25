@@ -77,7 +77,7 @@ class DisableAppAuthenticationAction
 
                             $fail(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.messages.invalid'));
                         };
-                    }),
+                    }, fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode'))),
                 TextInput::make('recoveryCode')
                     ->label(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.recovery_code.label'))
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.recovery_code.validation_attribute'))

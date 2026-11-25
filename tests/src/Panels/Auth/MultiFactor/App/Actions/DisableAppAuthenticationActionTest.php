@@ -124,6 +124,29 @@ describe('disabling authentication', function (): void {
             ->toBeFalse();
     });
 
+    it('can disable authentication with a valid recovery code while an invalid one-time code is still entered', function (): void {
+        $user = auth()->user();
+
+        // The user typed a wrong one-time code before switching to a recovery code, and it's still in the field.
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->fillForm([
+                'code' => '000000',
+            ])
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm([
+                'password' => 'password',
+                'recoveryCode' => Arr::first($this->recoveryCodes),
+            ])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
+    });
+
     it('will not disable authentication when an invalid code is used', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
