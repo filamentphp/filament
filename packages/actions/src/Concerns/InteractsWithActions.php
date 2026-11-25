@@ -327,7 +327,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 $this->flushCachedTableRecords();
             }
 
-            if ($action->isDisabled()) {
+            if ($action->isDisabled() || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled()))) {
                 $this->unmountAction(cancelParentActions: false);
 
                 return null;
@@ -462,7 +462,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $action->mergeArguments($arguments);
 
-        if ($action->isDisabled()) {
+        if ($action->isDisabled() || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled()))) {
             return null;
         }
 
@@ -797,7 +797,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             if (
                 ($this->mountActionNestingLevel === 0) &&
                 ($action = Arr::last($actions)) &&
-                ($action->isDisabled() || (! $action->isAuthorized()))
+                ($action->isDisabled() || (! $action->isAuthorized()) || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled())))
             ) {
                 throw new ActionNotResolvableException('The mounted action is not available.');
             }
