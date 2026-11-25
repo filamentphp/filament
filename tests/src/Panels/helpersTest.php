@@ -4,6 +4,7 @@ use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Panel;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
@@ -77,22 +78,46 @@ describe('`get_authorization_response()`', function (): void {
             ->and(get_authorization_response('missing', User::class)->allowed())->toBeTrue();
     });
 
-    it('honors gate before callbacks when a policy method is missing', function (bool | Response | null $result, bool $isAllowed): void {
-        Gate::before(static fn (): bool | Response | null => $result);
+    it('honors gate before callbacks when a policy or method is missing', function (mixed $result, bool $isAllowed, string $model): void {
+        Gate::before(static fn (): mixed => $result);
 
-        $response = get_authorization_response('missing', Ticket::class);
+        $response = get_authorization_response('missing', $model);
 
         expect($response->allowed())->toBe($isAllowed);
 
         if ($result instanceof Response) {
-            expect($response)->toBe($result);
+            expect($response)->toBe($result)
+                ->and($response->message())->toBe($result->message())
+                ->and($response->status())->toBe($result->status());
         }
     })->with([
         'allow' => [true, true],
         'deny' => [false, false],
         'abstain' => [null, true],
-        'response' => [Response::deny('Denied by callback'), false],
-    ]);
+        'integer zero' => [0, false],
+        'string zero' => ['0', false],
+        'empty string' => ['', false],
+        'float zero' => [0.0, false],
+        'empty array' => [[], false],
+        'truthy value' => ['allowed', true],
+        'allowed response' => [Response::allow('Allowed by callback'), true],
+        'denied response' => [Response::denyWithStatus(404, 'Denied by callback'), false],
+    ])->with(['missing method' => [Ticket::class], 'missing policy' => [User::class]]);
+
+    it('passes normalized enum abilities to gate before callbacks when a policy or method is missing', function (UnitEnum $ability, string | int $expectedAbility, string $model): void {
+        Gate::before(static function (User $user, string | int $ability, array $arguments) use ($expectedAbility, $model): bool {
+            expect($ability)->toBe($expectedAbility)
+                ->and($arguments)->toBe([$model]);
+
+            return false;
+        });
+
+        expect(get_authorization_response($ability, $model)->denied())->toBeTrue();
+    })->with([
+        'string-backed enum' => [fn (): HelperBackedAbility => HelperBackedAbility::Missing, 'missing'],
+        'unit enum' => [fn (): HelperUnitAbility => HelperUnitAbility::missing, 'missing'],
+        'integer-backed enum' => [IntegerBackedEnum::Zero, 0],
+    ])->with(['missing method' => [Ticket::class], 'missing policy' => [User::class]]);
 
     it('rejects missing policies and methods in strict mode', function (string $model): void {
         Filament::getCurrentOrDefaultPanel()->strictAuthorization();
@@ -145,9 +170,11 @@ describe('`authorize()`', function (): void {
 enum HelperBackedAbility: string
 {
     case Browse = 'viewAny';
+    case Missing = 'missing';
 }
 
 enum HelperUnitAbility
 {
     case viewAny;
+    case missing;
 }

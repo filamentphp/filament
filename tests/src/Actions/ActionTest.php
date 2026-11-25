@@ -24,11 +24,15 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -1292,6 +1296,41 @@ describe('authorization', function (): void {
         expect($action->getAuthorizationResponse()->message())->toBe('Nope.');
     });
 
+    it('checks direct enum abilities through Gate in `authorize()`', function (UnitEnum $ability, string $expectedAbility, bool $isAllowed): void {
+        $record = new Post;
+        $response = $isAllowed ? Response::allow('Allowed by Gate') : Response::denyWithStatus(404, 'Denied by Gate');
+        $wasAbilityChecked = false;
+
+        Gate::define($expectedAbility, static function (User $user, Post $argumentRecord, string $context) use ($record, $response, &$wasAbilityChecked): Response {
+            $wasAbilityChecked = true;
+
+            expect($argumentRecord)->toBe($record)
+                ->and($context)->toBe('context');
+
+            return $response;
+        });
+
+        $action = Action::make('test')->record($record);
+
+        expect($action->authorize(abilities: $ability, arguments: ['context']))->toBe($action)
+            ->and($action->isAuthorized())->toBe($isAllowed)
+            ->and($wasAbilityChecked)->toBeTrue();
+
+        $wasAbilityChecked = false;
+
+        expect($action->getAuthorizationResponse()->allowed())->toBe($isAllowed)
+            ->and($wasAbilityChecked)->toBeTrue();
+
+        if (! $isAllowed) {
+            expect($action->getAuthorizationResponse())->toBe($response);
+        }
+    })->with([
+        'unit enum' => [fn (): ActionUnitAbility => ActionUnitAbility::publish, 'publish'],
+        'string-backed enum' => [StringBackedEnum::One, 'one'],
+        'integer-backed enum' => [IntegerBackedEnum::One, '1'],
+        'zero-backed enum' => [IntegerBackedEnum::Zero, '0'],
+    ])->with([true, false]);
+
     it('can chain `authorizationMessage()` to set a fallback message', function (): void {
         $action = Action::make('test')
             ->authorizationMessage('Custom fallback.');
@@ -2552,4 +2591,9 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
     {
         return view('livewire.table');
     }
+}
+
+enum ActionUnitAbility
+{
+    case publish;
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
+use UnitEnum;
 
 trait CanBeAuthorized
 {
@@ -32,8 +33,8 @@ trait CanBeAuthorized
      */
     public function authorize(mixed $abilities, Model | string | array | null $arguments = null): static
     {
-        if ($abilities instanceof BackedEnum) {
-            $abilities = $abilities->value;
+        if ($abilities instanceof UnitEnum) {
+            $abilities = $abilities instanceof BackedEnum ? (string) $abilities->value : $abilities->name;
         }
 
         if (is_string($abilities) || is_array($abilities)) {
