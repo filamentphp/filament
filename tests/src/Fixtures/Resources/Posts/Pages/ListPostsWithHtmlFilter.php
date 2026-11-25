@@ -14,16 +14,16 @@ class ListPostsWithHtmlFilter extends ListPosts
     {
         return parent::table($table)
             ->filters([
-                Filter::make('rating')
+                Filter::make('title')
                     ->schema([
                         Select::make('value')
-                            ->label('Rating')
-                            ->options(['5' => '<b data-testid="trusted-rating-label">Five &amp; trusted</b>'])
+                            ->label('Title')
+                            ->options(['known' => '<b data-testid="trusted-title-label">Known &amp; trusted</b>'])
                             ->allowHtml()
-                            ->extraAttributes(['data-testid' => 'rating-filter']),
+                            ->extraAttributes(['data-testid' => 'title-filter']),
                     ])
                     ->query(fn (Builder $query, array $data): Builder => $query
-                        ->when(filled($data['value'] ?? null), fn (Builder $query): Builder => $query->where('rating', $data['value']))),
+                        ->when(filled($data['value'] ?? null), fn (Builder $query): Builder => $query->where('title', $data['value']))),
             ], layout: FiltersLayout::AboveContent);
     }
 }
