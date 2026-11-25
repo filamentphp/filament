@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
+use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 use LogicException;
@@ -150,7 +151,7 @@ trait InteractsWithSchemas
             return;
         }
 
-        $rootSchema = $this->getSchema((string) str($schemaKey)->before('.'));
+        $rootSchema = $this->getCachedSchema((string) str($schemaKey)->before('.'));
 
         if (! $rootSchema) {
             app(PartialsComponentHook::class)->skipPartialRender($this);
@@ -310,7 +311,11 @@ trait InteractsWithSchemas
     {
         $statePath = (string) str($statePath)->before('.');
 
-        $this->oldSchemaState[$statePath] ??= data_get($this, $statePath);
+        try {
+            $this->oldSchemaState[$statePath] ??= $this->getPropertyValue($statePath);
+        } catch (PropertyNotFoundException) {
+            // Pagination hooks may pass a page value rather than a state path.
+        }
     }
 
     #[Unexposed]
@@ -361,7 +366,7 @@ trait InteractsWithSchemas
 
         $schemaName = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaName);
+        $schema = $this->getCachedSchema($schemaName);
 
         return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentsChildContainersWhileSearching: $skipComponentsChildContainersWhileSearching);
     }
@@ -486,6 +491,11 @@ trait InteractsWithSchemas
     protected function hasCachedSchema(string $name): bool
     {
         return array_key_exists($name, $this->getCachedSchemas());
+    }
+
+    protected function getCachedSchema(string $name): ?Schema
+    {
+        return $this->getCachedSchemas()[$name] ?? null;
     }
 
     #[Unexposed]

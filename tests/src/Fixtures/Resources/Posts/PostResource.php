@@ -90,6 +90,7 @@ class PostResource extends Resource
     {
         return [
             'index' => Pages\ListPosts::route('/'),
+            'html-filter' => Pages\ListPostsWithHtmlFilter::route('/html-filter'),
             'create' => Pages\CreatePost::route('/create'),
             'view' => Pages\ViewPost::route('/{record}'),
             'edit' => Pages\EditPost::route('/{record}/edit'),

@@ -16,6 +16,7 @@ use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Url;
 use stdClass;
 
@@ -36,7 +37,13 @@ class ColumnsBrowserTest extends Page implements HasTable
     public bool $selectColumns = false;
 
     #[Url]
+    public bool $selectFallbackLabels = false;
+
+    #[Url]
     public bool $editableColumns = false;
+
+    #[Url]
+    public bool $readOnly = false;
 
     #[Url]
     public string $saveScenario = 'success';
@@ -46,6 +53,31 @@ class ColumnsBrowserTest extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        $table->readOnly(fn (): bool => $this->readOnly);
+
+        if ($this->selectFallbackLabels) {
+            return $table->query(Post::query())->columns([
+                Tables\Columns\SelectColumn::make('title')->label('Unmatched select')
+                    ->native(false)->allowOptionsHtml()
+                    ->options(['known' => '<b>Known &amp; trusted</b>'])
+                    ->extraAttributes(['data-testid' => 'fallback-column']),
+                Tables\Columns\SelectColumn::make('content')->label('Searchable select')
+                    ->searchableOptions()->allowOptionsHtml()
+                    ->options(['known' => '<b>Known &amp; trusted</b>'])
+                    ->getOptionLabelUsing(static fn (): ?string => null)
+                    ->extraAttributes(['data-testid' => 'fallback-searchable-column']),
+                Tables\Columns\SelectColumn::make('json.status')->label('Configured select')
+                    ->native(false)->allowOptionsHtml()
+                    ->getOptionLabelUsing(static fn (mixed $value): ?HtmlString => $value === 'known' ? new HtmlString('<b>Known &amp; trusted</b>') : null)
+                    ->extraAttributes(['data-testid' => 'trusted-column']),
+            ])->headerActions([
+                Action::make('refreshSelection')->label('Refresh selection')
+                    ->action(static function (): void {
+                        Post::query()->each(static fn (Post $record): bool => $record->update(['json' => ['status' => SelectBrowserTest::FALLBACK_VALUE]]));
+                    }),
+            ]);
+        }
+
         if ($this->imageTooltips) {
             return $table->query(Post::query())->columns([
                 Tables\Columns\ImageColumn::make('avatars')

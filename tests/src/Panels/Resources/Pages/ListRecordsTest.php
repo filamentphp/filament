@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithCustomFiltersRemoveAllAction;
@@ -35,6 +36,8 @@ use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Features\SupportTesting\Testable;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
@@ -57,6 +60,36 @@ it('can list posts', function (): void {
     livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts);
 });
+
+it('does not discover unmounted action schemas through pagination hooks', function (string $schemaName, string $pageName): void {
+    $component = livewire(ListPosts::class)
+        ->call('setPage', $schemaName, $pageName);
+
+    expect($component->instance()->discoveredSchemaNames)->not->toContain($schemaName)
+        ->and($component->instance()->getSchemaComponent("{$schemaName}.title"))->toBeNull();
+})->with(['form', 'infolist'])->with(['interactsWithSchemas', 'interacts_with_schemas']);
+
+it('does not expose an unmounted action form as a standalone schema', function (): void {
+    $component = livewire(ListPosts::class)
+        ->call('partiallyRenderSchemaComponent', 'form.title');
+
+    expect($component->instance()->discoveredSchemaNames)->not->toContain('form')
+        ->and($component->instance()->getSchemaComponent('form.title'))->toBeNull();
+});
+
+it('exposes authorized action schemas without registering standalone forms', function (string $action): void {
+    $post = Post::factory()->create();
+
+    $component = livewire(ListPosts::class)
+        ->call('mountAction', $action, [], ($action === 'create') ? [] : ['table' => true, 'recordKey' => (string) $post->getKey()])
+        ->assertSet('mountedActions.0.name', $action)
+        ->call('partiallyRenderSchemaComponent', 'mountedActionSchema0.title');
+
+    expect($component->instance()->getSchemaComponent('mountedActionSchema0.title'))->not->toBeNull()
+        ->and($component->instance()->discoveredSchemaNames)->not->toContain('form', 'infolist')
+        ->and($component->instance()->getSchemaComponent('form.title'))->toBeNull()
+        ->and($component->instance()->getSchemaComponent('infolist.title'))->toBeNull();
+})->with(['create', 'edit', 'view']);
 
 it('uses no-panel filters without changing default queries or pagination updates', function (): void {
     $published = Post::factory()->create(['is_published' => true]);
@@ -363,6 +396,55 @@ it('re-authorizes resource access on Livewire updates when the policy returns a 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
+it('re-authorizes custom page access before Livewire interactions after mount', function (Closure $interact): void {
+    $post = Post::factory()->create();
+    Gate::define('access-list-posts', fn (): bool => true);
+
+    $component = livewire(ListPostsWithPageAuthorization::class)
+        ->assertSuccessful();
+
+    Gate::define('access-list-posts', fn (): Response => Response::denyAsNotFound());
+
+    $interact($component, $post)->assertNotFound();
+
+    expect($post->fresh()->trashed())->toBeFalse();
+})->with([
+    'search' => [fn (Testable $component): Testable => $component->set('tableSearch', 'changed search')],
+    'pagination' => [fn (Testable $component): Testable => $component->call('setPage', 2)],
+    'action' => [fn (Testable $component, Post $post): Testable => $component->call('mountAction', 'delete', [], ['table' => true, 'recordKey' => (string) $post->getKey()])],
+    'polling' => [fn (Testable $component): Testable => $component->call('$refresh')],
+]);
+
+it('runs custom page authorization once on mount and each authorized hydration', function (): void {
+    $authorizationCount = 0;
+    Gate::define('access-list-posts', function () use (&$authorizationCount): bool {
+        $authorizationCount++;
+
+        return true;
+    });
+
+    $matchingPost = Post::factory()->create(['title' => 'Matching title']);
+    $otherPost = Post::factory()->create(['title' => 'Other title']);
+
+    $component = livewire(ListPostsWithPageAuthorization::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$matchingPost, $otherPost]);
+
+    expect($authorizationCount)->toBe(1);
+
+    $component
+        ->set('tableSearch', 'Matching title')
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords([$otherPost]);
+
+    expect($authorizationCount)->toBe(2);
+
+    $component->call('$refresh')->assertSuccessful();
+
+    expect($authorizationCount)->toBe(3);
+});
+
 it('does not save relationships when a view-only user calls the `ViewAction`', function (string $pageClass): void {
     $ticket = Ticket::factory()->create();
     $originalDepartment = Department::factory()->create();
@@ -409,6 +491,59 @@ it('does not save forged field or relationship state when an `EditAction` schema
     'disabled schema' => true,
     'enabled schema' => false,
 ]);
+
+it('authorizes `CreateAction` using its model', function (bool $isCrossModel, bool $ownerAllowed, bool $actionAllowed, ?bool $authorization, bool $expectedAllowed): void {
+    $ownerResponse = $ownerAllowed ? Response::allow('Owner grant.') : Response::deny('Owner denial.');
+    $actionResponse = $actionAllowed ? Response::allow('Action grant.') : Response::denyAsNotFound('Action denial.', 'action-denied');
+    app()->bind(TicketPolicy::class . '::create', static fn (): Response => $ownerResponse);
+    app()->bind(DepartmentPolicy::class . '::create', static fn (): Response => $actionResponse);
+
+    CreateAction::configureUsing(
+        static fn (CreateAction $action) => $action
+            ->model(static fn (): string => $isCrossModel ? Department::class : Ticket::class)
+            ->authorize($authorization),
+        during: function () use ($isCrossModel, $authorization, $expectedAllowed, $ownerResponse, $actionResponse): void {
+            $component = livewire(ListTickets::class)
+                ->{$expectedAllowed ? 'assertActionVisible' : 'assertActionHidden'}('create');
+            $action = $component->instance()->getAction('create');
+
+            expect($action->getUrl())->toBe($isCrossModel ? null : TicketResource::getUrl('create'));
+
+            if ($authorization === null) {
+                expect($action->getAuthorizationResponse())->toBe($isCrossModel ? $actionResponse : $ownerResponse);
+            }
+
+            $component->mountAction('create')
+                ->{$expectedAllowed ? 'assertActionMounted' : 'assertActionNotMounted'}();
+        },
+    );
+})->with('create action authorization subjects');
+
+it('preserves resource create authorization overrides only for the resource model', function (bool $isCrossModel): void {
+    CreateAction::configureUsing(
+        static fn (CreateAction $action) => $action->model($isCrossModel ? Department::class : Ticket::class),
+        during: function () use ($isCrossModel): void {
+            livewire(ListTicketsWithCreateAuthorization::class)
+                ->{$isCrossModel ? 'assertActionVisible' : 'assertActionHidden'}('create');
+        },
+    );
+})->with([false, true]);
+
+it('uses action Gate semantics for cross-model create authorization without a policy', function (?bool $gateResult): void {
+    if ($gateResult !== null) {
+        Gate::define('create', static fn (User $user, string $model): bool => ($model === TicketMessage::class) && $gateResult);
+    }
+
+    CreateAction::configureUsing(
+        static fn (CreateAction $action) => $action->model(TicketMessage::class),
+        during: function () use ($gateResult): void {
+            livewire(ListTickets::class)
+                ->{$gateResult ? 'assertActionVisible' : 'assertActionHidden'}('create')
+                ->mountAction('create')
+                ->{$gateResult ? 'assertActionMounted' : 'assertActionNotMounted'}();
+        },
+    );
+})->with([null, false, true]);
 
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
@@ -515,5 +650,30 @@ class ListTicketsWithEditableColumns extends ListTickets
                     ->updateStateUsing(fn (): bool => true)
                     ->authorize(true),
             ]);
+    }
+}
+
+class ListTicketsWithCreateAuthorization extends ListTickets
+{
+    protected static string $resource = CreateAuthorizationTicketResource::class;
+}
+
+class CreateAuthorizationTicketResource extends TicketResource
+{
+    protected static ?string $slug = 'tickets';
+
+    public static function getCreateAuthorizationResponse(): Response
+    {
+        $response = parent::getCreateAuthorizationResponse();
+
+        return $response->denied() ? $response : Response::deny('Resource hook denial.');
+    }
+}
+
+class ListPostsWithPageAuthorization extends ListPosts
+{
+    protected function authorizeAccess(): void
+    {
+        Gate::authorize('access-list-posts');
     }
 }

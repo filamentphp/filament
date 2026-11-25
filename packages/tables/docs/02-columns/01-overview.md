@@ -128,6 +128,9 @@ TextColumn::make('users_count')->counts([
 ])
 ```
 
+> [!NOTE]
+> When Filament fetches a record for a table action or editable column update, the count remains available on `$record`, even if the column is hidden or toggled off. This does not guarantee its availability when rendering table rows.
+
 #### Determining relationship existence
 
 If you simply wish to indicate whether related records exist in a column, you may use the `exists()` method:
@@ -154,6 +157,9 @@ TextColumn::make('users_exists')->exists([
 ])
 ```
 
+> [!NOTE]
+> When Filament fetches a record for a table action or editable column update, the existence attribute remains available on `$record`, even if the column is hidden or toggled off. This does not guarantee its availability when rendering table rows.
+
 #### Aggregating relationships
 
 Filament provides several methods for aggregating a relationship field, including `avg()`, `max()`, `min()` and `sum()`. For instance, if you wish to show the average of a field on all related records in a column, you may use the `avg()` method:
@@ -176,6 +182,9 @@ TextColumn::make('users_avg_age')->avg([
     'users' => fn (Builder $query) => $query->where('is_active', true),
 ], 'age')
 ```
+
+> [!NOTE]
+> When Filament fetches a record for a table action or editable column update, the aggregate attributes remain available on `$record`, even if the column is hidden or toggled off. This does not guarantee their availability when rendering table rows.
 
 ## Setting a column's label
 

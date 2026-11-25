@@ -106,7 +106,7 @@ trait HasEmptyState
      */
     public function getEmptyStateActions(): array
     {
-        return $this->emptyStateActions;
+        return $this->isReadOnly() ? [] : $this->emptyStateActions;
     }
 
     public function getEmptyStateDescription(): string | Htmlable | null
