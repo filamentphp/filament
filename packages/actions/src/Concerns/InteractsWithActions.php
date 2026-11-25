@@ -973,7 +973,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $schemaName = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaName);
+        $schema = $this->getCachedSchema($schemaName);
 
         if (! $schema) {
             throw new ActionNotResolvableException("Schema [{$schemaName}] not found.");

@@ -60,6 +60,36 @@ it('can list posts', function (): void {
         ->assertCanSeeTableRecords($posts);
 });
 
+it('does not discover unmounted action schemas through pagination hooks', function (string $schemaName, string $pageName): void {
+    $component = livewire(ListPosts::class)
+        ->call('setPage', $schemaName, $pageName);
+
+    expect($component->instance()->discoveredSchemaNames)->not->toContain($schemaName)
+        ->and($component->instance()->getSchemaComponent("{$schemaName}.title"))->toBeNull();
+})->with(['form', 'infolist'])->with(['interactsWithSchemas', 'interacts_with_schemas']);
+
+it('does not expose an unmounted action form as a standalone schema', function (): void {
+    $component = livewire(ListPosts::class)
+        ->call('partiallyRenderSchemaComponent', 'form.title');
+
+    expect($component->instance()->discoveredSchemaNames)->not->toContain('form')
+        ->and($component->instance()->getSchemaComponent('form.title'))->toBeNull();
+});
+
+it('exposes authorized action schemas without registering standalone forms', function (string $action): void {
+    $post = Post::factory()->create();
+
+    $component = livewire(ListPosts::class)
+        ->call('mountAction', $action, [], ($action === 'create') ? [] : ['table' => true, 'recordKey' => (string) $post->getKey()])
+        ->assertSet('mountedActions.0.name', $action)
+        ->call('partiallyRenderSchemaComponent', 'mountedActionSchema0.title');
+
+    expect($component->instance()->getSchemaComponent('mountedActionSchema0.title'))->not->toBeNull()
+        ->and($component->instance()->discoveredSchemaNames)->not->toContain('form', 'infolist')
+        ->and($component->instance()->getSchemaComponent('form.title'))->toBeNull()
+        ->and($component->instance()->getSchemaComponent('infolist.title'))->toBeNull();
+})->with(['create', 'edit', 'view']);
+
 it('uses no-panel filters without changing default queries or pagination updates', function (): void {
     $published = Post::factory()->create(['is_published' => true]);
     $draft = Post::factory()->create(['is_published' => false]);
