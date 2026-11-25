@@ -327,7 +327,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 $this->flushCachedTableRecords();
             }
 
-            if ($action->isDisabled()) {
+            if ($action->isDisabled() || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled()))) {
                 $this->unmountAction(cancelParentActions: false);
 
                 return null;
@@ -462,7 +462,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $action->mergeArguments($arguments);
 
-        if ($action->isDisabled()) {
+        if ($action->isDisabled() || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled()))) {
             return null;
         }
 
@@ -710,6 +710,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             return [];
         }
 
+        if (($this->mountedActions[0]['context']['table'] ?? false) && ($this instanceof HasTable) && $this->getTable()->isReadOnly()) {
+            return [];
+        }
+
         if (array_key_exists(count($this->mountedActions) - 1, $this->cachedMountedActions ?? [])) {
             return $this->cachedMountedActions;
         }
@@ -736,6 +740,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     public function getMountedAction(?int $actionNestingIndex = null): ?Action
     {
         if (! count($this->mountedActions ?? [])) {
+            return null;
+        }
+
+        if (($this->mountedActions[0]['context']['table'] ?? false) && ($this instanceof HasTable) && $this->getTable()->isReadOnly()) {
             return null;
         }
 
@@ -780,7 +788,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             if (
                 ($this->mountActionNestingLevel === 0) &&
                 ($action = Arr::last($actions)) &&
-                ($action->isDisabled() || (! $action->isAuthorized()))
+                ($action->isDisabled() || (! $action->isAuthorized()) || (filled($action->getUrl()) && (! $action->isLivewireClickHandlerEnabled())))
             ) {
                 throw new ActionNotResolvableException('The mounted action is not available.');
             }
@@ -819,10 +827,16 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 throw new ActionNotResolvableException('An action tried to resolve without a name.');
             }
 
+            $column = null;
+
             if (filled($action['context']['schemaComponent'] ?? null)) {
                 $resolvedAction = $this->resolveSchemaComponentAction($action, $resolvedActions);
             } elseif ($this instanceof HasTable && filled($action['context']['table'] ?? null)) {
                 $resolvedAction = $this->resolveTableAction($action, $resolvedActions);
+
+                if (blank($resolvedActions)) {
+                    $column = Arr::last($this->getTable()->getColumns(), static fn (Column $column): bool => $column->getAction() === $resolvedAction);
+                }
             } else {
                 $resolvedAction = $this->resolveAction($action, $resolvedActions);
             }
@@ -835,6 +849,14 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
             if (filled($action['arguments'] ?? [])) {
                 $resolvedAction->mergeArguments($action['arguments']);
+            }
+
+            if ($column && ($record = $resolvedAction->getRecord())) {
+                $column->record($record);
+            }
+
+            if ($column?->isHidden()) {
+                throw new ActionNotResolvableException("Action [{$action['name']}] belongs to a hidden table column.");
             }
 
             $resolvedAction->nestingIndex($actionNestingIndex);
@@ -964,7 +986,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $schemaName = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaName);
+        $schema = $this->getCachedSchema($schemaName);
 
         if (! $schema) {
             throw new ActionNotResolvableException("Schema [{$schemaName}] not found.");

@@ -227,7 +227,8 @@ trait HasRecords
                 isResolvingRecord: true,
             );
 
-            foreach ($this->getTable()->getVisibleColumns() as $column) {
+            // Record callbacks may depend on aggregates from hidden columns too.
+            foreach ($this->getTable()->getColumns() as $column) {
                 $column->applyRelationshipAggregates($query);
             }
 
@@ -250,7 +251,7 @@ trait HasRecords
             $relationship->wherePivot($pivotKeyName, $key) :
             $relationship->where($relationship->getQualifiedRelatedKeyName(), $key);
 
-        foreach ($table->getVisibleColumns() as $column) {
+        foreach ($table->getColumns() as $column) {
             $column->applyRelationshipAggregates($query);
         }
 

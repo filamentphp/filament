@@ -110,6 +110,10 @@ trait HasRecordActions
      */
     public function getRecordActions(): array
     {
+        if ($this->isReadOnly()) {
+            return [];
+        }
+
         $defaultGroupDropdownPlacement = in_array($this->getRecordActionsPosition(), [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns])
             ? 'bottom-start'
             : 'bottom-end';

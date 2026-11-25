@@ -54,7 +54,7 @@ export default function selectFormComponent({
                 getOptionLabelUsing: () =>
                     this.$callSchemaComponentMethod(
                         'getOptionLabel',
-                        {},
+                        { withDefault: false },
                         { async: true },
                     ),
                 getOptionLabelsUsing: () =>

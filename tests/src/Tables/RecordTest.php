@@ -1,5 +1,8 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsReorderableTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
@@ -24,6 +27,61 @@ it('can list records', function (): void {
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts);
+});
+
+describe('single-record relationship aggregates', function (): void {
+    it('preserves aggregate-dependent callback decisions independently of column preferences', function (string $recordSource, bool $hidesAggregate, string $operation): void {
+        $ticket = Ticket::factory()->create();
+        $restricted = Department::factory()->create(['name' => 'Restricted']);
+        $editable = Department::factory()->create(['name' => 'Editable']);
+        Ticket::factory()->create()->departments()->attach($restricted);
+        $ticket->departments()->attach([$restricted->getKey(), $editable->getKey()], ['quantity' => 7]);
+
+        $component = livewire(AggregateRecordTable::class, [
+            'ticketKey' => $ticket->getKey(),
+            'recordSource' => $recordSource,
+            'duplicates' => $recordSource === 'pivot',
+        ]);
+
+        if ($hidesAggregate) {
+            $columns = $component->get('tableColumns');
+            $columns[1]['isToggled'] = false;
+            $component->call('applyTableColumnManager', $columns);
+        }
+
+        $table = $component->instance()->getTable();
+
+        expect(array_keys($table->getVisibleColumns()))->toBe($hidesAggregate ? ['name'] : ['name', 'tickets_count']);
+        $aggregate = $component->instance()->getTableRecords()->firstWhere('name', 'Restricted')->getAttribute('tickets_count');
+
+        if ($hidesAggregate) {
+            expect($aggregate)->toBeNull();
+        } else {
+            expect($aggregate)->toEqual(2);
+        }
+
+        foreach ([$restricted, $editable] as $department) {
+            $key = (string) (($recordSource === 'pivot')
+                ? DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->where('department_id', $department->getKey())->value('id')
+                : $department->getKey());
+
+            if ($operation === 'inline') {
+                $component->call('updateTableColumnState', 'name', $key, 'Updated');
+
+                if ($department->is($restricted)) {
+                    $component->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
+                }
+            } else {
+                // Call the Livewire endpoint directly, without the test helper's visibility precheck.
+                $component->call('mountAction', 'rename', [], ['table' => true, 'recordKey' => $key])
+                    ->assertActionNotMounted();
+            }
+
+            expect($department->fresh()->name)->toBe($department->is($restricted) ? 'Restricted' : 'Updated');
+        }
+
+        expect($ticket->departments()->pluck('quantity')->all())->toEqual([7, 7]);
+    })->with(['query', 'relationship', 'pivot'])->with([false, true])->with(['inline', 'action']);
 });
 
 it('resolves and counts eligible attachment keys with `allowDuplicates()`', function (bool $checksSelectability): void {
@@ -479,3 +537,31 @@ describe('reordering', function (): void {
             ->assertSet('afterReorderingOrder', $order);
     });
 });
+
+class AggregateRecordTable extends TicketDepartmentsReorderableTable
+{
+    public string $recordSource = 'query';
+
+    public function table(Table $table): Table
+    {
+        $table = parent::table($table);
+
+        if ($this->recordSource === 'query') {
+            $table->relationship(null)->query(Department::query());
+        }
+
+        return $table
+            ->columns([
+                TextInputColumn::make('name')
+                    ->disabled(static fn (Department $record): bool => $record->related_tickets_count > 1),
+                TextColumn::make('tickets_count')
+                    ->counts(['tickets', 'tickets as related_tickets_count'])
+                    ->toggleable(),
+            ])
+            ->recordActions([
+                Action::make('rename')
+                    ->hidden(static fn (Department $record): bool => $record->tickets_count > 1)
+                    ->action(static fn (Department $record): bool => $record->update(['name' => 'Updated'])),
+            ]);
+    }
+}

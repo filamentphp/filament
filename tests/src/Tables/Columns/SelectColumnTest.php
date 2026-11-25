@@ -12,9 +12,12 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\SelectBrowserTest;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use LogicException;
@@ -515,6 +518,54 @@ describe('rendering', function (): void {
         Post::factory()->create();
         livewire(RenderSelectColumnWithLoadingMessage::class)->assertSuccessful();
     });
+
+    it('omits fallback labels from initial and server select column data without changing `getOptionLabel()`', function (string $source, bool $allowsHtml): void {
+        $fallback = '<em>Unmatched & literal</em>';
+        $column = SelectColumn::make('title')->native(false)->allowOptionsHtml($allowsHtml)
+            ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
+            ->record(Post::factory()->create(['title' => $fallback]))
+            ->options($source === 'grouped' ? ['Group' => ['known' => 'Known']] : ['known' => 'Known']);
+
+        if ($source === 'callback') {
+            $column->getOptionLabelUsing(static fn (): ?string => null);
+        }
+
+        expect($column->getOptionLabel())->toBe($fallback);
+
+        expect($column->toEmbeddedHtml())
+            ->toContain('initialOptionLabel: null,')
+            ->toContain('data-option-label=""');
+    })->with(['static', 'grouped', 'callback'])->with([false, true]);
+
+    it('does not transform a missing select column label into a configured label', function (): void {
+        $column = SelectColumn::make('title')->native(false)->allowOptionsHtml()
+            ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
+            ->record(Post::factory()->create(['title' => 'missing']))
+            ->getOptionLabelUsing(static fn (): ?string => null)
+            ->transformOptionsForJsUsing(static fn (array $options): array => array_map(
+                static fn ($label, $value): array => ['label' => $label ?? '<b>Configured replacement</b>', 'value' => $value],
+                $options,
+                array_keys($options),
+            ));
+
+        expect($column->toEmbeddedHtml())
+            ->toContain('initialOptionLabel: null,')
+            ->toContain('data-option-label=""');
+    });
+
+    it('preserves configured HTML labels in initial and server select column data', function (bool $usesHtmlString, bool $allowsHtml): void {
+        $label = $usesHtmlString ? new HtmlString('<b>Configured</b>') : '<b>Configured</b>';
+        $column = SelectColumn::make('title')->native(false)->allowOptionsHtml($allowsHtml)
+            ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
+            ->record(Post::factory()->create(['title' => 'known']))
+            ->options(['known' => $label]);
+
+        expect($column->getOptionLabel())->toBe((string) $label);
+
+        expect($column->toEmbeddedHtml())
+            ->toContain('initialOptionLabel: ' . Js::from((string) $label))
+            ->toContain('data-option-label="' . e((string) $label) . '"');
+    })->with([false, true])->with([false, true]);
 });
 
 describe('relationship options, labels, and updates', function (): void {
@@ -793,6 +844,33 @@ describe('relationship options, labels, and updates', function (): void {
                 return true;
             });
     });
+});
+
+it('renders unmatched HTML-like select column state as text initially and after refresh in the browser', function (): void {
+    Artisan::call('filament:assets');
+    $fallback = SelectBrowserTest::FALLBACK_VALUE;
+    Post::factory()->create(['title' => $fallback, 'content' => $fallback, 'json' => ['status' => 'known']]);
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/columns-browser-test?selectFallbackLabels=1');
+    $single = '[data-testid="fallback-column"] [role="combobox"]';
+    $searchable = '[data-testid="fallback-searchable-column"] button[aria-haspopup="listbox"]';
+    $refreshed = '[data-testid="trusted-column"] [role="combobox"]';
+
+    $page->assertSeeIn($single, $fallback)
+        ->assertSeeIn($searchable, $fallback)
+        ->assertScript('document.querySelector(\'' . $single . '\').textContent', $fallback)
+        ->assertScript('document.querySelector(\'' . $searchable . '\').textContent', $fallback)
+        ->assertSeeIn($refreshed . ' b', 'Known & trusted')
+        ->click('Refresh selection')
+        ->assertSeeIn($refreshed, $fallback)
+        ->assertScript('document.querySelector(\'' . $refreshed . '\').textContent', $fallback)
+        ->assertScript('window.fallbackMarker ?? null', null)
+        ->click($searchable)
+        ->assertSeeIn('[data-testid="fallback-searchable-column"] [role="option"] b', 'Known & trusted')
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->click($searchable)->assertNoAccessibilityIssues();
 });
 
 it('navigates and saves JavaScript select columns with stable focus', function (): void {

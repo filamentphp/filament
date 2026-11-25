@@ -91,6 +91,10 @@ trait HasColumns
     #[Exposed]
     public function callTableColumnAction(string $name, string $recordKey): mixed
     {
+        if ($this->getTable()->isReadOnly()) {
+            return null;
+        }
+
         $record = $this->getTableRecord($recordKey);
 
         if (! $record) {
@@ -103,7 +107,7 @@ trait HasColumns
             return null;
         }
 
-        if ($column->isHidden()) {
+        if ($column->record($record)->isHidden()) {
             return null;
         }
 
@@ -113,7 +117,7 @@ trait HasColumns
             return null;
         }
 
-        return $column->record($record)->evaluate($action);
+        return $column->evaluate($action);
     }
 
     #[Exposed]

@@ -24,11 +24,15 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -1292,6 +1296,41 @@ describe('authorization', function (): void {
         expect($action->getAuthorizationResponse()->message())->toBe('Nope.');
     });
 
+    it('checks direct enum abilities through Gate in `authorize()`', function (UnitEnum $ability, string $expectedAbility, bool $isAllowed): void {
+        $record = new Post;
+        $response = $isAllowed ? Response::allow('Allowed by Gate') : Response::denyWithStatus(404, 'Denied by Gate');
+        $wasAbilityChecked = false;
+
+        Gate::define($expectedAbility, static function (User $user, Post $argumentRecord, string $context) use ($record, $response, &$wasAbilityChecked): Response {
+            $wasAbilityChecked = true;
+
+            expect($argumentRecord)->toBe($record)
+                ->and($context)->toBe('context');
+
+            return $response;
+        });
+
+        $action = Action::make('test')->record($record);
+
+        expect($action->authorize(abilities: $ability, arguments: ['context']))->toBe($action)
+            ->and($action->isAuthorized())->toBe($isAllowed)
+            ->and($wasAbilityChecked)->toBeTrue();
+
+        $wasAbilityChecked = false;
+
+        expect($action->getAuthorizationResponse()->allowed())->toBe($isAllowed)
+            ->and($wasAbilityChecked)->toBeTrue();
+
+        if (! $isAllowed) {
+            expect($action->getAuthorizationResponse())->toBe($response);
+        }
+    })->with([
+        'unit enum' => [fn (): ActionUnitAbility => ActionUnitAbility::publish, 'publish'],
+        'string-backed enum' => [StringBackedEnum::One, 'one'],
+        'integer-backed enum' => [IntegerBackedEnum::One, '1'],
+        'zero-backed enum' => [IntegerBackedEnum::Zero, '0'],
+    ])->with([true, false]);
+
     it('can chain `authorizationMessage()` to set a fallback message', function (): void {
         $action = Action::make('test')
             ->authorizationMessage('Custom fallback.');
@@ -1437,6 +1476,101 @@ describe('authorization', function (): void {
 
             expect($action->isVisible())->toBeFalse();
         });
+    });
+
+    describe('feedback-only URLs', function (): void {
+        it('does not evaluate or serialize a denied feedback URL', function (string $feedback): void {
+            $wasUrlEvaluated = false;
+            $action = Action::make('download')
+                ->authorize(static fn (): Response => Response::deny('Private download denied.'))
+                ->{$feedback}()
+                ->url(static function () use (&$wasUrlEvaluated): string {
+                    $wasUrlEvaluated = true;
+
+                    return '/private/download?signature=configured-secret';
+                });
+
+            expect($action->getUrl())->toBeNull()
+                ->and($action->toArray()['url'])->toBeNull()
+                ->and($wasUrlEvaluated)->toBeFalse();
+        })->with(['authorizationNotification', 'authorizationTooltip']);
+
+        it('honors authorization feedback when rendering URL actions', function (string $feedback, string $view, bool $shouldPostToUrl, bool $isAllowed): void {
+            $url = '/private/download?signature=configured-secret';
+            $action = Action::make('download')
+                ->{$view}()
+                ->icon(Heroicon::OutlinedArrowDownTray)
+                ->authorize(static fn (): Response => $isAllowed ? Response::allow() : Response::deny('Private download denied.'))
+                ->{$feedback}()
+                ->url($url, shouldOpenInNewTab: true)
+                ->postToUrl($shouldPostToUrl);
+
+            $html = $action->toHtml();
+
+            if ($isAllowed) {
+                expect($html)
+                    ->toContain($shouldPostToUrl ? '<form' : '<a')
+                    ->toContain(($shouldPostToUrl ? 'action' : 'href') . '="' . $url . '"')
+                    ->not->toContain('wire:click=');
+
+                if (! $shouldPostToUrl) {
+                    expect($html)->toContain('target="_blank"');
+                }
+
+                expect($action->getUrl())->toBe($url)
+                    ->and($action->toArray()['url'])->toBe($url);
+
+                return;
+            }
+
+            expect($html)
+                ->not->toContain($url)
+                ->not->toContain('<form')
+                ->not->toContain('href=')
+                ->toContain('<button');
+
+            expect($action->getUrl())->toBeNull()
+                ->and($action->toArray()['url'])->toBeNull()
+                ->and($action->isVisible())->toBeTrue();
+
+            if ($feedback === 'authorizationNotification') {
+                expect($html)->toContain('wire:click="mountAction(')
+                    ->and($action->isDisabled())->toBeFalse();
+            } else {
+                expect($html)->not->toContain('wire:click=')
+                    ->and($action->isDisabled())->toBeTrue()
+                    ->and($action->getTooltip())->toBe('Private download denied.');
+            }
+        })->with(['authorizationNotification', 'authorizationTooltip'])
+            ->with(['button', 'link', 'iconButton', 'badge', 'grouped'])
+            ->with([false, true])
+            ->with([false, true]);
+
+        it('honors default authorization and URLs for feedback actions', function (string $feedback, bool $isAllowed, bool $shouldPostToUrl): void {
+            $component = app(AuthorizationFeedbackUrlActions::class);
+            $component->isAllowed = $isAllowed;
+            $component->shouldPostToUrl = $shouldPostToUrl;
+
+            $action = $component->downloadAction()->livewire($component)
+                ->authorizationNotification(false)
+                ->{$feedback}();
+
+            expect($action->getUrl())->toBe($isAllowed ? '/private/download?signature=default-secret' : null)
+                ->and($action->toArray()['url'])->toBe($isAllowed ? '/private/download?signature=default-secret' : null);
+
+            if ($isAllowed) {
+                expect($action->toHtml())->toContain(($shouldPostToUrl ? 'action' : 'href') . '="/private/download?signature=default-secret"');
+            } else {
+                expect($action->toHtml())->not->toContain('default-secret')->not->toContain('<form');
+            }
+        })->with(['authorizationNotification', 'authorizationTooltip'])->with([false, true])->with([false, true]);
+
+        it('delivers the denial notification through the URL action mount handler', function (bool $shouldPostToUrl): void {
+            livewire(AuthorizationFeedbackUrlActions::class, ['shouldPostToUrl' => $shouldPostToUrl])
+                ->mountAction('download')
+                ->assertActionNotMounted()
+                ->assertNotified('Private download denied.');
+        })->with([false, true]);
     });
 });
 describe('authorization enforcement', function (): void {
@@ -2422,6 +2556,35 @@ describe('record visibility and authorization', function (): void {
     });
 });
 
+class AuthorizationFeedbackUrlActions extends Actions
+{
+    public bool $isAllowed = false;
+
+    public bool $shouldPostToUrl = false;
+
+    protected function getHeaderActions(): array
+    {
+        return [$this->downloadAction()];
+    }
+
+    public function downloadAction(): Action
+    {
+        return Action::make('download')
+            ->authorizationNotification()
+            ->postToUrl($this->shouldPostToUrl);
+    }
+
+    public function getDefaultActionAuthorizationResponse(Action $action): ?Response
+    {
+        return $this->isAllowed ? Response::allow() : Response::deny('Private download denied.');
+    }
+
+    public function getDefaultActionUrl(Action $action): ?string
+    {
+        return '/private/download?signature=default-secret';
+    }
+}
+
 class RestoredActions extends Actions
 {
     public string $restriction = '';
@@ -2552,4 +2715,9 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
     {
         return view('livewire.table');
     }
+}
+
+enum ActionUnitAbility
+{
+    case publish;
 }

@@ -47,6 +47,10 @@ trait CanOpenUrl
             return null;
         }
 
+        if (($this->hasAuthorizationNotification() || $this->hasAuthorizationTooltip()) && (! $this->isAuthorized())) {
+            return null;
+        }
+
         return $this->evaluate($this->url) ?? $this->getHasActionsLivewire()?->getDefaultActionUrl($this);
     }
 

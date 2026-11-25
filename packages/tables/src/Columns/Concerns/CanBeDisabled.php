@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Filament\Tables\Columns\Contracts\Editable;
 
 trait CanBeDisabled
 {
@@ -26,6 +27,10 @@ trait CanBeDisabled
 
     public function isDisabled(): bool
     {
+        if (($this instanceof Editable) && $this->hasTable() && $this->getTable()->isReadOnly()) {
+            return true;
+        }
+
         return (bool) $this->evaluate($this->isDisabled);
     }
 

@@ -773,7 +773,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     #[Renderless]
     public function getOptionLabelsForJs(): array
     {
-        return $this->transformOptionsForJs($this->getOptionLabels());
+        return $this->transformOptionsForJs($this->getOptionLabels(withDefaults: false));
     }
 
     /**
@@ -2130,8 +2130,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
                                     hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,
                                     id: <?= Js::from($id) ?>,
-                                    initialOptionLabel: <?= Js::from((blank($state) || $isMultiple) ? null : $this->resolveOptionLabel(options: $options)) ?>,
-                                    initialOptionLabels: <?= Js::from((filled($state) && $isMultiple) ? $this->transformOptionsForJs($this->getOptionLabels(options: $options)) : []) ?>,
+                                    initialOptionLabel: <?= Js::from((blank($state) || $isMultiple) ? null : $this->resolveOptionLabel(withDefault: false, options: $options)) ?>,
+                                    initialOptionLabels: <?= Js::from((filled($state) && $isMultiple) ? $this->transformOptionsForJs($this->getOptionLabels(withDefaults: false, options: $options)) : []) ?>,
                                     initialState: <?= Js::from($state) ?>,
                                     isAutofocused: <?= Js::from($isAutofocused) ?>,
                                     isDisabled: <?= Js::from($isDisabled) ?>,

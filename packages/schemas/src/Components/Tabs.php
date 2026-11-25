@@ -418,7 +418,7 @@ class Tabs extends Component implements HasEmbeddedView
                             'aria-controls' => $this->hasTabPanels() ? e($tab->getPanelId()) : null,
                             'tabindex' => $this->hasTabPanels() ? -1 : 0,
                             'x-bind:tabindex' => 'getTabIndex(' . Js::from($tabKey) . ')',
-                            'data-tab-key' => $tabKey,
+                            'data-tab-key' => e($tabKey),
                             'x-bind:data-tab-available' => "Boolean({$tabVisibilityJs}).toString()",
                             $this->hasTabPanels() ? 'x-bind:aria-selected' : 'x-bind:aria-pressed' => 'isTabSelected(' . Js::from($tabKey) . ')',
                             'x-on:click' => 'selectTab(' . Js::from($tabKey) . ', $event)',
@@ -493,7 +493,7 @@ class Tabs extends Component implements HasEmbeddedView
                                         'x-bind:aria-selected' => null,
                                         'x-bind:aria-pressed' => null,
                                         'data-tabs-overflow-trigger' => true,
-                                        'data-tab-trigger-key' => $tabKey,
+                                        'data-tab-trigger-key' => e($tabKey),
                                         'aria-label' => e(__('filament-schemas::components.tabs.actions.more.label') . ': ' . ($tabLabel instanceof Htmlable ? html_entity_decode(strip_tags($tabLabel->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $tabLabel)),
                                         'x-show' => 'overflowReady && overflowTabs.includes(' . Js::from($tabKey) . ') && isTabSelected(' . Js::from($tabKey) . ')',
                                     ], escape: false)
@@ -562,7 +562,7 @@ class Tabs extends Component implements HasEmbeddedView
                                         ->merge([
                                             'role' => $this->hasTabPanels() ? null : 'menuitem',
                                             'type' => $this->hasTabPanels() ? null : 'button',
-                                            'data-tab-menu-key' => $tabKey,
+                                            'data-tab-menu-key' => e($tabKey),
                                             'aria-disabled' => ($tabExtraAttributeBag->get('disabled') || ($tabExtraAttributeBag->get('aria-disabled') === 'true')) ? 'true' : null,
                                             'x-bind:aria-disabled' => 'availableTabs.includes(' . Js::from($tabKey) . ") ? 'false' : 'true'",
                                             'x-on:click' => $this->hasTabPanels() ? null : "if (\$el.getAttribute('aria-disabled') !== 'true') selectTab(" . Js::from($tabKey) . ', $event, true)',
@@ -769,9 +769,7 @@ class Tabs extends Component implements HasEmbeddedView
                     $isActive = $activeTab === $tabKey;
                     $tabVisibilityJs = $tab->getTabVisibilityJs();
 
-                    $wireClickValue = filled($tabKey)
-                        ? "\$set('{$livewireProperty}', '" . addslashes($tabKey) . "')"
-                        : "\$set('{$livewireProperty}', null)";
+                    $wireClickValue = '$set(' . Js::from($livewireProperty) . ', ' . Js::from(filled($tabKey) ? $tabKey : null) . ')';
 
                     $tabItemAttributes = (new FilamentComponentAttributeBag)
                         ->merge([
@@ -782,7 +780,7 @@ class Tabs extends Component implements HasEmbeddedView
                             $this->hasTabPanels() ? 'x-bind:aria-selected' : 'x-bind:aria-pressed' => 'isTabSelected(' . Js::from($tabKey) . ')',
                             'tabindex' => $this->hasTabPanels() ? ($isActive ? 0 : -1) : 0,
                             'x-bind:tabindex' => 'getTabIndex(' . Js::from($tabKey) . ')',
-                            'data-tab-key' => $tabKey,
+                            'data-tab-key' => e($tabKey),
                             'x-bind:data-tab-available' => "Boolean({$tabVisibilityJs}).toString()",
                             'x-show' => $tabVisibilityJs,
                             'x-on:click.capture' => 'if (! selectTab(' . Js::from($tabKey) . ', $event)) { $event.preventDefault(); $event.stopImmediatePropagation() }',
