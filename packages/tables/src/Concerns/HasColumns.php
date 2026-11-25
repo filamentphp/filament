@@ -34,7 +34,7 @@ trait HasColumns
             return null;
         }
 
-        if ($column->isHidden()) {
+        if ($column->record($record)->isHidden()) {
             return null;
         }
 
@@ -44,7 +44,7 @@ trait HasColumns
             return null;
         }
 
-        return $column->record($record)->evaluate($action);
+        return $column->evaluate($action);
     }
 
     #[Exposed]
