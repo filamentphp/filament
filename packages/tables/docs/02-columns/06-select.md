@@ -238,6 +238,9 @@ SelectColumn::make('author_id')
 
 <UtilityInjection set="tableColumns" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.||Search;;?string;;$search;;The current search input value, if the field is searchable.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
 
+> [!NOTE]
+> Group any `orWhere()` conditions inside a `where()` callback so the query's other conditions still apply. If you return a new query, keep the relationship's existing constraints. If you select specific columns, include the related key. The default lookup rejects an option whose key does not match the selected value, but does not fix the query itself.
+
 ### Customizing the relationship option labels
 
 If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you could use a virtual column in your database migration:

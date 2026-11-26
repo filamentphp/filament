@@ -7,14 +7,17 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Image;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use InvalidArgumentException;
 use Livewire\Component;
 
@@ -165,6 +168,42 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasFormErrors(['imageable_id' => ['in']]);
     });
+
+    it('rejects a relationship record whose canonical key differs from the submitted state', function (string $modifier, bool $usesCustomLabel): void {
+        $allowed = Post::factory()->create(['title' => 'Allowed']);
+        $excluded = Post::factory()->create(['title' => 'Excluded']);
+
+        $schema = Schema::make(Livewire::make())
+            ->model(Image::class)
+            ->statePath('data')
+            ->components([
+                MorphToSelect::make('imageable')
+                    ->types([
+                        MorphToSelect\Type::make(Post::class)
+                            ->titleAttribute('title')
+                            ->modifyOptionsQueryUsing(match ($modifier) {
+                                'orWhere' => static fn (Builder $query): Builder => $query->where('title', 'Missing')->orWhere('title', 'Allowed'),
+                                'replacement' => static fn (): Builder => Post::query()->where('title', 'Allowed'),
+                                'coercion' => null,
+                            })
+                            ->getOptionLabelFromRecordUsing($usesCustomLabel ? static fn (Post $record): string => "Post: {$record->title}" : null),
+                    ]),
+            ])
+            ->fill(['imageable_type' => Post::class, 'imageable_id' => (string) $allowed->getKey()]);
+
+        /** @var Select $select */
+        $select = $schema->getComponent('imageable_id');
+
+        expect($select->getOptionLabel(withDefault: false))->toBe($usesCustomLabel ? 'Post: Allowed' : 'Allowed');
+        expect(validator(['imageable_id' => $select->getState()], ['imageable_id' => $select->getValidationRules()])->passes())->toBeTrue();
+
+        $select->state($modifier === 'coercion' ? "0{$allowed->getKey()}" : (string) $excluded->getKey());
+
+        $validator = validator(['imageable_id' => $select->getState()], ['imageable_id' => $select->getValidationRules()]);
+        expect($validator->fails())->toBeTrue()
+            ->and($validator->failed())->toHaveKey('imageable_id.In');
+        expect($select->getOptionLabel(withDefault: false))->toBeNull();
+    })->with(['orWhere', 'replacement', 'coercion'])->with([false, true]);
 
     it('validates against a `modifyOptionsQueryUsing()` query that adds a join without an ambiguous column error', function (): void {
         $author = User::factory()->create();
