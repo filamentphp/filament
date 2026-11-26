@@ -3,6 +3,7 @@
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
@@ -150,6 +151,31 @@ it('blocks `_startUpload` for a property name that exists on neither of the mult
         ->call('_startUpload', 'photoForm.somethingElse.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
+
+it('only allows upload lifecycle calls for actionable repeated fields', function (string $fieldClass, string $restriction, string $method): void {
+    $component = livewire(RestrictedUploadsTestComponentWithActionableFields::class, [
+        'fieldClass' => $fieldClass,
+        'restriction' => $restriction,
+    ]);
+    $rowKey = array_key_first($component->get('data.section.items'));
+    $statePath = "data.section.items.{$rowKey}.upload.fileKey";
+
+    if ($fieldClass !== FileUpload::class) {
+        $statePath = "componentFileAttachments.{$statePath}";
+    }
+
+    $component->call($method, $statePath, $method === '_startUpload'
+        ? [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']]
+        : [temporaryUploadedFileReference('actionable.jpg')], false);
+
+    if ($restriction === 'enabled') {
+        $component->assertDispatched($method === '_startUpload' ? 'upload:generatedSignedUrl' : 'upload:finished');
+    } else {
+        $component->assertForbidden();
+    }
+})->with([FileUpload::class, MarkdownEditor::class, RichEditor::class])
+    ->with(['enabled', 'field', 'section', 'repeater', 'schema', 'hidden field', 'hidden section'])
+    ->with(['_startUpload', '_finishUpload']);
 
 class UnrestrictedUploadsTestComponent extends Livewire
 {
@@ -304,5 +330,41 @@ class RestrictedUploadsTestComponentWithMultipleSchemas extends Livewire
                 TextInput::make('name'),
             ])
             ->statePath('detailsForm');
+    }
+}
+
+class RestrictedUploadsTestComponentWithActionableFields extends Livewire
+{
+    use RestrictsFileUploadsToSchemaComponents;
+
+    public string $fieldClass = FileUpload::class;
+
+    public string $restriction = 'enabled';
+
+    public function mount(): void
+    {
+        $this->form->fill(['section' => ['items' => [['upload' => null]]]]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make()
+                    ->statePath('section')
+                    ->disabled(fn (): bool => $this->restriction === 'section')
+                    ->hidden(fn (): bool => $this->restriction === 'hidden section')
+                    ->schema([
+                        Repeater::make('items')
+                            ->disabled(fn (): bool => $this->restriction === 'repeater')
+                            ->schema([
+                                $this->fieldClass::make('upload')
+                                    ->disabled(fn (): bool => $this->restriction === 'field')
+                                    ->hidden(fn (): bool => $this->restriction === 'hidden field'),
+                            ]),
+                    ]),
+            ])
+            ->disabled(fn (): bool => $this->restriction === 'schema')
+            ->statePath('data');
     }
 }
