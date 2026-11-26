@@ -1,15 +1,26 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Events\RecordSaved;
 use Filament\Resources\Events\RecordUpdated;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\PostMetadata;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
@@ -93,6 +104,88 @@ it('can validate input', function (): void {
         ])
         ->call('save')
         ->assertHasFormErrors(['title' => 'required']);
+});
+
+describe('partial saving', function (): void {
+    it('does not save a field excluded by an ancestor', function (Closure $layout): void {
+        $post = Post::factory()->create(['title' => 'Original title']);
+        $page = livewire(EditPost::class, ['record' => $post->getKey()])->instance();
+        $page->form->components([$layout(TextInput::make('title'))]);
+        $field = $page->form->getComponentByStatePath('title', withHidden: true);
+        $page->data['title'] = 'Changed title';
+
+        $page->saveFormComponentOnly($field);
+
+        expect($post->refresh()->title)->toBe('Original title');
+    })->with([
+        'group' => [static fn (Component $component): Group => Group::make([$component])->disabled()],
+        'tab' => [static fn (Component $component): Tabs => Tabs::make('Details')->tabs([
+            Tab::make('Read only')->disabled()->schema([Section::make()->schema([$component])]),
+        ])],
+        'unsaved group' => [static fn (Component $component): Group => Group::make([$component])->saved(false)],
+        'hidden section' => [static fn (Component $component): Section => Section::make()->hidden()->schema([$component])],
+    ]);
+
+    it('can save a field whose disabled ancestor opts into saving', function (): void {
+        $post = Post::factory()->create(['title' => 'Original title']);
+        $page = livewire(EditPost::class, ['record' => $post->getKey()])->instance();
+        $page->form->components([
+            Group::make([TextInput::make('title')])->disabled()->saved(),
+        ]);
+        $field = $page->form->getComponentByStatePath('title');
+        $page->data['title'] = 'Changed title';
+
+        $page->saveFormComponentOnly($field);
+
+        expect($post->refresh()->title)->toBe('Changed title');
+    });
+
+    it('respects ancestor opt-in when saving a relationship component inside a disabled ancestor', function (bool $shouldSaveRelationships): void {
+        $post = Post::factory()->create();
+        $metadata = PostMetadata::factory()->for($post)->create(['seo_title' => 'Original SEO title']);
+        $page = livewire(EditPost::class, ['record' => $post->getKey()])->instance();
+        $page->form->components([
+            Group::make([
+                Section::make('Metadata')->key('metadata')->relationship('metadata')->schema([
+                    TextInput::make('seo_title'),
+                ]),
+            ])->disabled()->saveRelationshipsWhenDisabled($shouldSaveRelationships),
+        ])->fill($post->attributesToArray());
+        $section = $page->form->getComponent('metadata');
+        $page->data['metadata']['seo_title'] = 'Changed SEO title';
+
+        $page->saveFormComponentOnly($section);
+
+        expect($metadata->refresh()->seo_title)->toBe($shouldSaveRelationships ? 'Changed SEO title' : 'Original SEO title');
+    })->with([false, true]);
+
+    it('validates and saves an eligible section through its footer action', function (string $pageClass): void {
+        $post = Post::factory()->create();
+        $metadata = PostMetadata::factory()->for($post)->create(['seo_title' => 'Original SEO title']);
+        $action = TestAction::make('saveSection')->schemaComponent('details');
+        $page = livewire($pageClass, ['record' => $post->getKey()]);
+
+        $page->fillForm(['title' => null])->callAction($action)->assertHasFormErrors(['title' => 'required']);
+
+        expect($post->refresh()->title)->not->toBeNull();
+
+        $page->set('saveEvents', [])
+            ->fillForm([
+                'title' => 'Changed title',
+                'metadata' => ['seo_title' => 'Changed SEO title'],
+                'content' => null,
+            ])
+            ->callAction($action)
+            ->assertHasNoFormErrors()
+            ->assertNotified('Section saved')
+            ->assertSet('saveEvents', ['beforeValidate', 'afterValidate', 'mutate', 'beforeSave', 'afterSave']);
+
+        expect($post->refresh())->title->toBe('Changed title (mutated)')->content->not->toBeNull();
+        expect($metadata->refresh()->seo_title)->toBe('Changed SEO title');
+    })->with([
+        'default schema' => [EditPostWithPartialSaving::class],
+        'closure-backed footer' => [EditPostWithPartialSavingInFooter::class],
+    ]);
 });
 
 it('can delete', function (): void {
@@ -339,3 +432,69 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning false' => fn (): array => [ReplicateAction::class, 'replicate', false, false],
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
+
+class EditPostWithPartialSaving extends EditPost
+{
+    public array $saveEvents = [];
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            Group::make([
+                Section::make('Details')->key('details')->schema([
+                    TextInput::make('title')->required(),
+                    Section::make('Metadata')->relationship('metadata')->schema([
+                        TextInput::make('seo_title'),
+                    ]),
+                ])->footerActions([
+                    Action::make('saveSection')->action(function (Section $component): void {
+                        $this->saveFormComponentOnly($component);
+
+                        Notification::make()->title('Section saved')->success()->send();
+                    }),
+                ]),
+                TextInput::make('content')->required(),
+            ]),
+        ]);
+    }
+
+    protected function beforeValidate(): void
+    {
+        $this->saveEvents[] = 'beforeValidate';
+    }
+
+    protected function afterValidate(): void
+    {
+        $this->saveEvents[] = 'afterValidate';
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $this->saveEvents[] = 'mutate';
+        $data['title'] .= ' (mutated)';
+
+        return $data;
+    }
+
+    protected function beforeSave(): void
+    {
+        $this->saveEvents[] = 'beforeSave';
+    }
+
+    protected function afterSave(): void
+    {
+        $this->saveEvents[] = 'afterSave';
+    }
+}
+
+class EditPostWithPartialSavingInFooter extends EditPostWithPartialSaving
+{
+    public function form(Schema $schema): Schema
+    {
+        $components = parent::form($schema)->getComponents();
+
+        return $schema->components([
+            Section::make('Outer')->footer(static fn (): array => $components),
+        ]);
+    }
+}
