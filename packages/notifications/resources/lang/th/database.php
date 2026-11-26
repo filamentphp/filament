@@ -6,6 +6,8 @@ return [
 
         'heading' => 'การแจ้งเตือน',
 
+        'unread_label' => 'การแจ้งเตือนที่ยังไม่ได้อ่าน',
+
         'actions' => [
 
             'clear' => [
