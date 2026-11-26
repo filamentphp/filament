@@ -4,7 +4,10 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
@@ -39,6 +42,33 @@ it('renders a blade string', function (): void {
 
     expect($component->render())->toBe('{{ $this->table }}');
 });
+
+it('rejects temporary uploads without a file-upload field in its own schema', function (): void {
+    livewire(TableSelectLivewireComponent::class, [
+        'tableConfiguration' => base64_encode(PostsTableWithSessionPersistence::class),
+    ])
+        ->call('_startUpload', 'componentFileAttachments.data.photo', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
+        ->assertForbidden();
+});
+
+it('allows uploads only to its own mounted filter action schema', function (string $statePath): void {
+    livewire(TableSelectLivewireComponent::class, [
+        'tableConfiguration' => base64_encode(TableSelectUploadConfiguration::class),
+    ])
+        ->call('mountAction', 'upload', [], ['schemaComponent' => 'tableFiltersForm.attachment.query'])
+        ->assertSet('mountedActions.0.name', 'upload')
+        ->call('_startUpload', $statePath, [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
+        ->assertDispatched('upload:generatedSignedUrl');
+
+    livewire(TableSelectLivewireComponent::class, [
+        'tableConfiguration' => base64_encode(TableSelectUploadConfiguration::class),
+    ])
+        ->call('_startUpload', $statePath, [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
+        ->assertForbidden();
+})->with([
+    'file upload' => 'mountedActions.0.data.photo.fileKey',
+    'attachment editor' => 'componentFileAttachments.mountedActions.0.data.content.fileKey',
+]);
 
 it('preserves native restoration for a scope-excluded `record`', function (): void {
     $post = Post::factory()->create();
@@ -377,5 +407,25 @@ class TableSelectCapabilityOwner extends PostsReorderableTable
     public function table(Table $table): Table
     {
         return $this->configuration::configure($table->readOnly(fn (): bool => $this->isReadOnly));
+    }
+}
+
+class TableSelectUploadConfiguration
+{
+    public static function configure(Table $table): Table
+    {
+        return PostsTableWithSessionPersistence::configure($table)
+            ->filters([
+                Filter::make('attachment')
+                    ->schema([
+                        TextInput::make('query')
+                            ->suffixAction(
+                                Action::make('upload')->schema([
+                                    FileUpload::make('photo'),
+                                    MarkdownEditor::make('content'),
+                                ]),
+                            ),
+                    ]),
+            ]);
     }
 }
