@@ -406,7 +406,7 @@ class ImportAction extends Action
         }
     }
 
-    private function isCsvEncodingValid(mixed $resource, string $encoding): bool
+    protected function isCsvEncodingValid(mixed $resource, string $encoding): bool
     {
         rewind($resource);
 
