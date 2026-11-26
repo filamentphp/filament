@@ -15,6 +15,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\SelectBrowserTest;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
@@ -792,6 +793,30 @@ describe('relationship options, labels, and updates', function (): void {
         // (rather than thrown), so we assert the persisted state was not mutated.
         expect($post->fresh()->author_id)->toBe($inScopeUser->id);
     });
+
+    it('rejects a relationship record whose canonical key differs from the submitted state', function (string $modifier, bool $usesCustomLabel): void {
+        $allowed = User::factory()->create(['name' => 'Allowed']);
+        $excluded = User::factory()->create(['name' => 'Excluded']);
+        $post = Post::factory()->create(['author_id' => $excluded->getKey()])->load('author');
+
+        $column = SelectColumn::make('author_id')
+            ->table(livewire(TestTableWithRelationshipSelectColumn::class)->instance()->getTable())
+            ->record($post)
+            ->optionsRelationship('author', 'name', modifyQueryUsing: match ($modifier) {
+                'orWhere' => static fn (Builder $query, ?string $search): Builder => $query->where('name', 'Missing')->orWhere('name', 'Allowed'),
+                'replacement' => static fn (): Builder => User::query()->where('name', 'Allowed'),
+                'coercion' => null,
+            })
+            ->getOptionLabelFromRecordUsing($usesCustomLabel ? static fn (User $record): string => "User: {$record->name}" : null);
+
+        expect($column->getOptionLabelFromRelationship($post, (string) $allowed->getKey()))->toBe($usesCustomLabel ? 'User: Allowed' : 'Allowed');
+        $column->validate((string) $allowed->getKey());
+
+        $invalidState = $modifier === 'coercion' ? "0{$allowed->getKey()}" : (string) $excluded->getKey();
+
+        expect(fn () => $column->validate($invalidState))->toThrow(ValidationException::class);
+        expect($column->getOptionLabelFromRelationship($post, $invalidState))->toBeNull();
+    })->with(['orWhere', 'replacement', 'coercion'])->with([false, true]);
 
     it('rejects a matching eager-loaded relationship excluded by `modifyQueryUsing()`', function (): void {
         $outOfScopeUser = User::factory()->create(['name' => 'Beta User']);

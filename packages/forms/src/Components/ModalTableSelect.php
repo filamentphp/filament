@@ -326,7 +326,9 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-        $relationshipQuery->where($this->getQualifiedRelatedKeyNameForRelationship($relationship), $state);
+        $qualifiedRelatedKeyName = $this->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+        $relationshipQuery->where($qualifiedRelatedKeyName, $state);
 
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
@@ -335,7 +337,13 @@ class ModalTableSelect extends Field implements HasEmbeddedView
             ]) ?? $relationshipQuery;
         }
 
-        return $relationshipQuery->first();
+        $record = $relationshipQuery->first();
+
+        if ((! $record) || ((string) $record->getAttribute(Str::afterLast($qualifiedRelatedKeyName, '.')) !== (string) $state)) {
+            return null;
+        }
+
+        return $record;
     }
 
     /**

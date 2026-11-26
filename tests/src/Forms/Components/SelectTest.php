@@ -1027,6 +1027,36 @@ describe('validation', function (): void {
             ->assertHasFormErrors(['author_id' => ['in']]);
     });
 
+    it('rejects a relationship record whose canonical key differs from the submitted state', function (string $modifier, bool $usesCustomLabel): void {
+        $allowed = Team::factory()->create(['name' => 'Allowed']);
+        $excluded = Team::factory()->create(['name' => 'Excluded']);
+
+        Schema::make(Livewire::make())
+            ->model(User::class)
+            ->statePath('data')
+            ->components([
+                $select = Select::make('team_id')
+                    ->relationship('team', 'name', modifyQueryUsing: match ($modifier) {
+                        'orWhere' => static fn (Builder $query, ?string $search): Builder => $query->where('name', 'Missing')->orWhere('name', 'Allowed'),
+                        'replacement' => static fn (): Builder => Team::query()->where('name', 'Allowed'),
+                        'coercion' => null,
+                    })
+                    ->getOptionLabelFromRecordUsing($usesCustomLabel ? static fn (Team $record): string => "Team: {$record->name}" : null),
+            ])
+            ->fill(['team_id' => (string) $allowed->getKey()]);
+
+        expect($select->getOptionLabel(withDefault: false))->toBe($usesCustomLabel ? 'Team: Allowed' : 'Allowed');
+        expect(validator(['team_id' => $select->getState()], ['team_id' => $select->getValidationRules()])->passes())->toBeTrue();
+
+        $select->state($modifier === 'coercion' ? "0{$allowed->getKey()}" : (string) $excluded->getKey());
+
+        $validator = validator(['team_id' => $select->getState()], ['team_id' => $select->getValidationRules()]);
+        expect($validator->fails())->toBeTrue()
+            ->and($validator->failed())->toHaveKey('team_id.In');
+        expect($select->getSelectedRecord())->toBeNull()
+            ->and($select->getOptionLabel(withDefault: false))->toBeNull();
+    })->with(['orWhere', 'replacement', 'coercion'])->with([false, true]);
+
     it('revalidates a cached relationship record after its query scope changes', function (): void {
         $user = User::factory()->create(['name' => 'Alpha User']);
 

@@ -541,7 +541,7 @@ Operator::make('subscribed')
 
 In this example, the operator is able to filter records based on whether or not the authenticated user is subscribed to the record. A subscription is recorded in the `subscriptions` relationship of the table.
 
-The `baseQuery()` method is used to define the query that will be used to filter the records. The `$isInverse` argument is `false` when the "Subscribed" option is selected, and `true` when the "Not subscribed" option is selected. The function is applied to the base query of the table, where `whereHas()` can be used. If your function does not need to be applied to the base query of the table, like when you are using a simple `where()` or `whereIn()`, you can use the `query()` method instead, which has the bonus of being able to be used inside nested "OR" groups.
+The `$isInverse` argument is `false` when the "Subscribed" option is selected, and `true` when the "Not subscribed" option is selected. Use `baseQuery()` to work directly with the rule's model, as in the `whereHas()` example above. Use `query()` for conditions on the constraint's column, including columns on a relationship. Both methods work inside nested "OR" groups. An operator's `baseQuery()` still runs inside the filter's condition groups, unlike `baseQuery()` on a filter.
 
 The `label()` method is used to render the options in the operator select. Two options are registered for each operator, one for when the operator is not inverted, and one for when it is inverted.
 
