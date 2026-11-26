@@ -1046,6 +1046,8 @@ ExportColumn::make('description')
     ->preventFormulaInjection()
 ```
 
+This protection also applies to the column's header in CSV and XLSX files, including a label renamed in the export modal.
+
 If you would like to enable this protection for every export column across your application, you can use the `configureUsing()` method inside the `boot()` method of a service provider. Since this is applied to all columns, you can opt an individual column back out by passing `false` to `preventFormulaInjection()`:
 
 ```php
