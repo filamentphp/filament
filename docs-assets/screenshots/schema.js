@@ -2296,6 +2296,19 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/color-picker/preset-colors': {
+        url: 'forms/fields/color-picker',
+        selector: '#colorPickerPresetColors',
+        viewport: {
+            width: 1920,
+            height: 900,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#colorPickerPresetColors .fi-fo-color-picker-preview')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/toggle-buttons/simple': {
         url: 'forms/fields/toggle-buttons',
         selector: '#toggleButtons',

@@ -49,6 +49,25 @@ class ColorPickerSchema
                         ->rgba()
                         ->default('rgba(52, 144, 220, 0.5)'),
                 ]),
+            Group::make()
+                ->id('colorPickerPresetColors')
+                ->extraAttributes([
+                    'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                ])
+                ->schema([
+                    ColorPicker::make('colorPickerPresetColors')
+                        ->label('Brand color')
+                        ->presetColors([
+                            '#ef4444' => 'Red',
+                            '#f59e0b' => 'Amber',
+                            '#22c55e' => 'Green',
+                            '#3b82f6' => 'Blue',
+                            '#8b5cf6' => 'Violet',
+                            '#111827' => 'Ink',
+                        ])
+                        ->eyeDropper()
+                        ->default('#3b82f6'),
+                ]),
         ];
     }
 }

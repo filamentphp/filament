@@ -142,6 +142,18 @@ return [
 
         'panel_label' => 'Color picker',
 
+        'actions' => [
+
+            'eye_dropper' => [
+                'label' => 'Pick a color from the screen',
+            ],
+
+        ],
+
+        'preset_colors' => [
+            'label' => 'Preset colors',
+        ],
+
     ],
 
     'date_time_picker' => [

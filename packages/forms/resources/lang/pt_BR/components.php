@@ -142,6 +142,18 @@ return [
 
         'panel_label' => 'Seletor de cor',
 
+        'actions' => [
+
+            'eye_dropper' => [
+                'label' => 'Escolher uma cor da tela',
+            ],
+
+        ],
+
+        'preset_colors' => [
+            'label' => 'Cores predefinidas',
+        ],
+
     ],
 
     'date_time_picker' => [
