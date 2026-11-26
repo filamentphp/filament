@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -11,6 +12,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Enums\SchemaLoadTrigger;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Attributes\Url;
@@ -136,6 +138,44 @@ class LazySchemaLoadingBrowserTest extends Page
                     ]),
             ])
             ->statePath('data');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make('editSettings')
+                ->label('Edit settings')
+                ->modalHeading('Edit settings')
+                ->record(auth()->user())
+                ->extraAttributes(['data-testid' => 'open-prefetch-modal'])
+                ->extraModalWindowAttributes(['data-testid' => 'prefetch-modal'])
+                ->modalSubmitActionLabel('Save settings')
+                ->schema([
+                    Tabs::make('Settings')
+                        ->key('settings')
+                        ->tabs([
+                            Tab::make('Profile')
+                                ->key('profile')
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->extraInputAttributes(['data-testid' => 'prefetch-name']),
+                                ]),
+                            Tab::make('Notifications')
+                                ->key('notifications')
+                                ->schema(
+                                    Schema::make()
+                                        ->components([
+                                            TextInput::make('email')
+                                                ->rule('email')
+                                                ->extraInputAttributes(['data-testid' => 'prefetch-email']),
+                                        ])
+                                        ->lazyLoaded()
+                                        ->lazyLoadTrigger(SchemaLoadTrigger::AfterRender)
+                                        ->loadingPlaceholder(static fn () => view('loading-placeholder', ['label' => 'Preparing notifications'])),
+                                ),
+                        ]),
+                ]),
+        ];
     }
 
     public function save(): void

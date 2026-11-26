@@ -80,6 +80,84 @@ it('replaces custom loading content with the loaded schema', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
+it('prefetches an inactive tab in an action modal after rendering', function (): void {
+    $user = User::factory()->create(['email' => 'team@example.com']);
+    $this->actingAs($user);
+
+    $page = visit('/lazy-schema-loading-browser-test', ['reducedMotion' => 'reduce']);
+    $modal = '[data-testid="prefetch-modal"]';
+    $profile = $modal . ' [role="tab"][data-tab-key="profile"]';
+    $notifications = $modal . ' [role="tab"][data-tab-key="notifications"]';
+    $placeholder = $modal . ' [data-testid="custom-loading-placeholder"]';
+    $name = $modal . ' [data-testid="prefetch-name"]';
+    $email = $modal . ' [data-testid="prefetch-email"]';
+
+    // Hold the response for the notifications schema while switching tabs.
+    $page->page()->evaluate(<<<'JS'
+        ([profile, name]) => {
+            const fetch = window.fetch
+            const prefetch = window.schemaPrefetch = { requests: 0 }
+            const release = new Promise(resolve => { prefetch.release = resolve })
+
+            window.fetch = async (url, options) => {
+                if (!new Headers(options?.headers).has('X-Livewire')) {
+                    return fetch(url, options)
+                }
+
+                const isNotificationsLoad = JSON.parse(options.body).components.some(({ calls }) =>
+                    calls.some(({ method, params }) =>
+                        method === 'loadLazySchema' && params[0].endsWith('.settings.notifications'),
+                    ),
+                )
+
+                if (!isNotificationsLoad || ++prefetch.requests !== 1) {
+                    return fetch(url, options)
+                }
+
+                prefetch.profileWasVisible = document.querySelector(profile)?.getAttribute('aria-selected') === 'true' &&
+                    document.querySelector(name)?.checkVisibility()
+
+                const response = await fetch(url, options)
+                await release
+
+                return response
+            }
+        }
+        JS, [$profile, $name]);
+
+    $page->click('[data-testid="open-prefetch-modal"]')->assertVisible($name);
+    $page->page()->waitForFunction('() => window.schemaPrefetch.requests > 0');
+    $page->assertScript('window.schemaPrefetch.profileWasVisible', true)
+        ->fill($name, 'Ada')
+        ->click($notifications)
+        ->assertVisible($placeholder)
+        ->click($profile);
+
+    $page->page()->evaluate('window.schemaPrefetch.release()');
+    $page->page()->locator($email)->waitFor(['state' => 'attached']);
+
+    $page->assertAttribute($profile, 'aria-selected', 'true')
+        ->assertValue($name, 'Ada')
+        ->click($notifications)
+        ->assertVisible($email)
+        ->assertValue($email, 'team@example.com')
+        ->assertNotPresent($placeholder)
+        ->assertNoAccessibilityIssues()
+        ->fill($email, 'invalid')
+        ->click($profile)
+        ->click('Save settings')
+        ->assertVisible($modal . ' [data-validation-error]')
+        ->fill($email, 'ada@example.com')
+        ->click('Save settings');
+
+    $page->page()->locator($modal)->waitFor(['state' => 'hidden']);
+    $page->assertScript('window.schemaPrefetch.requests', 1)->assertNoSmoke();
+
+    expect($user->refresh())
+        ->name->toBe('Ada')
+        ->email->toBe('ada@example.com');
+});
+
 it('shows an accessible inline error when a lazy-loaded schema fails', function (bool $hasCustomLoadingPlaceholder): void {
     $this->actingAs(User::factory()->create());
 

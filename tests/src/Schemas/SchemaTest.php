@@ -5,6 +5,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
+use Filament\Schemas\Enums\SchemaLoadTrigger;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -177,9 +178,24 @@ describe('lazy loading', function (): void {
         expect($schema->toEmbeddedHtml())
             ->toContain('fi-sc-loading')
             ->toContain('data-testid="lazy-loaded-schema"')
-            ->toContain('wire:partial="schema.form"')
+            ->toContain('wire:partial="schema.form"', 'loadAfterRender: false')
             ->not->toContain('Loaded content');
     })->with(['lazyLoaded', 'deferLoading']);
+
+    it('can change when a lazy schema loads', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->key('form')
+            ->components([Text::make('Loaded content')])
+            ->lazyLoaded()
+            ->lazyLoadTrigger(SchemaLoadTrigger::AfterRender);
+
+        expect($schema->toEmbeddedHtml())
+            ->toContain('wire:partial="schema.form"', 'loadAfterRender: true')
+            ->not->toContain('Loaded content');
+
+        expect($schema->lazyLoadTrigger(SchemaLoadTrigger::InViewport)->livewire(Livewire::make())->toEmbeddedHtml())
+            ->toContain('loadAfterRender: false');
+    });
 
     it('renders custom loading content without rendering the lazy schema and can reset it', function (string $contentType): void {
         $schema = Schema::make(Livewire::make())
