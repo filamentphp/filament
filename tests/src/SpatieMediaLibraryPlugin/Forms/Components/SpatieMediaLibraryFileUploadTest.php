@@ -21,6 +21,8 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 use Spatie\MediaLibrary\Conversions\ImageGenerators\Image;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Observers\MediaObserver;
+use Spatie\MediaLibrary\Support\FileRemover\DefaultFileRemover;
 
 use function Filament\Tests\livewire;
 
@@ -443,6 +445,77 @@ describe('integration', function (): void {
         // Old media should be deleted, only the new one should remain
         expect($record->getMedia('avatars'))->toHaveCount(1);
         expect($record->getMedia('avatars')->first()->file_name)->toEndWith('.jpg');
+    });
+
+    it('honors `deletable()` when submitted media is missing', function (bool $isDeletable, bool $useClosure): void {
+        Media::observe(app(MediaObserver::class));
+        config()->set('media-library.file_remover_class', DefaultFileRemover::class);
+
+        $record = MediaPost::factory()->create();
+        $media = $record->addMediaFromString('existing')
+            ->usingFileName('existing.txt')
+            ->toMediaCollection('avatars');
+        $mediaPath = $media->getPathRelativeToRoot();
+
+        SpatieMediaLibraryFileUpload::configureUsing(
+            static fn (SpatieMediaLibraryFileUpload $component) => $component
+                ->deletable($useClosure ? static fn (): bool => $isDeletable : $isDeletable),
+            during: function () use ($record): void {
+                livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+                    ->set('data.avatar', [])
+                    ->call('save')
+                    ->assertHasNoFormErrors();
+            },
+        );
+
+        expect($media->fresh() !== null)->toBe(! $isDeletable);
+        expect(Storage::disk('public')->exists($mediaPath))->toBe(! $isDeletable);
+    })->with([true, false])->with([false, true]);
+
+    it('still uploads media with configured metadata and reorders existing media when `deletable(false)`', function (): void {
+        Media::observe(app(MediaObserver::class));
+        config()->set('media-library.file_remover_class', DefaultFileRemover::class);
+
+        $record = MediaPost::factory()->create();
+        $firstMedia = $record->addMediaFromString('first')
+            ->usingFileName('first.txt')
+            ->toMediaCollection('avatars');
+        $secondMedia = $record->addMediaFromString('second')
+            ->usingFileName('second.txt')
+            ->toMediaCollection('avatars');
+        $omittedMedia = $record->addMediaFromString('omitted')
+            ->usingFileName('omitted.txt')
+            ->toMediaCollection('avatars');
+
+        $firstMedia->refresh();
+        $secondMedia->refresh();
+
+        SpatieMediaLibraryFileUpload::configureUsing(
+            static fn (SpatieMediaLibraryFileUpload $component) => $component
+                ->deletable(false)
+                ->mediaName('New media')
+                ->customProperties(['alt' => 'New description']),
+            during: function () use ($record, $firstMedia, $secondMedia): void {
+                livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+                    ->set('data.avatar', [
+                        $secondMedia->uuid => $secondMedia->uuid,
+                        $firstMedia->uuid => $firstMedia->uuid,
+                    ])
+                    ->fillForm(['avatar.new-upload' => UploadedFile::fake()->image('new.jpg')])
+                    ->call('save')
+                    ->assertHasNoFormErrors();
+            },
+        );
+
+        $media = $record->fresh()->getMedia('avatars');
+        $uploadedMedia = $media->firstWhere('name', 'New media');
+        expect($media)->toHaveCount(4)
+            ->and($omittedMedia->fresh())->not->toBeNull()
+            ->and((int) $secondMedia->fresh()->order_column)->toBe(1)
+            ->and((int) $firstMedia->fresh()->order_column)->toBe(2)
+            ->and($uploadedMedia)->not->toBeNull()
+            ->and($uploadedMedia->getCustomProperty('alt'))->toBe('New description');
+        Storage::disk($uploadedMedia->disk)->assertExists($uploadedMedia->getPathRelativeToRoot());
     });
 
     it('applies the media filter before selecting abandoned files to delete', function (): void {
