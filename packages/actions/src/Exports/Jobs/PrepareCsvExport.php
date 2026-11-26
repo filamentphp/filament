@@ -61,6 +61,7 @@ class PrepareCsvExport implements ShouldQueue
         }
 
         $csv = Writer::fromString();
+        $csv->setEscape('');
         $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));

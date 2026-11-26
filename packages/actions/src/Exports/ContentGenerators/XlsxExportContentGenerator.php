@@ -18,6 +18,7 @@ class XlsxExportContentGenerator
 
         $writeRowsFromFile = static function (string $file) use ($csvDelimiter, $disk, $writer): void {
             $csvReader = CsvReader::from($disk->readStream($file));
+            $csvReader->setEscape('');
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = (new Statement)->process($csvReader);
 

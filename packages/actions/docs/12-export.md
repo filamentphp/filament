@@ -671,6 +671,8 @@ public static function getCsvDelimiter(): string
 
 You can only specify a single character, otherwise an exception will be thrown.
 
+Filament reads and writes CSV using doubled double quotes inside quoted fields, with PHP's proprietary backslash escape disabled. If you use a custom League CSV reader or writer to exchange CSV with Filament, call `setEscape('')` on it.
+
 ## Customizing XLSX files
 
 ### Styling XLSX rows

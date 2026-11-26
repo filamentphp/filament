@@ -717,6 +717,8 @@ ImportAction::make()
 
 You can only specify a single character, otherwise an exception will be thrown.
 
+Filament reads and writes CSV using doubled double quotes inside quoted fields, with PHP's proprietary backslash escape disabled. If you use a custom League CSV reader or writer to exchange CSV with Filament, call `setEscape('')` on it.
+
 ## Changing the column header offset
 
 If your column headers are not on the first row of the CSV, you can call the `headerOffset()` method on the action, passing the number of rows to skip:
