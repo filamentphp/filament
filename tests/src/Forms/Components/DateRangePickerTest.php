@@ -258,7 +258,8 @@ describe('browser interactions', function (): void {
 
         $panel = '[id="form.period-panel"]';
 
-        $page->assertNoSmoke()
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
             ->click('[data-testid="period"]')
             ->assertPresent("{$panel} [data-date=\"2025-07-01\"]:focus")
             ->click("{$panel} [data-date=\"2025-07-03\"]")
@@ -295,7 +296,8 @@ describe('browser interactions', function (): void {
 
         $panel = '[id="form.period-panel"]';
 
-        $page->assertNoSmoke()
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
             ->click('[data-testid="period"]')
             ->assertPresent("{$panel} [data-date=\"2025-07-01\"]:focus")
             ->keys("{$panel} [role=\"gridcell\"]:focus", 'PageDown')
@@ -314,7 +316,8 @@ describe('browser interactions', function (): void {
 
         $panel = '[id="form.period-panel"]';
 
-        $page->assertNoSmoke()
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
             ->click('[data-testid="period"]')
             ->assertAttribute("{$panel} [role=\"group\"] button", 'aria-pressed', 'false')
             ->click("{$panel} [role=\"group\"] button")
@@ -333,7 +336,8 @@ describe('browser interactions', function (): void {
 
         $panel = '[id="form.stay-panel"]';
 
-        $page->assertNoSmoke()
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
             ->click('[data-testid="stay"]')
             ->assertAttribute("{$panel} [data-date=\"2025-07-09\"]", 'aria-disabled', 'true')
             ->assertAttribute("{$panel} [data-date=\"2025-07-20\"]", 'aria-disabled', 'true')
@@ -346,6 +350,7 @@ describe('browser interactions', function (): void {
             ->assertNoAccessibilityIssues();
 
         $page->inDarkMode()
+            ->waitForEvent('networkidle')
             ->click('[data-testid="stay"]')
             ->assertVisible($panel)
             ->assertNoAccessibilityIssues();
@@ -358,7 +363,8 @@ describe('browser interactions', function (): void {
 
         $panel = '[id="form.stay-panel"]';
 
-        $page->assertNoSmoke()
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
             ->click('[data-testid="stay"]')
             ->click("{$panel} [data-date=\"2025-07-12\"]")
             ->click("{$panel} [data-date=\"2025-07-15\"]")
