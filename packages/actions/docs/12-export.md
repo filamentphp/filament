@@ -596,7 +596,7 @@ By default, the `exports` table has a `user_id` column. That column is constrain
 $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 ```
 
-In the `Export` model, the `user()` relationship is defined as a `BelongsTo` relationship to the `App\Models\User` model. If the `App\Models\User` model does not exist, or you want to use a different one, you can bind a new `Authenticatable` model to the container in a service provider's `register()` method:
+By default, the `Export` model's `user()` relationship is a `BelongsTo` relationship to `App\Models\User`. To use a different owner model, bind it to `Illuminate\Contracts\Auth\Authenticatable` in a service provider's `register()` method:
 
 ```php
 use App\Models\Admin;
@@ -604,6 +604,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 $this->app->bind(Authenticatable::class, Admin::class);
 ```
+
+If your application uses multiple authenticatable models, we recommend using a [polymorphic user relationship](#using-a-polymorphic-user-relationship) instead, even if only one model can own exports.
 
 If your authenticatable model uses a different table to `users`, you should pass that table name to `constrained()`:
 
@@ -613,7 +615,7 @@ $table->foreignId('user_id')->constrained('admins')->cascadeOnDelete();
 
 ### Using a polymorphic user relationship
 
-If you want to associate exports with multiple user models, you can use a polymorphic `MorphTo` relationship instead. To do this, you need to replace the `user_id` column in the `exports` table:
+A polymorphic `MorphTo` relationship stores the owner model type on each export, allowing exports to belong to different user models. To use it, replace the `user_id` column in the `exports` table with morph columns:
 
 ```php
 $table->morphs('user');
