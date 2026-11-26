@@ -511,8 +511,8 @@ describe('integration', function (): void {
         $uploadedMedia = $media->firstWhere('name', 'New media');
         expect($media)->toHaveCount(4)
             ->and($omittedMedia->fresh())->not->toBeNull()
-            ->and($secondMedia->fresh()->order_column)->toBe(1)
-            ->and($firstMedia->fresh()->order_column)->toBe(2)
+            ->and((int) $secondMedia->fresh()->order_column)->toBe(1)
+            ->and((int) $firstMedia->fresh()->order_column)->toBe(2)
             ->and($uploadedMedia)->not->toBeNull()
             ->and($uploadedMedia->getCustomProperty('alt'))->toBe('New description');
         Storage::disk($uploadedMedia->disk)->assertExists($uploadedMedia->getPathRelativeToRoot());
