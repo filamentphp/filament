@@ -3,6 +3,9 @@
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 uses(TestCase::class);
 
@@ -190,6 +193,28 @@ it('can configure and reset `csvEncoding()`', function (): void {
 
     expect($action->getCsvEncoding())->toBeNull();
 });
+
+it('automatically validates CSV encodings across read boundaries and at EOF', function (string $encodedText, string $decodedText, int $prefixLength): void {
+    $storage = Storage::fake('tmp-for-tests');
+    $prefix = "title,content\r\nArticle,";
+    $prefix .= str_repeat('A', $prefixLength - strlen($prefix));
+    $storage->put(FileUploadConfiguration::path('encoding.csv'), $prefix . $encodedText);
+
+    $stream = ImportAction::make()->getUploadedFileStream(new TemporaryUploadedFile('encoding.csv', 'tmp-for-tests'));
+
+    try {
+        expect(stream_get_contents($stream))->toBe($prefix . $decodedText);
+    } finally {
+        fclose($stream);
+    }
+})->with([
+    'UTF-8 with one pending byte' => ["😀\r\n", "😀\r\n", 8191],
+    'UTF-8 with three pending bytes' => ["😀\r\n", "😀\r\n", 8189],
+    'automatic Shift-JIS' => [mb_convert_encoding("日本語\r\n", 'SJIS-win', 'UTF-8'), "日本語\r\n", 8191],
+    'automatic EUC-KR' => [mb_convert_encoding("안녕하세요\r\n", 'EUC-KR', 'UTF-8'), "안녕하세요\r\n", 8191],
+    'incomplete final Shift-JIS character' => ["\x93", "\u{0093}", 8191],
+    'invalid byte after a complete UTF-8 chunk' => ["\xFF", 'ÿ', 8193],
+]);
 
 it('can set `csvDelimiter()` with a `Closure`', function (): void {
     $action = ImportAction::make()

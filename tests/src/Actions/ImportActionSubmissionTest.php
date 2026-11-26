@@ -192,6 +192,38 @@ it('preserves CSV cells when importing RFC CSV and re-importing generated CSV', 
     'failed rows' => ['failure', null],
 ]);
 
+it('preserves CSV rows and fields when a Windows-1252 suffix invalidates the sampled Shift-JIS encoding', function (?string $encoding): void {
+    Bus::swap($this->busDispatcher);
+    app()->bind(Authenticatable::class, User::class);
+    Exceptions::fake()->throwOnReport();
+
+    $prefix = "Before;Metadata\r\ntitle;content\r\n" . str_repeat("Sample;£\r\n", 20);
+    $csv = mb_convert_encoding($prefix . "\"café\";\"First; field\r\nSecond line\"\r\nLast;Fin\r\n", 'Windows-1252', 'UTF-8');
+
+    expect(mb_check_encoding(mb_convert_encoding($prefix, 'Windows-1252', 'UTF-8'), 'SJIS-win'))->toBeTrue()
+        ->and(mb_check_encoding($csv, 'SJIS-win'))->toBeFalse();
+
+    livewire(ImportActionSubmissionPage::class)
+        ->set('csvEncoding', $encoding)
+        ->set('csvDelimiter', ';')
+        ->set('headerOffset', 1)
+        ->mountAction('import')
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('articles.csv', $csv)])
+        ->assertSchemaStateSet(['columnMap' => ['title' => 'title', 'content' => 'content']])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    expect(Import::query()->sole()->total_rows)->toBe(23)
+        ->and(Post::query()->count())->toBe(23)
+        ->and(Post::query()->orderBy('id')->get(['title', 'content'])->take(-2)->values()->toArray())->toBe([
+            ['title' => 'café', 'content' => "First; field\r\nSecond line"],
+            ['title' => 'Last', 'content' => 'Fin'],
+        ]);
+})->with([
+    'automatic encoding' => [null],
+    'explicit Windows-1252' => ['Windows-1252'],
+]);
+
 it('does not start an import when the mapping or options form is invalid', function (array $data, array $errors): void {
     livewire(ImportActionSubmissionPage::class)
         ->mountAction('import')
@@ -232,6 +264,10 @@ class ImportActionSubmissionPage extends Actions
 
     public ?string $csvEncoding = null;
 
+    public ?string $csvDelimiter = null;
+
+    public ?int $headerOffset = null;
+
     public bool $shouldDetectCsvEncoding = false;
 
     protected function getHeaderActions(): array
@@ -248,6 +284,8 @@ class ImportActionSubmissionPage extends Actions
 
                     return mb_check_encoding($sample, 'UTF-8') ? null : 'Windows-1252';
                 })
+                ->csvDelimiter(fn (): ?string => $this->csvDelimiter)
+                ->headerOffset(fn (): ?int => $this->headerOffset)
                 ->options(['mode' => 'static', 'source' => 'catalog'])
                 ->authorize(fn (): bool => $this->canImport),
         ];
