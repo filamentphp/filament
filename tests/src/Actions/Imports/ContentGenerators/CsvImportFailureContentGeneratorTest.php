@@ -109,14 +109,17 @@ it('preserves failed CSV cells with default and custom downloaders', function (b
     $reader = Reader::fromString($content);
     $reader->setEscape('');
     $reader->setDelimiter($customWriter ? ';' : ',');
+    $headers = $reader->fetchOne();
+
     if ($preventFormulaInjection) {
         $data['protected'] = "'\tINERT_MARKER";
     }
 
     expect(str_starts_with($content, Bom::Utf8->value))->toBeTrue()
+        ->and($headers)->toEqualCanonicalizing([...array_keys($data), 'error'])
         ->and(array_values(iterator_to_array($reader->getRecords())))->toBe([
-            [...array_keys($data), 'error'],
-            [...array_values($data), $error],
+            $headers,
+            array_map(static fn (string $header): string => ($header === 'error') ? $error : $data[$header], $headers),
             [...array_fill(0, count($data), 'LAST_RECORD'), 'System error, please contact support.'],
         ]);
 })->with([false, true])->with([false, true]);
