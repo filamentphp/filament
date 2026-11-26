@@ -39,7 +39,7 @@ trait BelongsToModel
 
             $shouldSaveRelationshipsWhenDisabled = $component->shouldSaveRelationshipsWhenDisabled();
 
-            foreach ($component->getChildSchemas(withHidden: $component->shouldSaveRelationshipsWhenHidden()) as $childSchema) {
+            foreach ($component->getChildSchemasForRelationshipSaving() as $childSchema) {
                 if ((! $shouldSaveRelationshipsWhenDisabled) && $childSchema->isDisabled()) {
                     continue;
                 }
@@ -48,6 +48,15 @@ trait BelongsToModel
             }
 
             $component->saveRelationships();
+        }
+    }
+
+    protected function cacheRelationshipSaveEligibility(): void
+    {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            foreach ($component->cacheRelationshipSaveEligibility() as $childSchema) {
+                $childSchema->cacheRelationshipSaveEligibility();
+            }
         }
     }
 

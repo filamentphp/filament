@@ -587,6 +587,12 @@ trait HasState
     public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
     {
         return Component::withVisibilityCache(function () use ($shouldCallHooksBefore, $afterValidate): array {
+            if ($this->isRoot()) {
+                // Relationship callbacks run again after a newly created record is bound.
+                // Binding it must not admit components excluded from this submission.
+                $this->cacheRelationshipSaveEligibility();
+            }
+
             $state = $this->validate();
 
             if ($this->isRoot() && $this->isDisabled()) {

@@ -886,6 +886,90 @@ describe('dehydrating state', function (): void {
         'hidden',
     ]);
 
+    test('excluded layouts remove only ineligible descendants when an included layout shares their state path', function (string $exclusion, bool $reverseOrder): void {
+        $excluded = Section::make('Excluded')
+            ->statePath('group')
+            ->schema([
+                Field::make('excluded')->key('first-excluded'),
+                Field::make('excluded')->key('second-excluded'),
+                Field::make('shared')->dehydrated(),
+            ]);
+
+        match ($exclusion) {
+            'disabled' => $excluded->disabled(),
+            'not dehydrated' => $excluded->dehydrated(false),
+        };
+
+        $components = [
+            $excluded,
+            Section::make('Included')
+                ->statePath('group')
+                ->schema([
+                    Field::make('included'),
+                    Field::make('shared'),
+                ]),
+        ];
+
+        $schema = StateTestLivewire::make()
+            ->data(['scope' => [
+                'group' => ['excluded' => 'client excluded', 'included' => 'client included', 'shared' => 'client shared'],
+                'group_other' => 'boundary value',
+            ]])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                Section::make('Scope')
+                    ->statePath('scope')
+                    ->schema([
+                        ...($reverseOrder ? array_reverse($components) : $components),
+                        Field::make('group_other'),
+                    ]),
+            ]);
+
+        expect($schema->getState())->toEqual(['scope' => [
+            'group' => ['included' => 'client included', 'shared' => 'client shared'],
+            'group_other' => 'boundary value',
+        ]]);
+    })->with(['disabled', 'not dehydrated'])->with([false, true]);
+
+    test('differently keyed fields preserve shared client state only for an eligible owner', function (string $exclusion, bool $reverseOrder): void {
+        $first = Field::make('shared')->key('first');
+        $second = Field::make('shared')->key('second');
+
+        foreach ([$first, $second] as $field) {
+            match ($exclusion) {
+                'disabled' => $field->disabled(),
+                'hidden' => $field->hidden(),
+                'not dehydrated' => $field->dehydrated(false),
+            };
+        }
+
+        $components = [$first, $second, Field::make('other')];
+        $schema = StateTestLivewire::make()
+            ->data(['group' => ['shared' => 'client shared', 'other' => 'client other']])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                Section::make('Details')
+                    ->statePath('group')
+                    ->schema($reverseOrder ? array_reverse($components) : $components),
+            ]);
+
+        $state = ['data' => $schema->getLivewire()->data];
+        $schema->dehydrateState($state);
+
+        expect($state)->toBe(['data' => ['group' => ['other' => 'client other']]]);
+        expect($schema->getState())->toBe(['group' => ['other' => 'client other']]);
+
+        match ($exclusion) {
+            'disabled' => $first->disabled(false),
+            'hidden' => $first->dehydratedWhenHidden(),
+            'not dehydrated' => $first->dehydrated(),
+        };
+
+        expect($schema->getState())->toEqual(['group' => ['shared' => 'client shared', 'other' => 'client other']]);
+    })->with(['disabled', 'hidden', 'not dehydrated'])->with([false, true]);
+
     test('components in a hidden parent component with a grandparent component with a state path are excluded from state dehydration', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')
