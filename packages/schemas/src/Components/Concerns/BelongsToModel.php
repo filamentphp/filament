@@ -3,6 +3,7 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToModel
@@ -22,6 +23,13 @@ trait BelongsToModel
 
     protected bool | Closure $shouldSaveRelationshipsWhenHidden = false;
 
+    protected ?bool $cachedRelationshipSaveEligibility = null;
+
+    /**
+     * @var array<Schema> | null
+     */
+    protected ?array $cachedChildSchemasForRelationshipSaving = null;
+
     /**
      * @param  Model | array<string, mixed> | class-string<Model> | Closure | null  $model
      */
@@ -40,19 +48,7 @@ trait BelongsToModel
             return;
         }
 
-        $isDisabled = $this->isDisabled();
-        $isHidden = $this->isHidden();
-        $isSaved = $this->isSaved();
-
-        if ($isDisabled && (! $this->shouldSaveRelationshipsWhenDisabled()) && (! $isSaved)) {
-            return;
-        }
-
-        if ($isHidden && (! $this->shouldSaveRelationshipsWhenHidden())) {
-            return;
-        }
-
-        if ((! $isDisabled) && (! $isHidden) && (! $isSaved)) {
+        if (! $this->shouldSaveRelationships()) {
             return;
         }
 
@@ -71,19 +67,7 @@ trait BelongsToModel
             return;
         }
 
-        $isDisabled = $this->isDisabled();
-        $isHidden = $this->isHidden();
-        $isSaved = $this->isSaved();
-
-        if ($isDisabled && (! $this->shouldSaveRelationshipsWhenDisabled()) && (! $isSaved)) {
-            return;
-        }
-
-        if ($isHidden && (! $this->shouldSaveRelationshipsWhenHidden())) {
-            return;
-        }
-
-        if ((! $isDisabled) && (! $isHidden) && (! $isSaved)) {
+        if (! $this->shouldSaveRelationships()) {
             return;
         }
 
@@ -92,6 +76,89 @@ trait BelongsToModel
         }
 
         $this->evaluate($callback);
+    }
+
+    /**
+     * @return array<Schema>
+     *
+     * @internal
+     */
+    public function cacheRelationshipSaveEligibility(): array
+    {
+        $this->cachedRelationshipSaveEligibility = null;
+        $this->cachedChildSchemasForRelationshipSaving = null;
+
+        if ($this->saveRelationshipsUsing || $this->saveRelationshipsBeforeChildrenUsing) {
+            $this->cachedRelationshipSaveEligibility = $this->shouldSaveRelationships();
+        }
+
+        $shouldSaveRelationshipsWhenDisabled = $this->shouldSaveRelationshipsWhenDisabled();
+
+        return $this->cachedChildSchemasForRelationshipSaving = array_filter(
+            $this->getChildSchemas(withHidden: $this->shouldSaveRelationshipsWhenHidden()),
+            static fn (Schema $schema): bool => $shouldSaveRelationshipsWhenDisabled || (! $schema->isDisabled()),
+        );
+    }
+
+    /**
+     * @return array<Schema>
+     *
+     * @internal
+     */
+    public function getChildSchemasForRelationshipSaving(): array
+    {
+        $childSchemas = $this->getChildSchemas(withHidden: $this->shouldSaveRelationshipsWhenHidden());
+
+        if ($this->cachedChildSchemasForRelationshipSaving === null) {
+            return $childSchemas;
+        }
+
+        $cachedChildSchemas = [];
+
+        foreach ($this->cachedChildSchemasForRelationshipSaving as $key => $childSchema) {
+            if (! isset($childSchemas[$key])) {
+                continue;
+            }
+
+            // A singular relationship can rebuild its schema after creating its record.
+            // Keep the submitted components and their eligibility, but bind the new model.
+            if ($childSchema !== $childSchemas[$key]) {
+                $childSchema->model($childSchemas[$key]->model);
+
+                // Array-backed schemas share components that may have been reparented.
+                foreach ($childSchema->getComponents(withActions: false, withHidden: true) as $component) {
+                    $component->container($childSchema);
+                }
+            }
+
+            $cachedChildSchemas[$key] = $childSchema;
+        }
+
+        return $cachedChildSchemas;
+    }
+
+    /**
+     * @internal
+     */
+    public function shouldSaveRelationships(): bool
+    {
+        if ($this->cachedRelationshipSaveEligibility === false) {
+            return false;
+        }
+
+        $isDisabled = $this->isDisabled();
+        $isHidden = $this->isHidden();
+        $isSaved = $this->isSaved();
+
+        if ($isDisabled && (! $this->shouldSaveRelationshipsWhenDisabled()) && (! $isSaved)) {
+            return false;
+        }
+
+        if ($isHidden && (! $this->shouldSaveRelationshipsWhenHidden())) {
+            return false;
+        }
+
+        return $isDisabled || $isHidden || $isSaved;
     }
 
     public function loadStateFromRelationships(bool $shouldHydrate = false): void
