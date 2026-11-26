@@ -212,7 +212,7 @@ class DateRangePicker extends Field implements Contracts\HasAffixes, HasEmbedded
                 <div aria-live="polite" aria-atomic="true" x-text="getCalendarLabel()" class="fi-fo-date-time-picker-calendar-description"></div>
 
                 <div x-ref="calendar" tabindex="-1" x-on:keydown="handleCalendarKeydown($event)" x-on:mouseleave="hoveredDate = null" class="fi-fo-date-range-picker-months">
-                    <template x-for="(month, monthIndex) in focusedMonths" x-bind:key="month.key">
+                    <template x-for="(month, monthIndex) in focusedMonths" x-bind:key="monthIndex">
                         <div class="fi-fo-date-range-picker-month">
                             <div class="fi-fo-date-time-picker-panel-header">
                                 <button

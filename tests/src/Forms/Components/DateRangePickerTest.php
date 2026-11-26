@@ -309,6 +309,35 @@ describe('browser interactions', function (): void {
             ->assertPresent("{$panel} [data-date=\"2024-09-01\"]:focus");
     });
 
+    it('stays open while the month and year are changed', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/date-range-picker-browser-test');
+
+        $panel = '[id="form.period-panel"]';
+        $monthSelect = "{$panel} select";
+        $yearInput = "{$panel} input[type=\"number\"]";
+
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
+            ->click('[data-testid="period"]')
+            ->click($monthSelect)
+            ->select($monthSelect, '8')
+            ->wait(0.5)
+            ->assertVisible($panel)
+            ->assertPresent("{$monthSelect}:focus")
+            ->assertPresent("{$panel} [data-date=\"2025-09-01\"]")
+            ->type($yearInput, '2026')
+            ->wait(0.5)
+            ->assertVisible($panel)
+            ->assertPresent("{$yearInput}:focus")
+            ->assertPresent("{$panel} [data-date=\"2026-09-01\"]")
+            ->click("{$panel} .fi-fo-date-range-picker-month:last-child .fi-fo-date-range-picker-next-month-btn")
+            ->wait(0.5)
+            ->assertVisible($panel)
+            ->assertPresent("{$panel} [data-date=\"2026-10-01\"]");
+    });
+
     it('selects a preset', function (): void {
         $this->actingAs(User::factory()->create());
 
