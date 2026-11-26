@@ -1006,7 +1006,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         $recordsToDelete = [];
 
         foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
-            if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+            if ((! $this->isDeletable()) || array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
                 continue;
             }
 

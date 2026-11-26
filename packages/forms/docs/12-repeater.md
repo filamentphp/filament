@@ -101,7 +101,7 @@ Repeater::make('members')
 
 ### Preventing the user from adding items
 
-You may prevent the user from adding items to the repeater using the `addable(false)` method:
+You may prevent the user from adding items through the built-in add action using the `addable(false)` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -114,6 +114,9 @@ Repeater::make('members')
 ```
 
 <UtilityInjection set="formFields">As well as allowing a static value, the `addable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+> [!WARNING]
+> `addable()` controls the built-in add action, not server-side authorization or validation of relationship state. Defaults and items produced by an enabled clone action share the same relationship persistence path. Use [`maxItems()`](#number-of-items-validation) to validate the submitted item count. To reject relationship creation, [return `null` from `mutateRelationshipDataBeforeCreateUsing()`](#mutating-related-item-data-before-creating) or enforce authorization checks or policies in your application.
 
 ## Deleting items
 
@@ -791,6 +794,8 @@ Repeater::make('members')
 ```
 
 <UtilityInjection set="formFields">As well as allowing static values, the `minItems()` and `maxItems()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+These rules validate item counts. In particular, `minItems()` does not authorize individual relationship deletions.
 
 > [!NOTE]
 > `maxItems()` is a validation rule. Filament builds item schemas before evaluating the rule, and Livewire requests can render items without running form validation. To avoid long processing times if your application accidentally creates too many items, you can [limit item processing](#limiting-item-processing) separately.

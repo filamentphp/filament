@@ -2295,6 +2295,80 @@ describe('relationship persistence', function (): void {
         'supported punctuation' => 'order@café+雪,123=value~end',
     ]);
 
+    it('honors `deletable()` when submitted relationship items are missing while still updating existing items', function (bool $isDeletable, bool $useClosure): void {
+        $user = User::factory()->create();
+        $retainedPost = Post::factory()->create(['author_id' => $user->id, 'title' => 'Original']);
+        $omittedPost = Post::factory()->create(['author_id' => $user->id, 'title' => 'Omitted']);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->model($user)
+            ->components([
+                $repeater = Repeater::make('posts')
+                    ->relationship()
+                    ->deletable($useClosure ? static fn (): bool => $isDeletable : $isDeletable)
+                    ->schema([TextInput::make('title')]),
+            ]);
+        $schema->loadStateFromRelationships();
+
+        $repeater->rawState(["record-{$retainedPost->id}" => ['title' => 'Updated']]);
+        $schema->saveRelationships();
+
+        expect($retainedPost->fresh()->title)->toBe('Updated')
+            ->and($omittedPost->fresh()->trashed())->toBe($isDeletable)
+            ->and(array_values($user->posts->modelKeys()))->toEqualCanonicalizing($isDeletable
+                ? [$retainedPost->id]
+                : [$retainedPost->id, $omittedPost->id]);
+    })->with([true, false])->with([false, true]);
+
+    it('saves server default relationship items on a newly created record regardless of `addable()`', function (bool $isAddable, bool $useDefaultItems): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $repeater = Repeater::make('posts')
+                    ->relationship()
+                    ->addable($isAddable)
+                    ->schema([TextInput::make('title')->default('Server default')]),
+            ])
+            ->model(User::class);
+
+        $useDefaultItems
+            ? $repeater->defaultItems(1)
+            : $repeater->default([['title' => 'Server default']]);
+
+        $schema->fill();
+        $user = User::factory()->create();
+        $schema->model($user);
+        expect(array_values($repeater->getRawState()))->toBe([['title' => 'Server default']]);
+
+        $schema->saveRelationships();
+
+        expect($user->posts()->pluck('title')->all())->toBe(['Server default']);
+    })->with([true, false])->with([false, true]);
+
+    it('saves relationship items produced by an enabled clone action regardless of `addable()`', function (bool $isAddable): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => $user->id, 'title' => 'Source']);
+
+        Repeater::configureUsing(
+            static fn (Repeater $component) => $component->addable($isAddable)->cloneable(),
+            during: function () use ($user, $post): void {
+                livewire(RepeaterWithHasManyRelationshipAndOrderColumn::class, ['record' => $user])
+                    ->callAction(TestAction::make('clone')->schemaComponent('posts')->arguments(['item' => "record-{$post->id}"]))
+                    ->assertSchemaStateSet(function (array $state): array {
+                        expect($state['posts'])->toHaveCount(2);
+
+                        return [];
+                    })
+                    ->call('save')
+                    ->assertHasNoFormErrors();
+            },
+        );
+
+        expect($post->fresh()->title)->toBe('Source')
+            ->and($user->posts()->pluck('title')->all())->toBe(['Source', 'Source']);
+    })->with([true, false]);
+
     it('preserves safe string record keys and rejects unsafe keys before changing related records', function (string $recordKey, bool $isSafe): void {
         $user = User::factory()->create();
         $user = RepeaterUserWithStringKeyPosts::findOrFail($user->id);

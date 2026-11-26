@@ -574,6 +574,13 @@ Builder::make('content')
 
 <UtilityInjection set="formFields">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Controlling block visibility
+
+You can control whether a block appears in the picker and builder using `visible()` or `hidden()` on the `Block`. Hidden blocks remain in the stored state.
+
+> [!WARNING]
+> Block visibility (`Block::visible()` and `Block::hidden()`) controls only the block picker and rendering. It does not authorize use of a block type or guarantee validation or dehydration through a block schema that is unavailable to the current request. Builder state is client-writable. If you restrict block types by user, role, or operation, you must enforce those restrictions in your own [authorization](../advanced/security#resource-authorization) and persistence logic before saving. You are also responsible for rendering stored block data safely.
+
 ## Limiting the number of times a block can be used
 
 By default, each block can be used in the builder an unlimited number of times. You may limit this using the `maxItems()` method on a block:

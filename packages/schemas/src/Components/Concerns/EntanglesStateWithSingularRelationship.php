@@ -91,15 +91,7 @@ trait EntanglesStateWithSingularRelationship
                         ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
                         ($childComponent->hasRelationship())
                     ) {
-                        $isDisabled = $childComponent->isDisabled();
-
-                        if (
-                            (! $childComponent->isSaved()) &&
-                            (
-                                ($isDisabled && (! $childComponent->shouldSaveRelationshipsWhenDisabled())) ||
-                                ((! $isDisabled) && (! $childComponent->isHidden()))
-                            )
-                        ) {
+                        if (! $childComponent->shouldSaveRelationships()) {
                             continue;
                         }
 
@@ -108,7 +100,7 @@ trait EntanglesStateWithSingularRelationship
                         continue;
                     }
 
-                    foreach ($childComponent->getChildSchemas() as $schema) {
+                    foreach ($childComponent->getChildSchemasForRelationshipSaving() as $schema) {
                         if ($schema->isDisabled() && (! $childComponent->shouldSaveRelationshipsWhenDisabled())) {
                             continue;
                         }

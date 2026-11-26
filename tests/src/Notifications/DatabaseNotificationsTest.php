@@ -31,6 +31,12 @@ beforeEach(function (): void {
     $this->actingAs($this->user);
 });
 
+it('rejects temporary uploads without a file-upload field in its own schema', function (string $component): void {
+    livewire($component)
+        ->call('_startUpload', 'componentFileAttachments.data.photo', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
+        ->assertForbidden();
+})->with('database notification components');
+
 describe('ignores IDs that are not database notification IDs', function (): void {
     it('does not affect database notifications when `notificationClosed` is dispatched', function (): void {
         Notification::make()->title('Test')->sendToDatabase($this->user);

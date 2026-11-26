@@ -324,6 +324,12 @@ trait HasState
     public function dehydrateState(array &$state, bool $isDehydrated = true): void
     {
         if (! ($isDehydrated && $this->isDehydrated())) {
+            // Descendants may own supplementary state outside this component's
+            // state path, so they must also receive the exclusion decision.
+            foreach ($this->getChildSchemas(withHidden: (! $this->hasStatePath()) || (! $this->isHiddenAndNotDehydratedWhenHidden())) as $childSchema) {
+                $childSchema->dehydrateState($state, isDehydrated: false);
+            }
+
             if ($this->hasStatePath()) {
                 $statePath = $this->getStatePath();
 
@@ -332,7 +338,7 @@ trait HasState
                     // `statePath`, removing the entire key would destroy that
                     // sibling's data. Instead, only remove the state paths
                     // owned by *this* component's descendants.
-                    if ($this->hasComponentWithStatePath($statePath)) {
+                    if ($isDehydrated && $this->hasComponentWithStatePath($statePath)) {
                         $descendantStatePathsToForget = $this->getDescendantStatePathsToForget($statePath);
 
                         Arr::forget($state, $descendantStatePathsToForget); /** @phpstan-ignore parameterByRef.type */
@@ -351,16 +357,6 @@ trait HasState
 
                     return;
                 }
-
-                return;
-            }
-
-            // If the component is not dehydrated, but it has child components,
-            // we need to dehydrate the child component containers while
-            // informing them that they are not dehydrated, so that their
-            // child components get removed from the state.
-            foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-                $childSchema->dehydrateState($state, isDehydrated: false);
             }
 
             return;
@@ -419,7 +415,8 @@ trait HasState
             if (
                 $component->hasStatePath() &&
                 ($componentStatePath === $statePath) &&
-                ($hasPassedThisComponent || ($component->getKey() !== $this->getKey()))
+                ($hasPassedThisComponent || ($component->getKey() !== $this->getKey())) &&
+                $component->isDehydrated()
             ) {
                 return true;
             }

@@ -770,6 +770,10 @@ trait InteractsWithSchemas
                     continue;
                 }
 
+                if ($component->isDisabled()) {
+                    continue;
+                }
+
                 if ($component instanceof BaseFileUpload) {
                     return $component;
                 }
