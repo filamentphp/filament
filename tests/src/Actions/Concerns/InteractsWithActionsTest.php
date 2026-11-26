@@ -150,7 +150,9 @@ describe('event listeners', function (): void {
         WebSocketActions::$isAuthorized = false;
 
         $component->call('callActionWebSocketListener', ...[...$configuration['parameters'], ['status' => 'Unauthorized', 'sequence' => 1]])
-            ->assertForbidden();
+            ->assertReturned(false)
+            ->assertActionNotMounted()
+            ->assertNotDispatched('shipment-received');
     })->with([false, true]);
 
     it('delivers arbitrary events in order without a record, keeps drafts and disconnects on close', function (): void {
@@ -254,7 +256,9 @@ describe('event listeners', function (): void {
         $configuration = $component->instance()->getActionEventListeners($component->instance()->getMountedAction())[0];
         WebSocketActions::$isAuthorized = false;
         $component->call('callActionLivewireListener', ...[...$configuration['parameters'], ['status' => 'Unauthorized']])
-            ->assertForbidden();
+            ->assertReturned(false)
+            ->assertActionNotMounted()
+            ->assertNotDispatched('livewire-shipment-received');
     });
 
     it('receives global, self and targeted Livewire events only while the modal is mounted', function (): void {
@@ -483,7 +487,7 @@ describe('record updates', function (): void {
         $component->call('callActionWebSocketListener', ...$parameters)->assertNotFound();
     });
 
-    it('rechecks action authorization before refreshing or signing', function (string $method, array $parameters): void {
+    it('rechecks action authorization before refreshing or signing', function (string $method, array $parameters, mixed $expectedReturn): void {
         FilamentRealtime::subscribe(Department::class);
         $ticket = Ticket::factory()->create();
         $department = Department::factory()->hasAttached($ticket)->create();
@@ -493,10 +497,12 @@ describe('record updates', function (): void {
 
         app()->bind(DepartmentPolicy::class . '::view', static fn (): bool => false);
 
-        $component->call($method, ...[...$listener['parameters'], ...$parameters])->assertForbidden();
+        $component->call($method, ...[...$listener['parameters'], ...$parameters])
+            ->assertReturned($expectedReturn)
+            ->assertActionNotMounted();
     })->with([
-        ['callActionWebSocketListener', []],
-        ['authorizeActionRecordUpdates', ['123.456']],
+        ['callActionWebSocketListener', [], false],
+        ['authorizeActionRecordUpdates', ['123.456'], null],
     ]);
 
     it('rejects deleted or out-of-scope view records', function (string $method, array $parameters, bool $isDeleted): void {
