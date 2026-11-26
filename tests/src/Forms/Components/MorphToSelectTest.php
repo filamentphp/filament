@@ -206,8 +206,8 @@ describe('validation', function (): void {
     })->with(['orWhere', 'replacement', 'coercion'])->with([false, true]);
 
     it('validates against a `modifyOptionsQueryUsing()` query that adds a join without an ambiguous column error', function (): void {
-        $author = User::factory()->create();
-        $post = Post::factory()->create(['title' => 'Alpha Article', 'author_id' => $author->getKey()]);
+        $author = User::factory()->create(['id' => 101]);
+        $post = Post::factory()->create(['id' => 202, 'title' => 'Alpha Article', 'author_id' => $author->getKey()]);
 
         livewire(TestComponentWithMorphToSelectAndJoinQuery::class)
             ->fillForm([
@@ -249,7 +249,7 @@ class TestComponentWithMorphToSelectAndJoinQuery extends Component implements Ha
                     ->types([
                         MorphToSelect\Type::make(Post::class)
                             ->titleAttribute('title')
-                            ->modifyOptionsQueryUsing(fn ($query) => $query->join('users', 'users.id', '=', 'posts.author_id')),
+                            ->modifyOptionsQueryUsing(fn ($query) => $query->join('users', 'users.id', '=', 'posts.author_id')->select('posts.*')),
                     ]),
             ])
             ->model(Image::class)
