@@ -1170,6 +1170,20 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     }
 
     /**
+     * @param  array<string, mixed>  $state
+     */
+    public function dehydrateState(array &$state, bool $isDehydrated = true): void
+    {
+        $isDehydrated = $isDehydrated && $this->isDehydrated();
+
+        parent::dehydrateState($state, $isDehydrated);
+
+        if ((! $isDehydrated) && ($fileNamesStatePath = $this->getFileNamesStatePath())) {
+            Arr::forget($state, $fileNamesStatePath); /** @phpstan-ignore parameterByRef.type */
+        }
+    }
+
+    /**
      * @return array<string, string>
      */
     public function getStateToDehydrate(mixed $state): array
