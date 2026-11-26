@@ -182,6 +182,7 @@ class DateRangePicker extends Field implements Contracts\HasAffixes, HasEmbedded
                 id="<?= e($id) ?>-panel"
                 role="dialog"
                 aria-label="<?= e($labelText) ?>"
+                tabindex="-1"
                 x-cloak
                 x-show="isPanelOpen"
                 wire:ignore

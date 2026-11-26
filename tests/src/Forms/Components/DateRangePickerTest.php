@@ -309,7 +309,7 @@ describe('browser interactions', function (): void {
             ->assertPresent("{$panel} [data-date=\"2024-09-01\"]:focus");
     });
 
-    it('stays open while the month and year are changed', function (): void {
+    it('stays open while the month and year are changed and its empty space is clicked', function (): void {
         $this->actingAs(User::factory()->create());
 
         $page = visit('/date-range-picker-browser-test');
@@ -335,7 +335,10 @@ describe('browser interactions', function (): void {
             ->click("{$panel} .fi-fo-date-range-picker-month:last-child .fi-fo-date-range-picker-next-month-btn")
             ->wait(0.5)
             ->assertVisible($panel)
-            ->assertPresent("{$panel} [data-date=\"2026-10-01\"]");
+            ->assertPresent("{$panel} [data-date=\"2026-10-01\"]")
+            ->click("{$panel} [role=\"group\"]")
+            ->wait(0.5)
+            ->assertVisible($panel);
     });
 
     it('selects a preset', function (): void {

@@ -1,6 +1,6 @@
 .fi-fo-date-range-picker {
     & .fi-fo-date-range-picker-panel {
-        @apply flex w-max max-w-[calc(100vw-2rem)] flex-col gap-4 sm:flex-row;
+        @apply flex w-max max-w-[calc(100vw-2rem)] flex-col gap-4 outline-none sm:flex-row;
     }
 
     & .fi-fo-date-range-picker-presets {
