@@ -109,8 +109,8 @@ class Range extends Summarizer
                 return $state;
             }
 
-            $originalFromCharacters = str_split($originalFrom);
-            $originalToCharacters = str_split($originalTo);
+            $originalFromCharacters = mb_str_split($originalFrom);
+            $originalToCharacters = mb_str_split($originalTo);
 
             $from = '';
             $to = '';

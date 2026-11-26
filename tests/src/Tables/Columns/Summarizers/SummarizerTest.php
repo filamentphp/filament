@@ -146,6 +146,23 @@ describe('`Range` summarizer', function (): void {
 
         expect($range->shouldExcludeNull())->toBeFalse();
     });
+
+    it('can use `minimalTextualDifference()` to shorten the range', function (): void {
+        $range = Range::make()
+            ->minimalTextualDifference();
+
+        expect($range->formatState(['apple', 'apricot']))->toBe(['app', 'apr'])
+            ->and($range->formatState(['app', 'apple']))->toBe(['app', 'appl']);
+    });
+
+    it('can use `minimalTextualDifference()` with multibyte characters', function (): void {
+        $range = Range::make()
+            ->minimalTextualDifference();
+
+        expect($range->formatState(['Jose', 'José']))->toBe(['Jose', 'José'])
+            ->and($range->formatState(['ab', 'abé']))->toBe(['ab', 'abé'])
+            ->and($range->formatState(['Аня', 'Ася']))->toBe(['Ан', 'Ас']);
+    });
 });
 
 describe('`Sum` summarizer', function (): void {
