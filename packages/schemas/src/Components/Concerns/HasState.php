@@ -332,7 +332,7 @@ trait HasState
                     // `statePath`, removing the entire key would destroy that
                     // sibling's data. Instead, only remove the state paths
                     // owned by *this* component's descendants.
-                    if ($this->hasComponentWithStatePath($statePath)) {
+                    if ($isDehydrated && $this->hasComponentWithStatePath($statePath)) {
                         $descendantStatePathsToForget = $this->getDescendantStatePathsToForget($statePath);
 
                         Arr::forget($state, $descendantStatePathsToForget); /** @phpstan-ignore parameterByRef.type */
@@ -351,8 +351,6 @@ trait HasState
 
                     return;
                 }
-
-                return;
             }
 
             // If the component is not dehydrated, but it has child components,
@@ -419,7 +417,8 @@ trait HasState
             if (
                 $component->hasStatePath() &&
                 ($componentStatePath === $statePath) &&
-                ($hasPassedThisComponent || ($component->getKey() !== $this->getKey()))
+                ($hasPassedThisComponent || ($component->getKey() !== $this->getKey())) &&
+                $component->isDehydrated()
             ) {
                 return true;
             }
