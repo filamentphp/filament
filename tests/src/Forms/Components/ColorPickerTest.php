@@ -503,7 +503,8 @@ describe('browser interactions', function (): void {
 
         $page = visit('/color-picker-browser-test');
 
-        $page->assertNoSmoke()
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
             ->click('[data-testid="brand-color-picker"]')
             ->assertVisible('[aria-label="Preset colors"]')
             ->assertVisible('[aria-label="Pick a color from the screen"]')
@@ -515,6 +516,7 @@ describe('browser interactions', function (): void {
             ->assertAttribute('[aria-label="Red"]', 'aria-pressed', 'false');
 
         $page->inDarkMode()
+            ->waitForEvent('networkidle')
             ->click('[data-testid="brand-color-picker"]')
             ->assertVisible('[aria-label="Preset colors"]')
             ->assertNoAccessibilityIssues();
