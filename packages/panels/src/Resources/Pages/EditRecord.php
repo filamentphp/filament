@@ -226,15 +226,31 @@ class EditRecord extends Page
             $this->callHook('beforeValidate');
 
             $oldContainer = $component->getContainer();
+            $container = $oldContainer;
+            $componentToSave = $component;
+            $componentKey = $component->getKey();
 
-            $data = Schema::make($component->getLivewire())
-                ->components([$component])
-                ->model($component->getRecord())
-                ->operation($oldContainer->getOperation())
-                ->statePath('data')
-                ->getState();
+            // Keep only the target branch, preserving the ancestors' persistence rules.
+            while ($parentComponent = $container->getParentComponent()) {
+                $childSchema = (clone $container)->components([$componentToSave]);
+                $componentToSave = clone $parentComponent;
 
-            $component->container($oldContainer);
+                foreach ($parentComponent->getChildSchemas(withHidden: true) as $key => $schema) {
+                    $isTargetSchema = ($schema === $container) || (
+                        filled($componentKey) && $schema->getComponent($componentKey, withHidden: true, isAbsoluteKey: true)
+                    );
+
+                    $componentToSave->childComponents($isTargetSchema ? $childSchema : null, $key);
+                }
+
+                $container = $parentComponent->getContainer();
+            }
+
+            try {
+                $data = (clone $container)->components([$componentToSave])->getState();
+            } finally {
+                $component->container($oldContainer);
+            }
 
             $this->callHook('afterValidate');
 
