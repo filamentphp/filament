@@ -188,7 +188,7 @@ describe('browser interactions', function (): void {
             ->assertAttribute('[aria-controls="form.phone-panel"]', 'aria-expanded', 'false');
     });
 
-    it('announces when no country matches the search, and closes on Escape', function (): void {
+    it('announces when no country matches the search, stays open when the message is clicked, and closes on Escape', function (): void {
         $this->actingAs(User::factory()->create());
 
         $page = visit('/phone-input-browser-test');
@@ -200,6 +200,10 @@ describe('browser interactions', function (): void {
             ->click('[aria-controls="form.phone-panel"]')
             ->type("{$panel} input[role=\"combobox\"]", 'zzz')
             ->assertScript('document.querySelector(\'[id="form.phone-panel"] [role="status"]\').textContent.trim()', 'No countries match your search.')
+            ->click("{$panel} .fi-fo-phone-input-message")
+            ->wait(0.5)
+            ->assertAttribute('[aria-controls="form.phone-panel"]', 'aria-expanded', 'true')
+            ->assertPresent("{$panel} input[role=\"combobox\"]:focus")
             ->keys("{$panel} input[role=\"combobox\"]", 'Escape')
             ->assertPresent('[aria-controls="form.phone-panel"]:focus')
             ->assertAttribute('[aria-controls="form.phone-panel"]', 'aria-expanded', 'false');

@@ -194,6 +194,7 @@ class PhoneInput extends Field implements Contracts\HasAffixes, HasEmbeddedView
                     id="<?= e($id) ?>-countries"
                     role="listbox"
                     aria-label="<?= e(__('filament-forms::components.phone_input.country_button.label')) ?>"
+                    x-on:mousedown.prevent
                     class="fi-dropdown-list"
                 >
                     <template x-for="option in filteredCountryOptions" x-bind:key="option.code">
@@ -202,7 +203,6 @@ class PhoneInput extends Field implements Contracts\HasAffixes, HasEmbeddedView
                             x-bind:id="getCountryOptionId(option.code)"
                             x-bind:aria-selected="(option.code === country).toString()"
                             x-on:click="selectCountry(option.code)"
-                            x-on:mousedown.prevent
                             x-on:mouseenter="focusedCountry = option.code"
                             x-bind:class="{
                                 'fi-selected': option.code === focusedCountry,
@@ -218,7 +218,7 @@ class PhoneInput extends Field implements Contracts\HasAffixes, HasEmbeddedView
                     </template>
                 </ul>
 
-                <div x-show="! filteredCountryOptions.length" aria-hidden="true" class="fi-fo-phone-input-message">
+                <div x-show="! filteredCountryOptions.length" aria-hidden="true" x-on:mousedown.prevent class="fi-fo-phone-input-message">
                     <?= e(__('filament-forms::components.phone_input.no_search_results_message')) ?>
                 </div>
 
