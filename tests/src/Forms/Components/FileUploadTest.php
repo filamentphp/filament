@@ -1787,6 +1787,101 @@ describe('configuration', function (): void {
                 ]);
         });
 
+        it('dehydrates stored file names only when the upload is dehydrated', function (string $configuration, bool $shouldDehydrate): void {
+            $livewire = Livewire::make();
+            $upload = FileUpload::make('attachment')
+                ->fetchFileInformation(false)
+                ->storeFileNamesIn(statePath: static fn (): string => 'metadata.original_name');
+            $group = Group::make([$upload]);
+
+            match ($configuration) {
+                'disabled' => $upload->disabled(),
+                'ancestor disabled' => $group->disabled(),
+                'not saved' => $upload->saved(false),
+                'not dehydrated' => $upload->dehydrated(false),
+                'disabled but saved' => $upload->disabled()->saved(),
+                'disabled but dehydrated' => $upload->disabled()->dehydrated(),
+                'ancestor disabled but saved' => $group->disabled()->saved(),
+                default => null,
+            };
+
+            $schema = Schema::make($livewire)
+                ->statePath('data.section')
+                ->components([
+                    Field::make('title'),
+                    Field::make('metadata.caption'),
+                    $group,
+                ])
+                ->fill([
+                    'title' => 'Keep this title',
+                    'attachment' => 'uploads/report.txt',
+                    'metadata' => [
+                        'caption' => 'Keep this caption',
+                        'original_name' => 'Original report.txt',
+                    ],
+                ]);
+
+            // Simulate a client-supplied filename after hydration.
+            $livewire->data['section']['metadata']['original_name'] = 'Client-supplied report.txt';
+
+            $state = $schema->getState();
+
+            expect($state['title'])->toBe('Keep this title')
+                ->and($state['metadata']['caption'])->toBe('Keep this caption');
+
+            if ($shouldDehydrate) {
+                expect($state['attachment'])->toBe('uploads/report.txt')
+                    ->and($state['metadata']['original_name'])->toBe('Client-supplied report.txt');
+            } else {
+                expect($state)->not->toHaveKey('attachment')
+                    ->and($state['metadata'] ?? [])->not->toHaveKey('original_name');
+            }
+        })->with([
+            'enabled' => ['enabled', true],
+            'directly disabled' => ['disabled', false],
+            'ancestor disabled' => ['ancestor disabled', false],
+            'not saved' => ['not saved', false],
+            'not dehydrated' => ['not dehydrated', false],
+            'explicit save opt-in' => ['disabled but saved', true],
+            'explicit dehydration opt-in' => ['disabled but dehydrated', true],
+            'ancestor save opt-in' => ['ancestor disabled but saved', true],
+        ]);
+
+        it('dehydrates parent-relative file names only when a state-path ancestor is dehydrated', function (string $configuration, bool $shouldDehydrate): void {
+            $group = Group::make([
+                FileUpload::make('attachment')
+                    ->fetchFileInformation(false)
+                    ->storeFileNamesIn('../original_name'),
+            ])->statePath('section');
+
+            match ($configuration) {
+                'disabled' => $group->disabled(),
+                'disabled but saved' => $group->disabled()->saved(),
+                'disabled but dehydrated' => $group->disabled()->dehydrated(),
+                default => null,
+            };
+
+            $schema = Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([Field::make('title'), $group])
+                ->fill([
+                    'title' => 'Keep this title',
+                    'section' => ['attachment' => 'uploads/report.txt'],
+                    'original_name' => 'Client-supplied report.txt',
+                ]);
+
+            expect($schema->getState())->toBe($shouldDehydrate ? [
+                'title' => 'Keep this title',
+                'section' => ['attachment' => 'uploads/report.txt'],
+                'original_name' => 'Client-supplied report.txt',
+            ] : ['title' => 'Keep this title']);
+        })->with([
+            'enabled' => ['enabled', true],
+            'disabled' => ['disabled', false],
+            'explicit save opt-in' => ['disabled but saved', true],
+            'explicit dehydration opt-in' => ['disabled but dehydrated', true],
+        ]);
+
         it('uses an overridden `getFileNamesStatePath()` for resolving, storing, reading, and removing file names', function (): void {
             $livewire = Livewire::make()->data([]);
             $upload = (new class('attachment') extends FileUpload
