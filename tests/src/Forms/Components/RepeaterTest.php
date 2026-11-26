@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -25,6 +26,7 @@ use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
@@ -782,6 +784,94 @@ describe('item schemas', function (): void {
             ->and(array_keys($items))->toBe(array_keys($repeater->getRawState()))
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
+
+    it('isolates non-record item entry state from the parent record', function (mixed $itemData, ?string $expectedTitle): void {
+        $record = Post::factory()->create([
+            'config' => ['item' => ['title' => 'Parent-only title']],
+        ]);
+
+        $repeater = Repeater::make('config')
+            ->schema([TextEntry::make('title')]);
+
+        Schema::make(Livewire::make()->data([
+            'config' => ['item' => $itemData],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $item = $repeater->getItems()['item'];
+
+        expect($item->getComponents()[0]->getState())->toBe($expectedTitle)
+            ->and($item->getConstantState())->toBe(is_array($itemData) ? $itemData : []);
+    })->with([
+        'scalar string' => ['malformed', null],
+        'integer' => [42, null],
+        'boolean' => [false, null],
+        'null' => [null, null],
+        'empty array' => [[], null],
+        'item array' => [['title' => 'Item-only title'], 'Item-only title'],
+    ]);
+
+    it('does not traverse parent relationships through a non-record item key', function (): void {
+        $team = Team::factory()->create(['name' => 'Parent-only team name']);
+        $author = User::factory()->create(['team_id' => $team->getKey()]);
+        $record = Post::factory()->create(['author_id' => $author->getKey()]);
+
+        $repeater = Repeater::make('author')
+            ->schema([TextEntry::make('name')]);
+
+        Schema::make(Livewire::make()->data([
+            'author' => ['team' => 'malformed'],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $item = $repeater->getItems()['team'];
+
+        expect($item->getComponents()[0]->getState())->toBeNull()
+            ->and($item->getConstantState())->toBe([])
+            ->and($record->relationLoaded('author'))->toBeFalse();
+    });
+
+    it('resolves relationship-backed item entries from their own record', function (mixed $itemData): void {
+        $record = User::factory()->create(['name' => 'Parent name']);
+        $post = Post::factory()->create([
+            'author_id' => $record->getKey(),
+            'title' => 'Related record title',
+        ]);
+
+        $repeater = Repeater::make('posts')
+            ->relationship('posts')
+            ->schema([TextEntry::make('title')]);
+
+        Schema::make(Livewire::make()->data([
+            'posts' => [
+                'record-' . $post->getKey() => $itemData,
+                'new' => 'malformed',
+                'array' => ['title' => 'New item title'],
+            ],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $items = $repeater->getItems();
+        $item = $items['record-' . $post->getKey()];
+
+        expect($item->getComponents()[0]->getState())->toBe('Related record title')
+            ->and($item->getRecord()->is($post))->toBeTrue()
+            ->and($items['new']->getComponents()[0]->getState())->toBeNull()
+            ->and($items['new']->getConstantState())->toBe([])
+            ->and($items['array']->getComponents()[0]->getState())->toBe('New item title');
+    })->with([
+        'item array' => [['title' => 'Unsaved item title']],
+        'scalar string' => ['malformed'],
+    ]);
 
     it('rekeys unsafe item state-path keys before building schemas', function (string $unsafeItemKey): void {
         $repeater = Repeater::make('items')
