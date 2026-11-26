@@ -77,6 +77,7 @@ class ExportCsv implements ShouldQueue
             $successfulRows = 0;
 
             $csv = Writer::fromString();
+            $csv->setEscape('');
             $csv->setDelimiter($this->exporter::getCsvDelimiter());
 
             $query = EloquentSerializeFacade::unserialize($this->query);

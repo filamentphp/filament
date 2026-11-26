@@ -11,6 +11,7 @@ class CsvImportFailureContentGenerator
 {
     public function __invoke(Import $import, Writer $csv): void
     {
+        $csv->setEscape('');
         $csv->setOutputBOM(Bom::Utf8);
 
         if ($import->importer::shouldPreventFormulaInjection()) {

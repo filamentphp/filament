@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Actions\ImportAction;
+use Filament\Actions\Imports\Downloaders\CsvDownloader;
 use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Reader;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseCount;
@@ -112,6 +115,81 @@ it('uses `csvEncoding()` for column mapping and imported values', function (?str
     'automatic UTF-8' => [null, ['Intitulé', 'Résumé'], [['Félix', '3個']]],
     'custom detection' => ['Windows-1252', ['Intitulé', 'Résumé'], [['Félix', 'O’Brien – €']], true],
     'custom detection falling back to automatic detection' => [null, ['Intitulé', 'Résumé'], [['Félix', '3個']], true],
+]);
+
+it('preserves CSV cells when importing RFC CSV and re-importing generated CSV', function (string $source, ?string $delimiter): void {
+    Bus::swap($this->busDispatcher);
+    app()->bind(Authenticatable::class, User::class);
+    Exceptions::fake()->throwOnReport();
+    $values = ['quote\\",;CELL_MARKER', 'trailing,;slash\\', "line one\r\nline two", 'ordinary'];
+    $expected = array_map(static fn (string $value): array => ['title' => $value, 'content' => 'NEIGHBOR_MARKER'], $values);
+    $headers = ['title' => 'title', 'content' => 'Body\\",;HEADER_MARKER'];
+    $csvRows = array_map(static fn (array $row): array => array_combine(array_values($headers), array_values($row)), $expected);
+
+    ImportColumn::configureUsing(
+        static fn (ImportColumn $column) => $column
+            ->exampleHeader($headers[$column->getName()])
+            ->label($headers[$column->getName()])
+            ->examples($column->getName() === 'title' ? $values : array_fill(0, count($values), 'NEIGHBOR_MARKER')),
+        isImportant: true,
+    );
+
+    if ($source === 'RFC') {
+        $separator = $delimiter ?? ',';
+        $content = "title{$separator}\"Body\\\"\",;HEADER_MARKER\"\r\n\"quote\\\"\",;CELL_MARKER\"{$separator}NEIGHBOR_MARKER\r\n\"trailing,;slash\\\"{$separator}NEIGHBOR_MARKER\r\n\"line one\r\nline two\"{$separator}NEIGHBOR_MARKER\r\nordinary{$separator}NEIGHBOR_MARKER\r\n";
+    } elseif ($source === 'example') {
+        $response = ImportAction::make()
+            ->importer(SubmissionPostImporter::class)
+            ->csvDelimiter($delimiter)
+            ->livewire(new class extends Component {})
+            ->getModalAction('downloadExample')
+            ->call();
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+    } else {
+        $import = Import::create([
+            'file_name' => 'articles.csv',
+            'file_path' => 'articles.csv',
+            'importer' => SubmissionPostImporter::class,
+            'total_rows' => count($values),
+            'user_id' => auth()->id(),
+        ]);
+        foreach ($csvRows as $data) {
+            $import->failedRows()->create(['data' => $data, 'validation_error' => 'INERT_ERROR']);
+        }
+        $response = app(CsvDownloader::class)($import);
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+    }
+
+    $reader = Reader::fromString($content);
+    $reader->setEscape('');
+    $reader->setDelimiter($source === 'failure' ? ',' : ($delimiter ?? ','));
+    $reader->setHeaderOffset(0);
+    expect(array_values(iterator_to_array($reader->getRecords())))->toBe(array_map(
+        static fn (array $row): array => $source === 'failure' ? [...$row, 'error' => 'INERT_ERROR'] : $row,
+        $csvRows,
+    ));
+
+    ImportAction::configureUsing(
+        static fn (ImportAction $action) => $action->csvDelimiter($source === 'failure' ? null : $delimiter),
+        during: fn () => livewire(ImportActionSubmissionPage::class)
+            ->mountAction('import')
+            ->fillForm(['file' => UploadedFile::fake()->createWithContent('articles.csv', $content)])
+            ->assertSchemaStateSet(['columnMap' => $headers])
+            ->callMountedAction()
+            ->assertHasNoFormErrors(),
+    );
+
+    expect(Post::query()->orderBy('id')->get(['title', 'content'])->toArray())->toBe($expected);
+})->with([
+    'RFC with detected delimiter' => ['RFC', null],
+    'RFC with semicolon delimiter' => ['RFC', ';'],
+    'example with detected delimiter' => ['example', null],
+    'example with semicolon delimiter' => ['example', ';'],
+    'failed rows' => ['failure', null],
 ]);
 
 it('does not start an import when the mapping or options form is invalid', function (array $data, array $errors): void {
