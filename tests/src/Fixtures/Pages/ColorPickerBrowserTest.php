@@ -40,6 +40,10 @@ class ColorPickerBrowserTest extends Page
                     ])
                     ->eyeDropper()
                     ->extraInputAttributes(['data-testid' => 'brand-color-picker']),
+                ColorPicker::make('accentColor')
+                    ->label('Accent color')
+                    ->presetColors(['#22c55e' => 'Green'])
+                    ->extraInputAttributes(['data-testid' => 'accent-color-picker']),
             ])
             ->statePath('data');
     }

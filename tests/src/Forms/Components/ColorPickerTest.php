@@ -506,7 +506,7 @@ describe('browser interactions', function (): void {
         $page->waitForEvent('networkidle')
             ->assertNoSmoke()
             ->click('[data-testid="brand-color-picker"]')
-            ->assertVisible('[aria-label="Preset colors"]')
+            ->assertVisible('[id="form.brandColor-panel"] [aria-label="Preset colors"]')
             ->assertVisible('[aria-label="Pick a color from the screen"]')
             ->assertAttribute('[aria-label="Blue"]', 'aria-pressed', 'false')
             ->assertNoAccessibilityIssues()
@@ -518,8 +518,26 @@ describe('browser interactions', function (): void {
         $page->inDarkMode()
             ->waitForEvent('networkidle')
             ->click('[data-testid="brand-color-picker"]')
-            ->assertVisible('[aria-label="Preset colors"]')
+            ->assertVisible('[id="form.brandColor-panel"] [aria-label="Preset colors"]')
             ->assertNoAccessibilityIssues();
+    });
+
+    it('stays open when its empty space is clicked', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/color-picker-browser-test');
+
+        $panel = '[id="form.accentColor-panel"]';
+
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
+            ->click('[data-testid="accent-color-picker"]')
+            ->assertVisible($panel)
+            ->click("{$panel} .fi-fo-color-picker-controls")
+            ->wait(0.5)
+            ->assertVisible($panel)
+            ->click('[aria-label="Green"]')
+            ->assertValue('[data-testid="accent-color-picker"]', '#22c55e');
     });
 });
 

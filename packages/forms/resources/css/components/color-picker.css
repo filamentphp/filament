@@ -19,7 +19,7 @@
     }
 
     & .fi-fo-color-picker-panel {
-        @apply absolute z-20 hidden rounded-lg shadow-lg;
+        @apply absolute z-20 hidden rounded-lg shadow-lg outline-none;
 
         &.fi-fo-color-picker-panel-has-controls {
             @apply space-y-3 bg-white p-3 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;

@@ -269,6 +269,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
                 id="<?= e($id) ?>-panel"
                 role="dialog"
                 aria-label="<?= e(__('filament-forms::components.color_picker.panel_label')) ?>"
+                tabindex="-1"
                 class="<?= e(($hasEyeDropper || $presetColors) ? 'fi-fo-color-picker-panel fi-fo-color-picker-panel-has-controls' : 'fi-fo-color-picker-panel') ?>"
             >
                 <<?= $tag ?> x-ref="picker" color="<?= e($this->getState()) ?>"></<?= $tag ?>>
