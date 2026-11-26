@@ -145,7 +145,7 @@ describe('browser interactions', function (): void {
     it('formats a number as it is typed and saves it in the E.164 format', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/phone-input-browser-test');
+        $page = visit('/phone-input-browser-test')->waitForEvent('networkidle');
 
         $page->assertNoSmoke()
             ->assertAttribute('[aria-controls="form.phone-panel"]', 'aria-label', 'Country: Brazil (+55)')
@@ -158,7 +158,7 @@ describe('browser interactions', function (): void {
     it('selects the country of a number typed with its calling code', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/phone-input-browser-test');
+        $page = visit('/phone-input-browser-test')->waitForEvent('networkidle');
 
         $page->assertNoSmoke()
             ->type('[data-testid="phone"]', '+12015550123')
@@ -171,7 +171,7 @@ describe('browser interactions', function (): void {
     it('chooses a country from the searchable list with the keyboard', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/phone-input-browser-test');
+        $page = visit('/phone-input-browser-test')->waitForEvent('networkidle');
 
         $panel = '[id="form.phone-panel"]';
 
@@ -195,7 +195,8 @@ describe('browser interactions', function (): void {
 
         $panel = '[id="form.phone-panel"]';
 
-        $page->assertNoSmoke()
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
             ->click('[aria-controls="form.phone-panel"]')
             ->type("{$panel} input[role=\"combobox\"]", 'zzz')
             ->assertScript('document.querySelector(\'[id="form.phone-panel"] [role="status"]\').textContent.trim()', 'No countries match your search.')
@@ -204,6 +205,7 @@ describe('browser interactions', function (): void {
             ->assertAttribute('[aria-controls="form.phone-panel"]', 'aria-expanded', 'false');
 
         $page->inDarkMode()
+            ->waitForEvent('networkidle')
             ->click('[aria-controls="form.phone-panel"]')
             ->assertVisible($panel)
             ->assertNoAccessibilityIssues();
