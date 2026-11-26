@@ -262,6 +262,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     public function deleteAbandonedFiles(): void
     {
+        if (! $this->isDeletable()) {
+            return;
+        }
+
         $uuids = array_map(strtolower(...), array_keys($this->getRawState() ?? []));
 
         $this->getScopedMedia()
