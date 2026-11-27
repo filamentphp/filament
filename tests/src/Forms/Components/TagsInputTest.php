@@ -428,6 +428,15 @@ describe('browser interactions', function (): void {
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
     });
+
+    it('hides the text input when disabled and it has tags', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/tags-input-browser-test')
+            ->assertSeeIn('[data-testid="disabled-tags"]', 'alpha')
+            ->assertMissing('[data-testid="disabled-tags"] input')
+            ->assertVisible('[data-testid="basic-tags"] input');
+    });
 });
 
 class TestComponentWithTagsInputTrim extends Livewire
