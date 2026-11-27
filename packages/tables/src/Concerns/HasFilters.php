@@ -65,6 +65,14 @@ trait HasFilters
     protected function handleTableFilterUpdates(): void
     {
         if ($this->getTable()->persistsFiltersInSession()) {
+            if (($this->tableFilters !== null) && $this->hasInvalidTableFilterEncoding($this->tableFilters)) {
+                $this->tableFilters = null;
+
+                if ($this->getTable()->hasDeferredFilters()) {
+                    $this->tableDeferredFilters = null;
+                }
+            }
+
             session()->put(
                 $this->getTableFiltersSessionKey(),
                 $this->tableFilters,
@@ -76,6 +84,24 @@ trait HasFilters
         }
 
         $this->resetPage();
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $state
+     */
+    protected function hasInvalidTableFilterEncoding(array $state): bool
+    {
+        foreach ($state as $key => $value) {
+            if (
+                (is_string($key) && (! mb_check_encoding($key, 'UTF-8'))) ||
+                (is_string($value) && (! mb_check_encoding($value, 'UTF-8'))) ||
+                (is_array($value) && $this->hasInvalidTableFilterEncoding($value))
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     #[Exposed]

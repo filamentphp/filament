@@ -1653,6 +1653,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             }
 
             $this->rawState($rawState);
+        } else {
+            $this->rawState(app(RichEditorDocumentNormalizer::class)($rawState));
         }
 
         return parent::callAfterStateUpdated($shouldBubbleToParents);

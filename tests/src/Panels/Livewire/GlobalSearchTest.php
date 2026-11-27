@@ -17,6 +17,7 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -57,6 +58,41 @@ describe('search results', function (): void {
             ->assertSee($title)
             ->assertViewHas('results', static fn (GlobalSearchResults $results): bool => $results->getCategories()->get('posts')->count() === 3);
     });
+
+    it('bounds resource split search query bindings without discarding excess terms', function (int $wordCount, array $expectedBindings): void {
+        $queries = DB::pretend(static fn () => PostResource::getGlobalSearchResults(str_repeat("猫\u{3164}", $wordCount - 1) . '0'));
+
+        expect($queries)->toHaveCount(1)
+            ->and($queries[0]['bindings'])->toBe($expectedBindings);
+    })->with([
+        '50 terms' => [50, [...array_fill(0, 49, '%猫%'), '%0%']],
+        '51 terms' => [51, ['%' . str_repeat("猫\u{3164}", 50) . '0%']],
+        'many terms' => [2000, ['%' . str_repeat("猫\u{3164}", 500) . '%']],
+        'much larger input' => [100000, ['%' . str_repeat("猫\u{3164}", 500) . '%']],
+    ]);
+
+    it('bounds resource search before case folding can expand multibyte characters', function (string $search, array $expectedBindings): void {
+        $resource = new class extends PostResource
+        {
+            protected static ?bool $isGlobalSearchForcedCaseInsensitive = true;
+        };
+
+        $queries = DB::pretend(static fn () => $resource::getGlobalSearchResults($search));
+
+        expect($queries)->toHaveCount(1)
+            ->and($queries[0]['bindings'])->toBe($expectedBindings);
+    })->with([
+        'character limit' => [str_repeat('İ', 1000) . 'extra', ['%' . str_repeat("i\u{0307}", 1000) . '%']],
+        '50 terms' => [str_repeat('İ ', 49) . '0', [...array_fill(0, 49, "%i\u{0307}%"), '%0%']],
+        '51 terms' => [str_repeat('İ ', 50) . '0', ['%' . str_repeat("i\u{0307} ", 50) . '0%']],
+    ]);
+
+    it('preserves resource search words, quoted phrases, zero, and literal wildcards', function (string $search): void {
+        $matchingPost = Post::factory()->create(['title' => 'Résumé café_123% red blue 0']);
+        Post::factory()->create(['title' => 'Résumé caféX123anything blue red']);
+
+        expect(PostResource::getGlobalSearchResults($search)->pluck('title')->all())->toBe([$matchingPost->title]);
+    })->with(['blue café_123%', '"red blue"', "red\u{1160}0", '0']);
 
     it('can retrieve results via custom search provider', function (): void {
         Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);

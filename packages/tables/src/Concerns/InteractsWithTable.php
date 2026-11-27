@@ -82,6 +82,10 @@ trait InteractsWithTable
             $this->tableFilters = session()->get($filtersSessionKey) ?? [];
         }
 
+        if ($shouldPersistFiltersInSession && ($this->tableFilters !== null) && $this->hasInvalidTableFilterEncoding($this->tableFilters)) {
+            $this->tableFilters = null;
+        }
+
         // https://github.com/filamentphp/filament/pull/7999
         if ($this->tableFilters) {
             $this->normalizeTableFilterValuesFromQueryString($this->tableFilters);
@@ -114,6 +118,10 @@ trait InteractsWithTable
         }
 
         if ($shouldPersistGroupInSession) {
+            if (($this->tableGrouping !== null) && (! mb_check_encoding($this->tableGrouping, 'UTF-8'))) {
+                $this->tableGrouping = null;
+            }
+
             session()->put(
                 $groupingSessionKey,
                 $this->tableGrouping,
@@ -134,6 +142,10 @@ trait InteractsWithTable
         $this->tableSearch = strval($this->tableSearch);
 
         if ($shouldPersistSearchInSession) {
+            if (! mb_check_encoding($this->tableSearch, 'UTF-8')) {
+                $this->tableSearch = '';
+            }
+
             session()->put(
                 $searchSessionKey,
                 $this->tableSearch,
@@ -154,6 +166,10 @@ trait InteractsWithTable
         $this->tableColumnSearches = $this->castTableColumnSearches(
             $this->tableColumnSearches,
         );
+
+        if ($shouldPersistColumnSearchesInSession && (! mb_check_encoding($this->tableColumnSearches, 'UTF-8'))) {
+            $this->tableColumnSearches = [];
+        }
 
         // Seed individually searchable columns named after a JavaScript array property (e.g. `length`), so `$tableColumnSearches` serializes to a JSON object instead of an array and `wire:model` reads the search value rather than the array property.
         $this->fillReservedTableColumnSearchKeys();
@@ -178,6 +194,10 @@ trait InteractsWithTable
         }
 
         if ($shouldPersistSortInSession) {
+            if (($this->tableSort !== null) && (! mb_check_encoding($this->tableSort, 'UTF-8'))) {
+                $this->tableSort = null;
+            }
+
             session()->put(
                 $sortSessionKey,
                 $this->tableSort,

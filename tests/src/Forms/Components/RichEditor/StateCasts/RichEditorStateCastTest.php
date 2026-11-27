@@ -3,6 +3,7 @@
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -232,6 +233,65 @@ describe('`set()`', function (): void {
         expect($found['attrs']['shouldApplyProseStylingToPreview'] ?? null)->toBeFalse();
         expect($found['attrs']['config'] ?? null)->toBe(['source' => 'persisted']);
     });
+
+    it('passes array configuration to custom block preview callbacks from every stored format', function (string $format, mixed $config, array $expectedConfig): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->customBlocks([StateCastConfigBlock::class]));
+        $document = [
+            'type' => 'doc',
+            'content' => [['type' => 'customBlock', 'attrs' => ['id' => 'config-block', 'config' => $config]]],
+        ];
+        $content = match ($format) {
+            'HTML' => '<div data-type="customBlock" data-id="config-block" data-config="' . e(json_encode($config)) . '"></div>',
+            'JSON' => json_encode($document),
+            default => $document,
+        };
+
+        $result = $cast->set($content);
+        $attributes = $result['content'][0]['attrs'];
+
+        expect(json_decode($attributes['label'], associative: true, flags: JSON_THROW_ON_ERROR))->toBe($expectedConfig)
+            ->and(base64_decode($attributes['preview']))->toBe('<p>' . e(json_encode($expectedConfig)) . '</p>')
+            ->and($attributes['shouldApplyProseStylingToPreview'])->toBe($expectedConfig['prose'] ?? false);
+    })->with(['HTML', 'JSON', 'array'])->with([
+        'string' => ['invalid', []],
+        'true' => [true, []],
+        'false' => [false, []],
+        'integer' => [42, []],
+        'float' => [1.5, []],
+        'null' => [null, []],
+        'object' => [(object) ['nested' => (object) ['enabled' => false]], ['nested' => ['enabled' => false]]],
+        'list' => [['first', ['second' => false]], ['first', ['second' => false]]],
+        'nested configuration' => [
+            ['heading' => 'Café <hero>', 'prose' => true, 'extension' => ['type' => 'custom', 'content' => [0, false, null]]],
+            ['heading' => 'Café <hero>', 'prose' => true, 'extension' => ['type' => 'custom', 'content' => [0, false, null]]],
+        ],
+    ]);
+
+    it('uses empty configuration for malformed HTML custom block JSON', function (string $config): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->customBlocks([StateCastConfigBlock::class]));
+
+        $result = $cast->set('<div data-type="customBlock" data-id="config-block" data-config="' . e($config) . '"></div>');
+
+        expect($result['content'][0]['attrs']['label'])->toBe('[]');
+    })->with(['{broken', '{"text":"\uD800"}', '1e400', '{"limit":1e400}']);
+
+    it('ignores stored HTML previews before serializing or regenerating custom blocks', function (string $direction, string $preview): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json()->customBlocks([StateCastCustomBlock::class]));
+
+        $result = $cast->{$direction}('<div data-type="customBlock" data-id="preview-block" data-preview="' . e($preview) . '"></div><p>Preserved sibling</p>');
+
+        expect(json_encode($result, JSON_THROW_ON_ERROR))->toContain('Preserved sibling');
+
+        if ($direction === 'set') {
+            expect(base64_decode($result['content'][0]['attrs']['preview']))->toBe('<strong>Preview HTML</strong>');
+        } else {
+            expect($result['content'][0]['attrs'])->not->toHaveKey('preview');
+        }
+    })->with(['get', 'set'])->with([
+        'invalid UTF-8' => base64_encode("\xB1\x31"),
+        'malformed base64' => '%%%/w==',
+        'obsolete HTML' => base64_encode('<p>Obsolete preview</p>'),
+    ]);
 
     it('hydrates a custom block `shouldApplyProseStylingToPreview` from the registered block class', function (): void {
         $editor = makeStateCastEditor()
@@ -694,6 +754,21 @@ describe('`get()`', function (): void {
     });
 });
 
+it('discards unencodable custom block configuration without losing siblings during state casting', function (string $direction, string $config, bool $isJson): void {
+    $cast = new RichEditorStateCast(makeStateCastEditor()->json()->customBlocks([StateCastConfigBlock::class]));
+    $document = '{"type":"doc","content":[{"type":"customBlock","attrs":{"id":"config-block","config":' . $config . '}},{"type":"paragraph","content":[{"type":"text","text":"Preserved sibling"}]}]}';
+
+    $result = $cast->{$direction}($isJson ? $document : json_decode($document, associative: true));
+
+    expect($result['content'][0]['attrs']['config'])->toBeNull()
+        ->and($result['content'][1]['content'][0]['text'])->toBe('Preserved sibling')
+        ->and(json_encode($result, JSON_THROW_ON_ERROR))->toBeString();
+
+    if ($direction === 'set') {
+        expect($result['content'][0]['attrs']['label'])->toBe('[]');
+    }
+})->with(['get', 'set'])->with(['1e400', '{"limit":1e400}'])->with([true, false]);
+
 it('preserves mentions with missing attributes during state casting', function (string $direction, array $attributes): void {
     $cast = new RichEditorStateCast(makeStateCastEditor()->json());
 
@@ -721,6 +796,150 @@ it('preserves mentions with missing attributes during state casting', function (
 ]);
 
 describe('document boundary', function (): void {
+    it('does not persist JSON that fails later rich content rendering', function (?string $attribute): void {
+        $document = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'grid',
+                'attrs' => ['data-cols' => ($attribute === 'data-cols') ? ['invalid' => 3] : 3],
+                'content' => [[
+                    'type' => 'gridColumn',
+                    'attrs' => ['data-col-span' => ($attribute === 'data-col-span') ? ['invalid' => 2] : 2],
+                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Grid content']]]],
+                ]],
+            ]],
+        ];
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$editor = RichEditor::make('content')->json()])
+            ->fill();
+        $editor->rawState($document);
+
+        $savedDocument = $schema->getState()['content'];
+        $html = RichContentRenderer::make($savedDocument)->toHtml();
+        $expectedDocument = ($attribute === null) ? $document : ['type' => 'doc', 'content' => []];
+
+        expect($savedDocument)->toBe($expectedDocument);
+
+        if ($attribute === null) {
+            expect($html)->toContain('Grid content', '--cols: repeat(3, minmax(0, 1fr))', '--col-span: span 2 / span 2');
+        } else {
+            expect($html)->toBe('');
+        }
+
+        $schema->fill(['content' => $document]);
+
+        expect($editor->getRawState())->toBe($expectedDocument);
+    })->with(['data-col-span' => ['data-col-span'], 'data-cols' => ['data-cols'], 'valid' => [null]]);
+
+    it('defaults malformed mention trigger characters before looking up providers', function (string $direction, bool $hasProvider): void {
+        $providers = $hasProvider ? [MentionProvider::make('@')->items(['1' => 'Alice'])] : [];
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json()->mentions($providers));
+        $result = $cast->{$direction}([
+            'type' => 'doc',
+            'content' => [['type' => 'paragraph', 'content' => [
+                ['type' => 'mention', 'attrs' => ['id' => '1', 'char' => ['invalid' => '@'], 'label' => 'Alice']],
+                ['type' => 'text', 'text' => 'Kept sibling'],
+            ]]],
+        ]);
+
+        expect($result['content'][0]['content'][0]['attrs']['char'] ?? '@')->toBe('@')
+            ->and(html_entity_decode(strip_tags(RichContentRenderer::make($result)->mentions($providers)->toHtml())))->toBe('@AliceKept sibling');
+    })->with(['get', 'set'])->with([false, true]);
+
+    it('already fails closed for HTML or text that is valid JSON', function (string $direction, string $content): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+
+        expect($cast->{$direction}($content))->toBe(['type' => 'doc', 'content' => []]);
+    })->with(['get', 'set'])->with(['"<p>Quoted HTML</p>"', '"Quoted text"', '123', 'true', 'null', '[]']);
+
+    it('preserves bracketed plain text that is not valid JSON', function (string $direction, int $depth): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+        $text = str_repeat('[', $depth) . 'Not JSON';
+
+        expect(RichContentRenderer::make($cast->{$direction}($text))->toText())->toBe($text);
+    })->with(['get', 'set'])->with([101, 513]);
+
+    it('drops malformed text nodes without losing valid text or marks', function (string $direction, bool $isEncoded): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+        $document = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text'],
+                    ...array_map(static fn (mixed $text): array => ['type' => 'text', 'text' => $text], [null, false, 0, 1.5, [], ['bad'], (object) ['bad' => true], '']),
+                    ['type' => 'text', 'text' => '0', 'marks' => [['type' => 'bold']]],
+                ],
+            ]],
+        ];
+
+        $result = $cast->{$direction}($isEncoded ? json_encode($document) : $document);
+
+        expect($result['content'][0]['content'])->toBe([
+            ['type' => 'text', 'text' => '0', 'marks' => [['type' => 'bold']]],
+        ]);
+        expect(RichContentRenderer::make($result)->toHtml())->toBe('<p><strong>0</strong></p>');
+    })->with(['get', 'set'])->with([false, true]);
+
+    it('normalizes malformed node and mark attribute containers before rendering', function (string $direction, mixed $attributes): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+        $result = $cast->{$direction}([
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'attrs' => $attributes,
+                'content' => [['type' => 'text', 'text' => 'Kept', 'marks' => [['type' => 'link', 'attrs' => $attributes]]]],
+            ], [
+                'type' => 'mention',
+                'attrs' => $attributes,
+            ]],
+        ]);
+
+        expect($result['content'][0])->not->toHaveKey('attrs')
+            ->and($result['content'][0]['content'][0]['marks'][0])->not->toHaveKey('attrs')
+            ->and($result['content'][1]['attrs']['extra'])->toBeNull();
+        expect(RichContentRenderer::make($result)->toHtml())->toContain('Kept');
+    })->with(['get', 'set'])->with([
+        'false' => [false],
+        'true' => [true],
+        'number' => [12],
+        'string' => ['invalid'],
+        'empty array' => [[]],
+        'list' => [['invalid']],
+        'empty object' => [(object) []],
+    ]);
+
+    it('removes non-string fallback text before rendering non-text nodes', function (string $direction): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+        $result = $cast->{$direction}(['type' => 'doc', 'content' => [['type' => 'paragraph', 'text' => ['invalid']]]]);
+
+        expect($result['content'])->toBe([['type' => 'paragraph']]);
+        expect(RichContentRenderer::make($result)->toHtml())->toBe('<p></p>');
+    })->with(['get', 'set']);
+
+    it('bounds document serialization depth before TipTap and Livewire traverse it', function (string $direction, bool $isEncoded, int $depth): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json());
+        $document = ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Deep text', 'attrs' => ['locale' => 'en']]]];
+
+        for ($level = 0; $level < $depth; $level++) {
+            $document = ['type' => 'blockquote', 'content' => [$document]];
+        }
+
+        $document = ['type' => 'doc', 'content' => [$document]];
+        $result = $cast->{$direction}($isEncoded ? json_encode($document, depth: 1024) : $document);
+
+        if ($depth > 47) {
+            expect($result['type'])->toBe('doc')
+                ->and($result['content'])->toBeEmpty();
+
+            return;
+        }
+
+        expect($result)->toBe($document);
+        expect(RichContentRenderer::make($result)->toText())->toBe('Deep text');
+    })->with(['get', 'set'])->with([false, true])->with([47, 48, 240]);
+
     it('preserves bound editors and valid string-typed plugin nodes and marks through hydration and storage', function (): void {
         $editor = makeStateCastEditor()->json()->plugins([
             new class extends TestRichContentPlugin
@@ -736,7 +955,11 @@ describe('document boundary', function (): void {
             'type' => 'doc',
             'content' => [[
                 'type' => 'pluginParagraph',
-                'content' => [['type' => 'text', 'text' => 'Plugin content', 'marks' => [['type' => 'pluginBold']]]],
+                'attrs' => ['settings' => ['enabled' => true, 'weights' => [3, 7]]],
+                'content' => [['type' => 'text', 'text' => 'Plugin content', 'marks' => [[
+                    'type' => 'pluginBold',
+                    'attrs' => ['settings' => ['tokens' => ['first', 'second']]],
+                ]]]],
             ]],
         ];
         $boundEditor = $editor->getTipTapEditor();
@@ -851,6 +1074,29 @@ class StateCastCustomBlock extends RichContentCustomBlock
     public static function toHtml(array $config, array $data): ?string
     {
         return '<div>Rendered block</div>';
+    }
+}
+
+class StateCastConfigBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'config-block';
+    }
+
+    public static function getPreviewLabel(array $config): string
+    {
+        return json_encode($config, JSON_THROW_ON_ERROR);
+    }
+
+    public static function toPreviewHtml(array $config): string
+    {
+        return '<p>' . e(json_encode($config, JSON_THROW_ON_ERROR)) . '</p>';
+    }
+
+    public static function shouldApplyProseStylingToPreview(array $config): bool
+    {
+        return $config['prose'] ?? false;
     }
 }
 
