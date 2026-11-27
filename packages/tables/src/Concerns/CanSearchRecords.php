@@ -92,7 +92,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            if ($column->isHidden()) {
+            if ($column->getCloneForRecord(null)->isHidden()) {
                 continue;
             }
 
@@ -160,7 +160,7 @@ trait CanSearchRecords
                 $isFirst = true;
 
                 foreach ($this->getTable()->getColumns() as $column) {
-                    if ($column->isHidden()) {
+                    if ($column->getCloneForRecord(null)->isHidden()) {
                         continue;
                     }
 
@@ -186,7 +186,7 @@ trait CanSearchRecords
                 $isFirst = true;
 
                 foreach ($this->getTable()->getColumns() as $column) {
-                    if ($column->isHidden()) {
+                    if ($column->getCloneForRecord(null)->isHidden()) {
                         continue;
                     }
 
@@ -289,7 +289,7 @@ trait CanSearchRecords
         $indicators = [];
 
         foreach ($this->getTable()->getColumns() as $column) {
-            if ($column->isHidden()) {
+            if ($column->getCloneForRecord(null)->isHidden()) {
                 continue;
             }
 

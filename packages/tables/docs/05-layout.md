@@ -336,6 +336,24 @@ Grid::make([
     ])
 ```
 
+### Hiding layouts conditionally
+
+You may use `hidden()` or `visible()` to hide a layout and its child columns. You may also pass a callback to hide the layout for particular records:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+
+Stack::make([
+    TextColumn::make('title')
+        ->searchable()
+        ->sortable(),
+])->hidden(fn (?Post $record): bool => $record !== null && ! $record->is_published)
+```
+
+This hides the layout for unpublished posts. The callback returns `false` when `$record` is `null`, keeping the child column available for table-wide search and sorting. As with [column visibility](columns/overview#hiding-columns), your callback must handle a nullable `$record`; hiding a layout for individual records does not scope the table query.
+
 ### Collapsible content
 
 When you're using a column layout like split or stack, then you can also add collapsible content. This is very useful for when you don't want to display all data in the table at once, but still want it to be accessible to the user if they need to access it, without navigating away.

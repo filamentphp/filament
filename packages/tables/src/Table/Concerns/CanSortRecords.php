@@ -57,7 +57,7 @@ trait CanSortRecords
             return null;
         }
 
-        if ($column->isHidden()) {
+        if ($column->getCloneForRecord(null)->isHidden()) {
             return null;
         }
 
