@@ -27,6 +27,10 @@ trait CanSearchRecords
     public function updatedTableSearch(): void
     {
         if ($this->getTable()->persistsSearchInSession()) {
+            if (is_string($this->tableSearch) && (! mb_check_encoding($this->tableSearch, 'UTF-8'))) {
+                $this->tableSearch = '';
+            }
+
             session()->put(
                 $this->getTableSearchSessionKey(),
                 $this->tableSearch,
@@ -55,6 +59,11 @@ trait CanSearchRecords
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
+            if (! mb_check_encoding($this->tableColumnSearches, 'UTF-8')) {
+                $this->tableColumnSearches = [];
+                $this->fillReservedTableColumnSearchKeys();
+            }
+
             session()->put(
                 $this->getTableColumnSearchesSessionKey(),
                 $this->tableColumnSearches,
