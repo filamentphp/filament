@@ -1602,6 +1602,38 @@ describe('link protocols', function (): void {
 });
 
 describe('CSS injection', function (): void {
+    it('safely serializes JSON `textAlign` values', function (mixed $alignment, ?string $expectedAlignment): void {
+        $content = [
+            'type' => 'doc',
+            'content' => array_map(static fn (string $type): array => [
+                'type' => $type,
+                'attrs' => ['textAlign' => $alignment, 'level' => 2],
+                'content' => [['type' => 'text', 'text' => 'Aligned content']],
+            ], ['paragraph', 'heading']),
+        ];
+
+        $renderer = RichContentRenderer::make($content);
+        $expectedStyle = $expectedAlignment === null ? '' : ' style="text-align: ' . $expectedAlignment . ';"';
+
+        expect($renderer->toUnsafeHtml())->toBe("<p{$expectedStyle}>Aligned content</p><h2{$expectedStyle}>Aligned content</h2>")
+            ->and($renderer->toHtml())->not->toContain('--alignment-injected');
+    })->with([
+        'injected declaration' => ['center; --alignment-injected: 1', null],
+        'inherited alignment' => ['inherit', 'inherit'],
+        'empty' => ['', null],
+        'null' => [null, null],
+        'number' => [1, null],
+        'boolean' => [true, null],
+        'array' => [['center'], null],
+        'object' => [(object) ['alignment' => 'center'], null],
+        'default' => ['start', null],
+        'center' => ['center', 'center'],
+        'end' => ['end', 'end'],
+        'justify' => ['justify', 'justify'],
+        'legacy left' => ['left', 'left'],
+        'legacy right' => ['right', 'right'],
+    ]);
+
     it('casts a malicious `data-cols` to an integer so it cannot inject CSS declarations', function (): void {
         $html = RichContentRenderer::make(
             '<div class="grid-layout" data-cols="1, minmax(0,1fr)); position:fixed; inset:0; background-image:url(//attacker" data-from-breakpoint="lg"><div class="grid-layout-col" data-col-span="1">x</div></div>',
