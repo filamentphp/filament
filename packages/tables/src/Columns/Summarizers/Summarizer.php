@@ -8,6 +8,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 
 class Summarizer extends ViewComponent implements HasEmbeddedView
 {
@@ -155,9 +156,14 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
         }
 
         $asName = (string) str($query?->getModel()->getTable())->afterLast('.');
+        $baseQuery = $query?->toBase();
+
+        if (($baseQuery?->getGrammar() instanceof SqlServerGrammar) && ($baseQuery->limit === null) && ($baseQuery->offset === null) && ($baseQuery->unionLimit === null) && ($baseQuery->unionOffset === null)) {
+            $baseQuery->reorder();
+        }
 
         $query = $query?->getModel()->resolveConnection($query->getModel()->getConnectionName())
-            ->table($query->toBase(), $asName);
+            ->table($baseQuery, $asName);
 
         if ($this->hasQueryModificationCallback() && ! $hasRelationship) {
             $query = $this->evaluate($this->modifyQueryUsing, [
