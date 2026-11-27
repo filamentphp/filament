@@ -51,6 +51,13 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
     protected Size | string | Closure | null $size = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->prohibited(static fn (ToggleButtons $component): bool => $component->isMultiple() && filled($component->getRawState()) && blank($component->getState()));
+    }
+
     public function size(Size | string | Closure | null $size): static
     {
         $this->size = $size;

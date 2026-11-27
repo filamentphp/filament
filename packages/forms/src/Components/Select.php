@@ -168,6 +168,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         parent::setUp();
 
+        $this->prohibited(static fn (Select $component): bool => filled($component->getRawState()) && blank($component->getState()));
+
         $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
             return collect($options)
                 ->map(fn ($label, $value): array => is_array($label)
