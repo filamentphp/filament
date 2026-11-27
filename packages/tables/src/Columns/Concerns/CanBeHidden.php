@@ -70,7 +70,11 @@ trait CanBeHidden
             return true;
         }
 
-        return ! $this->evaluate($this->isVisible);
+        if (! $this->evaluate($this->isVisible)) {
+            return true;
+        }
+
+        return $this->getLayout()?->getCloneForRecord($this->getRecord(), $this->getRowLoop())->isHidden() ?? false;
     }
 
     public function isVisible(): bool
