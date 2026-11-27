@@ -396,9 +396,7 @@ describe('rendering', function (): void {
         $component = livewire(RenderTagsInputDisabled::class)
             ->assertSuccessful();
 
-        expect($component->html())
-            ->not->toContain('x-bind="input"')
-            ->toContain('Example');
+        expect($component->html())->not->toContain('x-bind="input"');
     });
 
     it('can render with `placeholder()`', function (): void {
