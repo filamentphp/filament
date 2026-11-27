@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'แก้ไข',
 
+    'navigation_label' => 'แก้ไข',
+
     'form' => [
 
         'actions' => [
