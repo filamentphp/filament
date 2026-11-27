@@ -144,9 +144,17 @@ trait HasState
             return false;
         } finally {
             if ($this->shouldPartiallyRender($path)) {
-                app(PartialsComponentHook::class)->renderPartial($this->getLivewire(), fn (): array => [
-                    "schema.{$this->getKey()}" => $this->toHtml(...),
-                ]);
+                app(PartialsComponentHook::class)->renderPartial($this->getLivewire(), function (): array {
+                    for ($schema = $this; $schema !== null; $schema = $schema->getParentComponent()?->getContainer()) {
+                        if ($schema->isHidden()) {
+                            return [];
+                        }
+                    }
+
+                    return [
+                        "schema.{$this->getKey()}" => $this->toHtml(...),
+                    ];
+                });
             }
         }
     }

@@ -9,6 +9,8 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Html;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -1130,6 +1132,52 @@ describe('calling actions', function (): void {
             ->callAction('simple')
             ->assertDispatched('simple-called');
     });
+
+    it('excludes parent schema partials hidden by an action', function (string $hiddenAncestor): void {
+        $livewire = livewire(new class extends Filament\Tests\Fixtures\Livewire\Livewire
+        {
+            public string $hiddenAncestor = '';
+
+            public function form(Schema $form): Schema
+            {
+                return $form
+                    ->hidden(fn (): bool => $this->hiddenAncestor === 'root')
+                    ->components([
+                        Section::make('Ancestor')
+                            ->key('ancestor')
+                            ->hidden(fn (): bool => $this->hiddenAncestor === 'component')
+                            ->schema(Schema::make()
+                                ->hidden(fn (): bool => $this->hiddenAncestor === 'schema')
+                                ->components([
+                                    Section::make('Target')
+                                        ->key('target')
+                                        ->schema(Schema::make()->partiallyRender()->components([
+                                            Html::make('action-schema-marker'),
+                                            Action::make('changeVisibility')
+                                                ->action(function (array $arguments): void {
+                                                    $this->hiddenAncestor = $arguments['ancestor'];
+                                                }),
+                                        ])),
+                                ])),
+                    ])
+                    ->statePath('data');
+            }
+        })
+            ->assertSee('action-schema-marker')
+            ->callAction(TestAction::make('changeVisibility')->schemaComponent('ancestor.target', 'form'), arguments: ['ancestor' => $hiddenAncestor])
+            ->assertSet('hiddenAncestor', $hiddenAncestor);
+
+        $partials = $livewire->effects['partials'];
+
+        if ($hiddenAncestor === '') {
+            expect($partials['schema.form.ancestor.target'])->toContain('action-schema-marker');
+        } else {
+            expect($partials)->not->toHaveKey('schema.form.ancestor.target')
+                ->and(implode('', $partials))->not->toContain('action-schema-marker');
+        }
+
+        expect($livewire->effects)->not->toHaveKey('html');
+    })->with(['visible' => '', 'hidden root' => 'root', 'hidden component' => 'component', 'hidden schema' => 'schema']);
 
     it('can call an action with data', function (): void {
         livewire(Actions::class)
