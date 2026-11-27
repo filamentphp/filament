@@ -6,6 +6,7 @@ use Closure;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class IdentifyTenant
@@ -35,7 +36,11 @@ class IdentifyTenant
             abort(404);
         }
 
-        $tenant = $panel->getTenant($request->route()->parameter('tenant'));
+        try {
+            $tenant = $panel->getTenant($request->route()->parameter('tenant'));
+        } catch (ModelNotFoundException $exception) {
+            abort(404);
+        }
 
         if (! $user->canAccessTenant($tenant)) {
             abort(404);
