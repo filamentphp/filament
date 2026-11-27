@@ -163,6 +163,47 @@ describe('`Range` summarizer', function (): void {
             ->and($range->formatState(['ab', 'abé']))->toBe(['ab', 'abé'])
             ->and($range->formatState(['Аня', 'Ася']))->toBe(['Ан', 'Ас']);
     });
+
+    it('formats the minimal textual difference between values', function (array $state, ?array $expected): void {
+        expect(Range::make()->minimalTextualDifference()->formatState($state))->toBe($expected);
+    })->with([
+        'different initials' => [['apple', 'banana'], ['a', 'b']],
+        'common prefix' => [['abcd', 'abef'], ['abc', 'abe']],
+        'shorter first' => [['abc', 'abcdef'], ['abc', 'abcd']],
+        'longer first' => [['abcdef', 'abc'], ['abcd', 'abc']],
+        'case only' => [['AbC', 'aBc'], ['AbC', 'aBc']],
+        'case before difference' => [['ABcx', 'abcy'], ['ABcx', 'abcy']],
+        'trimmed comparison' => [[" abc \n", 'abd '], ['abc', 'abd']],
+        'identical values' => [['abc', 'abc'], ['abc']],
+        'identical trimmed values' => [[' abc ', 'abc'], [' abc ']],
+        'empty first' => [['', 'value'], [1 => 'value']],
+        'empty second' => [['value', ''], ['value']],
+        'both blank' => [[' ', null], null],
+        'multibyte difference' => [['éx', 'êy'], ['é', 'ê']],
+        'multibyte case' => [['Éx', 'éy'], ['Éx', 'éy']],
+        'emoji difference' => [['😀x', '😁y'], ['😀', '😁']],
+        'multibyte extension' => [['a', 'aé'], ['a', 'aé']],
+        'multibyte extension of first value' => [['aé', 'a'], ['aé', 'a']],
+    ]);
+
+    it('formats long common prefixes with `minimalTextualDifference()`', function (string $character): void {
+        $prefix = str_repeat($character, 4096);
+
+        expect(Range::make()->minimalTextualDifference()->formatState([$prefix . 'x', $prefix . 'y']))
+            ->toBe([$prefix . 'x', $prefix . 'y']);
+    })->with([
+        'ASCII' => 'a',
+        'Unicode' => 'é',
+    ]);
+
+    it('keeps `limit()` and `minimalTextualDifference()` as replacement formatters', function (): void {
+        expect(Range::make()->minimalTextualDifference()->limit(3)->formatState(['abcdef', 'abcxyz']))
+            ->toBe(['abc...', 'abc...'])
+            ->and(Range::make()->limit(3)->minimalTextualDifference()->formatState(['abcdef', 'abcxyz']))
+            ->toBe(['abcd', 'abcx'])
+            ->and(Range::make()->limit(2, null)->formatState(['ééé', '界界']))
+            ->toBe(['éé', '界']);
+    });
 });
 
 describe('`Sum` summarizer', function (): void {
