@@ -10,12 +10,14 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
 use Filament\Tests\Fixtures\Models\MediaPost;
@@ -23,6 +25,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\FileUploadController;
 
@@ -174,6 +177,52 @@ it('can validate from the component itself', function (): void {
         ->call('submit')
         ->assertHasFormErrors(['title' => ['required']]);
 });
+
+it('excludes schema partials hidden by an exposed component method', function (string $hiddenAncestor): void {
+    $livewire = livewire(TestComponentWithSchemaPartialVisibility::class)
+        ->assertSee('exposed-schema-marker')
+        ->call('callSchemaComponentMethod', 'form.ancestor.target.trigger', 'changeAncestorVisibility', ['ancestor' => $hiddenAncestor])
+        ->assertSet('hiddenAncestor', $hiddenAncestor);
+
+    $partials = $livewire->effects['partials'];
+
+    if ($hiddenAncestor === '') {
+        expect($partials['schema.form.ancestor.target'])->toContain('exposed-schema-marker');
+    } else {
+        expect($partials)->toBe([])
+            ->and(implode('', $partials))->not->toContain('exposed-schema-marker');
+    }
+
+    expect($livewire->effects)->not->toHaveKey('html');
+})->with(['visible' => '', 'hidden root' => 'root', 'hidden component' => 'component', 'hidden schema' => 'schema']);
+
+it('excludes lazy schema partials hidden by a later call in the same request', function (string $hiddenAncestor): void {
+    $livewire = livewire(TestComponentWithSchemaPartialVisibility::class, ['isLazyLoaded' => true]);
+
+    $response = $this->withHeaders(['X-Livewire' => true])
+        ->post(app('livewire')->getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($livewire->snapshot),
+                'updates' => [],
+                'calls' => [
+                    ['method' => 'loadLazySchema', 'params' => ['form.ancestor.target'], 'path' => ''],
+                    ['method' => 'callSchemaComponentMethod', 'params' => ['form.control', 'changeAncestorVisibilityWithoutRendering', ['ancestor' => $hiddenAncestor]], 'path' => ''],
+                ],
+            ]],
+        ])
+        ->assertSuccessful();
+
+    $effects = $response->json('components.0.effects');
+
+    if ($hiddenAncestor === '') {
+        expect($effects['partials']['schema.form.ancestor.target'])->toContain('exposed-schema-marker');
+    } else {
+        expect($effects['partials'])->toBe([])
+            ->and(implode('', $effects['partials']))->not->toContain('exposed-schema-marker');
+    }
+
+    expect($effects)->not->toHaveKey('html');
+})->with(['visible' => '', 'hidden root' => 'root']);
 
 describe('upload validation', function (): void {
     it('uses friendly field names when `WithFileUploads` is also used directly', function (): void {
@@ -685,5 +734,50 @@ class TestComponentWithReplacementSchema extends Component implements HasSchemas
     public function getSchemaReturnedByMethod(): ?Schema
     {
         return $this->schemaReturnedByMethod;
+    }
+}
+
+class TestComponentWithSchemaPartialVisibility extends Livewire
+{
+    public string $hiddenAncestor = '';
+
+    public bool $isLazyLoaded = false;
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->hidden(fn (): bool => $this->hiddenAncestor === 'root')
+            ->components([
+                SchemaPartialVisibilityComponent::make('control')->key('control'),
+                Section::make('Ancestor')
+                    ->key('ancestor')
+                    ->hidden(fn (): bool => $this->hiddenAncestor === 'component')
+                    ->schema(Schema::make()
+                        ->hidden(fn (): bool => $this->hiddenAncestor === 'schema')
+                        ->components([
+                            Section::make('Target')
+                                ->key('target')
+                                ->schema(Schema::make()->lazyLoaded($this->isLazyLoaded)->partiallyRender()->components([
+                                    SchemaPartialVisibilityComponent::make('exposed-schema-marker')->key('trigger'),
+                                ])),
+                        ])),
+            ])
+            ->statePath('data');
+    }
+}
+
+class SchemaPartialVisibilityComponent extends Html
+{
+    #[Exposed]
+    public function changeAncestorVisibility(string $ancestor): void
+    {
+        $this->getLivewire()->hiddenAncestor = $ancestor;
+    }
+
+    #[Exposed]
+    #[Renderless]
+    public function changeAncestorVisibilityWithoutRendering(string $ancestor): void
+    {
+        $this->changeAncestorVisibility($ancestor);
     }
 }
