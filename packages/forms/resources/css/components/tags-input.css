@@ -9,6 +9,10 @@
     &.fi-disabled {
         @apply min-h-9;
 
+        & > input {
+            @apply hidden;
+        }
+
         & .fi-badge-delete-btn {
             @apply hidden;
         }

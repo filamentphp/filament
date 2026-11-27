@@ -392,13 +392,13 @@ describe('rendering', function (): void {
         livewire(RenderTagsInputWithClosureTagSuffix::class)->assertSuccessful();
     });
 
-    it('does not render a text input when disabled', function (): void {
+    it('marks a disabled tags input as disabled', function (): void {
         $component = livewire(RenderTagsInputDisabled::class)
             ->assertSuccessful();
 
         expect($component->html())
-            ->not->toContain('x-bind="input"')
-            ->toContain('aria-disabled="true"');
+            ->toContain('aria-disabled="true"')
+            ->toContain('disabled');
     });
 
     it('can render with `placeholder()`', function (): void {

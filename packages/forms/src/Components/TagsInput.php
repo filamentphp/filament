@@ -314,9 +314,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
                     })"
             <?= $this->getExtraAlpineAttributeBag()->class(['fi-async-component-content'])->toHtml() ?>
         >
-            <?php if (! $isDisabled) { ?>
-                <input <?= $inputAttributes->toHtml() ?> />
-            <?php } ?>
+            <input <?= $inputAttributes->toHtml() ?> />
 
             <div x-ref="liveRegion" aria-live="polite" class="fi-sr-only"></div>
 
