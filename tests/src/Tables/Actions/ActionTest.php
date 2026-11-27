@@ -100,7 +100,7 @@ describe('hidden pivot state', function (): void {
         );
     });
 
-    it('does not automatically fill hidden pivot attributes in infolists', function (bool $duplicates): void {
+    it('can display hidden pivot attributes in action infolists', function (bool $duplicates): void {
         $user = User::factory()->create();
         $team = Team::factory()->create();
         $user->teams()->attach($team, ['role' => 'editor', 'created_at' => '2001-02-03 04:05:06']);
@@ -108,9 +108,9 @@ describe('hidden pivot state', function (): void {
         $component = livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'duplicates' => $duplicates])->mountTableAction('info', (string) $key);
         $entries = $component->instance()->getMountedTableAction()->getInfolist()->getComponents();
 
-        expect($entries[0]->getState())->toBeNull()
-            ->and($entries[1]->getState())->toBeNull()
-            ->and($entries[2]->getState())->toBeNull()
+        expect($entries[0]->getState())->toEqual($entries[0]->getRecord()->created_at)
+            ->and($entries[1]->getState())->toBe('2001-02-03 04:05:06')
+            ->and($entries[2]->getState())->toEqual($entries[2]->getRecord()->membership->created_at)
             ->and($entries[3]->getState())->toBe('editor');
     })->with([false, true]);
 

@@ -22,26 +22,35 @@ it('can evaluate livewire closure dependency by name', function () {
         ->assertSee('Third Entry State (dynamic)');
 });
 
-it('omits hidden pivot attributes from nested repeatable infolist state', function (): void {
+it('can display hidden pivot attributes and collisions in infolist entries', function (bool $isNested): void {
     $user = User::factory()->create();
     $team = Team::factory()->create();
     $user->teams()->attach($team, ['role' => 'editor', 'created_at' => '2001-02-03 04:05:06']);
     $record = UserWithHiddenTeamPivot::findOrFail($user->getKey())->load('teams');
-    Infolists\Infolist::make(Livewire::make())->record($record)->schema([
-        $repeatable = Infolists\Components\RepeatableEntry::make('teams')->schema([
-            Infolists\Components\TextEntry::make('created_at'),
-            Infolists\Components\TextEntry::make('membership.created_at'),
-            Infolists\Components\TextEntry::make('membership.role'),
-            Infolists\Components\TextEntry::make('explicit')->state(static fn (Team $record) => $record->membership->created_at),
-        ]),
-    ])->getComponents();
-    $entries = $repeatable->getChildComponentContainers()[0]->getComponents();
+    $team = $record->teams->first();
+    $team->setAttribute('pivot_created_at', $team->membership->created_at);
+    $fields = [
+        Infolists\Components\TextEntry::make('created_at'),
+        Infolists\Components\TextEntry::make('membership.created_at'),
+        Infolists\Components\TextEntry::make('pivot_created_at'),
+        Infolists\Components\TextEntry::make('membership.role'),
+    ];
+    $infolist = Infolists\Infolist::make(Livewire::make());
 
-    expect($entries[0]->getState())->toBeNull()
-        ->and($entries[1]->getState())->toBeNull()
-        ->and($entries[2]->getState())->toBe('editor')
-        ->and($entries[3]->getState())->not->toBeNull();
-});
+    if ($isNested) {
+        $infolist->record($record)->schema([
+            $repeatable = Infolists\Components\RepeatableEntry::make('teams')->schema($fields),
+        ])->getComponents();
+        $entries = $repeatable->getChildComponentContainers()[0]->getComponents();
+    } else {
+        $entries = $infolist->record($team)->schema($fields)->getComponents();
+    }
+
+    expect($entries[0]->getState())->toEqual($team->created_at)
+        ->and($entries[1]->getState())->toEqual($team->membership->created_at)
+        ->and($entries[2]->getState())->toEqual($team->membership->created_at)
+        ->and($entries[3]->getState())->toBe('editor');
+})->with([false, true]);
 
 it('preserves existing explicit infolist access to hidden non-pivot attributes', function (): void {
     $record = Team::factory()->create()->makeHidden('created_at');

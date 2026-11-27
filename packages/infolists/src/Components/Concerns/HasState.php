@@ -4,7 +4,6 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Collection;
 
 trait HasState
@@ -137,34 +136,6 @@ trait HasState
 
     public function getStateFromRecord(Model $record): mixed
     {
-        $stateRecord = $record;
-
-        foreach (explode('.', $this->getStatePath()) as $attribute) {
-            if ($stateRecord instanceof Model) {
-                if (($stateRecord instanceof Pivot) && in_array($attribute, $stateRecord->getHidden(), true)) {
-                    return null;
-                }
-
-                foreach ($stateRecord->getRelations() as $relationship) {
-                    if (! ($relationship instanceof Pivot)) {
-                        continue;
-                    }
-
-                    foreach ($relationship->getHidden() as $hiddenAttribute) {
-                        if (in_array($attribute, [$hiddenAttribute, "pivot_{$hiddenAttribute}"], true)) {
-                            return null;
-                        }
-                    }
-                }
-
-                $stateRecord = $stateRecord->getRelations()[$attribute] ?? null;
-            } elseif ($stateRecord instanceof Collection) {
-                $stateRecord = $stateRecord->get($attribute);
-            } else {
-                break;
-            }
-        }
-
         $state = data_get($record, $this->getStatePath());
 
         if ($state !== null) {
