@@ -2,7 +2,9 @@
 
 use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Tests\Fixtures\Livewire\ScopedTicketDepartmentsTable;
 use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\HiddenDepartmentTicket;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
@@ -39,6 +41,46 @@ it('can fill form with record data in `EditAction`', function (): void {
         ->assertSchemaStateSet([
             'name' => 'Original Name',
         ]);
+});
+
+it('does not prefill hidden pivot attributes but saves explicitly submitted values', function (bool $isTranslatable): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70]);
+    $savedValues = [];
+    HiddenDepartmentTicket::saving(static function (HiddenDepartmentTicket $pivot) use (&$savedValues): void {
+        $savedValues[] = [$pivot->quantity, $pivot->price];
+    });
+
+    $component = livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'hasHiddenPivot' => true, 'isTranslatable' => $isTranslatable])
+        ->mountAction(TestAction::make('edit')->table($department))
+        ->assertSchemaStateSet(['quantity' => null, 'pivot_quantity' => null, 'created_at' => null, 'pivot_created_at' => null, 'price' => 70]);
+
+    $component->fillForm(['quantity' => 9, 'price' => 99])->callMountedAction()->assertHasNoErrors();
+
+    expect($ticket->departments()->first()->pivot->quantity)->toBe(9)
+        ->and($ticket->departments()->first()->pivot->price)->toBe(99)
+        ->and($savedValues)->toBe([[9, 99]]);
+})->with([false, true]);
+
+it('does not save a pivot when submitted schema state contains no pivot fields', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70]);
+    $pivotSaves = 0;
+    HiddenDepartmentTicket::saving(static function () use (&$pivotSaves): void {
+        $pivotSaves++;
+    });
+
+    livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'hasHiddenPivot' => true, 'hasPivotFields' => false])
+        ->mountAction(TestAction::make('edit')->table($department))
+        ->fillForm(['name' => 'Renamed'])
+        ->callMountedAction()
+        ->assertHasNoErrors();
+
+    expect($department->fresh()->name)->toBe('Renamed')
+        ->and($ticket->departments()->first()->pivot->quantity)->toBe(7)
+        ->and($pivotSaves)->toBe(0);
 });
 
 it('can validate form data in `EditAction`', function (): void {

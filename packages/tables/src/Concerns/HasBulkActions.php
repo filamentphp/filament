@@ -642,9 +642,20 @@ trait HasBulkActions
         $records = $query->reorder()->lazyById($chunkSize, $qualifiedKeyName, $keyName);
 
         if ($this->getTable()->getRelationship() instanceof BelongsToMany) {
-            $invadedRelationship = invade($this->getTable()->getRelationship());
+            $relationship = $this->getTable()->getRelationship();
+            $invadedRelationship = invade($relationship);
 
-            $records = $records->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
+            $records = $records->tapEach(function (Model $record) use ($relationship, $invadedRelationship): void {
+                $invadedRelationship->hydratePivotRelation([$record]);
+                $pivotAccessor = $relationship->getPivotAccessor();
+                $pivot = $record->relationLoaded($pivotAccessor) ? $record->getRelation($pivotAccessor) : $relationship->newPivot();
+                $hiddenPivotAttributes = $pivot->getHidden();
+
+                $record->makeHidden([
+                    ...$hiddenPivotAttributes,
+                    ...array_map(static fn (string $attribute): string => "pivot_{$attribute}", $hiddenPivotAttributes),
+                ]);
+            });
         }
 
         return ($limit !== null) ? $records->take($limit) : $records;

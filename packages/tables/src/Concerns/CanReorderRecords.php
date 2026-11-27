@@ -42,11 +42,22 @@ trait CanReorderRecords
 
                 $connection = $relationship->getRelated()->getConnection();
 
-                $relationship->newPivotQuery()
-                    ->whereIn($keyColumn, array_values($order))
-                    ->update([
-                        $orderColumn => $this->makeTableReorderColumnExpression($order, $connection->getQueryGrammar()->wrap($keyColumn), $connection),
-                    ]);
+                $pivotQuery = $relationship->newPivotQuery()->whereIn($keyColumn, array_values($order));
+                $pivotKeyName = app($relationship->getPivotClass())->getKeyName();
+
+                if (in_array($pivotKeyName, $relationship->getPivotColumns(), true)) {
+                    $pivotKeys = $this->getFilteredTableQuery()
+                        ->whereIn($relationship->qualifyPivotColumn($keyColumn), array_values($order))
+                        ->toBase()
+                        ->addSelect($relationship->qualifyPivotColumn($pivotKeyName) . ' as filament_pivot_key')
+                        ->pluck('filament_pivot_key');
+
+                    $pivotQuery->whereIn($pivotKeyName, $pivotKeys);
+                }
+
+                $pivotQuery->update([
+                    $orderColumn => $this->makeTableReorderColumnExpression($order, $connection->getQueryGrammar()->wrap($keyColumn), $connection),
+                ]);
 
                 return;
             }
