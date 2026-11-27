@@ -38,6 +38,7 @@ use Filament\Tests\Fixtures\Pages\ColumnManagerReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
+use Filament\Tests\Fixtures\Pages\DateRangePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DissociateBulkActionBrowserTest;
 use Filament\Tests\Fixtures\Pages\DropdownBrowserTest;
@@ -175,6 +176,7 @@ class AdminPanelProvider extends PanelProvider
                 ColorPickerBrowserTest::class,
                 DatabaseNotificationsBrowserTest::class,
                 DatePickerBrowserTest::class,
+                DateRangePickerBrowserTest::class,
                 DateTimePickerBrowserTest::class,
                 LazySchemaLoadingBrowserTest::class,
                 DissociateBulkActionBrowserTest::class,

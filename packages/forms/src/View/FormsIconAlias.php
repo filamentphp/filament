@@ -22,6 +22,10 @@ class FormsIconAlias
 
     const COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD = 'forms::components.checkbox-list.search-field';
 
+    const COMPONENTS_DATE_RANGE_PICKER_NEXT_MONTH_BUTTON = 'forms::components.date-range-picker.next-month-button';
+
+    const COMPONENTS_DATE_RANGE_PICKER_PREVIOUS_MONTH_BUTTON = 'forms::components.date-range-picker.previous-month-button';
+
     const COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_CROP = 'forms::components.file-upload.editor.actions.drag-crop';
 
     const COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_MOVE = 'forms::components.file-upload.editor.actions.drag-move';

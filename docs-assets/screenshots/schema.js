@@ -1523,6 +1523,66 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/date-range-picker/simple': {
+        url: 'forms/fields/date-range-picker',
+        selector: '#dateRangePicker',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#dateRangePicker [role="combobox"]')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/date-range-picker/presets': {
+        url: 'forms/fields/date-range-picker',
+        selector: '#dateRangePickerPresets',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#dateRangePickerPresets [role="combobox"]')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/date-range-picker/display-format': {
+        url: 'forms/fields/date-range-picker',
+        selector: '#dateRangePickerDisplayFormat',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/date-range-picker/disabled-dates': {
+        url: 'forms/fields/date-range-picker',
+        selector: '#dateRangePickerDisabledDates',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#dateRangePickerDisabledDates [role="combobox"]')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/date-range-picker/prefix-icon': {
+        url: 'forms/fields/date-range-picker',
+        selector: '#dateRangePickerPrefixIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/file-upload/simple': {
         url: 'forms/fields/file-upload',
         selector: '#fileUpload',

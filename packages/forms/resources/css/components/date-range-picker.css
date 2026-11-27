@@ -1,0 +1,98 @@
+.fi-fo-date-range-picker {
+    & .fi-fo-date-range-picker-panel {
+        @apply flex w-max max-w-[calc(100vw-2rem)] flex-col gap-4 outline-none sm:flex-row;
+    }
+
+    & .fi-fo-date-range-picker-presets {
+        @apply flex gap-1 overflow-x-auto sm:w-auto sm:max-w-56 sm:min-w-36 sm:shrink-0 sm:flex-col sm:overflow-visible sm:border-e sm:border-gray-200 sm:pe-4 dark:sm:border-white/10;
+    }
+
+    & .fi-fo-date-range-picker-preset {
+        @apply rounded-lg px-2 py-1.5 text-start text-sm font-medium whitespace-nowrap text-gray-600 transition duration-75 outline-none sm:w-full sm:whitespace-normal dark:text-gray-300;
+
+        &:focus-visible {
+            @apply outline-primary-600 dark:outline-primary-500 outline-2 outline-solid;
+        }
+
+        &.fi-disabled {
+            @apply pointer-events-none opacity-50;
+        }
+
+        &:not(.fi-active):not(.fi-disabled) {
+            @apply hover:bg-gray-100 hover:text-gray-950 dark:hover:bg-white/5 dark:hover:text-white;
+        }
+
+        &.fi-active {
+            @apply text-primary-700 dark:text-primary-400 bg-gray-100 dark:bg-white/5;
+        }
+    }
+
+    & .fi-fo-date-range-picker-months {
+        @apply flex gap-6 outline-none;
+    }
+
+    & .fi-fo-date-range-picker-month {
+        @apply w-full sm:w-64;
+
+        &:last-of-type {
+            @apply max-md:hidden;
+
+            & .fi-fo-date-range-picker-previous-month-btn {
+                @apply invisible;
+            }
+        }
+
+        &:first-of-type .fi-fo-date-range-picker-next-month-btn {
+            @apply md:invisible;
+        }
+    }
+
+    & .fi-fo-date-range-picker-month-inputs {
+        @apply flex grow items-center gap-x-3;
+    }
+
+    & .fi-fo-date-range-picker-month-label {
+        @apply grow text-center text-sm font-medium text-gray-950 dark:text-white;
+    }
+
+    & .fi-fo-date-range-picker-previous-month-btn,
+    & .fi-fo-date-range-picker-next-month-btn {
+        @apply rounded-md p-1 text-gray-400 transition duration-75 outline-none hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-white/5 dark:hover:text-gray-200;
+
+        &:focus-visible {
+            @apply outline-primary-600 dark:outline-primary-500 outline-2 outline-solid;
+        }
+
+        & .fi-icon {
+            @apply size-4 rtl:rotate-180;
+        }
+    }
+
+    &.fi-fo-date-time-picker .fi-fo-date-time-picker-calendar-header,
+    &.fi-fo-date-time-picker
+        .fi-fo-date-time-picker-calendar
+        .fi-fo-date-time-picker-calendar-week {
+        @apply gap-x-0;
+    }
+
+    & .fi-fo-date-time-picker-calendar .fi-fo-date-time-picker-calendar-day {
+        &.fi-fo-date-range-picker-calendar-day-in-range:not(.fi-selected):not(
+                .fi-disabled
+            ) {
+            @apply bg-primary-50 dark:bg-primary-400/10 rounded-none text-gray-950 dark:text-white;
+        }
+
+        &.fi-selected:not(.fi-disabled),
+        &.fi-selected:not(.fi-disabled):is(:hover, :focus-visible) {
+            @apply bg-primary-100 text-primary-700 dark:bg-primary-400/20 dark:text-primary-300 font-semibold;
+        }
+
+        &.fi-fo-date-range-picker-calendar-day-range-start {
+            @apply rounded-e-none;
+        }
+
+        &.fi-fo-date-range-picker-calendar-day-range-end {
+            @apply rounded-s-none;
+        }
+    }
+}

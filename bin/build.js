@@ -118,6 +118,7 @@ const formComponents = [
     'checkbox-list',
     'code-editor',
     'color-picker',
+    'date-range-picker',
     'date-time-picker',
     'file-upload',
     'key-value',
