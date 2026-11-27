@@ -9,6 +9,8 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -56,6 +58,100 @@ describe('validation and relationship state', function (): void {
         'missing option' => ['Missing', false],
         'disabled option' => ['Blocked', false],
     ]);
+
+    it('rejects unsupported inline option types before persistence', function (mixed $input, string $optionsSource, bool $isOptionDisabled): void {
+        $post = Post::factory()->create(['rating' => 3]);
+        $component = livewire(TestTableWithSelectColumn::class)->instance();
+        $column = $component->getTable()->getColumn('rating')
+            ->options(match ($optionsSource) {
+                'grouped' => ['Ratings' => [0 => 'Zero', 1 => 'One', 3 => 'Three']],
+                default => [0 => 'Zero', 1 => 'One', 3 => 'Three'],
+            })
+            ->validationAttribute('rating selection')
+            ->validationMessages(['in' => 'Invalid :attribute.'])
+            ->disableOptionWhen(static fn ($value): bool => $isOptionDisabled && in_array($value, [0, '0', 1, '1'], strict: true));
+
+        if ($optionsSource === 'custom label') {
+            $column->getOptionLabelUsing(static fn (): string => 'Custom label');
+        }
+
+        $response = $component->updateTableColumnState('rating', (string) $post->getKey(), $input);
+
+        expect($post->fresh()->rating)->toBe(3)
+            ->and($response)->toBe(['error' => 'Invalid rating selection.']);
+    })->with([
+        'whole float' => [1.0],
+        'fractional float' => [1.5],
+        'true' => [true],
+        'false' => [false],
+        'array' => [[1]],
+        'empty array' => [[]],
+    ])->with(['static', 'grouped', 'custom label'])->with([false, true]);
+
+    it('preserves supported inline option values and hooks', function (mixed $input, bool $isOptionDisabled): void {
+        $post = Post::factory()->create(['rating' => 3]);
+        $component = livewire(TestTableWithSelectColumn::class)->instance();
+
+        if ($input instanceof IntegerBackedEnum) {
+            $component->getTable()->query(Post::query()->withCasts(['rating' => IntegerBackedEnum::class]));
+        }
+
+        $updatedStates = [];
+        $component->getTable()->getColumn('rating')
+            ->disableOptionWhen(static fn (): bool => $isOptionDisabled)
+            ->afterStateUpdated(function ($state) use (&$updatedStates): void {
+                $updatedStates[] = $state;
+            });
+
+        $response = $component->updateTableColumnState('rating', (string) $post->getKey(), $input);
+
+        expect($post->fresh()->rating)->toBe($isOptionDisabled ? 3 : 1)
+            ->and($updatedStates)->toBe($isOptionDisabled ? [] : [$input]);
+
+        if ($isOptionDisabled) {
+            expect($response)->toHaveKey('error');
+        } else {
+            expect($response)->toBe($input);
+        }
+    })->with([
+        'enabled string' => ['1', false],
+        'disabled string' => ['1', true],
+        'enabled integer' => [1, false],
+        'disabled integer' => [1, true],
+        'enabled integer-backed enum' => [IntegerBackedEnum::One, false],
+    ]);
+
+    it('preserves public validation and label resolution for supported values', function (mixed $input, array $options, string $label, bool $usesCustomLabel): void {
+        $post = Post::factory()->create();
+        $column = SelectColumn::make('rating')
+            ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
+            ->record($post)
+            ->options(['Options' => $options]);
+
+        if ($usesCustomLabel) {
+            $column->getOptionLabelUsing(static fn ($value): ?string => $value === $input ? $label : null);
+        }
+
+        $column->validate($input);
+        $column->state($input);
+
+        expect($column->getOptionLabel(withDefault: false))->toBe($label);
+    })->with([
+        'string' => ['one', ['one' => 'One'], 'One'],
+        'integer' => [1, [1 => 'One'], 'One'],
+        'integer-backed enum' => [IntegerBackedEnum::One, [1 => 'One'], 'One'],
+        'string-backed enum' => [StringBackedEnum::One, ['one' => 'One'], 'One'],
+        'Stringable' => [str('one'), ['one' => 'One'], 'One'],
+        'numeric Stringable' => [str('1'), [1 => 'One'], 'One'],
+    ])->with([false, true]);
+
+    it('preserves nullable inline placeholders', function (mixed $input): void {
+        $post = Post::factory()->create(['author_id' => User::factory()->create()->getKey()]);
+        $component = livewire(TestTableWithRelationshipSelectColumn::class)->instance();
+
+        expect($component->updateTableColumnState('author_id', (string) $post->getKey(), $input))->toBeNull()
+            ->and($post->fresh()->author_id)->toBeNull();
+    })->with(['empty string' => [''], 'null' => [null]]);
 });
 
 describe('native select', function (): void {
