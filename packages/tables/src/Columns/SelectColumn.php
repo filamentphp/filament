@@ -151,6 +151,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     {
         $state = $this->getState();
 
+        if (is_float($state) || is_bool($state) || is_array($state) || is_array($this->getStateUsingCallback())) {
+            return [
+                ...$this->getBaseRules(),
+                Rule::in([]),
+            ];
+        }
+
         if (blank($state)) {
             return $this->getBaseRules();
         }
