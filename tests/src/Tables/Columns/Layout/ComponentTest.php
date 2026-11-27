@@ -264,7 +264,7 @@ describe('layout visibility', function (): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         $hidden = Post::factory()->create(['title' => 'Hidden', 'is_published' => false]);
-        $visible = Post::factory()->create(['title' => 'Visible', 'is_published' => true]);
+        $visible = Post::factory()->create(['title' => 'Visible', 'content' => 'Publish', 'is_published' => true]);
 
         $page = visit('/columns-browser-test?hiddenLayout=record');
         $input = '[data-testid="layout-title-' . $visible->getKey() . '"] input:not([type="hidden"])';
@@ -276,6 +276,7 @@ describe('layout visibility', function (): void {
             ->assertValue($input, 'Updated')
             ->assertAttributeMissing($input, 'aria-busy')
             ->click('[data-testid="layout-action-' . $visible->getKey() . '"]')
+            ->assertSeeIn('[data-testid="layout-action-' . $visible->getKey() . '"]', 'Action called')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
