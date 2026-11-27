@@ -1479,6 +1479,19 @@ describe('mentions', function (): void {
         expect($html)->toContain('@John');
     });
 
+    it('defaults malformed mention trigger characters before looking up providers', function (bool $hasProvider): void {
+        $providers = $hasProvider ? [MentionProvider::make('@')->items(['1' => 'Alice'])] : [];
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [['type' => 'paragraph', 'content' => [
+                ['type' => 'mention', 'attrs' => ['id' => '1', 'char' => ['invalid' => '@'], 'label' => 'Alice']],
+                ['type' => 'text', 'text' => 'Kept sibling'],
+            ]]],
+        ])->mentions($providers);
+
+        expect(html_entity_decode(strip_tags($renderer->toHtml())))->toBe('@AliceKept sibling');
+    })->with([false, true]);
+
     it('uses static `items()` for label lookup when `getLabelsUsing()` is not configured', function (): void {
         $renderer = RichContentRenderer::make([
             'type' => 'doc',
@@ -1633,6 +1646,23 @@ describe('CSS injection', function (): void {
         'legacy left' => ['left', 'left'],
         'legacy right' => ['right', 'right'],
     ]);
+
+    it('fails closed when stored grid attributes cannot be rendered', function (string $method, string $attribute): void {
+        $document = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'grid',
+                'attrs' => ['data-cols' => ($attribute === 'data-cols') ? ['invalid' => 2] : 2],
+                'content' => [[
+                    'type' => 'gridColumn',
+                    'attrs' => ['data-col-span' => ($attribute === 'data-col-span') ? ['invalid' => 1] : 1],
+                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Grid content']]]],
+                ]],
+            ]],
+        ];
+
+        expect(RichContentRenderer::make($document)->{$method}())->toBe('');
+    })->with(['toHtml', 'toUnsafeHtml'])->with(['data-col-span', 'data-cols']);
 
     it('casts a malicious `data-cols` to an integer so it cannot inject CSS declarations', function (): void {
         $html = RichContentRenderer::make(
