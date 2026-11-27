@@ -234,6 +234,7 @@ class RichContentRenderer implements Htmlable
             }
 
             $nodeConfig = json_decode(json_encode($node->attrs->config ?? []), associative: true);
+            $nodeConfig = is_array($nodeConfig) ? $nodeConfig : [];
 
             $node->type = 'renderedCustomBlock';
             $node->html = $this->getCustomBlockHtml($node->attrs->id, $nodeConfig);
@@ -570,7 +571,7 @@ class RichContentRenderer implements Htmlable
         $editor = app(Editor::class, ['configuration' => $this->getTipTapPhpConfiguration()]);
 
         if (filled($this->content)) {
-            $editor->setContent($this->content);
+            $editor->setContent(app(RichEditorDocumentNormalizer::class)->normalizeCustomBlockConfiguration($this->content));
         }
 
         return $editor;
