@@ -7,7 +7,6 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 
 class Summarizer extends ViewComponent implements HasEmbeddedView
@@ -93,26 +92,35 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
             $relationship = $column->getRelationship($query->getModel());
             $attribute = $column->getFullAttributeName($query->getModel());
 
-            $inverseRelationship = $column->getInverseRelationshipName($query->getModel());
+            $relatedModel = clone $relationship->getRelated();
+            $relatedTable = $relatedModel->getTable();
+            $relatedModel->setTable($relationship->getRelationCountHash());
 
             $baseQuery = $query->toBase();
 
-            $query = $relationship->getQuery()->getModel()->newQuery()
+            if (($baseQuery->limit === null) && ($baseQuery->offset === null) && ($baseQuery->unionLimit === null) && ($baseQuery->unionOffset === null)) {
+                $baseQuery->reorder();
+            }
+
+            // Keep the table's filters, scopes and limits inside the derived query.
+            // Eloquent builds every forward relationship constraint in `whereHas()`.
+            $parentQuery = $query->getModel()->newModelQuery()
+                ->whereIn(
+                    $query->getModel()->getQualifiedKeyName(),
+                    $query->getConnection()->table($baseQuery, $query->getModel()->getTable())
+                        ->select($query->getModel()->getQualifiedKeyName()),
+                )
                 ->whereHas(
-                    $inverseRelationship,
-                    function (EloquentBuilder $relatedQuery) use ($baseQuery, $query): EloquentBuilder {
-                        $relatedQuery->mergeConstraintsFrom($query);
-
-                        if ($baseQuery->limit !== null) {
-                            /** @var Collection $records */
-                            $records = $this->getTable()->getRecords();
-
-                            $relatedQuery->whereKey($records->modelKeys());
-                        }
-
-                        return $relatedQuery;
-                    },
+                    $column->getRelationshipName($query->getModel()),
+                    fn (EloquentBuilder $relatedQuery) => $relatedQuery->whereColumn(
+                        $relatedQuery->getModel()->getQualifiedKeyName(),
+                        $relatedModel->getQualifiedKeyName(),
+                    ),
                 );
+
+            $query = $relationship->getRelated()->newModelQuery()
+                ->from("{$relatedTable} as {$relatedModel->getTable()}")
+                ->whereExists($parentQuery->selectRaw('1')->toBase());
         } elseif ($query) {
             // https://github.com/filamentphp/filament/issues/12501
             // Handle pivot columns in `BelongsToMany` context.

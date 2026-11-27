@@ -8,6 +8,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
@@ -16,6 +17,7 @@ use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
@@ -126,6 +128,23 @@ it('renders the whole table after `updateTableColumnState()` by default', functi
 
     expect($component->effects['html'])->toContain('value="Updated title"')->not->toContain('wire:partial="table.record.')
         ->and($component->effects['partials'] ?? [])->toBe([]);
+});
+
+it('refreshes query-dependent summaries after a partially rendered edit changes their values', function (): void {
+    $post = Post::factory()->create(['title' => 'Original title', 'rating' => 1]);
+
+    Sum::configureUsing(
+        fn (Sum $summarizer) => $summarizer->visible(fn (Builder $query): bool => $query->exists()),
+        during: function () use ($post): void {
+            $component = livewire(ColumnsBrowserTest::class, ['editableColumns' => true, 'saveScenario' => 'partial-summary'])
+                ->call('updateTableColumnState', 'title', (string) $post->getKey(), 'Updated title');
+
+            expect($post->fresh()->rating)->toBe(2)
+                ->and($component->effects)->toHaveKey('html')
+                ->and($component->effects['html'])->toContain('rating-total')
+                ->and($component->effects['partials'] ?? [])->toBe([]);
+        },
+    );
 });
 
 it('encodes the record key and column name in `getTableCellPartialName()` without collisions', function (): void {

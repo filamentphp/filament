@@ -9,9 +9,12 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCursorPagination;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\QueryBuilderItem;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -160,6 +163,37 @@ describe('ranges', function (): void {
 
         $livewire->assertTableColumnSummarySet('author.name', 'published_range', ['Published author', 'Published author']);
     });
+
+    it('retains search, filters and page limits for relationship summaries', function (): void {
+        foreach (range(1, 12) as $index) {
+            Post::factory()->for(User::factory()->state(['name' => sprintf('Author %02d', $index)]), 'author')
+                ->create(['title' => 'Included', 'is_published' => true]);
+        }
+
+        Post::factory()->for(User::factory()->state(['name' => 'Excluded by search']), 'author')
+            ->create(['title' => 'Other', 'is_published' => true]);
+        Post::factory()->for(User::factory()->state(['name' => 'Excluded by filter']), 'author')
+            ->create(['title' => 'Included', 'is_published' => false]);
+
+        livewire(PostsTable::class)
+            ->searchTable('Included')
+            ->filterTable('is_published')
+            ->assertTableColumnSummarySet('author.name', 'range', ['Author 01', 'Author 12'])
+            ->assertTableColumnSummarySet('author.name', 'range', ['Author 01', 'Author 10'], isCurrentPaginationPageOnly: true);
+    });
+
+    it('summarizes relationships from ordered table queries with and without a limit', function (): void {
+        Post::factory()->for(User::factory()->state(['name' => 'First author']), 'author')->create();
+        Post::factory()->for(User::factory()->state(['name' => 'Second author']), 'author')->create();
+
+        $summarizer = Tables\Columns\Summarizers\Range::make();
+        Tables\Columns\TextColumn::make('author.name')->summarize($summarizer);
+
+        expect($summarizer->query(Post::query()->orderBy('posts.id'))->getState())
+            ->toEqual(['First author', 'Second author'])
+            ->and($summarizer->query(Post::query()->orderByDesc('posts.id')->limit(1))->getState())
+            ->toEqual(['Second author', 'Second author']);
+    });
 });
 
 describe('sums', function (): void {
@@ -194,9 +228,109 @@ describe('sums', function (): void {
             ->assertCanSeeTableRecords($posts->take(10))
             ->assertTableColumnSummarySet('rating', 'published_sum', $posts->take(10)->where('is_published', true)->sum('rating'), isCurrentPaginationPageOnly: true);
     });
+
+    it('only summarizes rows admitted by the forward relationship and table query', function (string $relationship, int $expected): void {
+        $author = User::factory()->create();
+        Post::factory()->for($author, 'author')->create(['rating' => 3, 'is_published' => false]);
+        Post::factory()->for($author, 'author')->create(['rating' => 7, 'is_published' => true]);
+        Post::factory()->for($author, 'author')->trashed()->create(['rating' => 50]);
+        Post::factory()->create(['rating' => 90]);
+
+        $summarizer = Tables\Columns\Summarizers\Sum::make();
+        Tables\Columns\TextColumn::make("{$relationship}.rating")
+            ->inverseRelationship('author')
+            ->summarize($summarizer);
+
+        expect($summarizer->query(User::query()->whereKey($author))->getState())->toEqual($expected);
+
+        $summarizer->using(fn (Illuminate\Database\Query\Builder $query) => $query->sum('posts.rating'));
+
+        expect($summarizer->getState())->toEqual($expected);
+    })->with(['published posts' => ['publishedPosts', 7], 'latest post' => ['latestPost', 7]]);
+
+    it('only summarizes pivot-constrained related rows', function (): void {
+        $owner = User::factory()->create();
+        $otherOwner = User::factory()->create();
+        $ownedTeam = Team::factory()->create(['budget' => 13]);
+        $memberTeam = Team::factory()->create(['budget' => 41]);
+        $owner->teams()->attach($ownedTeam, ['role' => 'owner']);
+        $owner->teams()->attach($memberTeam, ['role' => 'member']);
+        $otherOwner->teams()->attach($memberTeam, ['role' => 'owner']);
+
+        $summarizer = Tables\Columns\Summarizers\Sum::make();
+        Tables\Columns\TextColumn::make('ownedTeams.budget')->summarize($summarizer);
+
+        expect($summarizer->query(User::query()->whereKey($owner))->getState())->toEqual(13);
+    });
+
+    it('retains constraints through nested relationships without multiplying shared rows', function (): void {
+        $author = User::factory()->create();
+        $team = Team::factory()->create(['budget' => 13]);
+        $otherTeam = Team::factory()->create(['budget' => 41]);
+        $author->teams()->attach($team, ['role' => 'owner']);
+        $author->teams()->attach($otherTeam, ['role' => 'member']);
+        $posts = Post::factory()->for($author, 'author')->count(2)->create();
+
+        $summarizer = Tables\Columns\Summarizers\Sum::make();
+        Tables\Columns\TextColumn::make('author.ownedTeams.budget')->summarize($summarizer);
+
+        expect($summarizer->query(Post::query()->whereKey($posts->modelKeys()))->getState())->toEqual(13);
+    });
+
+    it('summarizes the forward self-relationship without guessing its inverse', function (): void {
+        $connection = QueryBuilderItem::query()->getConnection();
+        $originalPrefix = $connection->getTablePrefix();
+        $connection->setTablePrefix('fo_');
+
+        try {
+            $parent = QueryBuilderItem::query()->create(['length' => 100]);
+            $child = $parent->children()->create(['length' => 7]);
+            $child->children()->create(['length' => 29]);
+            $otherParent = QueryBuilderItem::query()->create(['length' => 200]);
+            $otherParent->children()->create(['length' => 61]);
+
+            $summarizer = Tables\Columns\Summarizers\Sum::make();
+            Tables\Columns\TextColumn::make('children.length')->summarize($summarizer);
+
+            expect($summarizer->query(QueryBuilderItem::query()->whereKey($parent))->getState())->toEqual(7);
+        } finally {
+            $connection->setTablePrefix($originalPrefix);
+        }
+    });
 });
 
 describe('group summary rendering', function (): void {
+    it('retains the current owner when grouping a `BelongsToMany` table by a relationship', function (): void {
+        $owner = User::factory()->create();
+        $otherOwner = User::factory()->create();
+        $sharedTeam = Team::factory()->create(['budget' => 13]);
+        $otherTeam = Team::factory()->create(['company_id' => $sharedTeam->company_id, 'budget' => 71]);
+        $owner->teams()->attach($sharedTeam, ['role' => 'owner']);
+        $otherOwner->teams()->attach([$sharedTeam->id, $otherTeam->id], ['role' => 'member']);
+
+        $livewire = livewire(PostsTable::class)->instance();
+        $summarizer = Tables\Columns\Summarizers\Sum::make('sum');
+        $livewire->getTable()
+            ->query(null)
+            ->relationship(fn () => $owner->teams()->withPivot('id'))
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('budget')->summarize($summarizer),
+            ])
+            ->defaultGroup(Tables\Grouping\Group::make('company.name'));
+
+        $group = $livewire->getTableGrouping();
+        $query = $livewire->getTable()->getQuery();
+        $state = $livewire->getTableSummarySelectedState(
+            $query,
+            fn ($query) => $group->groupQuery($query, app(Team::class)),
+        );
+
+        $summarizer->selectedState(array_values($state)[0]);
+
+        expect($summarizer->getState())->toEqual(13);
+    });
+
     it('renders group summaries when page and all-table summaries are disabled', function (): void {
         Post::factory()->count(5)->create(['is_published' => true]);
 
@@ -262,6 +396,114 @@ describe('responsive summary rendering', function (): void {
             ->assertOk();
     });
 });
+
+describe('custom data summaries', function (): void {
+    it('discovers configured summaries without evaluating visibility when no query is supplied', function (): void {
+        $summarizer = Tables\Columns\Summarizers\Summarizer::make('summary')
+            ->visible(fn (Builder $query) => throw new LogicException('Structural discovery evaluated visibility'));
+        $hiddenSummarizer = Tables\Columns\Summarizers\Summarizer::make('hidden')->hidden();
+        $column = Tables\Columns\TextColumn::make('rating')->summarize([$summarizer, $hiddenSummarizer]);
+
+        expect($column->getSummarizers())->toBe(['summary' => $summarizer, 'hidden' => $hiddenSummarizer])
+            ->and($column->getSummarizers(null))->toBe($column->getSummarizers())
+            ->and($column->getSummarizer('summary'))->toBe($summarizer)
+            ->and($column->getSummarizer('hidden'))->toBe($hiddenSummarizer)
+            ->and($column->hasSummary())->toBeTrue()
+            ->and($column->hasSummary(null))->toBeTrue()
+            ->and($column->getVisibleSummarizers(null))->toBe([]);
+    });
+
+    it('does not execute or render hidden summarizers without a query', function (): void {
+        livewire(TestTableWithCustomDataSummaries::class)
+            ->assertSee('Visible custom summary')
+            ->assertSee('Nullable query summary')
+            ->assertSee('Typed component summary')
+            ->assertDontSee('Hidden custom summary')
+            ->assertDontSee('Invisible custom summary')
+            ->assertDontSee('Required query summary');
+    });
+
+    it('does not render summary rows when all custom-data summarizers are hidden', function (): void {
+        Tables\Columns\Summarizers\Summarizer::configureUsing(
+            fn (Tables\Columns\Summarizers\Summarizer $summarizer) => $summarizer->hidden(),
+            during: function (): void {
+                $livewire = livewire(TestTableWithCustomDataSummaries::class)
+                    ->assertDontSeeHtml('fi-ta-summary-row');
+
+                expect($livewire->instance()->getTable()->hasSummary(null))->toBeTrue();
+            },
+        );
+    });
+
+    it('preserves summarizer lookup, typed visibility and query callbacks when the query is null', function (): void {
+        Post::factory()->create(['is_published' => true, 'rating' => 7]);
+        Post::factory()->create(['is_published' => false, 'rating' => 13]);
+        $summarizer = Tables\Columns\Summarizers\Summarizer::make('summary')
+            ->visible(fn (?Builder $query): bool => $query === null)
+            ->query(fn ($query) => $query)
+            ->using(fn ($query): int => $query?->sum('rating') ?? 17);
+        $column = Tables\Columns\TextColumn::make('rating')->summarize($summarizer);
+
+        expect($column->getVisibleSummarizers(Post::query()))->toBe([])
+            ->and($column->getVisibleSummarizers(null))->toBe(['summary' => $summarizer])
+            ->and($column->getSummarizers(Post::query()))->toBe([])
+            ->and($column->getSummarizers())->toBe(['summary' => $summarizer])
+            ->and($column->getSummarizers(null))->toBe($column->getSummarizers())
+            ->and($column->hasSummary(null))->toBeTrue()
+            ->and($column->getSummarizer('summary'))->toBe($summarizer)
+            ->and($summarizer->hasQueryModificationCallback())->toBeTrue()
+            ->and($summarizer->getState())->toBe(20)
+            ->and($column->getSummarizers(fn ($query) => $query->where('is_published', true)))->toBe([])
+            ->and($summarizer->getState())->toBe(7);
+    });
+});
+
+class TestTableWithCustomDataSummaries extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->records(fn (): array => [1 => ['name' => 'Item', 'amount' => 7]])
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('amount')->summarize([
+                    Tables\Columns\Summarizers\Summarizer::make('visible')
+                        ->label('Visible custom summary')
+                        ->visible(fn (): bool => true)
+                        ->using(fn ($query): int => $query === null ? 7 : 0),
+                    Tables\Columns\Summarizers\Summarizer::make('nullable')
+                        ->label('Nullable query summary')
+                        ->visible(fn (?Builder $query): bool => $query === null)
+                        ->using(fn (): int => 11),
+                    Tables\Columns\Summarizers\Summarizer::make('component')
+                        ->label('Typed component summary')
+                        ->visible(fn (self $livewire): bool => $livewire instanceof self)
+                        ->using(fn (): int => 19),
+                    Tables\Columns\Summarizers\Summarizer::make('required_query')
+                        ->label('Required query summary')
+                        ->visible(fn (Builder $query): bool => $query->exists())
+                        ->using(fn () => throw new LogicException('Query-dependent summarizer executed')),
+                    Tables\Columns\Summarizers\Summarizer::make('hidden')
+                        ->label('Hidden custom summary')
+                        ->hidden()
+                        ->using(fn () => throw new LogicException('Hidden summarizer executed')),
+                    Tables\Columns\Summarizers\Summarizer::make('invisible')
+                        ->label('Invisible custom summary')
+                        ->visible(false)
+                        ->using(fn () => throw new LogicException('Invisible summarizer executed')),
+                ]),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
 
 class TestTableWithResponsiveSummaryFallbacks extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
