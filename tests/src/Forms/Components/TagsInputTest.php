@@ -392,6 +392,13 @@ describe('rendering', function (): void {
         livewire(RenderTagsInputWithClosureTagSuffix::class)->assertSuccessful();
     });
 
+    it('does not render a text input when disabled', function (): void {
+        $component = livewire(RenderTagsInputDisabled::class)
+            ->assertSuccessful();
+
+        expect($component->html())->not->toContain('x-bind="input"');
+    });
+
     it('can render with `placeholder()`', function (): void {
         livewire(RenderTagsInputWithPlaceholder::class)->assertSuccessful();
     });
@@ -577,5 +584,17 @@ class RenderTagsInputWithPlaceholder extends Livewire
     public function form(Schema $form): Schema
     {
         return $form->schema([TagsInput::make('tags')->placeholder('Add a tag...')])->statePath('data');
+    }
+}
+
+class RenderTagsInputDisabled extends Livewire
+{
+    public $data = ['tags' => ['Example']];
+
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            TagsInput::make('tags')->disabled(),
+        ])->statePath('data');
     }
 }
