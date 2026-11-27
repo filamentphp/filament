@@ -144,6 +144,7 @@ Using class `Filament\Forms\View\FormsIconAlias`
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_UP` - Trigger button of a move up action in a builder item
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_REORDER` - Trigger button of a reorder action in a builder item
 - `FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD` - Search input in a checkbox list
+- `FormsIconAlias::COMPONENTS_COLOR_PICKER_ACTIONS_EYE_DROPPER` - Button to pick a color from the screen in a color picker
 - `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_CROP` - Trigger button of a drag crop action in a file upload editor
 - `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_MOVE` - Trigger button of a drag move action in a file upload editor
 - `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_FLIP_HORIZONTAL` - Trigger button of a flip horizontal action in a file upload editor

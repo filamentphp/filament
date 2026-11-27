@@ -79,6 +79,43 @@ describe('format', function (): void {
     });
 });
 
+describe('preset colors', function (): void {
+    it('returns `null` for `getPresetColors()` by default', function (): void {
+        expect(ColorPicker::make('color')->getPresetColors())->toBeNull();
+    });
+
+    it('can set `presetColors()`', function (): void {
+        expect(ColorPicker::make('color')->presetColors(['#ef4444' => 'Red', '#111827'])->getPresetColors())
+            ->toBe(['#ef4444' => 'Red', '#111827']);
+    });
+
+    it('can set `presetColors()` with an `Arrayable` or a `Closure`', function (): void {
+        expect(ColorPicker::make('color')->presetColors(collect(['#ef4444' => 'Red']))->getPresetColors())->toBe(['#ef4444' => 'Red'])
+            ->and(ColorPicker::make('color')->presetColors(fn (): array => ['#3b82f6' => 'Blue'])->getPresetColors())->toBe(['#3b82f6' => 'Blue']);
+    });
+});
+
+describe('eye dropper', function (): void {
+    it('defaults `hasEyeDropper()` to `false`', function (): void {
+        expect(ColorPicker::make('color')->hasEyeDropper())->toBeFalse();
+    });
+
+    it('can set `eyeDropper()` with a `Closure`', function (): void {
+        expect(ColorPicker::make('color')->eyeDropper()->hasEyeDropper())->toBeTrue()
+            ->and(ColorPicker::make('color')->eyeDropper(fn (): bool => false)->hasEyeDropper())->toBeFalse();
+    });
+});
+
+describe('copyable', function (): void {
+    it('defaults `isCopyable()` to `false`', function (): void {
+        expect(ColorPicker::make('color')->isCopyable())->toBeFalse();
+    });
+
+    it('can set `copyable()`', function (): void {
+        expect(ColorPicker::make('color')->copyable()->isCopyable())->toBeTrue();
+    });
+});
+
 describe('placeholder', function (): void {
     it('returns `null` for `getPlaceholder()` by default', function (): void {
         $picker = ColorPicker::make('color');
@@ -413,6 +450,41 @@ describe('rendering', function (): void {
     });
 });
 
+describe('preset colors, eye dropper and copy action rendering', function (): void {
+    it('can render `presetColors()` and `eyeDropper()`', function (): void {
+        livewire(RenderColorPickerWithPresetColorsAndEyeDropper::class)
+            ->assertSuccessful()
+            ->assertSeeHtml([
+                'format: \'rgb\'',
+                'fi-fo-color-picker-panel-has-controls',
+                'aria-label="Pick a color from the screen"',
+                'role="group" aria-label="Preset colors"',
+                'aria-label="Red"',
+                'style="background-color: rgb(239, 68, 68)"',
+                'aria-label="rgb(17, 24, 39)"',
+            ])
+            ->assertSeeHtmlInOrder(['</rgb-string-color-picker>', 'fi-fo-color-picker-controls']);
+    });
+
+    it('does not render the controls without `presetColors()` or `eyeDropper()`', function (): void {
+        livewire(TestComponentWithColorPicker::class)
+            ->assertSuccessful()
+            ->assertDontSeeHtml(['fi-fo-color-picker-panel-has-controls', 'fi-fo-color-picker-controls']);
+    });
+
+    it('escapes the labels and values of `presetColors()`', function (): void {
+        livewire(RenderColorPickerWithUnsafePresetColors::class)
+            ->assertSuccessful()
+            ->assertDontSeeHtml(['<script>alert(1)</script>', '"><script>alert(2)</script>']);
+    });
+
+    it('can render `copyable()`', function (): void {
+        livewire(RenderCopyableColorPicker::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('writeText');
+    });
+});
+
 describe('browser interactions', function (): void {
     it('can render `ColorPicker` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
@@ -424,6 +496,48 @@ describe('browser interactions', function (): void {
         visit('/color-picker-browser-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
+    });
+
+    it('selects a preset color', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/color-picker-browser-test');
+
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
+            ->click('[data-testid="brand-color-picker"]')
+            ->assertVisible('[id="form.brandColor-panel"] [aria-label="Preset colors"]')
+            ->assertVisible('[aria-label="Pick a color from the screen"]')
+            ->assertAttribute('[aria-label="Blue"]', 'aria-pressed', 'false')
+            ->assertNoAccessibilityIssues()
+            ->click('[aria-label="Blue"]')
+            ->assertValue('[data-testid="brand-color-picker"]', '#3b82f6')
+            ->assertAttribute('[aria-label="Blue"]', 'aria-pressed', 'true')
+            ->assertAttribute('[aria-label="Red"]', 'aria-pressed', 'false');
+
+        $page->inDarkMode()
+            ->waitForEvent('networkidle')
+            ->click('[data-testid="brand-color-picker"]')
+            ->assertVisible('[id="form.brandColor-panel"] [aria-label="Preset colors"]')
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('stays open when its empty space is clicked', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/color-picker-browser-test');
+
+        $panel = '[id="form.accentColor-panel"]';
+
+        $page->waitForEvent('networkidle')
+            ->assertNoSmoke()
+            ->click('[data-testid="accent-color-picker"]')
+            ->assertVisible($panel)
+            ->click("{$panel} .fi-fo-color-picker-controls")
+            ->wait(0.5)
+            ->assertVisible($panel)
+            ->click('[aria-label="Green"]')
+            ->assertValue('[data-testid="accent-color-picker"]', '#22c55e');
     });
 });
 
@@ -733,6 +847,53 @@ class RenderColorPickerWithInlineSuffixParam extends Livewire
             ->schema([
                 ColorPicker::make('color')
                     ->suffix('(hex)', isInline: true),
+            ])
+            ->statePath('data');
+    }
+}
+
+class RenderColorPickerWithPresetColorsAndEyeDropper extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ColorPicker::make('color')
+                    ->rgb()
+                    ->presetColors([
+                        'rgb(239, 68, 68)' => 'Red',
+                        'rgb(17, 24, 39)',
+                    ])
+                    ->eyeDropper(),
+            ])
+            ->statePath('data');
+    }
+}
+
+class RenderColorPickerWithUnsafePresetColors extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ColorPicker::make('color')
+                    ->presetColors([
+                        '#ef4444' => '<script>alert(1)</script>',
+                        '"><script>alert(2)</script>',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class RenderCopyableColorPicker extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ColorPicker::make('color')
+                    ->copyable(),
             ])
             ->statePath('data');
     }

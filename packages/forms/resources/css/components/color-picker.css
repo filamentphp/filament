@@ -19,6 +19,43 @@
     }
 
     & .fi-fo-color-picker-panel {
-        @apply absolute z-20 hidden rounded-lg shadow-lg;
+        @apply absolute z-20 hidden rounded-lg shadow-lg outline-none;
+
+        &.fi-fo-color-picker-panel-has-controls {
+            @apply space-y-3 bg-white p-3 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        }
+    }
+
+    & .fi-fo-color-picker-controls {
+        @apply flex max-w-[200px] flex-wrap items-center gap-1.5;
+    }
+
+    & .fi-fo-color-picker-preset-colors {
+        @apply contents;
+    }
+
+    & .fi-fo-color-picker-eye-dropper-btn,
+    & .fi-fo-color-picker-preset-color {
+        @apply outline-none;
+
+        &:focus-visible {
+            @apply outline-primary-600 dark:outline-primary-500 outline-2 outline-offset-1 outline-solid;
+        }
+    }
+
+    & .fi-fo-color-picker-eye-dropper-btn {
+        @apply rounded-md p-1 text-gray-400 transition duration-75 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-white/5 dark:hover:text-gray-200;
+
+        & .fi-icon {
+            @apply size-4;
+        }
+    }
+
+    & .fi-fo-color-picker-preset-color {
+        @apply size-6 cursor-pointer rounded-md ring-1 ring-gray-950/10 transition duration-75 ring-inset dark:ring-white/20;
+
+        &.fi-active {
+            @apply outline-primary-600 dark:outline-primary-500 outline-2 outline-offset-1 outline-solid;
+        }
     }
 }

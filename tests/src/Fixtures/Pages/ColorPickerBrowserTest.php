@@ -31,6 +31,19 @@ class ColorPickerBrowserTest extends Page
                     ->label('Test Color')
                     ->live(debounce: 1000)
                     ->extraAttributes(['data-testid' => 'color-picker']),
+                ColorPicker::make('brandColor')
+                    ->label('Brand color')
+                    ->presetColors([
+                        '#ef4444' => 'Red',
+                        '#3b82f6' => 'Blue',
+                        '#111827',
+                    ])
+                    ->eyeDropper()
+                    ->extraInputAttributes(['data-testid' => 'brand-color-picker']),
+                ColorPicker::make('accentColor')
+                    ->label('Accent color')
+                    ->presetColors(['#22c55e' => 'Green'])
+                    ->extraInputAttributes(['data-testid' => 'accent-color-picker']),
             ])
             ->statePath('data');
     }

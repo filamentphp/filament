@@ -22,6 +22,8 @@ class FormsIconAlias
 
     const COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD = 'forms::components.checkbox-list.search-field';
 
+    const COMPONENTS_COLOR_PICKER_ACTIONS_EYE_DROPPER = 'forms::components.color-picker.actions.eye-dropper';
+
     const COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_CROP = 'forms::components.file-upload.editor.actions.drag-crop';
 
     const COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_MOVE = 'forms::components.file-upload.editor.actions.drag-move';

@@ -4,11 +4,16 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Js;
+
+use function Filament\Support\generate_icon_html;
 
 class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 {
@@ -21,6 +26,15 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.color-picker';
 
     protected string | Closure $format = 'hex';
+
+    protected bool | Closure $hasEyeDropper = false;
+
+    protected bool | Closure $isCopyable = false;
+
+    /**
+     * @var array<string> | Arrayable | Closure | null
+     */
+    protected array | Arrayable | Closure | null $presetColors = null;
 
     protected function setUp(): void
     {
@@ -64,14 +78,73 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         return $this;
     }
 
+    public function copyable(
+        bool | Closure $condition = true,
+        string | Closure | null $copyMessage = null,
+        int | Closure | null $copyMessageDuration = null
+    ): static {
+        $this->isCopyable = $condition;
+
+        $this->suffixAction(
+            TextInput\Actions\CopyAction::make()
+                ->copyMessage($copyMessage)
+                ->copyMessageDuration($copyMessageDuration)
+                ->visible($condition),
+        );
+
+        return $this;
+    }
+
+    public function eyeDropper(bool | Closure $condition = true): static
+    {
+        $this->hasEyeDropper = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string> | Arrayable | Closure | null  $colors
+     */
+    public function presetColors(array | Arrayable | Closure | null $colors): static
+    {
+        $this->presetColors = $colors;
+
+        return $this;
+    }
+
     public function getFormat(): string
     {
         return $this->evaluate($this->format);
     }
 
+    /**
+     * @return array<string> | null
+     */
+    public function getPresetColors(): ?array
+    {
+        $colors = $this->evaluate($this->presetColors);
+
+        if ($colors instanceof Arrayable) {
+            $colors = $colors->toArray();
+        }
+
+        return $colors;
+    }
+
+    public function hasEyeDropper(): bool
+    {
+        return (bool) $this->evaluate($this->hasEyeDropper);
+    }
+
+    public function isCopyable(): bool
+    {
+        return (bool) $this->evaluate($this->isCopyable);
+    }
+
     public function toEmbeddedHtml(): string
     {
         $extraAttributeBag = $this->getExtraAttributeBag();
+        $hasEyeDropper = $this->hasEyeDropper();
         $id = $this->getId();
         $isAutofocused = $this->isAutofocused();
         $isDisabled = $this->isDisabled();
@@ -93,6 +166,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         $placeholder = $this->getPlaceholder();
         $livewireKey = $this->getLivewireKey();
         $format = $this->getFormat();
+        $presetColors = $this->getPresetColors();
 
         // Filter visible prefix/suffix actions
         $prefixActions = array_filter(
@@ -154,6 +228,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"
             x-data="colorPickerFormComponent({
+                        format: <?= Js::from($format) ?>,
                         isAutofocused: <?= Js::from($isAutofocused) ?>,
                         isDisabled: <?= Js::from($isDisabled) ?>,
                         isLive: <?= Js::from($isLive) ?>,
@@ -194,9 +269,46 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
                 id="<?= e($id) ?>-panel"
                 role="dialog"
                 aria-label="<?= e(__('filament-forms::components.color_picker.panel_label')) ?>"
-                class="fi-fo-color-picker-panel"
+                tabindex="-1"
+                class="<?= e(($hasEyeDropper || $presetColors) ? 'fi-fo-color-picker-panel fi-fo-color-picker-panel-has-controls' : 'fi-fo-color-picker-panel') ?>"
             >
-                <<?= $tag ?> x-ref="picker" color="<?= e($this->getState()) ?>" />
+                <<?= $tag ?> x-ref="picker" color="<?= e($this->getState()) ?>"></<?= $tag ?>>
+
+                <?php if ($hasEyeDropper || $presetColors) { ?>
+                    <div class="fi-fo-color-picker-controls">
+                        <?php if ($hasEyeDropper) { ?>
+                            <button
+                                type="button"
+                                aria-label="<?= e(__('filament-forms::components.color_picker.actions.eye_dropper.label')) ?>"
+                                x-show="isEyeDropperSupported()"
+                                x-on:click="openEyeDropper()"
+                                class="fi-fo-color-picker-eye-dropper-btn"
+                            >
+                                <?= generate_icon_html(Heroicon::EyeDropper, alias: FormsIconAlias::COMPONENTS_COLOR_PICKER_ACTIONS_EYE_DROPPER)?->toHtml() ?>
+                            </button>
+                        <?php } ?>
+
+                        <?php if ($presetColors) { ?>
+                            <div role="group" aria-label="<?= e(__('filament-forms::components.color_picker.preset_colors.label')) ?>" class="fi-fo-color-picker-preset-colors">
+                                <?php foreach ($presetColors as $presetColor => $presetColorLabel) { ?>
+                                    <?php $presetColor = is_int($presetColor) ? $presetColorLabel : $presetColor; ?>
+                                    <button
+                                        type="button"
+                                        aria-label="<?= e($presetColorLabel) ?>"
+                                        title="<?= e($presetColorLabel) ?>"
+                                        style="background-color: <?= e($presetColor) ?>"
+                                        x-on:click="selectColor(<?= e(Js::from($presetColor)) ?>)"
+                                        x-bind:aria-pressed="(state === <?= e(Js::from($presetColor)) ?>).toString()"
+                                        x-bind:class="{
+                                            'fi-active': state === <?= e(Js::from($presetColor)) ?>,
+                                        }"
+                                        class="fi-fo-color-picker-preset-color"
+                                    ></button>
+                                <?php } ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
             </div>
         </div>
 
