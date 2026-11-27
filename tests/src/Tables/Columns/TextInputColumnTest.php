@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Tables\Columns;
 
+use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -25,6 +26,64 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 describe('state updates and relationship persistence', function (): void {
+    it('rejects array and object-shaped client state without persisting it', function (string $columnName, string $payload, bool $hasScalarValidation): void {
+        $post = Post::factory()->create(['title2' => 'Original', 'json' => ['title' => 'Original', 'sibling' => 'Preserved']]);
+        $originalAttributes = $post->fresh()->getAttributes();
+        $input = json_decode($payload, associative: true, flags: JSON_THROW_ON_ERROR);
+
+        $component = livewire(TestTableWithScalarTextInputColumn::class, compact('columnName', 'hasScalarValidation'))
+            ->call('updateTableColumnState', $columnName, (string) $post->getKey(), $input)
+            ->assertReturned(['error' => 'Invalid text value.'])
+            ->assertSuccessful();
+
+        expect($post->fresh()->getAttributes())->toBe($originalAttributes);
+
+        $component->call('$refresh')->assertSuccessful();
+        livewire(TestTableWithScalarTextInputColumn::class, compact('columnName', 'hasScalarValidation'))->assertSuccessful();
+    })->with(['title2', 'json.title'])->with([
+        'empty array' => '[]',
+        'list' => '["Invalid"]',
+        'empty object' => '{}',
+        'nested object' => '{"nested":["Invalid"]}',
+    ])->with([false, true]);
+
+    it('preserves scalar and nullable client state', function (mixed $input, mixed $expected): void {
+        $post = Post::factory()->create(['json' => ['title' => 'Original', 'sibling' => 'Preserved']]);
+
+        livewire(TestTableWithScalarTextInputColumn::class)
+            ->call('updateTableColumnState', 'json.title', (string) $post->getKey(), $input)
+            ->assertReturned($expected)
+            ->assertSuccessful();
+
+        expect($post->fresh()->json)->toBe(['title' => $expected, 'sibling' => 'Preserved']);
+    })->with([
+        'string' => ['Updated', 'Updated'],
+        'numeric string' => ['007', '007'],
+        'integer zero' => [0, 0],
+        'float' => [1.25, 1.25],
+        'boolean' => [false, false],
+        'null' => [null, null],
+        'blank string' => ['', null],
+    ]);
+
+    it('preserves scalar validation closures and messages', function (): void {
+        $post = Post::factory()->create(['title2' => 'Original']);
+
+        $component = livewire(TestTableWithScalarTextInputColumn::class, ['columnName' => 'title2', 'hasScalarValidation' => true])
+            ->call('updateTableColumnState', 'title2', (string) $post->getKey(), 'Too long input')
+            ->assertReturned(['error' => 'Too long.'])
+            ->call('updateTableColumnState', 'title2', (string) $post->getKey(), 'blocked')
+            ->assertReturned(['error' => 'Blocked value.']);
+
+        expect($post->fresh()->title2)->toBe('Original');
+
+        $component->call('updateTableColumnState', 'title2', (string) $post->getKey(), 'Updated')
+            ->assertReturned('Updated')
+            ->assertSuccessful();
+
+        expect($post->fresh()->title2)->toBe('Updated');
+    });
+
     it('reports a missing persistence target without changing custom `null` callback results', function (): void {
         $post = Post::factory()->create(['author_id' => null]);
         $column = TextInputColumn::make('author.name')->record($post);
@@ -510,6 +569,35 @@ class TestTableWithTextInputColumn extends Component implements HasActions, HasS
     public function render(): View
     {
         return view('livewire.table');
+    }
+}
+
+class TestTableWithScalarTextInputColumn extends TestTableWithTextInputColumn
+{
+    public string $columnName = 'json.title';
+
+    public bool $hasScalarValidation = false;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Post::query())->columns([
+            TextInputColumn::make($this->columnName)
+                ->rules($this->hasScalarValidation ? static fn (string $state): array => [
+                    'max:8',
+                    static function (string $attribute, string $value, Closure $fail): void {
+                        if ($value === 'blocked') {
+                            $fail('Blocked value.');
+                        }
+                    },
+                ] : [])
+                ->validationMessages([
+                    'string' => static fn (): string => 'Invalid text value.',
+                    'max' => static fn (): string => 'Too long.',
+                ])
+                ->beforeStateUpdated(static function (mixed $state): void {
+                    expect(is_array($state))->toBeFalse();
+                }),
+        ]);
     }
 }
 
