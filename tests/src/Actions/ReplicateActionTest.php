@@ -3,7 +3,10 @@
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\ScopedTicketDepartmentsTable;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Tables\TestCase;
 
 use function Filament\Tests\livewire;
@@ -24,6 +27,16 @@ it('can mount `ReplicateAction` modal', function (): void {
     livewire(PostsTable::class)
         ->mountAction(TestAction::make('replicate')->table($post))
         ->assertActionMounted(TestAction::make('replicate')->table($post));
+});
+
+it('does not prefill hidden pivot attributes when replicating a relationship record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70]);
+
+    livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'hasHiddenPivot' => true])
+        ->mountAction(TestAction::make('replicate')->table($department))
+        ->assertSchemaStateSet(['quantity' => null, 'pivot_quantity' => null, 'created_at' => null, 'pivot_created_at' => null, 'price' => 70]);
 });
 
 it('can replicate a record using `ReplicateAction`', function (): void {
