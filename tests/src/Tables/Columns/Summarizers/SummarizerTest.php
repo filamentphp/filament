@@ -1,15 +1,20 @@
 <?php
 
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Summarizers\Average;
 use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\Summarizers\Values;
+use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\SqlServerConnection;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
@@ -118,6 +123,66 @@ describe('`Count` summarizer', function (): void {
 
         expect($count->getId())->toBe('row-count');
     });
+
+    it('omits iconless entries from `icons()` without changing valid counts and colors', function (string $iconType): void {
+        Post::factory()->count(2)->create(['rating' => 1]);
+        Post::factory()->count(3)->create(['rating' => 2]);
+        Post::factory()->count(4)->create(['rating' => 3]);
+
+        $icon = match ($iconType) {
+            'string' => 'heroicon-o-check-circle',
+            'enum' => Heroicon::OutlinedCheckCircle,
+            'svg' => svg('heroicon-o-check-circle'),
+        };
+        $column = IconColumn::make('rating')
+            ->table(livewire(PostsTable::class)->instance()->getTable())
+            ->icon(static fn (int $state) => ($state === 1) ? null : $icon)
+            ->color(static fn (int $state): string => ($state === 3) ? 'warning' : 'success');
+        $count = Count::make()
+            ->icons()
+            ->column($column)
+            ->query(Post::query()->orderBy('rating'));
+
+        expect($count->getState())->toBe([
+            '"success"' => [serialize(null) => 2, serialize($icon) => 3],
+            '"warning"' => [serialize($icon) => 4],
+        ]);
+
+        $document = new DOMDocument;
+        $document->loadHTML($count->toEmbeddedHtml(), LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new DOMXPath($document);
+        $items = $xpath->query('//li');
+
+        expect($items)->toHaveCount(2)
+            ->and(trim($items->item(0)->textContent))->toBe('3')
+            ->and(trim($items->item(1)->textContent))->toBe('4')
+            ->and($xpath->query('.//svg', $items->item(0)))->toHaveCount(1)
+            ->and($xpath->query('.//svg', $items->item(1)))->toHaveCount(1)
+            ->and($xpath->query('.//*[contains(@class, "fi-color-success")]', $items->item(0)))->toHaveCount(1)
+            ->and($xpath->query('.//*[contains(@class, "fi-color-warning")]', $items->item(1)))->toHaveCount(1);
+    })->with(['string', 'enum', 'svg']);
+
+    it('can render `icons()` when all entries are iconless', function (string | bool | null $icon): void {
+        Post::factory()->count(2)->create(['rating' => 1]);
+        Post::factory()->count(3)->create(['rating' => 2]);
+
+        $column = IconColumn::make('rating')
+            ->table(livewire(PostsTable::class)->instance()->getTable())
+            ->icon(static fn () => $icon);
+        $count = Count::make()
+            ->icons()
+            ->column($column)
+            ->query(Post::query());
+
+        expect($count->getState())->toBe(['null' => [serialize(null) => 5]]);
+
+        $document = new DOMDocument;
+        $document->loadHTML($count->toEmbeddedHtml());
+
+        expect($document->getElementsByTagName('li'))->toHaveCount(0)
+            ->and($document->getElementsByTagName('svg'))->toHaveCount(0)
+            ->and(trim($document->textContent))->toBe('');
+    })->with([null, false, '', ' ']);
 });
 
 describe('`Range` summarizer', function (): void {
