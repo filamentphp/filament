@@ -6,6 +6,7 @@ use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
 use Filament\Support\View\Concerns\CanGenerateIconButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateLinkHtml;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -109,6 +110,27 @@ it('preserves specialized dropdown item roles', function () use ($embeddedHtmlGe
         expect($html)->toContain('role="menuitemradio"');
     }
 });
+
+it('serializes dropdown image URLs as CSS strings before HTML escaping', function (mixed $image, string $expected): void {
+    $document = new DOMDocument;
+    @$document->loadHTML(Blade::render('<x-filament::dropdown.list.item :image="$image">Image</x-filament::dropdown.list.item>', compact('image')));
+
+    expect($document->getElementsByTagName('div')->item(0)->getAttribute('style'))
+        ->toBe("background-image: url('{$expected}')");
+})->with([
+    'ordinary URL' => ['/avatar.svg?name=Dan&size=32', '/avatar.svg?name=Dan&size=32'],
+    'CSS punctuation' => ["/avatar.svg?name=');position:fixed;/*", "/avatar.svg?name=\\');position:fixed;/*"],
+    'backslashes and line breaks' => ["/avatar.svg?name=\\a\r\n\fend", '/avatar.svg?name=\\\\a\\d \\a \\c end'],
+    'literal entities' => ['/avatar.svg?name=&#39;&size=%27', '/avatar.svg?name=&#39;&size=%27'],
+    'HTML-safe URL' => [new HtmlString('/avatar.svg?name=O&#39;Reilly&amp;size=32'), "/avatar.svg?name=O\\'Reilly&size=32"],
+    'Htmlable without string casting' => [new class implements Htmlable
+    {
+        public function toHtml(): string
+        {
+            return '/avatar.svg?name=O&apos;Reilly&amp;size=32';
+        }
+    }, "/avatar.svg?name=O\\'Reilly&size=32"],
+]);
 
 it('preserves custom loading classes on Blade buttons', function (): void {
     $htmlOutputs = [

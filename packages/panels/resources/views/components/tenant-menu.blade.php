@@ -148,6 +148,10 @@
                                 class="fi-dropdown-list-item"
                             >
                                 @if ($tenantImage)
+                                    @php
+                                        $tenantImage = str_replace(['\\', "'", "\r", "\n", "\f"], ['\\\\', "\\'", '\d ', '\a ', '\c '], $tenantImage);
+                                    @endphp
+
                                     <div
                                         class="fi-dropdown-list-item-image"
                                         style="
