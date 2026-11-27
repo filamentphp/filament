@@ -385,9 +385,27 @@ trait HasBulkActions
                 $this->filterTableQuery($query);
             }
 
-            return $this->cachedSelectedTableRecords = $shouldFetchSelectedRecords ?
-                $query->get() :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+            if (! $shouldFetchSelectedRecords) {
+                return $this->cachedSelectedTableRecords = $query->pluck($query->getModel()->getQualifiedKeyName());
+            }
+
+            $records = $query->get();
+            $relationship = $table->getRelationship();
+
+            if ($relationship instanceof BelongsToMany) {
+                foreach ($records as $record) {
+                    $pivotAccessor = $relationship->getPivotAccessor();
+                    $pivot = $record->relationLoaded($pivotAccessor) ? $record->getRelation($pivotAccessor) : $relationship->newPivot();
+                    $hiddenPivotAttributes = $pivot->getHidden();
+
+                    $record->makeHidden([
+                        ...$hiddenPivotAttributes,
+                        ...array_map(static fn (string $attribute): string => "pivot_{$attribute}", $hiddenPivotAttributes),
+                    ]);
+                }
+            }
+
+            return $this->cachedSelectedTableRecords = $records;
         }
 
         /** @var BelongsToMany $relationship */

@@ -5,16 +5,126 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Table;
+use Filament\Tests\Models\HiddenTeamUser;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Models\Team;
+use Filament\Tests\Models\User;
+use Filament\Tests\Tables\Fixtures\HiddenPivotTeamsTable;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
+use Spatie\Translatable\HasTranslations;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
+
+describe('hidden pivot state', function (): void {
+    it('does not automatically fill hidden pivot fields in record actions', function (string $action, bool $duplicates, bool $isTranslatable): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team, ['role' => 'editor', 'created_at' => '2001-02-03 04:05:06']);
+        $key = $duplicates ? $user->teams()->withPivot('id')->first()->pivot->id : $team->getKey();
+
+        livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'duplicates' => $duplicates, 'isTranslatable' => $isTranslatable])
+            ->mountTableAction($action, (string) $key)
+            ->assertTableActionDataSet(['created_at' => null, 'pivot_created_at' => null, 'user_id' => null, 'pivot_user_id' => null, 'role' => 'editor']);
+    })->with(['view', 'edit', 'replicate'])->with([false, true])->with([false, true]);
+
+    it('saves explicitly submitted hidden pivot fields and visible pivot fields', function (bool $isTranslatable): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team, ['role' => 'editor', 'created_at' => '2001-02-03 04:05:06']);
+
+        livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'isTranslatable' => $isTranslatable])
+            ->callTableAction('edit', $team, ['created_at' => '2002-03-04 05:06:07', 'role' => 'manager'])
+            ->assertHasNoTableActionErrors();
+
+        $pivot = $user->teams()->withTimestamps()->withPivot('role')->first()->pivot;
+        expect($pivot->created_at->format('Y-m-d H:i:s'))->toBe('2002-03-04 05:06:07')
+            ->and($pivot->role)->toBe('manager');
+    })->with([false, true]);
+
+    it('does not write a pivot when submitted state has no pivot keys', function (): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team, ['role' => 'editor', 'created_at' => '2001-02-03 04:05:06']);
+        $saves = 0;
+        HiddenTeamUser::saving(static function () use (&$saves): void {
+            $saves++;
+        });
+
+        livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'hasPivotFields' => false])
+            ->callTableAction('edit', $team, ['name' => 'Renamed'])
+            ->assertHasNoTableActionErrors();
+
+        expect($saves)->toBe(0)
+            ->and($team->fresh()->name)->toBe('Renamed')
+            ->and($user->teams()->withTimestamps()->first()->pivot->created_at->format('Y-m-d H:i:s'))->toBe('2001-02-03 04:05:06');
+    });
+
+    it('does not write an absent hidden pivot field while saving visible pivot fields', function (): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team, ['role' => 'editor', 'created_at' => '2001-02-03 04:05:06']);
+
+        livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'hasHiddenPivotField' => false])
+            ->callTableAction('edit', $team, ['role' => 'manager'])
+            ->assertHasNoTableActionErrors();
+
+        $pivot = $user->teams()->withTimestamps()->withPivot('role')->first()->pivot;
+        expect($pivot->created_at->format('Y-m-d H:i:s'))->toBe('2001-02-03 04:05:06')
+            ->and($pivot->role)->toBe('manager');
+    });
+
+    it('does not reintroduce translated hidden pivot attributes when filling an action', function (): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team, ['role' => '{"en":"Secret translation"}']);
+        $pivot = new class extends HiddenTeamUser
+        {
+            use HasTranslations;
+
+            public $translatable = ['role'];
+
+            protected $hidden = ['role', 'created_at', 'user_id'];
+        };
+
+        Table::configureUsing(
+            static fn (Table $table) => $table->relationship(static fn () => $user->teams()->using($pivot::class)->withPivot(['id', 'role'])->withTimestamps()),
+            during: static fn () => livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'isTranslatable' => true])
+                ->mountTableAction('edit', $team)
+                ->assertTableActionDataSet(['role' => null, 'created_at' => null]),
+        );
+    });
+
+    it('does not automatically fill hidden pivot attributes in infolists', function (bool $duplicates): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team, ['role' => 'editor', 'created_at' => '2001-02-03 04:05:06']);
+        $key = $duplicates ? $user->teams()->withPivot('id')->first()->pivot->id : $team->getKey();
+        $component = livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'duplicates' => $duplicates])->mountTableAction('info', (string) $key);
+        $entries = $component->instance()->getMountedTableAction()->getInfolist()->getComponents();
+
+        expect($entries[0]->getState())->toBeNull()
+            ->and($entries[1]->getState())->toBeNull()
+            ->and($entries[2]->getState())->toBeNull()
+            ->and($entries[3]->getState())->toBe('editor');
+    })->with([false, true]);
+
+    it('does not automatically fill hidden pivot attributes in bulk actions', function (bool $duplicates): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team, ['role' => 'editor']);
+        $key = $duplicates ? $user->teams()->withPivot('id')->first()->pivot->id : $team->getKey();
+
+        livewire(HiddenPivotTeamsTable::class, ['userKey' => $user->getKey(), 'duplicates' => $duplicates])
+            ->mountTableBulkAction('inspect', [(string) $key])
+            ->assertTableBulkActionDataSet(['created_at' => null, 'pivot_created_at' => null, 'user_id' => null, 'pivot_user_id' => null, 'role' => 'editor']);
+    })->with([false, true]);
+});
 
 describe('table action registration context', function (): void {
     it('does not mount non-record actions with a supplied record', function (string $name): void {

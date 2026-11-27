@@ -80,6 +80,19 @@ trait HasRecords
             invade($relationship)->hydratePivotRelation($records->all());
         }
 
+        if ($relationship instanceof BelongsToMany) {
+            foreach ($records as $record) {
+                $pivotAccessor = $relationship->getPivotAccessor();
+                $pivot = $record->relationLoaded($pivotAccessor) ? $record->getRelation($pivotAccessor) : $relationship->newPivot();
+                $hiddenPivotAttributes = $pivot->getHidden();
+
+                $record->makeHidden([
+                    ...$hiddenPivotAttributes,
+                    ...array_map(static fn (string $attribute): string => "pivot_{$attribute}", $hiddenPivotAttributes),
+                ]);
+            }
+        }
+
         return $records;
     }
 
@@ -137,7 +150,19 @@ trait HasRecords
 
         $record = $table->selectPivotDataInQuery($query)->first();
 
-        return $record?->setRawAttributes($record->getRawOriginal());
+        if (! $record) {
+            return null;
+        }
+
+        $record->setRawAttributes($record->getRawOriginal());
+        $pivotAccessor = $relationship->getPivotAccessor();
+        $pivot = $record->relationLoaded($pivotAccessor) ? $record->getRelation($pivotAccessor) : $relationship->newPivot();
+        $hiddenPivotAttributes = $pivot->getHidden();
+
+        return $record->makeHidden([
+            ...$hiddenPivotAttributes,
+            ...array_map(static fn (string $attribute): string => "pivot_{$attribute}", $hiddenPivotAttributes),
+        ]);
     }
 
     public function getTableRecord(?string $key): ?Model

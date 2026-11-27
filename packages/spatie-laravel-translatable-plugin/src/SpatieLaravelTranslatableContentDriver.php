@@ -102,6 +102,10 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         }
 
         foreach ($record->getTranslatableAttributes() as $attribute) {
+            if (in_array($attribute, $record->getHidden(), true)) {
+                continue;
+            }
+
             $attributes[$attribute] = $record->getTranslation($attribute, $this->activeLocale, useFallbackLocale: false);
         }
 

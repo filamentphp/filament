@@ -7,7 +7,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Models\Team;
 use Filament\Tests\Models\User;
+use Filament\Tests\Models\UserWithHiddenTeamPivot;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -267,6 +269,37 @@ it('preserves safe string relationship identities and rejects unsafe identities 
     'dot' => ['part.one', false],
     'quote' => ['part"one', false],
 ]);
+
+it('does not fill hidden pivot copies or collisions in many-to-many repeater state', function (bool $isLoaded): void {
+    $user = User::factory()->create();
+    $team = Team::factory()->create();
+    $user->teams()->attach($team, ['role' => 'editor']);
+    $record = UserWithHiddenTeamPivot::findOrFail($user->getKey());
+
+    if ($isLoaded) {
+        $record->setRelation('teams', $record->teams()->getQuery()->select([
+            'team_user.*', 'teams.*', 'team_user.created_at as pivot_created_at', 'team_user.user_id as pivot_user_id',
+        ])->get());
+    }
+
+    $form = Form::make(Livewire::make())->statePath('data')->model($record)->schema([
+        $repeater = Repeater::make('teams')->relationship()->schema([
+            TextInput::make('created_at'),
+            TextInput::make('pivot_created_at'),
+            TextInput::make('user_id'),
+            TextInput::make('pivot_user_id'),
+            TextInput::make('role'),
+        ]),
+    ]);
+
+    $form->loadStateFromRelationships();
+    $form->fillStateWithNull();
+    $state = array_values($repeater->getState())[0];
+
+    expect(Arr::only($state, ['created_at', 'pivot_created_at', 'user_id', 'pivot_user_id', 'role']))
+        ->toEqual(['created_at' => null, 'pivot_created_at' => null, 'user_id' => null, 'pivot_user_id' => null, 'role' => 'editor'])
+        ->and($repeater->getCachedExistingRecords()->first()->created_at)->not->toBeNull();
+})->with([false, true]);
 
 class RepeaterUserWithStringKeyPosts extends User
 {
