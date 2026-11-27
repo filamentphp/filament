@@ -917,7 +917,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             $items[$itemKey] = $this
                 ->getChildSchema()
                 ->statePath($itemKey)
-                ->constantState(((! ($relationship && $records->has($itemKey))) && is_array($itemData)) ? $itemData : null)
+                ->constantState(($relationship && $records->has($itemKey)) ? null : (is_array($itemData) ? $itemData : []))
                 ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
                 ->inlineLabel(false)
                 ->getClone();

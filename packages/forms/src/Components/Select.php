@@ -877,7 +877,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-            $relationshipQuery->where($component->getQualifiedRelatedKeyNameForRelationship($relationship), $state);
+            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+            $relationshipQuery->where($qualifiedRelatedKeyName, $state);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -886,7 +888,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ]) ?? $relationshipQuery;
             }
 
-            return $relationshipQuery->first();
+            $record = $relationshipQuery->first();
+
+            if ((! $record) || ((string) $record->getAttribute(Str::afterLast($qualifiedRelatedKeyName, '.')) !== (string) $state)) {
+                return null;
+            }
+
+            return $record;
         });
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {

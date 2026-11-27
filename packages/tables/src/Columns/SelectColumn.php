@@ -757,7 +757,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             $relatedRecord = $relationshipQuery->first();
         }
 
-        if (! $relatedRecord) {
+        if ((! $relatedRecord) || ((string) $relatedRecord->getAttribute($this->getRelatedKeyNameForOptionsRelationship($relationship)) !== (string) $state)) {
             return null;
         }
 

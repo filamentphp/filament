@@ -2,7 +2,10 @@
 
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\ContentGenerators\CsvExportContentGenerator;
+use Filament\Actions\Exports\ContentGenerators\XlsxExportContentGenerator;
 use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Jobs\CompleteExport;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
@@ -21,7 +24,10 @@ use Illuminate\Bus\ChainedBatch;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Reader as CsvReader;
+use OpenSpout\Common\Entity\Cell\FormulaCell;
 use OpenSpout\Reader\XLSX\Reader;
+use OpenSpout\Writer\XLSX\Writer;
 
 use function Filament\Tests\livewire;
 
@@ -93,6 +99,85 @@ it('submits a real form and completes a synchronous export using the configured 
     'CSV' => [[ExportFormat::Csv]],
     'XLSX' => [[ExportFormat::Xlsx]],
     'both' => [[ExportFormat::Csv, ExportFormat::Xlsx]],
+]);
+
+it('protects developer and user-renamed export headers in CSV and both XLSX paths', function (bool $hasColumnMapping): void {
+    ExportActions::$formats = [ExportFormat::Csv, ExportFormat::Xlsx];
+    ExportAction::configureUsing(static fn (ExportAction $action) => $action->columnMapping($hasColumnMapping));
+    ExportColumn::configureUsing(static fn (ExportColumn $column) => $column
+        ->label($column->getName() === 'title' ? '=Developer' : 'Rating')
+        ->preventFormulaInjection());
+    Post::factory()->create(['title' => '=2+3', 'rating' => 3]);
+
+    livewire(ExportActions::class)
+        ->callAction('export', data: $hasColumnMapping ? [
+            'columnMap' => ['title' => ['isEnabled' => true, 'label' => '=Renamed']],
+        ] : [])
+        ->assertHasNoErrors();
+
+    $export = Export::query()->sole();
+    $disk = $export->getFileDisk();
+    $directory = $export->getFileDirectory();
+    $expectedRows = $hasColumnMapping
+        ? [["'=Renamed"], ["'=2+3"]]
+        : [["'=Developer", 'Rating'], ["'=2+3", '3']];
+
+    $csv = implode('', iterator_to_array(app(CsvExportContentGenerator::class)($export)));
+    expect(array_values(iterator_to_array(CsvReader::fromString($csv)->getRecords())))->toBe($expectedRows);
+
+    $onDemandPath = $disk->path($directory . '/on-demand.xlsx');
+    $writer = app(Writer::class);
+    $writer->openToFile($onDemandPath);
+    app(XlsxExportContentGenerator::class)($export, $writer);
+    $writer->close();
+
+    foreach ([$disk->path($directory . '/selected-posts.xlsx'), $onDemandPath] as $path) {
+        $reader = app(Reader::class);
+        $reader->open($path);
+        $rows = [];
+
+        try {
+            foreach ($reader->getSheetIterator() as $sheet) {
+                foreach ($sheet->getRowIterator() as $row) {
+                    foreach ($row->getCells() as $cell) {
+                        expect($cell)->not->toBeInstanceOf(FormulaCell::class);
+                    }
+                    $rows[] = $row->toArray();
+                }
+            }
+        } finally {
+            $reader->close();
+        }
+
+        expect($rows)->toBe($expectedRows);
+    }
+})->with([true, false]);
+
+it('writes each header using its own opt-out or options-dependent policy', function (int $minimum, string $expectedTitle): void {
+    ExportColumn::configureUsing(static fn (ExportColumn $column) => $column->preventFormulaInjection(
+        $column->getName() === 'title' ? static fn (array $options): bool => $options['minimum'] < 5 : false,
+    ));
+    Post::factory()->create(['title' => '=2+3', 'rating' => 7]);
+
+    livewire(ExportActions::class)
+        ->callAction('export', data: [
+            'minimum' => $minimum,
+            'columnMap' => [
+                'title' => ['isEnabled' => true, 'label' => '=Title'],
+                'rating' => ['isEnabled' => true, 'label' => '=Opted out'],
+            ],
+        ])
+        ->assertHasNoErrors();
+
+    $csv = implode('', iterator_to_array(app(CsvExportContentGenerator::class)(Export::query()->sole())));
+
+    expect(array_values(iterator_to_array(CsvReader::fromString($csv)->getRecords())))->toBe([
+        [$expectedTitle, '=Opted out'],
+        [$minimum < 5 ? "'=2+3" : '=2+3', '7'],
+    ]);
+})->with([
+    'options enable protection' => [2, "'=Title"],
+    'options disable protection' => [6, '=Title'],
 ]);
 
 it('preserves job construction and serialized chain ordering and configuration', function (array $formats, array $expectedChain): void {

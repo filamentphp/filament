@@ -64,6 +64,7 @@ class CreateXlsxFile implements ShouldQueue
 
         $writeRowsFromFile = function (string $file, ?Style $style, ?Closure $makeRow) use ($csvDelimiter, $disk, $writer): void {
             $csvReader = CsvReader::from($disk->readStream($file));
+            $csvReader->setEscape('');
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = (new Statement)->process($csvReader);
 

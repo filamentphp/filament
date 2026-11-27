@@ -4,7 +4,9 @@ use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
+use Illuminate\Database\Eloquent\Model;
 
 uses(TestCase::class);
 
@@ -97,6 +99,25 @@ describe('`getOptionsFormComponents()`', function (): void {
         expect(TestPostExporter::getOptionsFormComponents())->toBe([]);
     });
 });
+
+it('evaluates header conditions with a null record and value conditions with the current record', function (bool $shouldProtectHeader): void {
+    $post = Post::factory()->make(['title' => '=2+3', 'is_published' => ! $shouldProtectHeader]);
+    $exporter = new TestPostExporter(app(Export::class), ['title' => '=Title'], []);
+    $column = $exporter->getCachedColumns()['title']->preventFormulaInjection(
+        static function (?Model $record) use ($post, $shouldProtectHeader): bool {
+            if ($record === null) {
+                return $shouldProtectHeader;
+            }
+
+            expect($record)->toBe($post);
+
+            return $record->is_published;
+        },
+    );
+
+    expect($column->formatLabel('=Title'))->toBe($shouldProtectHeader ? "'=Title" : '=Title')
+        ->and($exporter($post))->toBe([$shouldProtectHeader ? '=2+3' : "'=2+3"]);
+})->with([true, false]);
 
 describe('`getOptions()`', function (): void {
     it('returns the options passed to constructor', function (): void {

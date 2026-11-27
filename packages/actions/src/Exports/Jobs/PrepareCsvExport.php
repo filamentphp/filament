@@ -61,9 +61,18 @@ class PrepareCsvExport implements ShouldQueue
         }
 
         $csv = Writer::fromString();
+        $csv->setEscape('');
         $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
-        $csv->insertOne(array_values($this->columnMap));
+
+        $columns = $this->exporter->getCachedColumns();
+        $headers = [];
+
+        foreach ($this->columnMap as $name => $label) {
+            $headers[] = $columns[$name]->formatLabel($label);
+        }
+
+        $csv->insertOne($headers);
 
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv';
 

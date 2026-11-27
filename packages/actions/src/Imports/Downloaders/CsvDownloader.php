@@ -13,6 +13,7 @@ class CsvDownloader implements Downloader
     public function __invoke(Import $import): StreamedResponse
     {
         $csv = Writer::fromString();
+        $csv->setEscape('');
 
         app(CsvImportFailureContentGenerator::class)($import, $csv);
 
