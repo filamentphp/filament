@@ -5,6 +5,7 @@ use Filament\Support\Colors\ColorManager;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\ButtonComponent;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Str;
 
 uses(TestCase::class);
 
@@ -209,6 +210,56 @@ describe('`getComponentCustomStyles()`', function (): void {
         $second = $this->manager->getComponentCustomStyles(BadgeComponent::class, $palette);
 
         expect($second)->toBe($first);
+    });
+
+    it('keeps palette declarations unchanged across HTML and JSON boundaries', function (string $color): void {
+        expect(Str::sanitizeCssColor($color))->toBe($color);
+
+        $styles = $this->manager->getComponentCustomStyles(BadgeComponent::class, [500 => $color] + Color::Blue);
+        $style = implode('; ', $styles);
+        $document = new DOMDocument;
+        $document->loadHTML('<div style="' . $style . '"></div>', LIBXML_NOERROR | LIBXML_NOWARNING);
+
+        expect($document->getElementsByTagName('div')->item(0)->getAttribute('style'))->toBe($style)
+            ->and(json_decode(json_encode($styles, JSON_THROW_ON_ERROR), true, flags: JSON_THROW_ON_ERROR))->toBe($styles)
+            ->and($styles)->toContain('--color-50: ' . Color::Blue[50]);
+    })->with([
+        'decimal entities without semicolons' => 'rgb(0&#41&#59position&#58fixed&#59--tail&#58rgb&#40 0)',
+        'hex entities without semicolons' => 'rgb(0&#x29&#x3bposition&#x3a fixed&#x3b--tail&#x3a rgb&#x28 0)',
+        'attribute delimiter' => 'rgb(0&#34 data-palette=changed &#34)',
+        'comment opener' => 'rgb(0&#41&#59&#47&#42)',
+    ]);
+
+    it('preserves compatible custom palette values and variable mappings', function (): void {
+        $palette = [
+            50 => 'white',
+            100 => '#abc',
+            200 => '#abcdef80',
+            300 => 'rgb(12, 34, 56)',
+            400 => 'hsl(120 50% 40% / 75%)',
+            500 => 'oklch(0.62 0.2 250)',
+            600 => 'color(display-p3 0.1 0.2 0.3)',
+        ];
+
+        app()->instance(BadgeComponent::class, new class extends BadgeComponent
+        {
+            public function getColorMap(array $color): array
+            {
+                return ['text' => 300, 'dark:text' => 500];
+            }
+        });
+
+        $styles = $this->manager->getComponentCustomStyles(BadgeComponent::class, $palette);
+
+        expect(array_slice($styles, 0, count($palette)))->toBe([
+            '--color-50: white',
+            '--color-100: #abc',
+            '--color-200: #abcdef80',
+            '--color-300: rgb(12, 34, 56)',
+            '--color-400: hsl(120 50% 40% / 75%)',
+            '--color-500: oklch(0.62 0.2 250)',
+            '--color-600: color(display-p3 0.1 0.2 0.3)',
+        ])->and($styles)->toContain('--text: var(--color-300)', '--dark-text: var(--color-500)');
     });
 
     it('differentiates stateful components by instance state', function () use ($palette): void {
