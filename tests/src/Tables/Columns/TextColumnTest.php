@@ -3,6 +3,7 @@
 namespace Filament\Tests\Tables\Columns;
 
 use BackedEnum;
+use DOMDocument;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -432,6 +433,26 @@ describe('rendering', function (): void {
             ->assertSeeHtml('fi-color')
             ->assertSeeHtml('--color-');
     });
+
+    it('keeps entity-like palette shades inside optimized `color()` declarations', function (bool $isBadge): void {
+        $post = Post::factory()->create(['title' => 'Palette']);
+        $column = livewire(RenderTextColumnWithArrayColor::class)->instance()->getTable()->getColumn('title');
+
+        $html = $column
+            ->record($post)
+            ->badge($isBadge)
+            ->color([500 => 'rgb(0&#41&#59position&#58fixed&#59--tail&#58rgb&#40 0)'] + Color::Blue)
+            ->toEmbeddedHtml();
+
+        $document = new DOMDocument;
+        $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+        $element = $document->getElementsByTagName($isBadge ? 'span' : 'div')->item(0);
+        $style = $element->getAttribute('style');
+
+        expect($style)->toContain('--color-500: rgb(', '--color-50: ' . Color::Blue[50])
+            ->not->toContain(';position:fixed', '--tail:')
+            ->and($element->textContent)->toBe('Palette');
+    })->with([false, true]);
 
     it('renders a `description()` below the state', function (): void {
         Post::factory()->create();

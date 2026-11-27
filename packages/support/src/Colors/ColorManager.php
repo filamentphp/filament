@@ -177,8 +177,9 @@ class ColorManager
         $map = $component->getColorMap($color);
 
         return $this->componentCustomStyles[$componentKey][$colorKey] = [
+            // CSS-escape ampersands to prevent HTML entity decoding without HTML-encoding styles used by JavaScript.
             ...array_map(
-                fn (string $color, string $shade): string => '--color-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $shade) . ': ' . (Str::sanitizeCssColor($color) ?? ''),
+                fn (string $color, string $shade): string => '--color-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $shade) . ': ' . str_replace('&', '\\26 ', Str::sanitizeCssColor($color) ?? ''),
                 array_values($color),
                 array_keys($color),
             ),
