@@ -7,6 +7,8 @@
     }
 
     &.fi-disabled {
+        @apply min-h-9;
+
         & .fi-badge-delete-btn {
             @apply hidden;
         }
