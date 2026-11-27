@@ -1,6 +1,8 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Livewire\Notifications as PanelNotifications;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
@@ -11,6 +13,7 @@ use Filament\Tests\Fixtures\Notifications\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 use PHPUnit\Framework\AssertionFailedError;
 
 use function Filament\Tests\livewire;
@@ -85,6 +88,377 @@ describe('delivery', function (): void {
         expect($component->get('notifications')->first()->toArray())->toBe($notification->toArray());
 
         livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
+    });
+
+    it('can pull notifications through the inherited panel component', function (): void {
+        $mailbox = Mockery::mock(NotificationMailbox::class);
+        $mailbox->shouldReceive('pull')->once()->with([])->andReturn([]);
+        $mailbox->shouldReceive('initializeScope')->andReturnNull();
+        $mailbox->shouldReceive('hasPendingNotifications')->andReturnFalse();
+        $mailbox->shouldReceive('hasPublishedNotifications')->andReturnFalse();
+        app()->instance(NotificationMailbox::class, $mailbox);
+
+        livewire(PanelNotifications::class)
+            ->call('pullNotifications', [])
+            ->assertHasNoErrors();
+    });
+
+    it('rejects oversized batch lists before validation', function (string $method): void {
+        $component = livewire(Notifications::class);
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [[
+                    'method' => $method,
+                    'params' => [array_fill(0, 51, str_repeat('a', 40))],
+                ]],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertStatus(419);
+    })->with(['pullNotifications', 'pullNotificationsFromSession']);
+
+    it('rejects non-string batch identifiers before validation', function (string $method): void {
+        $component = livewire(Notifications::class);
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [[
+                    'method' => $method,
+                    'params' => [[str_repeat('a', 40), []]],
+                ]],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertStatus(419);
+    })->with(['pullNotifications', 'pullNotificationsFromSession']);
+
+    it('bounds repeated notification pulls across one request', function (string $method): void {
+        $component = livewire(Notifications::class);
+        $mailbox = Mockery::mock(NotificationMailbox::class);
+        $mailbox->shouldReceive('pull')->times(50)->andReturn([]);
+        $mailbox->shouldReceive('initializeScope')->andReturnNull();
+        $mailbox->shouldReceive('hasPendingNotifications')->andReturnFalse();
+        $mailbox->shouldReceive('hasPublishedNotifications')->andReturnFalse();
+        app()->instance(NotificationMailbox::class, $mailbox);
+
+        $calls = array_map(
+            static fn (int $index): array => [
+                'method' => $method,
+                'params' => [[str_pad(dechex($index), 40, '0', STR_PAD_LEFT)]],
+            ],
+            range(1, 51),
+        );
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => $calls,
+            ]],
+        ], ['X-Livewire' => 'true'])->assertStatus(419);
+    })->with(['pullNotifications', 'pullNotificationsFromSession']);
+
+    it('shares the notification pull allowance across components in one request', function (string $method): void {
+        $firstComponent = livewire(Notifications::class);
+        $secondComponent = livewire(Notifications::class);
+        $mailbox = Mockery::mock(NotificationMailbox::class);
+        $mailbox->shouldReceive('pull')->once()->andReturn([]);
+        $mailbox->shouldReceive('initializeScope')->andReturnNull();
+        $mailbox->shouldReceive('hasPendingNotifications')->andReturnFalse();
+        $mailbox->shouldReceive('hasPublishedNotifications')->andReturnFalse();
+        app()->instance(NotificationMailbox::class, $mailbox);
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [
+                [
+                    'snapshot' => json_encode($firstComponent->snapshot),
+                    'updates' => [],
+                    'calls' => [[
+                        'method' => $method,
+                        'params' => [array_fill(0, 25, str_repeat('a', 40))],
+                    ]],
+                ],
+                [
+                    'snapshot' => json_encode($secondComponent->snapshot),
+                    'updates' => [],
+                    'calls' => [[
+                        'method' => $method,
+                        'params' => [array_fill(0, 26, str_repeat('b', 40))],
+                    ]],
+                ],
+            ],
+        ], ['X-Livewire' => 'true'])->assertStatus(419);
+    })->with(['pullNotifications', 'pullNotificationsFromSession']);
+
+    it('counts empty notification pulls against the request allowance', function (string $method): void {
+        $component = livewire(Notifications::class);
+        $mailbox = Mockery::mock(NotificationMailbox::class);
+        $mailbox->shouldReceive('pull')->times(50)->andReturn([]);
+        $mailbox->shouldReceive('initializeScope')->andReturnNull();
+        $mailbox->shouldReceive('hasPendingNotifications')->andReturnFalse();
+        $mailbox->shouldReceive('hasPublishedNotifications')->andReturnFalse();
+        app()->instance(NotificationMailbox::class, $mailbox);
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => array_fill(0, 51, [
+                    'method' => $method,
+                    'params' => [[]],
+                ]),
+            ]],
+        ], ['X-Livewire' => 'true'])->assertStatus(419);
+    })->with(['pullNotifications', 'pullNotificationsFromSession']);
+
+    it('accepts the maximum notification pull allowance', function (string $method): void {
+        $component = livewire(Notifications::class);
+        $mailbox = Mockery::mock(NotificationMailbox::class);
+        $mailbox->shouldReceive('pull')->once()->andReturn([]);
+        $mailbox->shouldReceive('initializeScope')->andReturnNull();
+        $mailbox->shouldReceive('hasPendingNotifications')->andReturnFalse();
+        $mailbox->shouldReceive('hasPublishedNotifications')->andReturnFalse();
+        app()->instance(NotificationMailbox::class, $mailbox);
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [[
+                    'method' => $method,
+                    'params' => [array_map(
+                        static fn (int $index): string => str_pad(dechex($index), 40, '0', STR_PAD_LEFT),
+                        range(1, 50),
+                    )],
+                ]],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk();
+    })->with(['pullNotifications', 'pullNotificationsFromSession']);
+
+    it('bounds notification restoration across mixed calls in one request', function (): void {
+        $component = livewire(Notifications::class);
+        $largePayload = Notification::make('large')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("action-{$index}"),
+                range(1, 49),
+            ))
+            ->toArray();
+        $broadcastPayload = [
+            ...$largePayload,
+            'id' => 'broadcast',
+            'format' => 'filament',
+        ];
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [
+                    ['method' => 'pushNotificationFromEvent', 'params' => [$largePayload]],
+                    ['method' => 'handleBroadcastNotification', 'params' => [$broadcastPayload]],
+                    ['method' => 'pushNotificationFromEvent', 'params' => [Notification::make('over-limit')->toArray()]],
+                ],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertStatus(419);
+    });
+
+    it('renders notification restoration at the aggregate request limit', function (): void {
+        $component = livewire(Notifications::class);
+        $firstPayload = Notification::make('first')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("first-action-{$index}"),
+                range(1, 49),
+            ))
+            ->toArray();
+        $secondPayload = Notification::make('second')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("second-action-{$index}"),
+                range(1, 49),
+            ))
+            ->toArray();
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [
+                    ['method' => 'pushNotificationFromEvent', 'params' => [$firstPayload]],
+                    ['method' => 'pushNotificationFromEvent', 'params' => [$secondPayload]],
+                ],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk();
+    });
+
+    it('shares the notification restoration allowance across components in one request', function (): void {
+        $firstComponent = livewire(Notifications::class);
+        $secondComponent = livewire(Notifications::class);
+        $payload = Notification::make('shared-budget')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("action-{$index}"),
+                range(1, 59),
+            ))
+            ->toArray();
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => array_map(
+                static fn ($component): array => [
+                    'snapshot' => json_encode($component->snapshot),
+                    'updates' => [],
+                    'calls' => [[
+                        'method' => 'pushNotificationFromEvent',
+                        'params' => [$payload],
+                    ]],
+                ],
+                [$firstComponent, $secondComponent],
+            ),
+        ], ['X-Livewire' => 'true'])->assertStatus(419);
+    });
+
+    it('resets the notification restoration allowance between requests', function (): void {
+        $payload = Notification::make('request-limit')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("action-{$index}"),
+                range(1, 99),
+            ))
+            ->toArray();
+
+        for ($requestNumber = 1; $requestNumber <= 2; $requestNumber++) {
+            $component = livewire(Notifications::class);
+
+            $this->postJson(Livewire::getUpdateUri(), [
+                'components' => [[
+                    'snapshot' => json_encode($component->snapshot),
+                    'updates' => [],
+                    'calls' => [[
+                        'method' => 'pushNotificationFromEvent',
+                        'params' => [$payload],
+                    ]],
+                ]],
+            ], ['X-Livewire' => 'true'])->assertOk();
+        }
+    });
+
+    it('does not spend the restoration allowance on ignored broadcasts', function (): void {
+        $component = livewire(Notifications::class);
+        $ignoredPayload = Notification::make('ignored')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("ignored-action-{$index}"),
+                range(1, 100),
+            ))
+            ->toArray();
+        $acceptedPayload = Notification::make('accepted')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("accepted-action-{$index}"),
+                range(1, 99),
+            ))
+            ->toArray();
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [
+                    ['method' => 'handleBroadcastNotification', 'params' => [$ignoredPayload]],
+                    ['method' => 'pushNotificationFromEvent', 'params' => [$acceptedPayload]],
+                ],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk();
+    });
+
+    it('keeps trusted delivery within the next signed snapshot hydration limit', function (): void {
+        $component = livewire(Notifications::class);
+        $untrustedPayload = Notification::make('untrusted')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("action-{$index}"),
+                range(1, 99),
+            ))
+            ->toArray();
+
+        Notification::make('trusted')->title('Trusted notification')->send();
+        app(NotificationMailbox::class)->flush();
+
+        $response = $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [
+                    ['method' => 'pushNotificationFromEvent', 'params' => [$untrustedPayload]],
+                    ['method' => 'pullNotifications', 'params' => [[]]],
+                ],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk();
+
+        $snapshot = json_decode($response->json('components.0.snapshot'), associative: true, flags: JSON_THROW_ON_ERROR);
+        $notifications = $snapshot['data']['notifications'][0];
+
+        expect(array_keys($notifications))->toBe(['trusted']);
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($snapshot),
+                'updates' => [],
+                'calls' => [],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk();
+    });
+
+    it('discards individually oversized trusted notifications without invalidating the signed snapshot', function (): void {
+        Notification::make('too-many-actions')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("action-{$index}"),
+                range(1, 100),
+            ))
+            ->send();
+
+        $nestedActions = [Action::make('nested-leaf')];
+
+        foreach (range(1, 11) as $depth) {
+            $nestedActions = [ActionGroup::make($nestedActions)];
+        }
+
+        Notification::make('too-deep')
+            ->actions($nestedActions)
+            ->send();
+
+        Notification::make('valid')->send();
+        app(NotificationMailbox::class)->flush();
+
+        $component = livewire(Notifications::class);
+        $response = $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot),
+                'updates' => [],
+                'calls' => [[
+                    'method' => 'pullNotifications',
+                    'params' => [[]],
+                ]],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk();
+
+        $snapshot = json_decode($response->json('components.0.snapshot'), associative: true, flags: JSON_THROW_ON_ERROR);
+        $notifications = $snapshot['data']['notifications'][0];
+
+        expect(array_keys($notifications))->toBe(['valid']);
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($snapshot),
+                'updates' => [],
+                'calls' => [],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk();
+    });
+
+    it('keeps shared `Notification::fromArray()` deserialization unrestricted', function (): void {
+        $payload = Notification::make('trusted-deserialization')
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("action-{$index}"),
+                range(1, 100),
+            ))
+            ->toArray();
+
+        expect(Notification::fromArray($payload)->getActions())->toHaveCount(100);
     });
 
     it('can close notifications', function (): void {
