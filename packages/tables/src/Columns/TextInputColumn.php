@@ -25,7 +25,9 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     // Security: Authorization is opt-in. Use `authorize()` to restrict editing.
 
     use Concerns\CanBeAuthorized;
-    use Concerns\CanBeValidated;
+    use Concerns\CanBeValidated {
+        getRules as private getBaseRules;
+    }
     use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
     use HasInputMode;
@@ -62,6 +64,19 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         parent::setUp();
 
         $this->disabledClick();
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getRules(): array
+    {
+        // Inspect submitted state before display defaults can replace empty arrays.
+        if (is_array($this->getStateUsingCallback())) {
+            return ['string'];
+        }
+
+        return $this->getBaseRules();
     }
 
     public function type(string | Closure | null $type): static
