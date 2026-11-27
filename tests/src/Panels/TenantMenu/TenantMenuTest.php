@@ -6,13 +6,16 @@ use Filament\Livewire\Sidebar;
 use Filament\Livewire\Topbar;
 use Filament\Models\Contracts\HasName;
 use Filament\Pages\Dashboard;
+use Filament\Support\Facades\FilamentView;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 
 use function Filament\Tests\livewire;
@@ -110,6 +113,37 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
         ->assertSeeIn('[role="tooltip"]', '<b>Archives</b>')
         ->assertMissing('[role="tooltip"] b');
 });
+
+it('keeps tenant avatar URLs inside one CSS URL in open tenant menus', function (bool $isSearchable): void {
+    Artisan::call('filament:assets');
+    $this->withoutMiddleware(Authenticate::class);
+    Filament::setCurrentPanel('tenant-menu-flat');
+    Filament::getCurrentPanel()->searchableTenantMenu($isSearchable);
+
+    // Block external requests, but allow the browser to parse inline styles normally.
+    FilamentView::registerRenderHook(PanelsRenderHook::HEAD_START, static fn (): string => '<meta http-equiv="Content-Security-Policy" content="default-src \'self\' data: \'unsafe-inline\' \'unsafe-eval\'">');
+    Route::get('/tenant-avatar.svg', static fn () => response('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><rect width="16" height="16" fill="green"/></svg>', 200, ['Content-Type' => 'image/svg+xml']));
+
+    $tenant = Team::factory()->create(['name' => 'Current team']);
+    $switchableTenant = Team::factory()->create(['name' => 'Switchable team']);
+    $image = "/tenant-avatar.svg?name=');position:fixed;inset:0;z-index:2147483647;/*";
+    Team::retrieved(static fn (Team $team) => $team->setAttribute('avatar_url', $team->is($tenant) ? '/tenant-avatar.svg?name=current' : $image));
+
+    $page = visit(Dashboard::getUrl(panel: 'tenant-menu-flat', tenant: $tenant));
+    $trigger = 'button:has(img[alt*="Current team"])';
+    $page->click($trigger);
+    $link = 'a[href="' . Filament::getUrl($switchableTenant) . '"]';
+
+    $page->assertVisible($link)
+        ->assertScript('getComputedStyle(document.querySelector(' . json_encode($link . ' > div') . ')).position', 'static')
+        ->assertScript('document.querySelector(' . json_encode($link . ' > div') . ').style.length', 1)
+        ->assertScript('performance.getEntriesByType("resource").some(entry => entry.initiatorType === "css" && entry.name === new URL(' . json_encode($image) . ', location.href).href)', true)
+        ->assertNoAccessibilityIssues();
+    $page->inDarkMode()
+        ->click($trigger)
+        ->assertVisible($link)
+        ->assertNoAccessibilityIssues();
+})->with(['ordinary' => false, 'searchable' => true]);
 
 describe('grouped tenant menu items', function (): void {
     beforeEach(function (): void {
