@@ -33,13 +33,54 @@ class RichEditorDocumentNormalizer
         }
 
         // PHP checks encoding depth after descent, so bound containers before encoding too.
-        if (! $this->isWithinDepth($content) || (json_encode($content, depth: self::MAX_DEPTH) === false)) {
+        if (! $this->isWithinDepth($content)) {
+            return ['type' => 'doc', 'content' => []];
+        }
+
+        $content = $this->normalizeCustomBlockConfiguration($content);
+
+        if (json_encode($content, depth: self::MAX_DEPTH) === false) {
             return ['type' => 'doc', 'content' => []];
         }
 
         $content['content'] ??= [];
 
         return $this->normalizeNode($content);
+    }
+
+    /**
+     * @param  string | array<string, mixed>  $content
+     * @return ($content is array ? array<string, mixed> : string | array<string, mixed>)
+     */
+    public function normalizeCustomBlockConfiguration(string | array $content): string | array
+    {
+        if (is_string($content)) {
+            $document = json_decode($content, associative: true);
+
+            if (! is_array($document)) {
+                return $content;
+            }
+
+            $content = $document;
+        }
+
+        if (($content['type'] ?? null) === 'customBlock') {
+            $attributes = $content['attrs'] ?? null;
+
+            if ((is_array($attributes) || is_object($attributes)) && (json_encode(((array) $attributes)['config'] ?? null) === false)) {
+                $content['attrs'] = [...(array) $attributes, 'config' => null];
+            }
+        }
+
+        if (is_array($content['content'] ?? null)) {
+            foreach ($content['content'] as $index => $node) {
+                if (is_array($node)) {
+                    $content['content'][$index] = $this->normalizeCustomBlockConfiguration($node);
+                }
+            }
+        }
+
+        return $content;
     }
 
     /**

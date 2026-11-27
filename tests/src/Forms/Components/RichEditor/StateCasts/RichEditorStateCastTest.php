@@ -234,6 +234,65 @@ describe('`set()`', function (): void {
         expect($found['attrs']['config'] ?? null)->toBe(['source' => 'persisted']);
     });
 
+    it('passes array configuration to custom block preview callbacks from every stored format', function (string $format, mixed $config, array $expectedConfig): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->customBlocks([StateCastConfigBlock::class]));
+        $document = [
+            'type' => 'doc',
+            'content' => [['type' => 'customBlock', 'attrs' => ['id' => 'config-block', 'config' => $config]]],
+        ];
+        $content = match ($format) {
+            'HTML' => '<div data-type="customBlock" data-id="config-block" data-config="' . e(json_encode($config)) . '"></div>',
+            'JSON' => json_encode($document),
+            default => $document,
+        };
+
+        $result = $cast->set($content);
+        $attributes = $result['content'][0]['attrs'];
+
+        expect(json_decode($attributes['label'], associative: true, flags: JSON_THROW_ON_ERROR))->toBe($expectedConfig)
+            ->and(base64_decode($attributes['preview']))->toBe('<p>' . e(json_encode($expectedConfig)) . '</p>')
+            ->and($attributes['shouldApplyProseStylingToPreview'])->toBe($expectedConfig['prose'] ?? false);
+    })->with(['HTML', 'JSON', 'array'])->with([
+        'string' => ['invalid', []],
+        'true' => [true, []],
+        'false' => [false, []],
+        'integer' => [42, []],
+        'float' => [1.5, []],
+        'null' => [null, []],
+        'object' => [(object) ['nested' => (object) ['enabled' => false]], ['nested' => ['enabled' => false]]],
+        'list' => [['first', ['second' => false]], ['first', ['second' => false]]],
+        'nested configuration' => [
+            ['heading' => 'Café <hero>', 'prose' => true, 'extension' => ['type' => 'custom', 'content' => [0, false, null]]],
+            ['heading' => 'Café <hero>', 'prose' => true, 'extension' => ['type' => 'custom', 'content' => [0, false, null]]],
+        ],
+    ]);
+
+    it('uses empty configuration for malformed HTML custom block JSON', function (string $config): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->customBlocks([StateCastConfigBlock::class]));
+
+        $result = $cast->set('<div data-type="customBlock" data-id="config-block" data-config="' . e($config) . '"></div>');
+
+        expect($result['content'][0]['attrs']['label'])->toBe('[]');
+    })->with(['{broken', '{"text":"\uD800"}', '1e400', '{"limit":1e400}']);
+
+    it('ignores stored HTML previews before serializing or regenerating custom blocks', function (string $direction, string $preview): void {
+        $cast = new RichEditorStateCast(makeStateCastEditor()->json()->customBlocks([StateCastCustomBlock::class]));
+
+        $result = $cast->{$direction}('<div data-type="customBlock" data-id="preview-block" data-preview="' . e($preview) . '"></div><p>Preserved sibling</p>');
+
+        expect(json_encode($result, JSON_THROW_ON_ERROR))->toContain('Preserved sibling');
+
+        if ($direction === 'set') {
+            expect(base64_decode($result['content'][0]['attrs']['preview']))->toBe('<strong>Preview HTML</strong>');
+        } else {
+            expect($result['content'][0]['attrs'])->not->toHaveKey('preview');
+        }
+    })->with(['get', 'set'])->with([
+        'invalid UTF-8' => base64_encode("\xB1\x31"),
+        'malformed base64' => '%%%/w==',
+        'obsolete HTML' => base64_encode('<p>Obsolete preview</p>'),
+    ]);
+
     it('hydrates a custom block `shouldApplyProseStylingToPreview` from the registered block class', function (): void {
         $editor = makeStateCastEditor()
             ->customBlocks([StateCastCustomBlock::class, StateCastProseBlock::class]);
@@ -695,6 +754,21 @@ describe('`get()`', function (): void {
     });
 });
 
+it('discards unencodable custom block configuration without losing siblings during state casting', function (string $direction, string $config, bool $isJson): void {
+    $cast = new RichEditorStateCast(makeStateCastEditor()->json()->customBlocks([StateCastConfigBlock::class]));
+    $document = '{"type":"doc","content":[{"type":"customBlock","attrs":{"id":"config-block","config":' . $config . '}},{"type":"paragraph","content":[{"type":"text","text":"Preserved sibling"}]}]}';
+
+    $result = $cast->{$direction}($isJson ? $document : json_decode($document, associative: true));
+
+    expect($result['content'][0]['attrs']['config'])->toBeNull()
+        ->and($result['content'][1]['content'][0]['text'])->toBe('Preserved sibling')
+        ->and(json_encode($result, JSON_THROW_ON_ERROR))->toBeString();
+
+    if ($direction === 'set') {
+        expect($result['content'][0]['attrs']['label'])->toBe('[]');
+    }
+})->with(['get', 'set'])->with(['1e400', '{"limit":1e400}'])->with([true, false]);
+
 it('preserves mentions with missing attributes during state casting', function (string $direction, array $attributes): void {
     $cast = new RichEditorStateCast(makeStateCastEditor()->json());
 
@@ -1000,6 +1074,29 @@ class StateCastCustomBlock extends RichContentCustomBlock
     public static function toHtml(array $config, array $data): ?string
     {
         return '<div>Rendered block</div>';
+    }
+}
+
+class StateCastConfigBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'config-block';
+    }
+
+    public static function getPreviewLabel(array $config): string
+    {
+        return json_encode($config, JSON_THROW_ON_ERROR);
+    }
+
+    public static function toPreviewHtml(array $config): string
+    {
+        return '<p>' . e(json_encode($config, JSON_THROW_ON_ERROR)) . '</p>';
+    }
+
+    public static function shouldApplyProseStylingToPreview(array $config): bool
+    {
+        return $config['prose'] ?? false;
     }
 }
 
