@@ -253,7 +253,7 @@ public function form(Schema $schema): Schema
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-If your custom pivot model defines `$hidden` attributes, Filament excludes those names and their `pivot_` aliases from automatically filled action, infolist, and relationship repeater state. The values remain readable in PHP. If a related model has an attribute with the same name, that attribute is also excluded from this state, even if it is not hidden on the related model.
+If your custom pivot model defines `$hidden` attributes, Filament excludes those names and their `pivot_` aliases from automatically filled action forms and relationship repeater state. The values remain readable in PHP and can still be displayed by infolist entries. If a related model has an attribute with the same name, that attribute is also excluded from this state, even if it is not hidden on the related model.
 
 > [!WARNING]
 > `$hidden` controls serialization, not write authorization. A hidden pivot field is not prefilled, but its validated, dehydrated submitted value can still be saved. If the field is absent from submitted schema state, its pivot attribute is not updated. Authorize edits separately.

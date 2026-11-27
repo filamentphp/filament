@@ -32,7 +32,7 @@ it('can render multiple infolists on the same component', function (): void {
         ->assertSee('Second Entry Label');
 });
 
-it('omits hidden pivot attributes and collisions from automatic infolist state', function (bool $isNested): void {
+it('can display hidden pivot attributes and collisions in infolist entries', function (bool $isNested): void {
     $ticket = Ticket::factory()->create();
     $department = Department::factory()->create();
     $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70, 'created_at' => '2001-02-03 04:05:06']);
@@ -59,10 +59,10 @@ it('omits hidden pivot attributes and collisions from automatic infolist state',
         $entries = $schema->record($record)->components($fields)->getComponents();
     }
 
-    expect($entries[0]->getState())->toBeNull()
-        ->and($entries[1]->getState())->toBeNull()
-        ->and($entries[2]->getState())->toBeNull()
-        ->and($entries[3]->getState())->toBeNull()
+    expect($entries[0]->getState())->toEqual($record->created_at)
+        ->and($entries[1]->getState())->toBe(7)
+        ->and($entries[2]->getState())->toBe(7)
+        ->and($entries[3]->getState())->toEqual($record->attachment->created_at)
         ->and($entries[4]->getState())->toBe(70)
         ->and($entries[5]->getState())->toBe(7)
         ->and($record->quantity)->toBe(7)

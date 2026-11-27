@@ -12,7 +12,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -1087,34 +1086,6 @@ trait HasState
     public function getConstantStateFromRecord(Model $record): mixed
     {
         $this->relatedRecords = [];
-
-        $stateRecord = $record;
-
-        foreach (explode('.', (string) ($this->hasContainer() ? $this->getConstantStatePath() : $this->getStateRelationshipPath())) as $attribute) {
-            if ($stateRecord instanceof Model) {
-                if (($stateRecord instanceof Pivot) && in_array($attribute, $stateRecord->getHidden(), true)) {
-                    return null;
-                }
-
-                foreach ($stateRecord->getRelations() as $relationship) {
-                    if (! ($relationship instanceof Pivot)) {
-                        continue;
-                    }
-
-                    foreach ($relationship->getHidden() as $hiddenAttribute) {
-                        if (in_array($attribute, [$hiddenAttribute, "pivot_{$hiddenAttribute}"], true)) {
-                            return null;
-                        }
-                    }
-                }
-
-                $stateRecord = $stateRecord->getRelations()[$attribute] ?? null;
-            } elseif ($stateRecord instanceof Collection) {
-                $stateRecord = $stateRecord->get($attribute);
-            } else {
-                break;
-            }
-        }
 
         $relationship = $this->getStateRelationship($record);
 
