@@ -15,6 +15,8 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -243,7 +245,7 @@ describe('sums', function (): void {
 
         expect($summarizer->query(User::query()->whereKey($author))->getState())->toEqual($expected);
 
-        $summarizer->using(fn (Illuminate\Database\Query\Builder $query) => $query->sum('posts.rating'));
+        $summarizer->using(fn (QueryBuilder $query) => $query->sum('posts.rating'));
 
         expect($summarizer->getState())->toEqual($expected);
     })->with(['published posts' => ['publishedPosts', 7], 'latest post' => ['latestPost', 7]]);
@@ -329,6 +331,127 @@ describe('group summary rendering', function (): void {
         $summarizer->selectedState(array_values($state)[0]);
 
         expect($summarizer->getState())->toEqual(13);
+    });
+
+    it('renders summaries for groups with non-text-safe keys', function (string $groupKey): void {
+        $driver = DB::connection()->getDriverName();
+
+        if (($driver === 'pgsql') || (($driver !== 'sqlite') && ! mb_check_encoding($groupKey, 'UTF-8'))) {
+            $this->markTestSkipped('The database text column does not support this group key.');
+        }
+
+        Post::factory()->create(['title' => $groupKey, 'rating' => 7]);
+        Post::factory()->create(['title' => $groupKey, 'rating' => 11]);
+        Post::factory()->create(['title' => 'ordinary', 'rating' => 3]);
+
+        $livewire = livewire(TestTableWithNonTextGroupKeys::class)->assertOk();
+        $column = $livewire->instance()->getTable()->getColumn('rating');
+        $query = $livewire->instance()->getTableGrouping()->scopeQueryByKey(Post::query(), $groupKey);
+
+        expect($column->getSummarizers($query))->toHaveKey('sum')
+            ->and($column->getSummarizer('sum')->query($query)->selectedState([])->getState())->toEqual(18);
+    })->with([
+        'null byte' => ["group\0key"],
+        'invalid UTF-8' => ["group\xFFkey"],
+    ]);
+
+    it('caches summary visibility by query structure and typed bindings', function (): void {
+        $evaluations = 0;
+        $summarizer = Tables\Columns\Summarizers\Sum::make()
+            ->hidden(function () use (&$evaluations): bool {
+                return (++$evaluations % 2) === 0;
+            });
+        $queries = [
+            null,
+            Post::query()->where('title', 'first'),
+            Post::query()->where('title', 'second'),
+            Post::query()->where('content', 'second'),
+            Post::query()->where('rating', 1),
+            Post::query()->where('rating', '1'),
+            Post::query()->where('rating', true),
+            Post::query()->where('rating', 1.0),
+            Post::query()->where('rating', null),
+            Post::query()->whereIn('title', ['a', 'bc']),
+            Post::query()->whereIn('title', ['ab', 'c']),
+            Post::query()->whereIn('title', ['bc', 'a']),
+            Post::query()->where('title', "group\0key"),
+            Post::query()->where('title', "group\xFFkey"),
+            Post::query()->where('title', "group\xFEkey"),
+            Post::query()->where('title', "quote'\\?\r\n☃"),
+            Post::query()->where('created_at', new DateTimeImmutable('2026-01-02 03:04:05 UTC')),
+            Post::query()->withGlobalScope('title', static fn (Builder $query) => $query->where('title', 'scoped first')),
+            Post::query()->withGlobalScope('title', static fn (Builder $query) => $query->where('title', 'scoped second')),
+            Post::query()->withoutGlobalScopes()->beforeQuery(static fn (QueryBuilder $query) => $query->where('rating', 7)),
+            Post::query()->withoutGlobalScopes()->beforeQuery(static fn (QueryBuilder $query) => $query->where('rating', 9)),
+        ];
+        $connection = DB::connection();
+        $connection->enableQueryLog();
+        $connection->flushQueryLog();
+
+        try {
+            foreach ($queries as $index => $query) {
+                $expected = ($index % 2) === 1;
+
+                expect($summarizer->query($query)->isHidden())->toBe($expected)
+                    ->and($summarizer->query($query ? clone $query : null)->isVisible())->toBe(! $expected)
+                    ->and($evaluations)->toBe($index + 1);
+            }
+
+            foreach (array_reverse($queries, preserve_keys: true) as $index => $query) {
+                expect($summarizer->query($query)->isHidden())->toBe(($index % 2) === 1);
+            }
+
+            expect($evaluations)->toBe(count($queries));
+            expect($connection->getQueryLog())->toBeEmpty();
+        } finally {
+            $connection->disableQueryLog();
+        }
+    });
+
+    it('does not mutate the summary query when caching visibility', function (): void {
+        $query = Post::query()->withoutGlobalScopes();
+        $query->getQuery()->beforeQuery(static fn (QueryBuilder $query) => $query->where('rating', 7));
+        $evaluations = 0;
+        $summarizer = Tables\Columns\Summarizers\Sum::make()
+            ->query($query)
+            ->visible(function () use (&$evaluations): bool {
+                $evaluations++;
+
+                return true;
+            });
+
+        expect($summarizer->isVisible())->toBeTrue()
+            ->and($summarizer->isVisible())->toBeTrue()
+            ->and($evaluations)->toBe(1)
+            ->and($query->getQuery()->getBindings())->toBeEmpty()
+            ->and((clone $query)->toSql())->toContain('where')
+            ->and($query->getQuery()->getBindings())->toBeEmpty();
+    });
+
+    it('supports non-serializable string bindings in summary visibility queries', function (): void {
+        Post::factory()->create(['title' => 'group', 'rating' => 13]);
+        $binding = new class implements Stringable
+        {
+            public function __toString(): string
+            {
+                return 'group';
+            }
+        };
+        $evaluations = 0;
+        $column = Tables\Columns\TextColumn::make('rating')->summarize(
+            Tables\Columns\Summarizers\Sum::make('sum')
+                ->visible(function () use (&$evaluations): bool {
+                    $evaluations++;
+
+                    return true;
+                }),
+        );
+        $query = Post::query()->where('title', $binding);
+
+        expect($column->getSummarizers($query))->toHaveKey('sum')
+            ->and($column->getSummarizer('sum')->query($query)->getState())->toEqual(13)
+            ->and($column->getSummarizers(Post::query()->where('title', clone $binding)))->toHaveKey('sum')
+            ->and($evaluations)->toBe(1);
     });
 
     it('renders group summaries when page and all-table summaries are disabled', function (): void {
@@ -502,6 +625,19 @@ class TestTableWithCustomDataSummaries extends Component implements HasActions, 
     public function render(): View
     {
         return view('livewire.table');
+    }
+}
+
+class TestTableWithNonTextGroupKeys extends PostsTable
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->groups([
+                Tables\Grouping\Group::make('title')
+                    ->getTitleFromRecordUsing(static fn (Post $record): string => bin2hex($record->title)),
+            ])
+            ->defaultGroup('title');
     }
 }
 
