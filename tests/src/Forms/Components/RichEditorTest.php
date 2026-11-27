@@ -2525,6 +2525,47 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
+    it('only renders supported stored JSON text alignments in a disabled editor', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-style-attributes-browser-test');
+
+        foreach (['p', 'h2'] as $tag) {
+            $page->assertScript(<<<JS
+                Array.from(document.querySelectorAll('[data-testid="style-attributes-rich-editor"] [role="textbox"] > {$tag}'))
+                    .map((element) => [element.style.textAlign, element.hasAttribute('style')])
+                JS, array_map(static fn (string $alignment): array => [$alignment, $alignment !== ''], [
+                'start', 'center', 'end', 'justify', 'left', 'right', '', '', '', '', '', '', '', '',
+            ]));
+        }
+
+        $page
+            ->assertAttribute('[data-testid="style-attributes-rich-editor"] [role="textbox"]', 'contenteditable', 'false')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()
+            ->assertCount('[data-testid="style-attributes-rich-editor"] th', 14)
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('only renders supported stored JSON table cell and header alignments', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-style-attributes-browser-test');
+
+        foreach (['td', 'th'] as $tag) {
+            $page->assertScript(<<<JS
+                Array.from(document.querySelectorAll('[data-testid="style-attributes-rich-editor"] {$tag}'))
+                    .map((element) => [element.style.textAlign, element.hasAttribute('style')])
+                JS, array_map(static fn (string $alignment): array => [$alignment, $alignment !== ''], [
+                '', 'center', '', '', 'left', 'right', '', '', '', '', '', '', '', '',
+            ]));
+        }
+
+        $page->assertNoSmoke();
+    });
+
     it('sanitizes stored CSS values before rendering them in the editor', function (): void {
         $this->actingAs(User::factory()->create());
 
