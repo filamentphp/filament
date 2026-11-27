@@ -68,6 +68,12 @@ trait CanPartiallyRender
                 throw new LogicException('A [key()] or [statePath()] is required to partially render a component.');
             }
 
+            for ($container = $this->getContainer(); $container !== null; $container = $container->getParentComponent()?->getContainer()) {
+                if ($container->isHidden()) {
+                    return [];
+                }
+            }
+
             return [
                 "schema-component::{$key}" => $this->toSchemaHtml(...),
             ];
