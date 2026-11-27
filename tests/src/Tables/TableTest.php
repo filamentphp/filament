@@ -28,12 +28,15 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -906,6 +909,22 @@ describe('pagination', function (): void {
     })->with([false, true]);
 });
 
+dataset('malformed persisted table state', [
+    'nested column search value' => ['tableColumnSearches', 'getTableColumnSearchesSessionKey', ['author' => ['name' => "bad\xFF"]], []],
+    'nested column search key' => ['tableColumnSearches', 'getTableColumnSearchesSessionKey', ['author' => ["bad\xFF" => 'valid']], []],
+    'sorting' => ['tableSort', 'getTableSortSessionKey', "bad\xFF:asc", null],
+    'grouping' => ['tableGrouping', 'getTableGroupingSessionKey', "bad\xFF:asc", null],
+    'nested filter value' => ['tableFilters', 'getTableFiltersSessionKey', ['unknown' => ['nested' => "bad\xFF"]], ['is_published' => ['isActive' => false]]],
+    'nested filter key' => ['tableFilters', 'getTableFiltersSessionKey', ['unknown' => ["bad\xFF" => 'valid']], ['is_published' => ['isActive' => false]]],
+]);
+
+dataset('valid persisted table state', [
+    'nested column searches' => ['tableColumnSearches', 'getTableColumnSearchesSessionKey', ['author' => ['中文' => "  café e\u{0301} 👩🏽‍💻 \u{FFFD} %FF +  "]]],
+    'sorting' => ['tableSort', 'getTableSortSessionKey', "中文e\u{0301}👩🏽‍💻:desc"],
+    'grouping' => ['tableGrouping', 'getTableGroupingSessionKey', "中文e\u{0301}👩🏽‍💻:asc"],
+    'nested filters' => ['tableFilters', 'getTableFiltersSessionKey', ['is_published' => ['isActive' => false], 'nested' => ['中文' => ["  café e\u{0301} 👩🏽‍💻 \u{FFFD} %FF +  ", null, true, false, 42]]]],
+]);
+
 describe('session persistence', function (): void {
     it('can toggle all session persistence with `persistInSession()`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
@@ -996,6 +1015,285 @@ describe('session persistence', function (): void {
             ->and($secondTenantTable->getTableSortSessionKey())->toBe("filament.tables.{$identifiedNamespace}.sort");
 
         Filament::setTenant(null);
+    });
+
+    it('does not persist malformed UTF-8 table searches from the URL', function (string $search): void {
+        $searchSessionKey = livewire(PersistedSearchUrlTableTestComponent::class)->instance()->getTableSearchSessionKey();
+
+        Livewire::withQueryParams(['search' => $search])
+            ->test(PersistedSearchUrlTableTestComponent::class)
+            ->assertSuccessful()
+            ->assertSet('tableSearch', '')
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($searchSessionKey))->toBe('');
+
+        Livewire::withQueryParams([])
+            ->test(PersistedSearchUrlTableTestComponent::class)
+            ->assertSet('tableSearch', '')
+            ->call('$refresh')
+            ->assertSuccessful();
+    })->with([
+        'invalid byte' => [urldecode('%FF')],
+        'truncated sequence' => [urldecode('caf%C3')],
+        'overlong sequence' => [urldecode('%C0%AF')],
+        'encoded surrogate' => [urldecode('%ED%A0%80')],
+    ]);
+
+    it('does not persist malformed UTF-8 table searches from Livewire requests', function (bool $usesQueryString): void {
+        $component = livewire(PersistedTableTestComponent::class);
+        $searchSessionKey = $component->instance()->getTableSearchSessionKey();
+        $payload = [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot, JSON_THROW_ON_ERROR),
+                'updates' => ['tableSearch' => "request\xFFsearch"],
+                'calls' => [['method' => 'setPage', 'params' => [1]]],
+            ]],
+        ];
+
+        $response = $usesQueryString
+            ? $this->postJson(Livewire::getUpdateUri() . '?' . http_build_query($payload), [], ['X-Livewire' => 'true'])
+            : $this->post(Livewire::getUpdateUri(), $payload, ['X-Livewire' => 'true']);
+
+        expect(session()->get($searchSessionKey))->toBe('');
+
+        $response->assertSuccessful();
+
+        $snapshot = json_decode($response->json('components.0.snapshot'), true, flags: JSON_THROW_ON_ERROR);
+
+        expect($snapshot['data']['tableSearch'])->toBe('');
+
+        livewire(PersistedTableTestComponent::class)
+            ->assertSet('tableSearch', '')
+            ->call('$refresh')
+            ->assertSuccessful();
+    })->with([
+        'form input' => [false],
+        'query string on a JSON request' => [true],
+    ]);
+
+    it('recovers from malformed UTF-8 in a persisted table search', function (): void {
+        $searchSessionKey = livewire(PersistedTableTestComponent::class)->instance()->getTableSearchSessionKey();
+
+        session()->put($searchSessionKey, "saved\xFFsearch");
+        session()->save();
+        session()->flush();
+        session()->start();
+
+        expect(session()->get($searchSessionKey))->toBe("saved\xFFsearch");
+
+        livewire(PersistedTableTestComponent::class)
+            ->assertSet('tableSearch', '')
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($searchSessionKey))->toBe('');
+
+        livewire(PersistedTableTestComponent::class)
+            ->assertSet('tableSearch', '')
+            ->set('tableSearch', 'recovered')
+            ->assertSuccessful();
+
+        livewire(PersistedTableTestComponent::class)
+            ->assertSet('tableSearch', 'recovered')
+            ->assertSuccessful();
+    });
+
+    it('preserves valid Unicode and URL precedence for persisted table searches', function (): void {
+        $searchSessionKey = livewire(PersistedSearchUrlTableTestComponent::class)->instance()->getTableSearchSessionKey();
+        session()->put($searchSessionKey, "stale\xFFsearch");
+
+        $search = "  café e\u{0301} Ελληνικά 中文 العربية 👩🏽‍💻 \u{FFFD} %FF +  ";
+
+        Livewire::withQueryParams(['search' => $search])
+            ->test(PersistedSearchUrlTableTestComponent::class)
+            ->assertSet('tableSearch', $search)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($searchSessionKey))->toBe($search);
+
+        Livewire::withQueryParams(['search' => ''])
+            ->test(PersistedSearchUrlTableTestComponent::class)
+            ->assertSet('tableSearch', $search)
+            ->set('tableSearch', $search . ' updated')
+            ->assertSuccessful();
+
+        expect(session()->get($searchSessionKey))->toBe($search . ' updated');
+
+        Livewire::withQueryParams([])
+            ->test(PersistedSearchUrlTableTestComponent::class)
+            ->assertSet('tableSearch', $search . ' updated')
+            ->call('resetTableSearch')
+            ->assertSet('tableSearch', '');
+
+        expect(session()->get($searchSessionKey))->toBe('');
+
+        livewire(PersistedSearchUrlTableTestComponent::class)
+            ->set('tableSearch', null)
+            ->assertSet('tableSearch', null)
+            ->assertSuccessful();
+
+        expect(session()->get($searchSessionKey))->toBeNull();
+    });
+
+    it('rejects malformed UTF-8 persisted table state from the URL', function (string $property, string $sessionKeyMethod, string | array $state, mixed $emptyState): void {
+        $sessionKey = livewire(PersistedStateUrlTableTestComponent::class)->instance()->{$sessionKeyMethod}();
+        $request = Request::create('/?' . http_build_query([$property => $state]));
+
+        Livewire::withQueryParams($request->query())
+            ->test(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $emptyState)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($sessionKey))->toBe($emptyState);
+
+        Livewire::withQueryParams([])
+            ->test(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $emptyState)
+            ->call('$refresh')
+            ->assertSuccessful();
+    })->with('malformed persisted table state');
+
+    it('recovers from malformed UTF-8 persisted table state on a clean URL', function (string $property, string $sessionKeyMethod, string | array $state, mixed $emptyState): void {
+        $sessionKey = livewire(PersistedStateUrlTableTestComponent::class)->instance()->{$sessionKeyMethod}();
+        session()->put($sessionKey, $state);
+        session()->save();
+        session()->flush();
+        session()->start();
+
+        expect(session()->get($sessionKey))->toBe($state);
+
+        livewire(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $emptyState)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($sessionKey))->toBe($emptyState);
+
+        livewire(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $emptyState)
+            ->call('$refresh')
+            ->assertSuccessful();
+    })->with('malformed persisted table state');
+
+    it('rejects malformed UTF-8 persisted table state from Livewire requests', function (string $property, string $sessionKeyMethod, string | array $state, mixed $emptyState): void {
+        $component = livewire(PersistedStateUrlTableTestComponent::class);
+        $sessionKey = $component->instance()->{$sessionKeyMethod}();
+        $payload = [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot, JSON_THROW_ON_ERROR),
+                'updates' => [$property => $state],
+                'calls' => [['method' => 'setPage', 'params' => [1]]],
+            ]],
+        ];
+
+        $response = $this->postJson(Livewire::getUpdateUri() . '?' . http_build_query($payload), [], ['X-Livewire' => 'true']);
+
+        expect(session()->get($sessionKey))->toBe($property === 'tableFilters' ? null : $emptyState);
+
+        $response->assertSuccessful();
+
+        $snapshot = json_decode($response->json('components.0.snapshot'), true, flags: JSON_THROW_ON_ERROR);
+
+        expect(mb_check_encoding($snapshot, 'UTF-8'))->toBeTrue();
+
+        Livewire::withQueryParams([])
+            ->test(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $emptyState)
+            ->call('$refresh')
+            ->assertSuccessful();
+    })->with('malformed persisted table state');
+
+    it('clears malformed persisted filters in immediate and deferred forms', function (bool $defersFilters): void {
+        $component = livewire(PersistedStateUrlTableTestComponent::class, ['defersFilters' => $defersFilters]);
+        $sessionKey = $component->instance()->getTableFiltersSessionKey();
+        $response = $this->post(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($component->snapshot, JSON_THROW_ON_ERROR),
+                'updates' => [($defersFilters ? 'tableDeferredFilters' : 'tableFilters') => ['nested' => ["bad\xFF" => 'valid']]],
+                'calls' => [['method' => $defersFilters ? 'applyTableFilters' : 'setPage', 'params' => $defersFilters ? [] : [1]]],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertSuccessful();
+
+        expect(session()->get($sessionKey))->toBeNull();
+        $snapshot = json_decode($response->json('components.0.snapshot'), true, flags: JSON_THROW_ON_ERROR);
+        expect($snapshot['data']['tableFilters'])->toBeNull();
+        expect($snapshot['data']['tableDeferredFilters'])->toBeNull();
+
+        livewire(PersistedStateUrlTableTestComponent::class, ['defersFilters' => $defersFilters])
+            ->call('$refresh')->assertSuccessful();
+    })->with([false, true]);
+
+    it('keeps reserved column search keys available after malformed persisted search recovery', function (): void {
+        $component = livewire(PersistedReservedColumnSearchTableTestComponent::class)
+            ->set('tableColumnSearches', ['nested' => ["bad\xFF" => 'valid']])
+            ->assertSet('tableColumnSearches', ['length' => ''])
+            ->call('$refresh')->assertSuccessful();
+
+        expect(session()->get($component->instance()->getTableColumnSearchesSessionKey()))->toBe(['length' => '']);
+    });
+
+    it('preserves valid Unicode and nested persisted table state and URL precedence', function (string $property, string $sessionKeyMethod, string | array $state): void {
+        $component = livewire(PersistedStateUrlTableTestComponent::class)->set($property, $state)->assertSuccessful();
+        $sessionKey = $component->instance()->{$sessionKeyMethod}();
+
+        expect(session()->get($sessionKey))->toBe($state);
+
+        livewire(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $state, strict: true)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        session()->put($sessionKey, is_array($state) ? ['stale' => "bad\xFF"] : "bad\xFF");
+
+        Livewire::withQueryParams([$property => $state])
+            ->test(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $state, strict: true)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($sessionKey))->toBe($state);
+
+        Livewire::withQueryParams([$property => is_array($state) ? [] : ''])
+            ->test(PersistedStateUrlTableTestComponent::class)
+            ->assertSet($property, $state, strict: true);
+    })->with('valid persisted table state');
+
+    it('does not consume or change persisted table state when persistence is disabled', function (string $property, string $sessionKeyMethod, string | array $state): void {
+        $sessionKey = livewire(PersistedStateUrlTableTestComponent::class)->instance()->{$sessionKeyMethod}();
+        $staleState = is_array($state) ? ['stale' => "bad\xFF"] : "bad\xFF";
+        session()->put($sessionKey, $staleState);
+
+        livewire(PersistedStateUrlTableTestComponent::class, ['persistsState' => false])
+            ->set($property, $state)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($sessionKey))->toBe($staleState);
+
+        Livewire::withQueryParams([$property => $state])
+            ->test(PersistedStateUrlTableTestComponent::class, ['persistsState' => false])
+            ->assertSet($property, $state, strict: true)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($sessionKey))->toBe($staleState);
+    })->with('valid persisted table state');
+
+    it('preserves supported date objects in persisted table filters', function (): void {
+        $sessionKey = livewire(PersistedStateUrlTableTestComponent::class)->instance()->getTableFiltersSessionKey();
+        $date = new DateTimeImmutable('2026-11-27T12:34:56+00:00');
+        session()->put($sessionKey, ['nested' => ['date' => $date]]);
+
+        livewire(PersistedStateUrlTableTestComponent::class)
+            ->assertSet('tableFilters.nested.date', $date)
+            ->call('$refresh')
+            ->assertSuccessful();
+
+        expect(session()->get($sessionKey)['nested']['date'])->toBe($date);
     });
 
     it('separates and resets every persisted feature for same-class identified tables across reloads', function (): void {
@@ -1685,6 +1983,41 @@ class PersistedTableTestComponent extends TableTestComponent
             ->defaultPaginationPageOption(10)
             ->reorderableColumns()
             ->persistInSession();
+    }
+}
+
+class PersistedSearchUrlTableTestComponent extends PersistedTableTestComponent
+{
+    #[Url(as: 'search')]
+    public $tableSearch = '';
+}
+
+class PersistedStateUrlTableTestComponent extends PersistedTableTestComponent
+{
+    public bool $persistsState = true;
+
+    public bool $defersFilters = true;
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->persistInSession($this->persistsState)
+            ->deferFilters($this->defersFilters);
+    }
+
+    protected function queryString(): array
+    {
+        return ['tableColumnSearches', 'tableSort', 'tableGrouping', 'tableFilters'];
+    }
+}
+
+class PersistedReservedColumnSearchTableTestComponent extends PersistedStateUrlTableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)->columns([
+            Tables\Columns\TextColumn::make('length')->searchable(isIndividual: true, isGlobal: false),
+        ]);
     }
 }
 
