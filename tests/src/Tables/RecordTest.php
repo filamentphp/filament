@@ -232,6 +232,21 @@ function postSort(int | string $postKey): ?int
 }
 
 describe('browser reordering', function (): void {
+    it('hides related-resource reorder controls in read-only relation managers', function (): void {
+        Artisan::call('filament:assets');
+        $owner = User::factory()->create();
+        $this->actingAs($owner);
+        Post::factory()->for($owner, 'author')->create(['title' => 'First', 'sort' => 1]);
+        Post::factory()->for($owner, 'author')->create(['title' => 'Second', 'sort' => 2]);
+
+        $page = visit('/table-reordering-browser-test?relationOwner=' . $owner->getKey());
+        $page->assertSee('First')->assertSee('Second')
+            ->assertMissing('[data-testid="toggle-reordering"]')
+            ->assertMissing('[data-table-reorder-direction]')
+            ->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
+
     it('persists drag reordering and disables moves beyond table boundaries', function (bool $grid): void {
         Artisan::call('filament:assets');
         $posts = Post::factory()->count(3)->sequence(
