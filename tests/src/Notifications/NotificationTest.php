@@ -2,7 +2,9 @@
 
 use BladeUI\Icons\Factory;
 use BladeUI\Icons\IconsManifest;
+use Filament\Livewire\Notifications as PanelNotifications;
 use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
@@ -12,6 +14,7 @@ use Filament\Tests\Notifications\Fixtures\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -156,6 +159,169 @@ it('can send notifications', function () {
 
     expect(session()->get('filament.notifications'))
         ->toBeEmpty();
+});
+
+it('can pull notifications through the inherited panel component', function (): void {
+    livewire(PanelNotifications::class)
+        ->call('pullNotificationsFromSession')
+        ->assertHasNoErrors();
+});
+
+it('keeps the newest 50 session notifications', function (): void {
+    foreach (range(1, 51) as $index) {
+        Notification::make("notification-{$index}")->send();
+    }
+
+    $sessionNotifications = session()->get('filament.notifications');
+
+    expect($sessionNotifications)
+        ->toHaveCount(50)
+        ->and($sessionNotifications[0]['id'])->toBe('notification-2')
+        ->and($sessionNotifications[49]['id'])->toBe('notification-51');
+
+    $notifications = livewire(Notifications::class)->get('notifications');
+
+    expect($notifications)
+        ->toHaveCount(50)
+        ->and($notifications->keys()->first())->toBe('notification-2')
+        ->and($notifications->keys()->last())->toBe('notification-51');
+});
+
+it('bounds notification restoration across repeated calls in one request', function (): void {
+    $component = livewire(Notifications::class);
+
+    $this->postJson(Livewire::getUpdateUri(), [
+        'components' => [[
+            'snapshot' => json_encode($component->snapshot),
+            'updates' => [],
+            'calls' => array_map(
+                static fn (int $index): array => [
+                    'method' => 'pushNotificationFromEvent',
+                    'params' => [Notification::make("notification-{$index}")->toArray()],
+                ],
+                range(1, 101),
+            ),
+        ]],
+    ], ['X-Livewire' => 'true'])->assertStatus(419);
+});
+
+it('shares notification restoration limits across components in one request', function (): void {
+    $firstComponent = livewire(Notifications::class);
+    $secondComponent = livewire(Notifications::class);
+    $firstPayload = Notification::make('first')
+        ->actions(array_map(
+            static fn (int $index): Action => Action::make("first-action-{$index}"),
+            range(1, 59),
+        ))
+        ->toArray();
+    $secondPayload = Notification::make('second')
+        ->actions(array_map(
+            static fn (int $index): Action => Action::make("second-action-{$index}"),
+            range(1, 40),
+        ))
+        ->toArray();
+
+    $this->postJson(Livewire::getUpdateUri(), [
+        'components' => [
+            [
+                'snapshot' => json_encode($firstComponent->snapshot),
+                'updates' => [],
+                'calls' => [[
+                    'method' => 'pushNotificationFromEvent',
+                    'params' => [$firstPayload],
+                ]],
+            ],
+            [
+                'snapshot' => json_encode($secondComponent->snapshot),
+                'updates' => [],
+                'calls' => [[
+                    'method' => 'pushNotificationFromEvent',
+                    'params' => [$secondPayload],
+                ]],
+            ],
+        ],
+    ], ['X-Livewire' => 'true'])->assertStatus(419);
+});
+
+it('applies notification restoration limits to event and broadcast delivery', function (string $method): void {
+    $component = livewire(Notifications::class);
+    $payload = Notification::make('over-limit')
+        ->actions(array_map(
+            static fn (int $index): Action => Action::make("action-{$index}"),
+            range(1, 100),
+        ))
+        ->toArray();
+
+    if ($method === 'handleBroadcastNotification') {
+        $payload['format'] = 'filament';
+    }
+
+    $this->postJson(Livewire::getUpdateUri(), [
+        'components' => [[
+            'snapshot' => json_encode($component->snapshot),
+            'updates' => [],
+            'calls' => [[
+                'method' => $method,
+                'params' => [$payload],
+            ]],
+        ]],
+    ], ['X-Livewire' => 'true'])->assertStatus(419);
+})->with(['pushNotificationFromEvent', 'handleBroadcastNotification']);
+
+it('keeps trusted session delivery within the next signed snapshot hydration limit', function (): void {
+    foreach (['first', 'second'] as $id) {
+        Notification::make($id)
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("{$id}-action-{$index}"),
+                range(1, 59),
+            ))
+            ->send();
+    }
+
+    $component = livewire(Notifications::class);
+
+    expect($component->get('notifications')->keys()->all())->toBe(['second']);
+
+    $this->postJson(Livewire::getUpdateUri(), [
+        'components' => [[
+            'snapshot' => json_encode($component->snapshot),
+            'updates' => [],
+            'calls' => [],
+        ]],
+    ], ['X-Livewire' => 'true'])->assertOk();
+});
+
+it('discards individually oversized trusted notifications without invalidating the signed snapshot', function (): void {
+    Notification::make('too-many-actions')
+        ->actions(array_map(
+            static fn (int $index): Action => Action::make("action-{$index}"),
+            range(1, 100),
+        ))
+        ->send();
+
+    $nestedActions = [Action::make('nested-leaf')];
+
+    foreach (range(1, 11) as $depth) {
+        $nestedActions = [ActionGroup::make($nestedActions)];
+    }
+
+    Notification::make('too-deep')
+        ->actions($nestedActions)
+        ->send();
+
+    Notification::make('valid')->send();
+
+    $component = livewire(Notifications::class);
+
+    expect($component->get('notifications')->keys()->all())->toBe(['valid']);
+
+    $this->postJson(Livewire::getUpdateUri(), [
+        'components' => [[
+            'snapshot' => json_encode($component->snapshot),
+            'updates' => [],
+            'calls' => [],
+        ]],
+    ], ['X-Livewire' => 'true'])->assertOk();
 });
 
 it('can close notifications', function () {

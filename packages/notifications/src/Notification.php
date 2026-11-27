@@ -32,6 +32,8 @@ class Notification extends ViewComponent implements Arrayable
     use Concerns\HasTitle;
     use HasColor;
 
+    private const MAX_SESSION_NOTIFICATIONS = 50;
+
     /**
      * @var view-string
      */
@@ -143,10 +145,15 @@ class Notification extends ViewComponent implements Arrayable
 
     public function send(): static
     {
-        session()->push(
-            'filament.notifications',
-            $this->toArray(),
-        );
+        $notifications = session()->get('filament.notifications') ?? [];
+
+        if (! is_array($notifications)) {
+            $notifications = [];
+        }
+
+        $notifications[] = $this->toArray();
+
+        session()->put('filament.notifications', array_slice($notifications, -self::MAX_SESSION_NOTIFICATIONS));
 
         return $this;
     }
