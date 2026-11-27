@@ -6,6 +6,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\RichEditorDocumentNormalizer;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Illuminate\Contracts\Support\Htmlable;
+use Throwable;
 use Tiptap\Editor;
 
 class RichEditorStateCast implements StateCast
@@ -55,7 +56,9 @@ class RichEditorStateCast implements StateCast
 
         $this->normalizeMentionAttributes($editor);
 
-        return $editor->{$this->richEditor->isJson() ? 'getDocument' : 'getHtml'}();
+        $html = $this->getHtmlOrResetDocument($editor);
+
+        return $this->richEditor->isJson() ? $editor->getDocument() : $html;
     }
 
     /**
@@ -129,7 +132,21 @@ class RichEditorStateCast implements StateCast
         $this->normalizeMentionAttributes($editor);
         $this->hydrateMentionLabels($editor);
 
+        $this->getHtmlOrResetDocument($editor);
+
         return $editor->getDocument();
+    }
+
+    private function getHtmlOrResetDocument(Editor $editor): string
+    {
+        try {
+            // TipTap serializes a copy, leaving valid JSON and extension attributes unchanged.
+            return $editor->getHTML();
+        } catch (Throwable) {
+            $editor->setContent(['type' => 'doc', 'content' => []]);
+
+            return '';
+        }
     }
 
     /**
@@ -151,6 +168,12 @@ class RichEditorStateCast implements StateCast
             $node->attrs ??= (object) [];
 
             $triggerCharacter = $node->attrs->char ?? '@';
+
+            if (! is_string($triggerCharacter)) {
+                unset($node->attrs->char);
+                $triggerCharacter = '@';
+            }
+
             $node->attrs->extra = isset($extraAttributesByTriggerCharacter[$triggerCharacter])
                 ? (object) $extraAttributesByTriggerCharacter[$triggerCharacter]
                 : null;
