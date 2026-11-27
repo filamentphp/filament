@@ -658,6 +658,30 @@ describe('rendering', function (): void {
         expect($html)->toContain('<strong>Allowed</strong>');
     });
 
+    it('bounds block nesting when rendering disabled Markdown content', function (int $depth, ?array $options, int $expectedDepth): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->commonMarkOptions($options),
+            ])
+            ->fill(['content' => str_repeat('> ', $depth) . '**Preserved content**'])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect(substr_count($html, '<blockquote>'))->toBe($expectedDepth)
+            ->and(substr_count($html, '&gt;'))->toBe($depth - $expectedDepth)
+            ->and($html)->toContain('<strong>Preserved content</strong>');
+    })->with([
+        'below the default' => [99, null, 99],
+        'at the default' => [100, null, 100],
+        'above the default' => [120, null, 100],
+        'unrelated options' => [120, ['html_input' => 'strip'], 100],
+        'lower override' => [120, ['max_nesting_level' => 3], 3],
+        'higher override' => [120, ['max_nesting_level' => 150], 120],
+    ]);
+
     it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
         $html = Schema::make(Livewire::make())
             ->statePath('data')
