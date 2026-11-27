@@ -75,8 +75,7 @@
             allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
-    {{
-        $attributes
+    {{ $attributes
             ->when(
                 $tag === 'form',
                 fn (ComponentAttributeBag $attributes) => $attributes->except(['action', 'class', 'method', 'wire:submit']),
@@ -105,16 +104,13 @@
                 'fi-dropdown-list-item',
                 'fi-disabled' => $disabled,
             ])
-            ->color(ItemComponent::class, $color)
-    }}
+            ->color(ItemComponent::class, $color) }}
 >
     @if ($hasLoadingIndicator)
-        {{
-            \Filament\Support\generate_loading_indicator_html((new FilamentComponentAttributeBag([
+        {{ \Filament\Support\generate_loading_indicator_html((new FilamentComponentAttributeBag([
                 'wire:loading.class.delay.' . $loadingDelay => $hasSeparateLoadingIndicatorTarget ? 'fi-loading' : null,
                 'wire:target' => $hasSeparateLoadingIndicatorTarget ? $loadingIndicatorTarget : null,
-            ]))->color(IconComponent::class, $iconColor), size: $iconSize)
-        }}
+            ]))->color(IconComponent::class, $iconColor), size: $iconSize) }}
     @endif
 
     @if ($icon || $iconAlias)
@@ -128,7 +124,7 @@
                 ['\\\\', "\\'", '\d ', '\a ', '\c '],
                 ($image instanceof Htmlable) ? html_entity_decode($image->toHtml(), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $image,
             );
-        @endphp
+        '@endphp
 
         <div
             class="fi-dropdown-list-item-image"
