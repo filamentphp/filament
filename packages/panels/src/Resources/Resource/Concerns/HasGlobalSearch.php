@@ -175,9 +175,16 @@ trait HasGlobalSearch
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
+        $shouldSplitSearchTerms = static::shouldSplitGlobalSearchTerms();
+
+        if ($shouldSplitSearchTerms) {
+            // Match the search input's `maxlength` before case folding and expanding words into query constraints.
+            $search = mb_substr($search, 0, 1000, 'UTF-8');
+        }
+
         $search = generate_search_term_expression($search, static::isGlobalSearchForcedCaseInsensitive(), $databaseConnection);
 
-        if (! static::shouldSplitGlobalSearchTerms()) {
+        if (! $shouldSplitSearchTerms) {
             $query->where(function (Builder $query) use ($search): void {
                 $isFirst = true;
 
@@ -198,6 +205,10 @@ trait HasGlobalSearch
             str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
+
+        if (count($searchWords) > 50) {
+            $searchWords = [$search];
+        }
 
         foreach ($searchWords as $searchWord) {
             $query->where(function (Builder $query) use ($searchWord): void {

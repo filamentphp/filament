@@ -135,10 +135,15 @@ trait CanSearchRecords
      */
     protected function extractTableSearchWords(string $search): array
     {
-        return array_filter(
+        // Match the search input's `maxlength` before expanding words into query constraints.
+        $search = mb_substr($search, 0, 1000, 'UTF-8');
+
+        $searchWords = array_filter(
             str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
+
+        return (count($searchWords) > 50) ? [$search] : $searchWords;
     }
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
