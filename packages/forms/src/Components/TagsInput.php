@@ -278,6 +278,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
         $wrapperAttributes = $this->getExtraAttributeBag()
             ->merge([
                 'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
+                'aria-disabled' => $isDisabled ? 'true' : null,
                 'aria-label' => filled($labelText) ? e($labelText) : null,
                 'role' => 'group',
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
