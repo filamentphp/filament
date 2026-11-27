@@ -196,7 +196,7 @@ class LazyLoadedStateVisibilityPage extends LazyLoadedStateBrowserTest
                             return ['restricted' => "Visible {$record['name']}"];
                         })),
                 ]),
-            ])->hidden(static fn (array $record, stdClass $rowLoop): bool => ($record['id'] !== 11) || ($rowLoop->iteration !== 1)),
+            ])->hidden(static fn (?array $record, ?stdClass $rowLoop): bool => ($record !== null) && (($record['id'] !== 11) || ($rowLoop?->iteration !== 1))),
         ]);
     }
 
