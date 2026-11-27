@@ -27,6 +27,8 @@ trait CanReorderRecords
             return;
         }
 
+        $order = array_values($order);
+
         $this->getTable()->callBeforeReordering($order);
 
         $orderColumn = (string) str($this->getTable()->getReorderColumn())->afterLast('.');
@@ -42,18 +44,20 @@ trait CanReorderRecords
 
                 $connection = $relationship->getRelated()->getConnection();
 
-                $pivotQuery = $relationship->newPivotQuery()->whereIn($keyColumn, array_values($order));
+                $pivotQuery = $relationship->newPivotQuery()->whereIn($keyColumn, $order);
                 $pivotKeyName = app($relationship->getPivotClass())->getKeyName();
+                $pivotConstraintKeyName = in_array($pivotKeyName, $relationship->getPivotColumns(), true)
+                    ? $pivotKeyName
+                    : $keyColumn;
+                $qualifiedPivotConstraintKeyName = $relationship->qualifyPivotColumn($pivotConstraintKeyName);
 
-                if (in_array($pivotKeyName, $relationship->getPivotColumns(), true)) {
-                    $pivotKeys = $this->getFilteredTableQuery()
-                        ->whereIn($relationship->qualifyPivotColumn($keyColumn), array_values($order))
-                        ->toBase()
-                        ->addSelect($relationship->qualifyPivotColumn($pivotKeyName) . ' as filament_pivot_key')
-                        ->pluck('filament_pivot_key');
+                $admittedPivotKeys = $this->getFilteredTableQuery()
+                    ->whereIn($relationship->qualifyPivotColumn($keyColumn), $order)
+                    ->toBase()
+                    ->addSelect("{$qualifiedPivotConstraintKeyName} as filament_pivot_key")
+                    ->pluck('filament_pivot_key');
 
-                    $pivotQuery->whereIn($pivotKeyName, $pivotKeys);
-                }
+                $pivotQuery->whereIn($pivotConstraintKeyName, $admittedPivotKeys);
 
                 $pivotQuery->update([
                     $orderColumn => $this->makeTableReorderColumnExpression($order, $connection->getQueryGrammar()->wrap($keyColumn), $connection),
@@ -68,7 +72,7 @@ trait CanReorderRecords
 
             $this->getTable()
                 ->getQuery()
-                ->whereIn($modelKeyName, array_values($order))
+                ->whereIn($modelKeyName, $order)
                 ->update([
                     $orderColumn => $this->makeTableReorderColumnExpression($order, $connection->getQueryGrammar()->wrap($modelKeyName), $connection),
                 ]);
