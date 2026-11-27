@@ -56,7 +56,7 @@
 
         @foreach ($columns as $column)
             @php
-                $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+                $columnHasSummary = ($pageTableSummaryQuery && filled($column->getVisibleSummarizers($pageTableSummaryQuery))) || filled($column->getVisibleSummarizers($allTableSummaryQuery));
             @endphp
 
             @if ($placeholderColumns || $columnHasSummary)

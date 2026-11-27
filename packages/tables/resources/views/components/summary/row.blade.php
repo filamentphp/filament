@@ -30,13 +30,13 @@
     $isStackedOnMobile = $this->getTable()->isStackedOnMobile();
 
     // `$query` is constant for this render, so each column's resolved summarizers are
-    // too. Resolve them once here instead of re-running `getSummarizers($query)` (and
-    // `hasSummary($query)`, which wraps it) in every loop guard below. Keyed by the
-    // `$columns` array key so the heading-span loop and the cell loop share the lookup.
+    // too. Resolve them once here instead of re-running `getVisibleSummarizers($query)`
+    // in every loop guard below. Keyed by the `$columns` array key so the heading-span
+    // loop and the cell loop share the lookup.
     $columnsWithSummary = [];
 
     foreach ($columns as $summaryColumnKey => $summaryColumn) {
-        $summaryColumnSummarizers = $summaryColumn->getSummarizers($query);
+        $summaryColumnSummarizers = $summaryColumn->getVisibleSummarizers($query);
 
         $columnsWithSummary[$summaryColumnKey] = [
             'summarizers' => $summaryColumnSummarizers,

@@ -400,6 +400,9 @@ TextColumn::make('sku')
         ->visible(fn (Builder $query): bool => $query->exists()))
 ```
 
+> [!NOTE]
+> On a [custom-data table](custom-data) without an Eloquent query, a summary is hidden if its `hidden()` or `visible()` callback requires a non-nullable `$query`. To evaluate visibility on these tables, omit the `$query` parameter or allow `null` and handle it in your callback.
+
 ## Summarising groups of rows
 
 You can use summaries with [groups](grouping) to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.

@@ -42,14 +42,20 @@ trait CanBeSummarized
      */
     public function getSummarizers(Builder | Closure | null $query = null): array
     {
-        if ($query) {
-            return array_filter(
-                $this->summarizers,
-                fn (Summarizer $summarizer): bool => $summarizer->query($query)->isVisible(),
-            );
-        }
+        return $query ? $this->getVisibleSummarizers($query) : $this->summarizers;
+    }
 
-        return $this->summarizers;
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @return array<string | int, Summarizer>
+     */
+    public function getVisibleSummarizers(Builder | Closure | null $query): array
+    {
+        return array_filter(
+            $this->summarizers,
+            fn (Summarizer $summarizer): bool => ($query ? $summarizer->query($query) : (clone $summarizer)->query(null))->isVisible(),
+        );
     }
 
     public function hasSummary(Builder | Closure | null $query = null): bool
