@@ -14,7 +14,7 @@ return [
 
         'password' => [
             'label' => 'รหัสผ่าน',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'รหัสผ่าน',
         ],
 
         'password_confirmation' => [
