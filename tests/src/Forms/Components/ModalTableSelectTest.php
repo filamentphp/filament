@@ -574,6 +574,55 @@ describe('scope enforcement', function (): void {
         expect($outOfScopePost->fresh()->author_id)->toBeNull();
         expect($inScopePost->fresh()->author_id)->toBeNull();
     });
+
+    it('rejects nonempty client state discarded before saving a single relationship', function (mixed $state): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        ModalTableSelect::configureUsing(
+            static fn (ModalTableSelect $component) => $component->required(),
+            during: fn () => livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
+                ->set('data.team_id', $state)
+                ->call('save')
+                ->assertHasFormErrors(['team_id' => ['prohibited']])
+                ->assertSet('record.team_id', $team->id),
+        );
+    })->with([
+        'array' => [['invalid']],
+        'false' => [false],
+    ]);
+
+    it('rejects discarded client state before detaching a multiple relationship', function (array $state): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+
+        livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+            ->set('data.teams', $state)
+            ->call('save')
+            ->assertHasFormErrors(['teams' => ['prohibited']]);
+
+        expect($user->fresh()->teams->modelKeys())->toBe([$team->id]);
+    })->with([
+        'nested array' => [[['invalid']]],
+        'blank string' => [['']],
+        'whitespace string' => [['   ']],
+    ]);
+
+    it('rejects non-array client state before saving a multiple relationship', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+
+        foreach ([(string) $team->id, json_encode([(string) $team->id]), false, 0] as $state) {
+            livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+                ->set('data.teams', $state)
+                ->call('save')
+                ->assertHasFormErrors(['teams' => ['array']]);
+
+            expect($user->fresh()->teams->modelKeys())->toBe([$team->id]);
+        }
+    });
 });
 
 describe('option labels', function (): void {

@@ -6,6 +6,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -1012,6 +1014,98 @@ describe('validation', function (): void {
             ->assertHasNoFormErrors();
     });
 
+    it('rejects nonempty client state discarded by the selection cast', function (mixed $state, bool $isMultiple): void {
+        $form = Schema::make(Livewire::make()->data(['selection' => $state]))
+            ->statePath('data')
+            ->components([
+                $select = Select::make('selection')
+                    ->options(['one' => 'One', 0 => 'Zero'])
+                    ->multiple($isMultiple)
+                    ->required(),
+            ]);
+
+        $form->getComponents();
+
+        expect(blank($select->getState()))->toBeTrue();
+
+        expect(fn () => $form->getState())->toThrow(ValidationException::class);
+    })->with([
+        'single array' => [['one'], false],
+        'single false' => [false, false],
+        'nested multiple array' => [[['one']], true],
+        'blank multiple array' => [[''], true],
+        'whitespace multiple array' => [['   '], true],
+    ]);
+
+    it('preserves zero selections and optional blank state through validation and dehydration', function (mixed $state, mixed $expected, bool $isMultiple): void {
+        $form = Schema::make(Livewire::make()->data(['selection' => $state]))
+            ->statePath('data')
+            ->components([
+                Select::make('selection')
+                    ->options([0 => 'Zero'])
+                    ->multiple($isMultiple)
+                    ->required(filled($state)),
+            ]);
+
+        expect($form->getState())->toBe(['selection' => $expected]);
+    })->with([
+        'integer zero' => [0, 0, false],
+        'string zero' => ['0', 0, false],
+        'multiple zero' => [['0'], [0], true],
+        'null' => [null, null, false],
+        'placeholder' => ['', null, false],
+        'empty multiple array' => [[], [], true],
+        'null multiple' => [null, [], true],
+    ]);
+
+    it('preserves enum selections through request validation and server-side `state()`', function (bool $isMultiple, bool $isServerState): void {
+        $state = $isMultiple ? [StringBackedEnum::One] : StringBackedEnum::One;
+        $form = Schema::make(Livewire::make()->data(['selection' => $isMultiple ? ['one'] : 'one']))
+            ->statePath('data')
+            ->components([
+                $select = Select::make('selection')
+                    ->options(['one' => 'One'])
+                    ->enum(StringBackedEnum::class)
+                    ->multiple($isMultiple)
+                    ->required(),
+            ]);
+
+        $form->getComponents();
+
+        if ($isServerState) {
+            $select->state($state);
+        }
+
+        expect($form->getState())->toBe(['selection' => $state]);
+    })->with([false, true])->with([false, true]);
+
+    it('preserves custom state casts through request validation and server-side `state()`', function (bool $isServerState): void {
+        $form = Schema::make(Livewire::make()->data(['selection' => '0']))
+            ->statePath('data')
+            ->components([
+                $select = Select::make('selection')
+                    ->options([0 => 'Zero'])
+                    ->stateCast(app(OptionStateCast::class, ['shouldCastToInteger' => false]))
+                    ->required(),
+            ]);
+
+        $form->getComponents();
+
+        if ($isServerState) {
+            $select->state(0);
+        }
+
+        expect($form->getState())->toBe(['selection' => '0']);
+    })->with([false, true]);
+
+    it('preserves `false` as a selected boolean option', function (): void {
+        $form = Schema::make(Livewire::make()->data(['selection' => false]))
+            ->statePath('data')
+            ->components([Select::make('selection')->boolean()->required()]);
+
+        expect($form->getState())->toBe(['selection' => false]);
+    });
+
     it('rejects an in-scope value but excluded by `modifyQueryUsing` on a `BelongsTo` relationship', function (): void {
         $inScope = User::factory()->create(['name' => 'Alpha User']);
         $outOfScope = User::factory()->create(['name' => 'Beta User']);
@@ -1159,7 +1253,7 @@ describe('validation', function (): void {
         $user = User::factory()->create();
         $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
 
-        foreach ([(string) $outOfScope->id, json_encode([(string) $outOfScope->id])] as $state) {
+        foreach ([(string) $outOfScope->id, json_encode([(string) $outOfScope->id]), false, 0] as $state) {
             livewire(TestComponentWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
                 ->set('data.teams', $state)
                 ->call('save')
