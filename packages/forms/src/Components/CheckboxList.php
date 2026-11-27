@@ -75,6 +75,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     {
         parent::setUp();
 
+        $this->prohibited(static fn (CheckboxList $component): bool => filled($component->getRawState()) && blank($component->getState()));
+
         $this->registerActions([
             fn (CheckboxList $component): Action => $component->getSelectAllAction(),
             fn (CheckboxList $component): Action => $component->getDeselectAllAction(),

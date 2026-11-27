@@ -90,6 +90,9 @@ FilamentAsset::register([
 
 Sometimes, you may wish to use dynamic data from the backend in CSS files. To do this, you can use the `FilamentAsset::registerCssVariables()` method in the `boot()` method of a service provider:
 
+> [!WARNING]
+> CSS variable names and values are trusted application configuration and are not sanitized for CSS. Unvalidated user content can inject additional declarations or rules into the global stylesheet. Use application-defined names and values, or strictly validate user-controlled input for the CSS syntax you intend to allow, including values read from a database. HTML escaping alone does not make a value safe for CSS. See [validating user input](security#validating-user-input).
+
 ```php
 use Filament\Support\Facades\FilamentAsset;
 

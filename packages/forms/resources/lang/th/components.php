@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'บล็อก',
+            'position' => ':label ตำแหน่งที่ :position จาก :count',
+            'moved' => 'ย้าย :label ไปยังตำแหน่งที่ :position จาก :count แล้ว',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -104,9 +110,19 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'ไม่พบบล็อกที่ตรงกับการค้นหา',
+
+            'search_prompt' => 'ค้นหาบล็อก',
+
+        ],
+
     ],
 
     'checkbox_list' => [
+
+        'required_description' => 'กรุณาเลือกอย่างน้อยหนึ่งตัวเลือก',
 
         'actions' => [
 
@@ -122,9 +138,55 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'ตัวเลือกสี',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'เดือน',
+        ],
+
+        'year_input' => [
+            'label' => 'ปี',
+        ],
+
+        'hour_input' => [
+            'label' => 'ชั่วโมง',
+        ],
+
+        'minute_input' => [
+            'label' => 'นาที',
+        ],
+
+        'second_input' => [
+            'label' => 'วินาที',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'placeholder' => 'ยังไม่มีไฟล์ที่อัปโหลด',
+
+        'actions' => [
+
+            'download' => [
+                'label' => 'ดาวน์โหลด',
+            ],
+
+            'open' => [
+                'label' => 'เปิดในแท็บใหม่',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'ตัวแก้ไขรูปภาพ',
 
             'actions' => [
 
@@ -240,7 +302,8 @@ return [
             'svg' => [
 
                 'messages' => [
-                    'confirmation' => "การแก้ไขไฟล์ SVG ไม่แนะนำ เนื่องจากอาจเกิดการสูญเสียคุณภาพเมื่อมีการปรับขนาด\nแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?",
+                    'confirmation' => 'การแก้ไขไฟล์ SVG ไม่แนะนำ เนื่องจากอาจเกิดการสูญเสียคุณภาพเมื่อมีการปรับขนาด
+แน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?',
                     'disabled' => 'การแก้ไขไฟล์ SVG ถูกปิดใช้งาน เนื่องจากอาจทำให้เกิดการสูญเสียคุณภาพเมื่อมีการปรับขนาด',
                 ],
 
@@ -262,8 +325,28 @@ return [
                 'label' => 'ลบแถว',
             ],
 
+            'move_down' => [
+                'label' => 'เลื่อนลง',
+            ],
+
+            'move_up' => [
+                'label' => 'เลื่อนขึ้น',
+            ],
+
             'reorder' => [
                 'label' => 'จัดลำดับแถว',
+            ],
+
+        ],
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'การดำเนินการ',
+            ],
+
+            'reorder' => [
+                'label' => 'จัดลำดับ',
             ],
 
         ],
@@ -278,6 +361,12 @@ return [
                 'label' => 'ค่า',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'แถว',
+            'position' => ':label ตำแหน่งที่ :position จาก :count',
+            'moved' => 'ย้าย :label ไปยังตำแหน่งที่ :position จาก :count แล้ว',
         ],
 
     ],
@@ -338,6 +427,24 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'รายการ',
+            'position' => ':label ตำแหน่งที่ :position จาก :count',
+            'moved' => 'ย้าย :label ไปยังตำแหน่งที่ :position จาก :count แล้ว',
+        ],
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'การดำเนินการ',
+            ],
+
+            'reorder' => [
+                'label' => 'จัดลำดับ',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -425,6 +532,10 @@ return [
 
                 ],
 
+            ],
+
+            'close_panel' => [
+                'label' => 'ปิดแผง',
             ],
 
             'custom_block' => [
@@ -548,6 +659,35 @@ return [
 
                         'color' => [
                             'label' => 'สี',
+
+                            'options' => [
+                                'slate' => 'เทาอมฟ้า',
+                                'gray' => 'เทา',
+                                'zinc' => 'เทาสังกะสี',
+                                'neutral' => 'เทากลาง',
+                                'stone' => 'เทาหิน',
+                                'mauve' => 'ม่วงอมเทา',
+                                'olive' => 'เขียวมะกอก',
+                                'mist' => 'เทาหมอก',
+                                'taupe' => 'น้ำตาลอมเทา',
+                                'red' => 'แดง',
+                                'orange' => 'ส้ม',
+                                'amber' => 'อำพัน',
+                                'yellow' => 'เหลือง',
+                                'lime' => 'เขียวมะนาว',
+                                'green' => 'เขียว',
+                                'emerald' => 'มรกต',
+                                'teal' => 'เขียวหัวเป็ด',
+                                'cyan' => 'ฟ้าอมเขียว',
+                                'sky' => 'ฟ้า',
+                                'blue' => 'น้ำเงิน',
+                                'indigo' => 'คราม',
+                                'violet' => 'ม่วงไวโอเล็ต',
+                                'purple' => 'ม่วง',
+                                'fuchsia' => 'บานเย็น',
+                                'pink' => 'ชมพู',
+                                'rose' => 'ชมพูกุหลาบ',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -562,6 +702,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'ลบบล็อก',
+                ],
+
+                'edit' => [
+                    'label' => 'แก้ไขบล็อก',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'ไม่พบบล็อกที่ตรงกับการค้นหา',
+
+            'search_label' => 'ค้นหาบล็อก',
+
+            'search_prompt' => 'ค้นหาบล็อก',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'ไฟล์ที่อัปโหลดต้องเป็นประเภท: :values',
 
         'file_attachments_max_size_message' => 'ไฟล์ที่อัปโหลดต้องมีขนาดไม่เกิน :max กิโลไบต์',
@@ -573,6 +735,10 @@ return [
             'no_search_results_message' => 'ไม่พบผลลัพธ์ที่ตรงกับการค้นหาของคุณ',
             'search_prompt' => 'เริ่มพิมพ์เพื่อค้นหา...',
             'searching_message' => 'กำลังค้นหา...',
+        ],
+
+        'toolbar' => [
+            'label' => 'แถบเครื่องมือตัวแก้ไข',
         ],
 
         'tools' => [
@@ -590,8 +756,11 @@ return [
             'custom_blocks' => 'บล็อก',
             'details' => 'รายละเอียด',
             'h1' => 'หัวข้อหลัก',
-            'h2' => 'หัวข้อรอง',
-            'h3' => 'หัวข้อย่อย',
+            'h2' => 'หัวข้อ 2',
+            'h3' => 'หัวข้อ 3',
+            'h4' => 'หัวข้อ 4',
+            'h5' => 'หัวข้อ 5',
+            'h6' => 'หัวข้อ 6',
             'grid' => 'ตารางกริด',
             'grid_delete' => 'ลบตารางกริด',
             'highlight' => 'เน้นข้อความ',
@@ -601,6 +770,7 @@ return [
             'link' => 'ลิงก์',
             'merge_tags' => 'รวมแท็ก',
             'ordered_list' => 'รายการแบบตัวเลข',
+            'paragraph' => 'ย่อหน้า',
             'redo' => 'ทำซ้ำ',
             'small' => 'ข้อความขนาดเล็ก',
             'strike' => 'ขีดฆ่า',
@@ -630,6 +800,10 @@ return [
     'select' => [
 
         'actions' => [
+
+            'clear' => [
+                'label' => 'ล้างที่เลือก',
+            ],
 
             'create_option' => [
 
@@ -675,12 +849,18 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'ลบ :label',
+            ],
+
         ],
 
         'boolean' => [
             'true' => 'ใช่',
             'false' => 'ไม่ใช่',
         ],
+
+        'error_message' => 'ไม่สามารถโหลดตัวเลือกได้ กรุณาลองใหม่อีกครั้ง',
 
         'loading_message' => 'กำลังโหลด...',
 
@@ -692,7 +872,11 @@ return [
 
         'placeholder' => 'เลือก',
 
+        'required_description' => 'กรุณาเลือกหนึ่งตัวเลือก',
+
         'searching_message' => 'กำลังค้นหา...',
+
+        'search_label' => 'ค้นหา',
 
         'search_prompt' => 'เริ่มพิมพ์เพื่อค้นหา...',
 
@@ -709,6 +893,10 @@ return [
         ],
 
         'placeholder' => 'แท็กใหม่',
+
+        'tag_added' => 'เพิ่มแล้ว: :tag',
+
+        'tag_removed' => 'ลบแล้ว: :tag',
 
     ],
 
@@ -734,6 +922,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'กรุณาเลือกอย่างน้อยหนึ่งตัวเลือก',
 
         'boolean' => [
             'true' => 'ใช่',

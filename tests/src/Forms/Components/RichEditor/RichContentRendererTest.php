@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\TextColor;
+use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,7 @@ use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Tiptap\Nodes\Paragraph;
 
 uses(TestCase::class);
 
@@ -1479,6 +1481,19 @@ describe('mentions', function (): void {
         expect($html)->toContain('@John');
     });
 
+    it('defaults malformed mention trigger characters before looking up providers', function (bool $hasProvider): void {
+        $providers = $hasProvider ? [MentionProvider::make('@')->items(['1' => 'Alice'])] : [];
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [['type' => 'paragraph', 'content' => [
+                ['type' => 'mention', 'attrs' => ['id' => '1', 'char' => ['invalid' => '@'], 'label' => 'Alice']],
+                ['type' => 'text', 'text' => 'Kept sibling'],
+            ]]],
+        ])->mentions($providers);
+
+        expect(html_entity_decode(strip_tags($renderer->toHtml())))->toBe('@AliceKept sibling');
+    })->with([false, true]);
+
     it('uses static `items()` for label lookup when `getLabelsUsing()` is not configured', function (): void {
         $renderer = RichContentRenderer::make([
             'type' => 'doc',
@@ -1602,6 +1617,55 @@ describe('link protocols', function (): void {
 });
 
 describe('CSS injection', function (): void {
+    it('safely serializes JSON `textAlign` values', function (mixed $alignment, ?string $expectedAlignment): void {
+        $content = [
+            'type' => 'doc',
+            'content' => array_map(static fn (string $type): array => [
+                'type' => $type,
+                'attrs' => ['textAlign' => $alignment, 'level' => 2],
+                'content' => [['type' => 'text', 'text' => 'Aligned content']],
+            ], ['paragraph', 'heading']),
+        ];
+
+        $renderer = RichContentRenderer::make($content);
+        $expectedStyle = $expectedAlignment === null ? '' : ' style="text-align: ' . $expectedAlignment . ';"';
+
+        expect($renderer->toUnsafeHtml())->toBe("<p{$expectedStyle}>Aligned content</p><h2{$expectedStyle}>Aligned content</h2>")
+            ->and($renderer->toHtml())->not->toContain('--alignment-injected');
+    })->with([
+        'injected declaration' => ['center; --alignment-injected: 1', null],
+        'inherited alignment' => ['inherit', 'inherit'],
+        'empty' => ['', null],
+        'null' => [null, null],
+        'number' => [1, null],
+        'boolean' => [true, null],
+        'array' => [['center'], null],
+        'object' => [(object) ['alignment' => 'center'], null],
+        'default' => ['start', null],
+        'center' => ['center', 'center'],
+        'end' => ['end', 'end'],
+        'justify' => ['justify', 'justify'],
+        'legacy left' => ['left', 'left'],
+        'legacy right' => ['right', 'right'],
+    ]);
+
+    it('fails closed when stored grid attributes cannot be rendered', function (string $method, string $attribute): void {
+        $document = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'grid',
+                'attrs' => ['data-cols' => ($attribute === 'data-cols') ? ['invalid' => 2] : 2],
+                'content' => [[
+                    'type' => 'gridColumn',
+                    'attrs' => ['data-col-span' => ($attribute === 'data-col-span') ? ['invalid' => 1] : 1],
+                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Grid content']]]],
+                ]],
+            ]],
+        ];
+
+        expect(RichContentRenderer::make($document)->{$method}())->toBe('');
+    })->with(['toHtml', 'toUnsafeHtml'])->with(['data-col-span', 'data-cols']);
+
     it('casts a malicious `data-cols` to an integer so it cannot inject CSS declarations', function (): void {
         $html = RichContentRenderer::make(
             '<div class="grid-layout" data-cols="1, minmax(0,1fr)); position:fixed; inset:0; background-image:url(//attacker" data-from-breakpoint="lg"><div class="grid-layout-col" data-col-span="1">x</div></div>',
@@ -1875,6 +1939,104 @@ describe('custom block rendering', function (): void {
 
         expect($html)->toContain('<div class="alert-info">Hello World</div>');
     });
+
+    it('passes array configuration to custom block renderers from every stored format', function (string $format, mixed $config, array $expectedConfig): void {
+        $document = [
+            'type' => 'doc',
+            'content' => [['type' => 'customBlock', 'attrs' => ['id' => 'config-block', 'config' => $config]]],
+        ];
+        $content = match ($format) {
+            'HTML' => '<div data-type="customBlock" data-id="config-block" data-config="' . e(json_encode($config)) . '"></div>',
+            'JSON' => json_encode($document),
+            default => $document,
+        };
+        $renderer = RichContentRenderer::make($content)->customBlocks([RendererTestConfigBlock::class => ['message' => 'Extra data']]);
+
+        expect($renderer->toHtml())->toBe('<p>' . e(json_encode($expectedConfig)) . ' Extra data</p>')
+            ->and($renderer->toUnsafeHtml())->toBe('<p>' . e(json_encode($expectedConfig)) . ' Extra data</p>');
+    })->with(['HTML', 'JSON', 'array'])->with([
+        'string' => ['invalid', []],
+        'true' => [true, []],
+        'false' => [false, []],
+        'integer' => [42, []],
+        'float' => [1.5, []],
+        'null' => [null, []],
+        'object' => [(object) ['nested' => (object) ['enabled' => false]], ['nested' => ['enabled' => false]]],
+        'list' => [['first', ['second' => false]], ['first', ['second' => false]]],
+        'nested configuration' => [
+            ['heading' => 'Café <hero>', 'extension' => ['type' => 'custom', 'content' => [0, false, null]]],
+            ['heading' => 'Café <hero>', 'extension' => ['type' => 'custom', 'content' => [0, false, null]]],
+        ],
+    ]);
+
+    it('uses empty configuration for malformed HTML custom block JSON', function (string $config): void {
+        $renderer = RichContentRenderer::make('<div data-type="customBlock" data-id="config-block" data-config="' . e($config) . '"></div>')
+            ->customBlocks([RendererTestConfigBlock::class => ['message' => 'Extra data']]);
+
+        expect($renderer->toHtml())->toBe('<p>[] Extra data</p>');
+    })->with(['{broken', '{"text":"\uD800"}', '1e400', '{"limit":1e400}']);
+
+    it('preserves valid extension data while checking custom block configuration', function (): void {
+        $plugin = new class extends TestRichContentPlugin
+        {
+            public function getTipTapPhpExtensions(): array
+            {
+                return [new class extends Paragraph
+                {
+                    public static $name = 'pluginParagraph';
+                }];
+            }
+        };
+        $document = [
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'pluginParagraph', 'attrs' => ['metadata' => ['type' => 'extension', 'content' => [0, false, null]]], 'content' => [['type' => 'text', 'text' => 'Plugin content']]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'config-block', 'config' => ['heading' => 'Café', 'extension' => ['enabled' => false]]]],
+            ],
+        ];
+        $renderer = RichContentRenderer::make($document)
+            ->plugins([$plugin])
+            ->customBlocks([RendererTestConfigBlock::class => ['message' => 'Extra data']]);
+
+        expect($renderer->toArray())->toBe($document)
+            ->and($renderer->toHtml())->toBe('<p>Plugin content</p><p>{&quot;heading&quot;:&quot;Caf\u00e9&quot;,&quot;extension&quot;:{&quot;enabled&quot;:false}} Extra data</p>');
+    });
+
+    it('discards unencodable custom block configuration without losing siblings', function (string $config, bool $isJson): void {
+        $document = '{"type":"doc","content":[{"type":"customBlock","attrs":{"id":"config-block","config":' . $config . '}},{"type":"paragraph","content":[{"type":"text","text":"Preserved sibling"}]}]}';
+        $renderer = RichContentRenderer::make($isJson ? $document : json_decode($document, associative: true))
+            ->customBlocks([RendererTestConfigBlock::class => ['message' => 'Extra data']]);
+
+        expect($renderer->toArray()['content'][0]['attrs']['config'])->toBeNull()
+            ->and($renderer->toHtml())->toBe('<p>[] Extra data</p><p>Preserved sibling</p>')
+            ->and($renderer->toUnsafeHtml())->toBe('<p>[] Extra data</p><p>Preserved sibling</p>')
+            ->and($renderer->toText())->toContain('Preserved sibling');
+    })->with(['1e400', '{"limit":1e400}'])->with([true, false]);
+
+    it('ignores stored HTML previews without losing serializable content', function (string $preview, bool $registerBlock): void {
+        $renderer = RichContentRenderer::make('<div data-type="customBlock" data-id="alert" data-config=\'{"type":"warning"}\' data-preview="' . e($preview) . '"></div><p>Preserved sibling</p>');
+
+        if ($registerBlock) {
+            $renderer->customBlocks([RendererTestAlertBlock::class]);
+        }
+
+        expect(json_encode($renderer->toArray(), JSON_THROW_ON_ERROR))->toContain('Preserved sibling');
+
+        $html = $renderer->toHtml();
+
+        expect($html)->toContain('<p>Preserved sibling</p>')->not->toContain('Obsolete preview');
+
+        if ($registerBlock) {
+            expect($html)->toContain('<div class="alert-warning"></div>');
+        }
+
+        expect($renderer->toUnsafeHtml())->toContain('<p>Preserved sibling</p>')
+            ->and($renderer->toText())->toContain('Preserved sibling');
+    })->with([
+        'invalid UTF-8' => base64_encode("\xB1\x31"),
+        'malformed base64' => '%%%/w==',
+        'obsolete HTML' => base64_encode('<p>Obsolete preview</p>'),
+    ])->with([true, false]);
 
     it('does not crash when content contains an unknown custom block ID', function (): void {
         $renderer = RichContentRenderer::make([
@@ -2423,6 +2585,19 @@ class RendererTestAlertBlock extends RichContentCustomBlock
     public static function toHtml(array $config, array $data): ?string
     {
         return '<div class="alert-' . ($config['type'] ?? 'info') . '">' . ($data['message'] ?? '') . '</div>';
+    }
+}
+
+class RendererTestConfigBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'config-block';
+    }
+
+    public static function toHtml(array $config, array $data): string
+    {
+        return '<p>' . e(json_encode($config, JSON_THROW_ON_ERROR)) . ' ' . e($data['message']) . '</p>';
     }
 }
 

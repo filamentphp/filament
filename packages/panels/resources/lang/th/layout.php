@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'ข้ามไปยังเนื้อหา',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -14,12 +18,9 @@ return [
             'label' => 'ออกจากระบบ',
         ],
 
-        'multi_factor_authentication' => [
-            'label' => 'การยืนยันตัวตนหลายขั้นตอน',
-        ],
-
         'open_database_notifications' => [
             'label' => 'เปิดการแจ้งเตือน',
+            'label_with_unread_count' => 'การแจ้งเตือน ยังไม่ได้อ่าน :count รายการ',
         ],
 
         'open_user_menu' => [
@@ -40,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'ธีม',
+
             'dark' => [
                 'label' => 'เปลี่ยนเป็นธีมกลางคืน',
             ],
@@ -55,6 +58,13 @@ return [
         ],
 
     ],
+    'navigation' => [
+        'label' => 'เมนูนำทางด้านข้าง',
+    ],
+
+    'topbar' => [
+        'label' => 'แถบด้านบน',
+    ],
 
     'avatar' => [
         'alt' => 'รูปผู้ใช้ :name',
@@ -62,6 +72,15 @@ return [
 
     'logo' => [
         'alt' => 'โลโก้ :name',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'ค้นหาทีม',
+            'placeholder' => 'ค้นหา',
+        ],
+
     ],
 
 ];

@@ -2,6 +2,7 @@
 
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
+use Filament\Tests\Fixtures\Livewire\ScopedTicketDepartmentsTable;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
@@ -50,6 +51,18 @@ it('displays form as disabled in `ViewAction`', function (): void {
             return $component->isDisabled();
         });
 });
+
+it('does not prefill hidden pivot attributes or their related-column collisions', function (bool $isTranslatable): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70]);
+
+    expect($department->attributesToArray())->toHaveKey('created_at');
+
+    livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'hasHiddenPivot' => true, 'isTranslatable' => $isTranslatable])
+        ->mountAction(TestAction::make('view')->table($department))
+        ->assertSchemaStateSet(['quantity' => null, 'pivot_quantity' => null, 'created_at' => null, 'pivot_created_at' => null, 'price' => 70]);
+})->with([false, true]);
 
 it('can view multiple records sequentially', function (): void {
     $ticket = Ticket::factory()->create();

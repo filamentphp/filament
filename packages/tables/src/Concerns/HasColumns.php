@@ -129,10 +129,6 @@ trait HasColumns
             return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
-        if ($column->isHidden()) {
-            return ['error' => __('filament-tables::table.columns.editable.unavailable')];
-        }
-
         $record = $this->getTableRecord($record);
 
         if (! $record) {
@@ -141,7 +137,7 @@ trait HasColumns
 
         $column->record($record);
 
-        if ($column->isDisabled()) {
+        if ($column->isHidden() || $column->isDisabled()) {
             return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
@@ -292,10 +288,6 @@ trait HasColumns
             return null;
         }
 
-        if ($column->isHidden()) {
-            return null;
-        }
-
         if (! method_exists($column, $method)) {
             return null;
         }
@@ -317,6 +309,10 @@ trait HasColumns
         }
 
         $column->record($record);
+
+        if ($column->isHidden()) {
+            return null;
+        }
 
         return $column->{$method}(...$arguments);
     }

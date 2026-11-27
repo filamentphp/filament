@@ -115,7 +115,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            if ($column->isHidden()) {
+            if ($column->getCloneForRecord(null)->isHidden()) {
                 continue;
             }
 

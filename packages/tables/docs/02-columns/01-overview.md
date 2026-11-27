@@ -865,6 +865,11 @@ TextColumn::make('role')
     ->visible(FeatureFlag::active())
 ```
 
+Visibility callbacks for columns and [layouts](../layout#hiding-layouts-conditionally) are also evaluated without a record when Filament determines table-wide visibility, search, and sort capabilities. If your callback uses `$record`, accept a nullable record and handle `null` explicitly. Return `false` from `hidden()` or `true` from `visible()` when there is no record if the column should remain available to these table-wide features. When rendering or interacting with a particular record, Filament evaluates visibility with that record instead.
+
+> [!WARNING]
+> Visibility callbacks using `$rowLoop` must accept `?stdClass` and handle `null`: the loop is only available during row rendering, not table-wide checks or direct server interactions. Hiding content for individual records does not prevent those records from matching searches or affecting sorting. Visibility is not a substitute for authorization or query scoping. Use [editable-column authorization](#authorizing-editable-columns) or `disabled()` to restrict edits, and scope the table query to restrict access to records.
+
 ### Allowing users to manage columns
 
 #### Toggling column visibility

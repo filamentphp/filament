@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'รายละเอียด',
 
+    'navigation_label' => 'รายละเอียด',
+
     'content' => [
 
         'tab' => [

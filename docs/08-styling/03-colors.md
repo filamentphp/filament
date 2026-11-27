@@ -48,6 +48,9 @@ If you would like to use a color in a [Blade component](../components), you can 
 
 From a service provider's `boot()` method, or middleware, you can call the `FilamentColor::register()` method, which you can use to customize which colors Filament uses for UI elements.
 
+> [!WARNING]
+> Registered palette names, shade keys, and shade values are trusted application configuration and are not sanitized for CSS. They are included in the global stylesheet, where malicious content can inject additional CSS declarations or rules. This also applies to palettes passed to a panel's `colors()` method or returned from a closure. Map user selections to application-defined palettes, or strictly validate user-controlled names, keys, and values before registration. Reading a value from the database or HTML-escaping it does not make it safe for CSS. See [validating user input](../advanced/security#validating-user-input).
+
 There are 6 default colors that are used throughout Filament that you are able to customize:
 
 ```php

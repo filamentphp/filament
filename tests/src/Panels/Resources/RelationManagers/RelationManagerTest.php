@@ -37,6 +37,7 @@ use Filament\Tests\Fixtures\Resources\Departments\CustomUpdateAuthorizationDepar
 use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
 use Filament\Tests\Fixtures\Resources\Departments\EditAuthorizationDepartmentResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
+use Filament\Tests\Fixtures\Resources\Posts\ReorderablePostResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicketWithContentTabs;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ViewTicket;
@@ -55,7 +56,9 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPi
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
+use Filament\Tests\Fixtures\Resources\Users\Pages\ViewUser;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithAssociateActionRelationManager;
+use Filament\Tests\Fixtures\Resources\Users\RelationManagers\ReorderableRelatedPostsRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
@@ -80,6 +83,27 @@ describe('rendering and authorization', function (): void {
         livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
             ->assertSuccessful();
     });
+
+    it('composes related-resource reorder authorization with manager overrides and read-only mode', function (string $manager, string $page, bool $expected): void {
+        $owner = User::factory()->create();
+        $first = Post::factory()->for($owner, 'author')->create(['sort' => 1]);
+        $second = Post::factory()->for($owner, 'author')->create(['sort' => 2]);
+
+        $component = livewire($manager, ['ownerRecord' => $owner, 'pageClass' => $page]);
+
+        expect($component->instance()->getTable()->isReorderable())->toBe($expected);
+
+        $component->call('reorderTable', [(string) $second->getKey(), (string) $first->getKey()]);
+
+        expect($first->fresh()->sort)->toBe($expected ? 2 : 1)
+            ->and($second->fresh()->sort)->toBe($expected ? 1 : 2);
+    })->with([
+        'read-only' => [ReorderableRelatedPostsRelationManager::class, ViewUser::class, false],
+        'writable' => [ReorderableRelatedPostsRelationManager::class, EditUser::class, true],
+        'resource denial' => [DeniedReorderRelatedPostsRelationManager::class, EditUser::class, false],
+        'manager override' => [CustomReorderRelatedPostsRelationManager::class, EditUser::class, false],
+        'allowing overrides' => [AllowedReorderRelatedPostsRelationManager::class, EditUser::class, true],
+    ]);
 
     it('does not expose a denied action form through schema lookup or pagination', function (string $method, array $arguments): void {
         app()->bind(DepartmentPolicy::class . '::create', static fn (): bool => false);
@@ -2296,5 +2320,49 @@ class CreateAuthorizationDepartmentsRelationManager extends DepartmentsRelationM
         $response = parent::getCreateAuthorizationResponse();
 
         return $response->denied() ? $response : Response::deny('Relationship hook denial.');
+    }
+}
+
+class DeniedReorderPostResource extends ReorderablePostResource
+{
+    public static function table(Table $table): Table
+    {
+        return parent::table($table)->authorizeReorder(static fn (Table $table): bool => false);
+    }
+}
+
+class DeniedReorderRelatedPostsRelationManager extends ReorderableRelatedPostsRelationManager
+{
+    protected static ?string $relatedResource = DeniedReorderPostResource::class;
+}
+
+class CustomReorderRelatedPostsRelationManager extends ReorderableRelatedPostsRelationManager
+{
+    protected function canReorder(): bool
+    {
+        return false;
+    }
+}
+
+class AllowedReorderPostResource extends ReorderablePostResource
+{
+    public static function getReorderAuthorizationResponse(): Response
+    {
+        return Response::deny();
+    }
+
+    public static function table(Table $table): Table
+    {
+        return parent::table($table)->authorizeReorder(static fn (Table $table): bool => $table->getReorderColumn() === 'sort');
+    }
+}
+
+class AllowedReorderRelatedPostsRelationManager extends ReorderableRelatedPostsRelationManager
+{
+    protected static ?string $relatedResource = AllowedReorderPostResource::class;
+
+    protected function canReorder(): bool
+    {
+        return true;
     }
 }

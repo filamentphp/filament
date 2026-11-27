@@ -148,7 +148,7 @@ trait HasColumns
     {
         return $this->cachedVisibleColumns ??= array_filter(
             $this->getColumns(),
-            fn (Column $column): bool => $column->isVisible() && (! $column->isToggledHidden()),
+            fn (Column $column): bool => $column->getCloneForRecord(null)->isVisible() && (! $column->isToggledHidden()),
         );
     }
 

@@ -1,8 +1,11 @@
 <?php
 
+use Filament\Support\Facades\FilamentView;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class);
 
@@ -50,6 +53,37 @@ it('uses menu behavior by default and supports opting out', function (): void {
         ->assertScript("document.getElementById(document.querySelector('[data-testid=\"dropdown-trigger\"]').getAttribute('aria-controls')).contains(document.querySelector('[data-testid=\"outer-dropdown-action\"]'))", true)
         ->assertScript("!document.getElementById(document.querySelector('[data-testid=\"dropdown-trigger\"]').getAttribute('aria-controls')).hasAttribute('role')", true)
         ->assertNoSmoke();
+});
+
+it('keeps dropdown images inside one CSS URL without changing layout or requested URLs', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    // Block external requests without preventing inline CSS from being parsed.
+    FilamentView::registerRenderHook(PanelsRenderHook::HEAD_START, static fn (): string => '<meta http-equiv="Content-Security-Policy" content="default-src \'self\' data: \'unsafe-inline\' \'unsafe-eval\'">');
+    Route::get('/dropdown-avatar.svg', static fn () => response('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><rect width="16" height="16" fill="green"/></svg>', 200, ['Content-Type' => 'image/svg+xml']));
+
+    $images = [
+        '/dropdown-avatar.svg?name=ordinary&size=32',
+        "/dropdown-avatar.svg?name=');position:fixed;inset:0;z-index:2147483647;/*",
+        "/dropdown-avatar.svg?name=O'Reilly\"\\a&literal=&quot;&encoded=%27&unicode=é\r\n\fend",
+    ];
+
+    $page = visit('/dropdown-browser-test?' . http_build_query(['images' => $images]));
+    $page->click('[data-testid="menu-dropdown-trigger"]');
+
+    foreach ($images as $index => $image) {
+        $page->assertVisible('[data-testid="image-item-' . $index . '"]')
+            ->assertScript('getComputedStyle(document.querySelector(\'[data-testid="image-item-' . $index . '"] > div\')).position', 'static')
+            ->assertScript('document.querySelector(\'[data-testid="image-item-' . $index . '"] > div\').style.length', 1)
+            ->assertScript('performance.getEntriesByType("resource").some(entry => entry.name === new URL(' . json_encode($image) . ', location.href).href)', true);
+    }
+
+    $page->assertNoAccessibilityIssues();
+    $page->inDarkMode()
+        ->click('[data-testid="menu-dropdown-trigger"]')
+        ->assertVisible('[data-testid="image-item-0"]')
+        ->assertNoAccessibilityIssues();
 });
 
 it('keeps an opted-out popup open when closing a nested menu', function (): void {

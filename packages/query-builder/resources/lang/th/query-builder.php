@@ -14,8 +14,13 @@ return [
 
             'label' => 'กลุ่ม',
 
+            'group' => [
+                'label' => 'กลุ่ม',
+            ],
+
             'block' => [
                 'label' => 'แยกเงื่อนไข (หรือ)',
+                'picker_group' => 'ตรรกะ',
                 'or' => 'หรือ',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(ไม่มีเงื่อนไข)',
+
+    'max_rules_reached_tooltip' => 'คุณเพิ่มเงื่อนไขครบจำนวนสูงสุด :count เงื่อนไขแล้ว',
 
     'item_separators' => [
         'and' => 'และ',
@@ -126,8 +133,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is :month',
-                    'inverse' => ':attribute is not :month',
+                    'direct' => ':attribute เป็นเดือน :month',
+                    'inverse' => ':attribute ไม่ใช่เดือน :month',
                 ],
 
             ],
@@ -146,6 +153,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'วินาที',
+                'minute' => 'นาที',
+                'hour' => 'ชั่วโมง',
+                'day' => 'วัน',
+                'week' => 'สัปดาห์',
+                'month' => 'เดือน',
+                'quarter' => 'ไตรมาส',
+                'year' => 'ปี',
+            ],
+
+            'presets' => [
+                'past_decade' => '10 ปีที่แล้ว',
+                'past_5_years' => '5 ปีที่แล้ว',
+                'past_2_years' => '2 ปีที่แล้ว',
+                'past_year' => '1 ปีที่แล้ว',
+                'past_6_months' => '6 เดือนที่แล้ว',
+                'past_quarter' => '1 ไตรมาสที่แล้ว',
+                'past_month' => '1 เดือนที่แล้ว',
+                'past_2_weeks' => '2 สัปดาห์ที่แล้ว',
+                'past_week' => '1 สัปดาห์ที่แล้ว',
+                'past_hour' => '1 ชั่วโมงที่แล้ว',
+                'past_minute' => '1 นาทีที่แล้ว',
+                'this_decade' => 'ทศวรรษนี้',
+                'this_year' => 'ปีนี้',
+                'this_quarter' => 'ไตรมาสนี้',
+                'this_month' => 'เดือนนี้',
+                'today' => 'วันนี้',
+                'this_hour' => 'ชั่วโมงนี้',
+                'this_minute' => 'นาทีนี้',
+                'next_minute' => '1 นาทีข้างหน้า',
+                'next_hour' => '1 ชั่วโมงข้างหน้า',
+                'next_week' => '1 สัปดาห์ข้างหน้า',
+                'next_2_weeks' => '2 สัปดาห์ข้างหน้า',
+                'next_month' => '1 เดือนข้างหน้า',
+                'next_quarter' => '1 ไตรมาสข้างหน้า',
+                'next_6_months' => '6 เดือนข้างหน้า',
+                'next_year' => '1 ปีข้างหน้า',
+                'next_2_years' => '2 ปีข้างหน้า',
+                'next_5_years' => '5 ปีข้างหน้า',
+                'next_decade' => '10 ปีข้างหน้า',
+                'custom' => 'กำหนดเอง',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +209,40 @@ return [
 
                 'year' => [
                     'label' => 'ปี',
+                ],
+
+                'mode' => [
+
+                    'label' => 'ประเภทวันที่',
+
+                    'options' => [
+                        'absolute' => 'ระบุวันที่',
+                        'relative' => 'นับจากปัจจุบัน',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'ช่วงเวลา',
+                ],
+
+                'relative_value' => [
+                    'label' => 'จำนวน',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'หน่วยเวลา',
+                ],
+
+                'tense' => [
+
+                    'label' => 'ทิศทางเวลา',
+
+                    'options' => [
+                        'past' => 'ย้อนหลัง',
+                        'future' => 'ล่วงหน้า',
+                    ],
+
                 ],
 
             ],
@@ -377,7 +462,7 @@ return [
                     'inverse' => ':attribute ไม่ใช่ :values',
                     'values_glue' => [
                         ', ',
-                        'final' => ' or ',
+                        'final' => ' หรือ ',
                     ],
                 ],
 
