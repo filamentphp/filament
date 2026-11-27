@@ -177,7 +177,7 @@ export default async ({
         Text,
         TextAlign.configure({
             types: ['heading', 'paragraph'],
-            alignments: ['start', 'center', 'end', 'justify'],
+            alignments: ['start', 'center', 'end', 'justify', 'left', 'right'],
             defaultAlignment: 'start',
         }),
         Underline,

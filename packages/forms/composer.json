@@ -13,7 +13,7 @@
         "filament/actions": "self.version",
         "filament/schemas": "self.version",
         "filament/support": "self.version",
-        "ueberdosis/tiptap-php": "^2.0"
+        "ueberdosis/tiptap-php": "^2.2.1"
     },
     "suggest": {
         "fakerphp/faker": "Required to generate fake rich content and Markdown."

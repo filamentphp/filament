@@ -37,7 +37,7 @@
         "staudenmeir/belongs-to-through": "^2.5",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
         "symplify/monorepo-builder": "^11.0",
-        "ueberdosis/tiptap-php": "^2.0"
+        "ueberdosis/tiptap-php": "^2.2.1"
     },
     "autoload": {
         "files": [

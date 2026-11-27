@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\View\ComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
@@ -227,6 +228,23 @@ describe('`color()`', function (): void {
         expect($bag->get('class'))->toBe('fi-color');
         expect($bag->get('style'))->toContain('--color-50: oklch(0.97 0 0)');
     });
+
+    it('keeps entity-like palette shades unchanged through attribute serialization', function (string $bagClass): void {
+        $bag = (new $bagClass)
+            ->style('position: relative')
+            ->color(BadgeComponent::class, [500 => 'rgb(0&#41&#59position&#58fixed&#59--tail&#58rgb&#40 0)'] + Color::Blue);
+
+        $document = new DOMDocument;
+        $document->loadHTML('<div ' . $bag->toHtml() . '></div>', LIBXML_NOERROR | LIBXML_NOWARNING);
+        $style = $document->getElementsByTagName('div')->item(0)->getAttribute('style');
+
+        expect($style)->toBe($bag->get('style'))
+            ->toContain('position: relative;', '--color-50: ' . Color::Blue[50])
+            ->not->toContain(';position:fixed', '--tail:', '&amp;');
+    })->with([
+        'Filament' => [ComponentAttributeBag::class],
+        'Laravel' => [BaseComponentAttributeBag::class],
+    ]);
 
     it('returns the bag unchanged for a null color', function (): void {
         $bag = (new ComponentAttributeBag)->color(BadgeComponent::class, null);

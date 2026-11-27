@@ -16,7 +16,34 @@ class RichEditorStyleAttributesBrowserTest extends Page
 
     public function mount(): void
     {
-        $this->form->fill();
+        $content = [];
+
+        foreach (['start', 'center', 'end', 'justify', 'left', 'right', 'center; --alignment-injected: 1', 'inherit', '', null, 1, true, ['center'], ['toString' => 'center']] as $alignment) {
+            foreach (['paragraph', 'heading'] as $type) {
+                $content[] = [
+                    'type' => $type,
+                    'attrs' => ['textAlign' => $alignment, 'level' => 2],
+                    'content' => [['type' => 'text', 'text' => 'Text alignment']],
+                ];
+            }
+
+            $content[] = [
+                'type' => 'table',
+                'content' => [[
+                    'type' => 'tableRow',
+                    'content' => array_map(static fn (string $type): array => [
+                        'type' => $type,
+                        'attrs' => ['align' => $alignment],
+                        'content' => [[
+                            'type' => 'paragraph',
+                            'content' => [['type' => 'text', 'text' => 'Cell alignment']],
+                        ]],
+                    ], ['tableHeader', 'tableCell']),
+                ]],
+            ];
+        }
+
+        $this->form->fill(['content' => ['type' => 'doc', 'content' => $content]]);
     }
 
     public function form(Schema $form): Schema
