@@ -82,6 +82,8 @@ class ModalTableSelect extends Field implements HasEmbeddedView
     {
         parent::setUp();
 
+        $this->prohibited(static fn (ModalTableSelect $component): bool => filled($component->getRawState()) && blank($component->getState()));
+
         $this->registerActions([
             fn (ModalTableSelect $component): Action => $component->getSelectAction(),
         ]);

@@ -258,6 +258,25 @@ it('does not dispatch an import when authorization is revoked before the server 
     assertDatabaseCount('posts', 0);
 });
 
+it('does not start an import when a required mapping is discarded by its selection cast', function (mixed $state): void {
+    livewire(ImportActionSubmissionPage::class)
+        ->mountAction('import')
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('articles.csv', "Article headline,Article body\nFirst article,First body\n")])
+        ->fillForm(['columnMap' => ['title' => 'Article headline', 'content' => 'Article body']])
+        ->set('mountedActions.0.data.columnMap.title', $state)
+        ->assertSet('mountedActions.0.data.columnMap.title', $state)
+        ->call('callMountedAction')
+        ->assertHasFormErrors(['columnMap.title' => ['prohibited']]);
+
+    Event::assertNotDispatched(ImportStarted::class);
+    Bus::assertBatchCount(0);
+    assertDatabaseCount('imports', 0);
+    assertDatabaseCount('posts', 0);
+})->with([
+    'array' => [['Article headline']],
+    'false' => [false],
+]);
+
 class ImportActionSubmissionPage extends Actions
 {
     public bool $canImport = true;

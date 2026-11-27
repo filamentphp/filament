@@ -3,9 +3,11 @@
 namespace Filament\Tests\Forms\Components;
 
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -318,6 +320,73 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasNoFormErrors();
     });
+
+    it('rejects blank-only client state for a required multiple selection', function (array $state): void {
+        ToggleButtons::configureUsing(
+            static fn (ToggleButtons $component) => $component->required(),
+            during: fn () => livewire(TestComponentWithMultipleToggleButtonsValidation::class)
+                ->set('data.tags', $state)
+                ->call('save')
+                ->assertHasFormErrors(['tags' => ['prohibited']]),
+        );
+    })->with([
+        'empty string' => [['']],
+        'whitespace' => [[' ']],
+    ]);
+
+    it('preserves valid multiple selections and optional blanks through validation and dehydration', function (mixed $state, array $expected, ?string $cast = null): void {
+        $component = ToggleButtons::make('tags')
+            ->multiple()
+            ->options(['one' => 'One', 0 => 'Zero'])
+            ->required(filled($state));
+
+        if ($cast === 'enum') {
+            $component->options(IntegerBackedEnum::class);
+        } elseif ($cast === 'custom') {
+            $component->stateCast(app(OptionsArrayStateCast::class, ['shouldCastToInteger' => false]));
+        }
+
+        $form = Schema::make(Livewire::make()->data(['tags' => $state]))
+            ->statePath('data')
+            ->components([$component]);
+
+        expect($form->getState())->toBe(['tags' => $expected]);
+    })->with([
+        'valid option' => [['one'], ['one']],
+        'integer zero' => [[0], [0]],
+        'string zero' => [['0'], [0]],
+        'null' => [null, []],
+        'empty array' => [[], []],
+        'enum zero' => [['0'], [IntegerBackedEnum::Zero], 'enum'],
+        'custom cast zero' => [['0'], ['0'], 'custom'],
+    ]);
+
+    it('rejects nested client state with multiple option membership validation', function (): void {
+        livewire(TestComponentWithMultipleToggleButtonsValidation::class)
+            ->set('data.tags', [['one']])
+            ->call('save')
+            ->assertHasFormErrors(['tags.0' => ['in']]);
+    });
+
+    it('rejects non-array client state with multiple array validation', function (): void {
+        foreach (['one', '["one"]', false, 0] as $state) {
+            livewire(TestComponentWithMultipleToggleButtonsValidation::class)
+                ->set('data.tags', $state)
+                ->call('save')
+                ->assertHasFormErrors(['tags' => ['array']]);
+        }
+    });
+
+    it('preserves single option membership errors for discarded client state', function (mixed $state): void {
+        livewire(TestComponentWithToggleButtonsValidation::class)
+            ->set('data.status', $state)
+            ->call('save')
+            ->assertHasFormErrors(['status' => ['in']])
+            ->assertHasNoErrors(['data.status' => ['prohibited']]);
+    })->with([
+        'array' => [['active']],
+        'false' => [false],
+    ]);
 });
 
 describe('rendering', function (): void {
