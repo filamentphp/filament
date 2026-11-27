@@ -8,11 +8,13 @@ use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\Summarizers\Values;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\SqlServerConnection;
+use Illuminate\Support\Facades\DB;
 
 use function Filament\Tests\livewire;
 
@@ -76,6 +78,20 @@ describe('`Summarizer` base class', function (): void {
         $summarizer = Summarizer::make();
 
         expect($summarizer->getSelectStatements('rating'))->toBe([]);
+    });
+
+    it('preserves the selected rows in ordered queries with limits and offsets', function (): void {
+        foreach ([2, 7, 19] as $rating) {
+            Post::factory()->create(['rating' => $rating]);
+        }
+
+        $summarizer = Sum::make();
+        TextColumn::make('rating')->summarize($summarizer);
+
+        expect($summarizer->query(Post::query()->orderByDesc('rating'))->getState())->toEqual(28)
+            ->and($summarizer->query(Post::query()->orderByDesc('rating')->limit(1))->getState())->toEqual(19)
+            ->and($summarizer->query(Post::query()->orderByDesc('rating')->offset(1)->limit(1))->getState())->toEqual(7)
+            ->and($summarizer->query(Post::query()->withGlobalScope('top-rating', static fn ($query) => $query->orderByDesc('rating')->limit(1)))->getState())->toEqual(19);
     });
 });
 
@@ -310,5 +326,20 @@ describe('`Values` summarizer', function (): void {
             ->bulleted(static fn (): bool => false);
 
         expect($values->isBulleted())->toBeFalse();
+    });
+
+    it('preserves existing ordered `Values` on SQLite', function (): void {
+        if (DB::connection()->getDriverName() !== 'sqlite') {
+            $this->markTestSkipped('This preserves existing SQLite ordering, not a portable derived-table ordering guarantee.');
+        }
+
+        foreach ([2, 7, 19] as $rating) {
+            Post::factory()->create(['rating' => $rating]);
+        }
+
+        $summarizer = Values::make();
+        TextColumn::make('rating')->summarize($summarizer);
+
+        expect($summarizer->query(Post::query()->orderByDesc('rating'))->getState())->toBe([19, 7, 2]);
     });
 });
