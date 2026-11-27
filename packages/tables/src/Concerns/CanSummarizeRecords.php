@@ -112,7 +112,7 @@ trait CanSummarizeRecords
         }
 
         foreach ($this->getTable()->getVisibleColumns() as $column) {
-            $summarizers = $column->getSummarizers($query);
+            $summarizers = $column->getVisibleSummarizers($query);
 
             if (! count($summarizers)) {
                 continue;
@@ -157,7 +157,7 @@ trait CanSummarizeRecords
             return [];
         }
 
-        $queryToJoin = $query->clone();
+        $queryToJoin = $query->getModel()->newQuery();
         $joins = [];
 
         $query = $query->getModel()->resolveConnection($query->getModel()->getConnectionName())

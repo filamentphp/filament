@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Summarizers\Concerns;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Arr;
+use ReflectionFunction;
 
 trait CanBeHidden
 {
@@ -74,6 +75,20 @@ trait CanBeHidden
 
         if (array_key_exists($querySql, $this->visibilityCache)) {
             return $this->visibilityCache[$querySql];
+        }
+
+        if (! $query) {
+            foreach ([$this->isHidden, $this->isVisible] as $condition) {
+                if (! $condition instanceof Closure) {
+                    continue;
+                }
+
+                foreach ((new ReflectionFunction($condition))->getParameters() as $parameter) {
+                    if (($parameter->getName() === 'query') && (! $parameter->allowsNull())) {
+                        return $this->visibilityCache[$querySql] = true;
+                    }
+                }
+            }
         }
 
         if ($this->evaluate($this->isHidden)) {
