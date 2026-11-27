@@ -7,6 +7,7 @@
  * - Changed `minHeight` and `maxHeight` to apply independently when both options are set. See https://github.com/Ionaru/easy-markdown-editor/issues/413.
  * - Made the `CodeMirror` scroller keyboard-focusable when `maxHeight` is set so overflowing content can be scrolled with a keyboard. See https://github.com/filamentphp/filament/pull/20258.
  * - Prevented `CodeMirror` from wrapping the ancestor form's `submit()` method, so detached editors can fully release their form listener during teardown.
+ * - Escaped image preview URLs before assigning them to the `--bg-image` CSS custom property. See https://github.com/filamentphp/filament/pull/21156.
  */
 
 // Some variables
@@ -2603,14 +2604,14 @@ EasyMDE.prototype.render = function (el) {
 
     function assignImageBlockAttributes(parentEl, img) {
         parentEl.setAttribute('data-img-src', img.url)
-        parentEl.setAttribute(
-            'style',
-            '--bg-image:url(' +
-                img.url +
-                ');--width:' +
-                img.naturalWidth +
-                'px;--height:' +
-                calcHeight(img.naturalWidth, img.naturalHeight),
+        parentEl.style.setProperty(
+            '--bg-image',
+            'url(' + CSS.escape(img.url) + ')',
+        )
+        parentEl.style.setProperty('--width', img.naturalWidth + 'px')
+        parentEl.style.setProperty(
+            '--height',
+            calcHeight(img.naturalWidth, img.naturalHeight),
         )
         _vm.codemirror.setSize()
     }
