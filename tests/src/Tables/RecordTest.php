@@ -1,22 +1,30 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsReorderableTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\ScopedTicketDepartmentsTable;
 use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
 use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\DepartmentTicket;
+use Filament\Tests\Fixtures\Models\HiddenDepartmentTicket;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 use function Filament\Tests\livewire;
 
@@ -537,6 +545,138 @@ describe('reordering', function (): void {
             ->assertSet('afterReorderingOrder', $order);
     });
 });
+
+describe('configured pivot identity', function (): void {
+    it('mutates only the admitted attachment', function (string $constraint, bool $duplicates, string $operation): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department, ['quantity' => 3, 'price' => 30, 'sort' => 30]);
+        $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70, 'sort' => 17]);
+        $excluded = DB::table('department_ticket')->where('quantity', 3)->first();
+        $admitted = DB::table('department_ticket')->where('quantity', 7)->first();
+        $recordKey = (string) ($duplicates ? $admitted->id : $department->getKey());
+        $component = livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'constraint' => $constraint, 'duplicates' => $duplicates]);
+
+        if ($operation === 'inline') {
+            $component->call('updateTableColumnState', 'price', $recordKey, 99)->assertHasNoErrors();
+        } elseif ($operation === 'edit') {
+            $component->callAction(TestAction::make('edit')->table($recordKey), ['price' => 99])->assertHasNoErrors();
+        } elseif ($operation === 'detach') {
+            $component->callAction(TestAction::make(DetachAction::class)->table($recordKey))->assertHasNoErrors();
+        } else {
+            $component->call('reorderTable', $duplicates ? [(string) $excluded->id, $recordKey] : [$recordKey])->assertHasNoErrors();
+        }
+
+        expect(DB::table('department_ticket')->where('id', $excluded->id)->first())->toEqual($excluded);
+
+        if ($operation === 'detach') {
+            expect(DB::table('department_ticket')->where('id', $admitted->id)->exists())->toBeFalse();
+        } elseif ($operation === 'reorder') {
+            expect(DB::table('department_ticket')->where('id', $admitted->id)->value('sort'))->toEqual($duplicates ? 2 : 1);
+        } else {
+            expect(DB::table('department_ticket')->where('id', $admitted->id)->value('price'))->toEqual(99);
+        }
+    })->with(['wherePivot', 'withPivotValue', 'global scope', 'modifyQueryUsing'])->with([false, true])->with(['inline', 'edit', 'detach', 'reorder']);
+
+    it('detaches only the admitted attachment in fetched and unfetched nonduplicate bulk actions', function (bool $fetchSelectedRecords, ?int $chunkSize, bool $usesCustomPivot): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department, ['quantity' => 3]);
+        $ticket->departments()->attach($department, ['quantity' => 7]);
+
+        $relationship = ($usesCustomPivot ? $ticket->departments() : $ticket->belongsToMany(Department::class))->withPivot(['id', 'quantity']);
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->relationship(static fn () => clone $relationship),
+            during: static fn () => livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'constraint' => 'modifyQueryUsing', 'fetchSelectedRecords' => $fetchSelectedRecords, 'chunkSize' => $chunkSize])
+                ->callTableBulkAction(DetachBulkAction::class, [$department->getKey()])
+                ->assertHasNoErrors(),
+        );
+
+        expect($ticket->departments()->pluck('quantity')->all())->toEqual([3]);
+    })->with([[true, null], [true, 1], [false, null]])->with([false, true]);
+
+    it('preserves a configured nonstandard string pivot key during scoped mutations', function (): void {
+        Schema::create('configured_pivot_links', static function (Blueprint $table): void {
+            $table->string('attachment_key')->primary();
+            $table->unsignedBigInteger('ticket_id');
+            $table->unsignedBigInteger('department_id');
+            $table->integer('quantity');
+            $table->integer('price');
+            $table->integer('sort');
+        });
+
+        try {
+            $ticket = Ticket::factory()->create();
+            $department = Department::factory()->create();
+            $relationship = $ticket->belongsToMany(Department::class, 'configured_pivot_links', 'ticket_id', 'department_id')
+                ->using(ConfiguredStringKeyPivot::class)->withPivot(['attachment_key', 'quantity', 'price', 'sort'])->as('attachment');
+            $relationship->attach($department, ['attachment_key' => 'excluded-key', 'quantity' => 3, 'price' => 30, 'sort' => 30]);
+            $relationship->attach($department, ['attachment_key' => 'admitted-key', 'quantity' => 7, 'price' => 70, 'sort' => 17]);
+            $relationship->getQuery()->withGlobalScope('quantity', static fn (Builder $query): Builder => $query->where('configured_pivot_links.quantity', 7));
+
+            Table::configureUsing(
+                static fn (Table $table): Table => $table->relationship(static fn () => clone $relationship),
+                during: function () use ($ticket, $department): void {
+                    $component = livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'fetchSelectedRecords' => false]);
+                    $record = $component->instance()->getTableRecord((string) $department->getKey());
+                    expect($record->attachment)->toBeInstanceOf(ConfiguredStringKeyPivot::class)
+                        ->and($record->attachment->getKey())->toBe('admitted-key');
+
+                    $component->call('updateTableColumnState', 'price', (string) $department->getKey(), 89)->assertHasNoErrors();
+                    expect(DB::table('configured_pivot_links')->where('attachment_key', 'admitted-key')->value('price'))->toEqual(89);
+                    $component->callAction(TestAction::make('edit')->table($department), ['price' => 99])->assertHasNoErrors();
+                    expect(DB::table('configured_pivot_links')->where('attachment_key', 'admitted-key')->value('price'))->toEqual(99);
+                    $component->call('reorderTable', [(string) $department->getKey()])->assertHasNoErrors();
+                    expect(DB::table('configured_pivot_links')->where('attachment_key', 'admitted-key')->value('sort'))->toEqual(1);
+                    $component->callTableBulkAction(DetachBulkAction::class, [$department->getKey()])->assertHasNoErrors();
+                },
+            );
+
+            expect(DB::table('configured_pivot_links')->pluck('attachment_key')->all())->toBe(['excluded-key'])
+                ->and(DB::table('configured_pivot_links')->value('price'))->toEqual(30)
+                ->and(DB::table('configured_pivot_links')->value('sort'))->toEqual(30);
+        } finally {
+            Schema::dropIfExists('configured_pivot_links');
+        }
+    });
+
+    it('keeps hidden pivot values readable in PHP without serializing them or removing other columns', function (): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70, 'sort' => 17]);
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->relationship(static fn () => $ticket->departments()->using(HiddenDepartmentTicket::class)->withPivot('id')->as('attachment')),
+            during: function () use ($ticket, $department): void {
+                $component = livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey()])->set('selectedTableRecords', [(string) $department->getKey()]);
+
+                foreach ([
+                    $component->instance()->getTableRecords()->first(),
+                    $component->instance()->getTableRecord((string) $department->getKey()),
+                    $component->instance()->getSelectedTableRecords()->first(),
+                    $component->instance()->getSelectedTableRecords(chunkSize: 1)->first(),
+                ] as $record) {
+                    expect($record->quantity)->toEqual(7)
+                        ->and($record->attachment->quantity)->toBe(7)
+                        ->and($record->created_at)->not->toBeNull()
+                        ->and($record->attributesToArray())->not->toHaveKeys(['quantity', 'pivot_quantity', 'created_at', 'pivot_created_at'])
+                        ->and($record->attributesToArray()['price'])->toEqual(70)
+                        ->and($record->attributesToArray()['sort'])->toEqual(17);
+                }
+            },
+        );
+    });
+});
+
+class ConfiguredStringKeyPivot extends DepartmentTicket
+{
+    protected $primaryKey = 'attachment_key';
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
+}
 
 class AggregateRecordTable extends TicketDepartmentsReorderableTable
 {

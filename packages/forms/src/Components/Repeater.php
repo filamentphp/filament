@@ -1194,9 +1194,21 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         }
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
+        $relationship = $this->getRelationship();
 
         return $records
-            ->map(function (Model $record) use ($translatableContentDriver): array {
+            ->map(function (Model $record) use ($translatableContentDriver, $relationship): array {
+                if ($relationship instanceof BelongsToMany) {
+                    $pivotAccessor = $relationship->getPivotAccessor();
+                    $pivot = $record->relationLoaded($pivotAccessor) ? $record->getRelation($pivotAccessor) : $relationship->newPivot();
+                    $hiddenPivotAttributes = $pivot->getHidden();
+
+                    $record->makeHidden([
+                        ...$hiddenPivotAttributes,
+                        ...array_map(static fn (string $attribute): string => "pivot_{$attribute}", $hiddenPivotAttributes),
+                    ]);
+                }
+
                 $data = $translatableContentDriver ?
                     $translatableContentDriver->getRecordAttributesToArray($record) :
                     $record->attributesToArray();

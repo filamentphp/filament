@@ -68,7 +68,7 @@ describe('validation and relationship state', function (): void {
                 default => [0 => 'Zero', 1 => 'One', 3 => 'Three'],
             })
             ->validationAttribute('rating selection')
-            ->validationMessages(['in' => 'Invalid :attribute.'])
+            ->validationMessages(['string' => 'Invalid :attribute.'])
             ->disableOptionWhen(static fn ($value): bool => $isOptionDisabled && in_array($value, [0, '0', 1, '1'], strict: true));
 
         if ($optionsSource === 'custom label') {

@@ -3,6 +3,7 @@
 use Filament\Actions\DetachBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Livewire\ScopedTicketDepartmentsTable;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\DepartmentTicket;
 use Filament\Tests\Fixtures\Models\Ticket;
@@ -97,6 +98,25 @@ it('only detaches selected records', function (): void {
 
 it('returns `detach` from `getDefaultName()`', function (): void {
     expect(DetachBulkAction::getDefaultName())->toBe('detach');
+});
+
+it('preserves custom pivot casts and deletion vetoes for scoped unfetched configured keys', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 3]);
+    $ticket->departments()->attach($department, ['quantity' => 7]);
+    $attemptedQuantities = [];
+    DepartmentTicket::deleting(static function (DepartmentTicket $pivot) use (&$attemptedQuantities): bool {
+        $attemptedQuantities[] = $pivot->quantity;
+
+        return $pivot->quantity !== 7;
+    });
+
+    livewire(ScopedTicketDepartmentsTable::class, ['ticketKey' => $ticket->getKey(), 'constraint' => 'modifyQueryUsing', 'fetchSelectedRecords' => false])
+        ->callTableBulkAction(DetachBulkAction::class, [$department->getKey()]);
+
+    expect($attemptedQuantities)->toBe([7])
+        ->and($ticket->departments()->pluck('quantity')->all())->toEqual([3, 7]);
 });
 
 it('counts pivot event vetoes and authorization failures separately when detaching', function (bool $hasPivotPrimaryKey, bool $throwsException): void {

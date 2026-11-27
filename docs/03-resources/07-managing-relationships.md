@@ -253,6 +253,11 @@ public function form(Schema $schema): Schema
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
+If your custom pivot model defines `$hidden` attributes, Filament excludes those names and their `pivot_` aliases from automatically filled action and relationship repeater state. The values remain readable in PHP. If a related model has an attribute with the same name, that attribute is also excluded from this state, even if it is not hidden on the related model.
+
+> [!WARNING]
+> `$hidden` controls serialization, not write authorization. A hidden pivot field is not prefilled, but its validated, dehydrated submitted value can still be saved. If the field is absent from submitted schema state, its pivot attribute is not updated. Authorize edits separately.
+
 ### Customizing the `EditAction`
 
 To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../actions/edit).
@@ -463,7 +468,7 @@ Filament loads Eloquent records into memory before detaching them for two reason
 - To allow individual records in the collection to be authorized with a model policy before detaching (using `authorizeIndividualRecords('delete')`, for example).
 - To ensure that model events are run when detaching records, such as the `deleting` and `deleted` events in a model observer.
 
-If you do not require individual record policy authorization and model events, you can use the `fetchSelectedRecords(false)` method, which will not fetch the records into memory before detaching them, and instead will detach them in a single query:
+If you do not require individual record policy authorization, you can use the `fetchSelectedRecords(false)` method to avoid fetching the related models before detaching them:
 
 ```php
 use Filament\Actions\DetachBulkAction;
@@ -471,6 +476,8 @@ use Filament\Actions\DetachBulkAction;
 DetachBulkAction::make()
     ->fetchSelectedRecords(false)
 ```
+
+When a pivot primary key is configured in `withPivot()`, Filament first resolves the keys admitted by the selected table query. Default pivot rows are detached in batches; custom pivot models may still be loaded and deleted individually to preserve their model events.
 
 ## Associating and dissociating records
 

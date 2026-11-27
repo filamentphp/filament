@@ -27,13 +27,17 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\HiddenDepartmentTicket;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
 use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -1930,6 +1934,28 @@ describe('relationships', function (): void {
         expect($user->posts()->count())
             ->toBe(3);
     });
+
+    it('does not prefill hidden pivot attributes or related-column collisions from `BelongsToMany` records', function (bool $isLoaded, bool $isTranslatable): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70]);
+        $record = RepeaterHiddenPivotTicket::findOrFail($ticket->getKey());
+
+        if ($isLoaded) {
+            $record->setRelation('departments', $record->departments()->getQuery()->select([
+                'department_ticket.*',
+                'departments.*',
+                'department_ticket.quantity as pivot_quantity',
+                'department_ticket.created_at as pivot_created_at',
+            ])->get());
+        }
+
+        $component = livewire(RepeaterWithHiddenPivot::class, ['record' => $record, 'isTranslatable' => $isTranslatable]);
+        $state = array_values($component->get('data.departments'))[0];
+
+        expect(Arr::only($state, ['quantity', 'pivot_quantity', 'created_at', 'pivot_created_at', 'price']))
+            ->toEqual(['quantity' => null, 'pivot_quantity' => null, 'created_at' => null, 'pivot_created_at' => null, 'price' => 70]);
+    })->with([false, true])->with([false, true]);
 
     it('can load state from a `HasMany` relationship using eager loaded data without additional queries', function (): void {
         $undoRepeaterFake = Repeater::fake();
@@ -4427,6 +4453,50 @@ class RepeaterGetStateLeakCheck extends Component implements HasSchemas
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class RepeaterHiddenPivotTicket extends Ticket
+{
+    protected $table = 'tickets';
+
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'department_ticket', 'ticket_id', 'department_id')
+            ->using(HiddenDepartmentTicket::class)
+            ->withPivot(['id', 'quantity', 'price'])
+            ->as('attachment')
+            ->withTimestamps();
+    }
+}
+
+class RepeaterWithHiddenPivot extends Livewire
+{
+    public Ticket $record;
+
+    public bool $isTranslatable = false;
+
+    public function getFilamentTranslatableContentDriver(): ?string
+    {
+        return $this->isTranslatable ? RecordingTranslatableContentDriver::class : null;
+    }
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->model($this->record)->statePath('data')->components([
+            Repeater::make('departments')->relationship()->schema([
+                TextInput::make('quantity'),
+                TextInput::make('pivot_quantity'),
+                TextInput::make('created_at'),
+                TextInput::make('pivot_created_at'),
+                TextInput::make('price'),
+            ]),
+        ]);
     }
 }
 

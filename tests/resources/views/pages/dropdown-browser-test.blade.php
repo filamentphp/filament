@@ -82,6 +82,15 @@
         </x-slot>
 
         <x-filament::dropdown.list>
+            @foreach (request()->query('images', []) as $index => $image)
+                <x-filament::dropdown.list.item
+                    :image="$image"
+                    :data-testid="'image-item-' . $index"
+                >
+                    Image {{ $index }}
+                </x-filament::dropdown.list.item>
+            @endforeach
+
             <x-filament::dropdown.list.item
                 data-testid="menu-dropdown-first-item"
             >

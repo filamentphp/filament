@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Throwable;
@@ -58,6 +59,26 @@ class DetachBulkAction extends BulkAction
 
                             foreach ($pivotKeys->chunk(1000) as $pivotKeysChunk) {
                                 $detachedRecordsCount += (clone $relationship)->wherePivotIn($pivotKeyName, $pivotKeysChunk)->detach();
+                            }
+                        } elseif (in_array($pivotKeyName = app($relationship->getPivotClass())->getKeyName(), $relationship->getPivotColumns(), true)) {
+                            $pivotKeys = $action->getSelectedRecordsQuery()->toBase()
+                                ->addSelect($relationship->qualifyPivotColumn($pivotKeyName) . ' as filament_pivot_key')
+                                ->pluck('filament_pivot_key');
+
+                            foreach ($pivotKeys->chunk(1000) as $pivotKeysChunk) {
+                                if ($relationship->getPivotClass() === Pivot::class) {
+                                    $detachedRecordsCount += (clone $relationship)->wherePivotIn($pivotKeyName, $pivotKeysChunk)->detach();
+
+                                    continue;
+                                }
+
+                                foreach ($relationship->newPivotQuery()->whereIn($pivotKeyName, $pivotKeysChunk)->get() as $pivotRecord) {
+                                    $detachedRecordsCount += (int) $relationship->newExistingPivot((array) $pivotRecord)->delete();
+                                }
+                            }
+
+                            if ($detachedRecordsCount && ($relationship->getPivotClass() !== Pivot::class)) {
+                                $relationship->touchIfTouching();
                             }
                         } else {
                             $detachedRecordsCount = $relationship->detach($records);
