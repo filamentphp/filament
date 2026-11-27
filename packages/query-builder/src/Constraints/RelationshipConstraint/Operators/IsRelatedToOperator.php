@@ -107,6 +107,8 @@ class IsRelatedToOperator extends Operator
     public function getFormSchema(): array
     {
         $constraint = $this->getConstraint();
+        $modifyConstraintRelationshipQueryUsing = $constraint->getModifyRelationshipQueryUsing();
+        $modifyOperatorRelationshipQueryUsing = $this->modifyRelationshipQueryUsing;
 
         $field = Select::make($constraint->isMultiple() ? 'values' : 'value')
             ->label(__($constraint->isMultiple() ? 'filament-query-builder::query-builder.operators.relationship.is_related_to.form.values.label' : 'filament-query-builder::query-builder.operators.relationship.is_related_to.form.value.label'))
@@ -120,7 +122,19 @@ class IsRelatedToOperator extends Operator
             ->relationship(
                 $constraint->getRelationshipName(),
                 $this->getTitleAttribute(),
-                $this->modifyRelationshipQueryUsing,
+                ($modifyConstraintRelationshipQueryUsing || $modifyOperatorRelationshipQueryUsing)
+                    ? function (Builder $query, Select $component, ?string $search) use ($constraint, $modifyConstraintRelationshipQueryUsing, $modifyOperatorRelationshipQueryUsing): Builder {
+                        if ($modifyConstraintRelationshipQueryUsing) {
+                            $query = $this->evaluate($modifyConstraintRelationshipQueryUsing, ['query' => $query, 'constraint' => $constraint]) ?? $query;
+                        }
+
+                        if ($modifyOperatorRelationshipQueryUsing) {
+                            $query = $component->evaluate($modifyOperatorRelationshipQueryUsing, ['query' => $query, 'search' => $search]) ?? $query;
+                        }
+
+                        return $query;
+                    }
+                : null,
             )
             ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive())
             ->dehydrated()
@@ -194,10 +208,10 @@ class IsRelatedToOperator extends Operator
         return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
             $constraint->getRelationshipName(),
             function (Builder $query) use ($value): Builder {
-                if ($this->modifyRelationshipQueryUsing) {
-                    $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
-                        'query' => $query,
-                    ]) ?? $query;
+                foreach ([$this->getConstraint()->getModifyRelationshipQueryUsing(), $this->modifyRelationshipQueryUsing] as $callback) {
+                    if ($callback) {
+                        $query = $this->evaluate($callback, ['query' => $query]) ?? $query;
+                    }
                 }
 
                 return $query->whereKey($value);
@@ -286,10 +300,10 @@ class IsRelatedToOperator extends Operator
 
         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-        if ($this->getModifyRelationshipQueryUsing()) {
-            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
-                'query' => $relationshipQuery,
-            ]) ?? $relationshipQuery;
+        foreach ([$this->getConstraint()->getModifyRelationshipQueryUsing(), $this->modifyRelationshipQueryUsing] as $callback) {
+            if ($callback) {
+                $relationshipQuery = $this->evaluate($callback, ['query' => $relationshipQuery]) ?? $relationshipQuery;
+            }
         }
 
         if (empty($relationshipQuery->getQuery()->orders)) {
