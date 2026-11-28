@@ -291,6 +291,54 @@ it('keeps trusted session delivery within the next signed snapshot hydration lim
     ], ['X-Livewire' => 'true'])->assertOk();
 });
 
+it('can replace and close notifications by ID after budget eviction', function (array $ids): void {
+    $component = livewire(Notifications::class);
+
+    foreach ($ids as $id) {
+        Notification::make($id)
+            ->title("Original {$id}")
+            ->persistent()
+            ->actions(array_map(
+                static fn (int $index): Action => Action::make("action-{$index}")->url('/jobs'),
+                range(1, 39),
+            ))
+            ->send();
+    }
+
+    $component->dispatch('notificationsSent');
+
+    expect($component->instance()->notifications->map->getId()->values()->all())
+        ->toBe([$ids[1], $ids[2]]);
+
+    Notification::make($ids[1])->title('Replacement')->persistent()->send();
+    $component->dispatch('notificationsSent');
+
+    expect($component->instance()->notifications->map->getId()->values()->all())
+        ->toBe([$ids[2], $ids[1]]);
+
+    $component
+        ->assertSee('Replacement')
+        ->assertDontSee("Original {$ids[1]}")
+        ->dispatch('notificationClosed', id: $ids[2]);
+
+    expect($component->instance()->notifications->map->getId()->values()->all())
+        ->toBe([$ids[1]]);
+
+    $component->dispatch('notificationClosed', id: $ids[1]);
+
+    expect($component->instance()->notifications)->toBeEmpty();
+})->with([
+    'numeric IDs' => [['100', '200', '300']],
+    'zero oldest ID' => [['0', '-1', '200']],
+    'negative oldest ID' => [['-1', '0', '200']],
+    'mixed IDs' => [['oldest', '200', 'newest']],
+    'UUID IDs' => [[
+        'ed5ec08d-136e-4ea6-8e8d-51eb9d3c5a01',
+        'ed5ec08d-136e-4ea6-8e8d-51eb9d3c5a02',
+        'ed5ec08d-136e-4ea6-8e8d-51eb9d3c5a03',
+    ]],
+]);
+
 it('discards individually oversized trusted notifications without invalidating the signed snapshot', function (): void {
     Notification::make('too-many-actions')
         ->actions(array_map(
