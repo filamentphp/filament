@@ -161,7 +161,7 @@ class Notifications extends Component
         $this->notifications->forget($notification->getId());
 
         while (($this->getNotificationsNodeCount() + $notificationNodeCount) > self::MAX_NOTIFICATION_NODES) {
-            $this->notifications->shift();
+            $this->notifications->forget(array_key_first($this->notifications->all()));
         }
 
         $this->notifications->put(
