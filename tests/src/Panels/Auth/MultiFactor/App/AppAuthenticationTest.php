@@ -250,6 +250,56 @@ describe('authentication flow', function (): void {
 
         $this->assertAuthenticatedAs($userToAuthenticate);
     });
+
+    it('will authenticate the user with a valid recovery code while an invalid one-time code is still entered', function (?string $code): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        if ($code === null) {
+            $code = ($appAuthentication->getCurrentCode($userToAuthenticate) === '000000') ? '111111' : '000000';
+
+            while ($appAuthentication->verifyCode($code, $appAuthentication->getSecret($userToAuthenticate))) {
+                $code = sprintf('%06d', ((int) $code) + 1);
+            }
+        }
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->assertNoRedirect()
+            // The user typed a wrong one-time code before switching to a recovery code, and it's still in the field.
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'code' => $code,
+                ],
+            ], 'multiFactorChallengeForm')
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'recoveryCode' => Arr::first($recoveryCodes),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasNoErrors()
+            ->assertRedirect(Filament::getUrl());
+
+        $this->assertAuthenticatedAs($userToAuthenticate);
+
+        expect($userToAuthenticate->fresh()->getAppAuthenticationRecoveryCodes())
+            ->toHaveCount(count($recoveryCodes) - 1);
+    })->with([
+        'a complete code' => null,
+        'a partial code' => '123',
+        'a non-numeric code' => 'abcdef',
+    ]);
 });
 
 describe('failure cases', function (): void {
@@ -375,10 +425,12 @@ describe('validation', function (): void {
         $this->assertGuest();
     });
 
-    test('a `recoveryCode` trimmed to an empty value cannot bypass app authentication', function (): void {
+    test('a `recoveryCode` normalized to an empty value cannot bypass app authentication', function (?string $code, bool $isValidationOnly): void {
         TextInput::configureUsing(
-            static fn (TextInput $component): TextInput => $component->trim(),
-            during: function (): void {
+            static fn (TextInput $component): TextInput => $isValidationOnly
+                ? $component->mutateStateForValidationUsing(static fn (?string $state): ?string => isset($state) ? Str::trim($state) : null)
+                : $component->trim(),
+            during: function () use ($code, $isValidationOnly): void {
                 $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
                 $userToAuthenticate = User::factory()
@@ -397,12 +449,13 @@ describe('validation', function (): void {
                         ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
                     ->fillForm([
                         $appAuthentication->getId() => [
+                            'code' => $code,
                             'recoveryCode' => "\u{200B}",
                         ],
                     ], 'multiFactorChallengeForm')
                     ->call('authenticate')
                     ->assertHasFormErrors([
-                        "{$appAuthentication->getId()}.recoveryCode" => 'required',
+                        $appAuthentication->getId() . ($isValidationOnly ? '.recoveryCode' : '.code'),
                     ], 'multiFactorChallengeForm')
                     ->assertNoRedirect();
 
@@ -412,7 +465,13 @@ describe('validation', function (): void {
                     ->toHaveCount(8);
             },
         );
-    });
+    })->with([
+        'no one-time code' => null,
+        'an invalid one-time code' => '123',
+    ])->with([
+        'trimming' => false,
+        'validation-only normalization' => true,
+    ]);
 
     test('challenge codes are required', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
