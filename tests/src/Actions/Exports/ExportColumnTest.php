@@ -156,6 +156,21 @@ describe('formula injection protection', function (): void {
         expect($column->getFormattedState())->toBe('Hello world');
     });
 
+    it('sanitizes the final `Stringable` returned by `formatStateUsing()`', function (): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection()
+            ->fakeState('Safe input')
+            ->formatStateUsing(static fn (): Stringable => new class implements Stringable
+            {
+                public function __toString(): string
+                {
+                    return '=2+3';
+                }
+            });
+
+        expect($column->getFormattedState())->toBe("'=2+3");
+    });
+
     it('passes through empty and `null` states when enabled', function (mixed $value, ?string $expected): void {
         $column = FakeStateExportColumn::make('title')
             ->preventFormulaInjection()
@@ -167,13 +182,17 @@ describe('formula injection protection', function (): void {
         [null, null],
     ]);
 
-    it('joins array state before sanitizing when enabled', function (): void {
+    it('formats array state before sanitizing when enabled', function (bool $isListedAsJson, string $expected): void {
         $column = FakeStateExportColumn::make('title')
             ->preventFormulaInjection()
+            ->listAsJson($isListedAsJson)
             ->fakeState(['=danger', 'safe']);
 
-        expect($column->getFormattedState())->toBe("'=danger, safe");
-    });
+        expect($column->getFormattedState())->toBe($expected);
+    })->with([
+        'list' => [false, "'=danger, safe"],
+        'JSON' => [true, '["=danger","safe"]'],
+    ]);
 
     it('can set `preventFormulaInjection()` with a `Closure`', function (): void {
         $column = FakeStateExportColumn::make('title')
