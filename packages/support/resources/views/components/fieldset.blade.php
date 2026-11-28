@@ -16,7 +16,10 @@
 >
     @if (filled($label))
         <legend>
-            {{ $label }}@if ($required)<sup class="fi-fieldset-label-required-mark">*</sup>
+            {{ $label }}@if ($required)<sup aria-hidden="true" class="fi-fieldset-label-required-mark">*</sup>
+                <span class="fi-sr-only">
+                    {{ __('filament::components/required-mark.label') }}
+                </span>
             @endif
         </legend>
     @endif

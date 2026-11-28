@@ -1,10 +1,13 @@
 <?php
 
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Blade;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -70,6 +73,19 @@ describe('rendering', function (): void {
     it('can render with `contained()` set via `Closure`', function (): void {
         livewire(RenderFieldsetWithClosureContained::class)->assertSuccessful();
     });
+
+    it('preserves the accessible required marker without requiring its children', function (bool $blade): void {
+        $html = $blade
+            ? Blade::render('<x-filament::fieldset label="Details" required><input aria-label="Name" /></x-filament::fieldset>')
+            : Schema::make(Livewire::make())->components([Fieldset::make('Details')->markAsRequired()->schema([TextInput::make('name')])])->toHtml();
+        $document = new DOMDocument;
+        @$document->loadHTML($html);
+        $query = new DOMXPath($document);
+
+        expect($query->query('//legend')->item(0)->textContent)->toContain('(required)')
+            ->and($query->query('//sup')->item(0)->getAttribute('aria-hidden'))->toBe('true')
+            ->and($query->query('//*[@required or @aria-required]')->length)->toBe(0);
+    })->with([false, true]);
 });
 
 class RenderFieldset extends Component implements HasSchemas

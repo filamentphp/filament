@@ -3,16 +3,21 @@
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\ModalTableSelect;
 use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\TableSelect;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -30,6 +35,7 @@ use Filament\Tests\Fixtures\Tables\PostsTable;
 use Filament\Tests\Fixtures\Tables\UsersTable;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
@@ -617,6 +623,93 @@ describe('required controls', function (): void {
             ->and(ToggleButtons::make('days')->container($schema)->multiple()->required()->getRequiredDescription())->toBe('Choose an available day.');
     });
 
+    it('preserves required marker information without duplicating existing required semantics', function (Closure $makeField, bool $needsMarkerText, bool $bladeWrapper): void {
+        $field = $makeField()->label('Answer');
+        if ($bladeWrapper) {
+            $field->fieldWrapperView('test-plugin-wrapper');
+        }
+        $schema = Schema::make(Livewire::make())->components([$field]);
+        $document = fieldAccessibilityDocument($schema->toHtml());
+        $mark = $document->query('//sup')->item(0);
+
+        expect($mark?->getAttribute('aria-hidden'))->toBe('true')
+            ->and($document->query('//*[contains(text(), "(required)")]')->length > 0)->toBe($needsMarkerText);
+
+        $field->markAsRequired(false);
+        $document = fieldAccessibilityDocument($schema->toHtml());
+        expect($document->query('//sup')->length)->toBe(0)
+            ->and($document->query('//*[contains(text(), "(required)")]')->length)->toBe(0);
+
+        $field->markAsRequired()->disabled();
+        $document = fieldAccessibilityDocument($schema->toHtml());
+        expect($document->query('//sup')->length)->toBe(0)
+            ->and($document->query('//*[contains(text(), "(required)")]')->length)->toBe(0);
+    })->with([
+        'text' => [static fn (): Field => TextInput::make('answer')->required(), false],
+        'native color input' => [static fn (): Field => TextInput::make('answer')->type('color')->required(), true],
+        'native range input' => [static fn (): Field => TextInput::make('answer')->type('range')->required(), true],
+        'masked color input' => [static fn (): Field => TextInput::make('answer')->type('color')->mask('999')->required(), false],
+        'revealable password input' => [static fn (): Field => TextInput::make('answer')->type('color')->password()->revealable()->required(), false],
+        'read-only text' => [static fn (): Field => TextInput::make('answer')->required()->readOnly(), true],
+        'marker only' => [static fn (): Field => TextInput::make('answer')->markAsRequired()->required(false), true],
+        'textarea' => [static fn (): Field => Textarea::make('answer')->required(), false],
+        'checkbox' => [static fn (): Field => Checkbox::make('answer')->required(), false],
+        'radio' => [static fn (): Field => Radio::make('answer')->options(['first' => 'First'])->required(), false],
+        'native date' => [static fn (): Field => DateTimePicker::make('answer')->required(), false],
+        'custom date' => [static fn (): Field => DateTimePicker::make('answer')->native(false)->required(), true],
+        'native select' => [static fn (): Field => Select::make('answer')->options(['first' => 'First'])->required(), false],
+        'custom select' => [static fn (): Field => Select::make('answer')->native(false)->options(['first' => 'First'])->required(), false],
+        'checkbox list' => [static fn (): Field => CheckboxList::make('answer')->options(['first' => 'First'])->required(), false],
+        'toggle buttons' => [static fn (): Field => ToggleButtons::make('answer')->options(['first' => 'First'])->required(), false],
+        'color' => [static fn (): Field => ColorPicker::make('answer')->required(), false],
+        'one-time code' => [static fn (): Field => OneTimeCodeInput::make('answer')->required(), false],
+        'toggle' => [static fn (): Field => Toggle::make('answer')->required(), true],
+        'tags' => [static fn (): Field => TagsInput::make('answer')->required(), true],
+        'key value' => [static fn (): Field => KeyValue::make('answer')->required(), true],
+        'code' => [static fn (): Field => CodeEditor::make('answer')->required(), true],
+        'markdown' => [static fn (): Field => MarkdownEditor::make('answer')->required(), true],
+        'rich editor' => [static fn (): Field => RichEditor::make('answer')->required(), true],
+        'file upload' => [static fn (): Field => FileUpload::make('answer')->required(), true],
+        'slider' => [static fn (): Field => Slider::make('answer')->required(), true],
+        'builder' => [static fn (): Field => Builder::make('answer')->required(), true],
+        'repeater' => [static fn (): Field => Repeater::make('answer')->required(), true],
+        'table select' => [static fn (): Field => TableSelect::make('answer')->model(User::class)->relationship('posts')->tableConfiguration(PostsTable::class)->required(), true],
+        'modal table select' => [static fn (): Field => ModalTableSelect::make('answer')->model(User::class)->tableConfiguration(UsersTable::class)->getOptionLabelUsing(static fn (): ?string => null)->required(), true],
+    ])->with([false, true]);
+
+    it('allows custom fields to opt out of required marker text', function (bool $bladeWrapper): void {
+        $field = FieldWithoutRequiredMarkDescription::make('answer')->label('Answer')->required()
+            ->container(Schema::make(Livewire::make()));
+        if ($bladeWrapper) {
+            $field->fieldWrapperView('test-plugin-wrapper');
+        }
+        $document = fieldAccessibilityDocument($field->wrapEmbeddedHtml('<input id="answer" required />'));
+
+        expect(trim($document->query('//label')->item(0)->textContent))->toBe('Answer*')
+            ->and($document->query('//sup')->item(0)->getAttribute('aria-hidden'))->toBe('true')
+            ->and($document->query('//input[@required]')->length)->toBe(1);
+    })->with([false, true]);
+
+    it('provides a required marker description to custom fields by default without adding validation', function (bool $bladeWrapper): void {
+        $field = Field::make('answer')->label('Answer')->markAsRequired()
+            ->container(Schema::make(Livewire::make()));
+        if ($bladeWrapper) {
+            $field->fieldWrapperView('test-plugin-wrapper');
+        }
+        $document = fieldAccessibilityDocument($field->wrapEmbeddedHtml('<input id="answer" />'));
+
+        expect($document->query('//label')->item(0)->textContent)->toContain('(required)')
+            ->and($document->query('//*[@required or @aria-required]')->length)->toBe(0)
+            ->and($field->getValidationRules())->not->toContain('required');
+    })->with([false, true]);
+
+    it('provides a standalone wrapper marker description unless opted out', function (?bool $renderDescription, bool $expected): void {
+        $document = fieldAccessibilityDocument(Blade::render('<x-filament-forms::field-wrapper id="answer" label="Answer" required :should-render-required-mark-description="$renderDescription"><input id="answer" /></x-filament-forms::field-wrapper>', ['renderDescription' => $renderDescription]));
+
+        expect(str_contains($document->query('//label')->item(0)->textContent, '(required)'))->toBe($expected)
+            ->and($document->query('//input[@required or @aria-required]')->length)->toBe(0);
+    })->with([[null, true], [false, false], [true, true]]);
+
 });
 
 describe('browser interactions', function (): void {
@@ -631,6 +724,16 @@ describe('browser interactions', function (): void {
             ->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note');
         $page->assertSeeIn('[id="form.name-helper-text"]', 'This appears on your membership card.')
             ->assertPresent('[data-testid="name"][required]')
+            ->assertPresent('role=textbox[name="Full name"]')
+            ->assertPresent('role=textbox[name="Custom required field"]')
+            ->assertPresent('#custom-required[required]')
+            ->assertPresent('role=textbox[name="Custom marker field (required)"]')
+            ->assertAttributeMissing('#custom-marker', 'required')
+            ->assertPresent('role=group[name="Contact details (required)"]')
+            ->assertPresent('role=group[name="Aliases (required)"]')
+            ->assertPresent('role=columnheader[name="Member name (required)"]')
+            ->assertAttributeMissing('[data-testid="marker-optional"]', 'required')
+            ->assertPresent('role=group[name="Attachment"]')
             ->assertSeeIn('[id="form.delivery-helper-text"]', 'Choose how to receive your card.')
             ->assertNoAccessibilityIssues();
 
@@ -705,6 +808,7 @@ describe('browser interactions', function (): void {
             $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text');
         }
         $page->click('[data-testid="validate-additional"]');
+        $page->assertPresent('role=group[name="Attachment (required)"]');
         foreach ($valueControls as $name => $selector) {
             $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text additionalForm.' . $name . '-error')
                 ->assertAttribute($selector, 'aria-invalid', 'true');
@@ -728,6 +832,7 @@ describe('browser interactions', function (): void {
         $page->fill($valueControls['code'], 'const updated = true;')
             ->fill($valueControls['rich'], 'Updated welcome message.')
             ->click('[data-testid="accept-additional"]');
+        $page->assertPresent('role=group[name="Attachment"]');
         foreach ($valueControls as $selector) {
             $page->assertAttributeMissing($selector, 'aria-describedby')
                 ->assertAttributeMissing($selector, 'aria-invalid');
@@ -750,3 +855,8 @@ describe('browser interactions', function (): void {
             ->assertNoAccessibilityIssues();
     });
 });
+
+class FieldWithoutRequiredMarkDescription extends Field
+{
+    protected bool $shouldRenderRequiredMarkDescription = false;
+}

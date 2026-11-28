@@ -22,6 +22,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
@@ -87,6 +89,10 @@ class FieldAccessibilityBrowserTest extends Page
                 TextInput::make('second.name')->label('Second guest')->required()->helperText('Name on the second guest pass.')
                     ->extraInputAttributes(['data-testid' => 'guest-second']),
             ])->statePath('guests'),
+            Fieldset::make('Contact details')->markAsRequired()->schema([
+                TextInput::make('nickname')->extraInputAttributes(['data-testid' => 'marker-optional']),
+            ]),
+            FusedGroup::make([TagsInput::make('aliases')])->label('Aliases')->key('aliases')->markAsRequired(),
         ]);
     }
 
@@ -110,6 +116,8 @@ class FieldAccessibilityBrowserTest extends Page
             TagsInput::make('tags')->default(['Laravel']),
             KeyValue::make('metadata')->default(['Team' => 'Membership']),
             Repeater::make('members')->schema([TextInput::make('name')])->default([['name' => 'Alex Morgan']]),
+            Repeater::make('table_members')->schema([TextInput::make('name')->hiddenLabel()])
+                ->table([Repeater\TableColumn::make('Member name')->markAsRequired()])->default([['name' => 'Alex Morgan']]),
             Builder::make('blocks')->blocks([Builder\Block::make('paragraph')->schema([TextInput::make('text')])])
                 ->default([['type' => 'paragraph', 'data' => ['text' => 'Welcome']]]),
             FileUpload::make('attachment'),
