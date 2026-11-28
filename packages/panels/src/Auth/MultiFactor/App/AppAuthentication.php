@@ -416,6 +416,8 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                     ->visible(fn (): bool => $isRecoverable && (! $get('useRecoveryCode'))))
                 ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
                 ->required(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
+                ->dehydrated(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
+                ->validatedWhenNotDehydrated(false)
                 ->rule(function () use ($user): Closure {
                     return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($user): void {
                         if ($this->verifyCode($value, $this->getSecret($user), shouldPreventCodeReuse: true)) {
@@ -424,7 +426,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
 
                         $fail(__('filament-panels::auth/multi-factor/app/provider.login_form.code.messages.invalid'));
                     };
-                }, fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode'))),
+                }),
             TextInput::make('recoveryCode')
                 ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.label'))
                 ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))
@@ -432,7 +434,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 ->revealable(Filament::arePasswordsRevealable())
                 ->autocomplete('one-time-code')
                 // Validate the normalized value without making the input natively required when a one-time code is used.
-                ->rule('required', fn (Get $get): bool => blank($get('code')))
+                ->rule('required', fn (Get $get): bool => filled($get('recoveryCode')))
                 ->rule(function () use ($user): Closure {
                     return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
                         if (blank($value)) {

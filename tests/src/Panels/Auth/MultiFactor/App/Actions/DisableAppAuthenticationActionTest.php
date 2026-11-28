@@ -124,7 +124,7 @@ describe('disabling authentication', function (): void {
             ->toBeFalse();
     });
 
-    it('can disable authentication with a valid recovery code while an invalid one-time code is still entered', function (): void {
+    it('can disable authentication with a valid recovery code while an invalid one-time code is still entered', function (string $code): void {
         $user = auth()->user();
 
         // The user typed a wrong one-time code before switching to a recovery code, and it's still in the field.
@@ -132,7 +132,7 @@ describe('disabling authentication', function (): void {
             ->mountAction(TestAction::make('disableAppAuthentication')
                 ->schemaComponent('app', schema: 'content'))
             ->fillForm([
-                'code' => '000000',
+                'code' => $code,
             ])
             ->callAction(TestAction::make('useRecoveryCode')
                 ->schemaComponent('code'))
@@ -145,7 +145,11 @@ describe('disabling authentication', function (): void {
 
         expect(filled($user->getAppAuthenticationSecret()))
             ->toBeFalse();
-    });
+    })->with([
+        'a complete code' => '000000',
+        'a partial code' => '123',
+        'a non-numeric code' => 'abcdef',
+    ]);
 
     it('will not disable authentication when an invalid code is used', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -281,10 +285,12 @@ describe('validation', function (): void {
             ->toBeTrue();
     });
 
-    test('a `recoveryCode` trimmed to an empty value cannot disable app authentication', function (): void {
+    test('a `recoveryCode` normalized to an empty value cannot disable app authentication', function (?string $code, bool $isValidationOnly): void {
         TextInput::configureUsing(
-            static fn (TextInput $component): TextInput => $component->trim(),
-            during: function (): void {
+            static fn (TextInput $component): TextInput => $isValidationOnly
+                ? $component->mutateStateForValidationUsing(static fn (?string $state): ?string => isset($state) ? Str::trim($state) : null)
+                : $component->trim(),
+            during: function () use ($code, $isValidationOnly): void {
                 $user = auth()->user();
 
                 livewire(EditProfile::class)
@@ -294,11 +300,12 @@ describe('validation', function (): void {
                         ->schemaComponent('code'))
                     ->fillForm([
                         'password' => 'password',
+                        'code' => $code,
                         'recoveryCode' => "\u{200B}",
                     ])
                     ->callMountedAction()
                     ->assertHasFormErrors([
-                        'recoveryCode' => 'required',
+                        $isValidationOnly ? 'recoveryCode' : 'code',
                     ]);
 
                 expect(filled($user->fresh()->getAppAuthenticationSecret()))
@@ -308,7 +315,13 @@ describe('validation', function (): void {
                     ->toHaveCount(8);
             },
         );
-    });
+    })->with([
+        'no one-time code' => null,
+        'an invalid one-time code' => '123',
+    ])->with([
+        'trimming' => false,
+        'validation-only normalization' => true,
+    ]);
 
     test('codes are required without a recovery code', function (): void {
         $user = auth()->user();
