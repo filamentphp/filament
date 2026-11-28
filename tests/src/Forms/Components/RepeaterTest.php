@@ -2493,6 +2493,21 @@ describe('shared `statePath` `Group` components', function (): void {
 });
 
 describe('rendering', function (): void {
+    it('preserves accessible header markers without requiring the column fields', function (): void {
+        $schema = Schema::make(Livewire::make())->components([
+            Repeater::make('people')->schema([TextInput::make('name')])->table([
+                Repeater\TableColumn::make('Name')->markAsRequired(),
+            ]),
+        ])->fill(['people' => [['name' => 'Alex']]]);
+        $document = new DOMDocument;
+        @$document->loadHTML($schema->toHtml());
+        $query = new DOMXPath($document);
+
+        expect($query->query('//th[.//sup]')->item(0)->textContent)->toContain('(required)')
+            ->and($query->query('//sup')->item(0)->getAttribute('aria-hidden'))->toBe('true')
+            ->and($query->query('//*[@required or @aria-required]')->length)->toBe(0);
+    });
+
     it('can render with `addable(false)`', function (): void {
         livewire(RenderRepeaterWithNotAddable::class)->assertSuccessful();
     });

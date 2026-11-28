@@ -1976,6 +1976,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return __('filament-forms::components.select.required_description');
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled())));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $extraInputAttributeBag = $this->getExtraInputAttributeBag();

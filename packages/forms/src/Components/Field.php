@@ -43,6 +43,8 @@ class Field extends Component implements Contracts\HasValidationRules
 
     protected string $viewIdentifier = 'field';
 
+    protected bool $shouldRenderRequiredMarkDescription = true;
+
     const ABOVE_LABEL_SCHEMA_KEY = 'above_label';
 
     const BELOW_LABEL_SCHEMA_KEY = 'below_label';
@@ -322,6 +324,12 @@ class Field extends Component implements Contracts\HasValidationRules
         return null;
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return $this->shouldRenderRequiredMarkDescription
+            && (($this->getFieldWrapperView() === 'filament-forms::plain-field-wrapper') || blank($this->getRequiredDescription()));
+    }
+
     /**
      * @return array<string, string | null>
      */
@@ -508,7 +516,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                                 <?php if (filled($label) && (! $labelSrOnly)) { ?>
                                     <span class="fi-fo-field-label-content">
-                                        <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup>
+                                        <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup><?php if ($this->shouldRenderRequiredMarkDescription()) { ?><span class="fi-sr-only"> <?= e(__('filament::components/required-mark.label')) ?></span><?php } ?>
                                         <?php } ?>
                                     </span>
                                 <?php } ?>

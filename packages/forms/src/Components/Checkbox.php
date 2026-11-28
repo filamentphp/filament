@@ -27,6 +27,12 @@ class Checkbox extends Field implements HasEmbeddedView
         $this->rule('boolean');
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled())));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $statePath = $this->getStatePath();

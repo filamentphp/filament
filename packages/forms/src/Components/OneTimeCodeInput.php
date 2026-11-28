@@ -55,6 +55,12 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
         return (bool) $this->evaluate($this->shouldSubmitOnCompletion);
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled()) && (! $this->isReadOnly())));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $length = $this->getLength();

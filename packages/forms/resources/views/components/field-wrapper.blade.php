@@ -15,6 +15,7 @@
     'labelSuffix' => null,
     'labelTag' => 'label',
     'required' => null,
+    'shouldRenderRequiredMarkDescription' => null,
     'shouldShowAllValidationMessages' => null,
     'statePath' => null,
 ])
@@ -40,6 +41,8 @@
         $areHtmlErrorMessagesAllowed ??= $field->areHtmlValidationMessagesAllowed();
         $shouldShowAllValidationMessages ??= $field->shouldShowAllValidationMessages();
     }
+
+    $shouldRenderRequiredMarkDescription ??= $field?->shouldRenderRequiredMarkDescription() ?? true;
 
     $aboveLabelSchema = $field?->getChildSchema($field::ABOVE_LABEL_SCHEMA_KEY)?->toHtmlString();
     $belowLabelSchema = $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
@@ -134,6 +137,11 @@
                         @if (filled($label) && (! $labelSrOnly))
                             <span class="fi-fo-field-label-content">
                                 {{ $label }}@if ($required && (! $isDisabled))<sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup>
+                                    @if ($shouldRenderRequiredMarkDescription)
+                                        <span class="fi-sr-only">
+                                            {{ __('filament::components/required-mark.label') }}
+                                        </span>
+                                    @endif
                                 @endif
                             </span>
                         @endif

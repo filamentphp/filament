@@ -81,6 +81,11 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $this->gap(false);
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return true;
+    }
+
     /**
      * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
@@ -400,7 +405,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                         <?php if (filled($label) && (! $labelSrOnly)) { ?>
                             <label <?php if (filled($id)) { ?>id="<?= e($id) ?>-label" <?php } ?>class="fi-fo-field-label">
                                 <span class="fi-fo-field-label-content">
-                                    <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup><?php } ?>
+                                    <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup aria-hidden="true" class="fi-fo-field-label-required-mark">*</sup><?php if ($this->shouldRenderRequiredMarkDescription()) { ?><span class="fi-sr-only"> <?= e(__('filament::components/required-mark.label')) ?></span><?php } ?><?php } ?>
                                 </span>
                             </label>
                         <?php } ?>

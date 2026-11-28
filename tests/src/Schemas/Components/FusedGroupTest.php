@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -108,6 +109,28 @@ describe('rendering', function (): void {
     it('can render with `hiddenLabel()`', function (): void {
         livewire(RenderFusedGroupWithHiddenLabel::class)->assertSuccessful();
     });
+
+    it('preserves the accessible required marker with plain child wrappers', function (bool $customField, bool $bladeWrapper, bool $keyed): void {
+        $field = $customField ? TagsInput::make('answer') : TextInput::make('answer');
+        $group = FusedGroup::make([$field->required()])->label('Details');
+        if ($bladeWrapper) {
+            $group->fieldWrapperView('test-plugin-wrapper');
+        }
+        if ($keyed) {
+            $group->key('details');
+        }
+        $document = new DOMDocument;
+        @$document->loadHTML(Schema::make(Livewire::make())->components([$group])->toHtml());
+        $query = new DOMXPath($document);
+
+        expect($query->query('//sup')->length)->toBe(1)
+            ->and($query->query('//sup')->item(0)->getAttribute('aria-hidden'))->toBe('true')
+            ->and($query->query('//*[contains(text(), "(required)")]')->length)->toBe(1)
+            ->and($query->query('//input[@aria-describedby]')->length)->toBe(0);
+        foreach ($query->query('//*[@aria-labelledby]') as $control) {
+            expect($query->query('//*[@id="' . $control->getAttribute('aria-labelledby') . '"]')->length)->toBe(1);
+        }
+    })->with([false, true])->with([false, true])->with([false, true]);
 
     it('renders a single error as `<p>` even when child uses `showAllValidationMessages()`', function (): void {
         $errors = new ViewErrorBag;
