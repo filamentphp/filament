@@ -34,6 +34,18 @@ it('can `trim()` whitespace from `Textarea`', function (mixed $input, mixed $exp
     ["\t\n　", ''],
 ]);
 
+it('exposes trimmed `Textarea` state without changing raw input', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([$textarea = Textarea::make('content')->trim()->stripCharacters('#')])
+        ->fill(['content' => "#　first\nsecond　#"]);
+
+    expect($textarea->getState())->toBe("first\nsecond")
+        ->and($textarea->getGetCallback()('content'))->toBe("first\nsecond")
+        ->and($schema->getRawState()['content'])->toBe("　first\nsecond　")
+        ->and($schema->getState()['content'])->toBe("first\nsecond");
+});
+
 describe('autosizing', function (): void {
     it('can set `autosize()`', function (): void {
         $textarea = Textarea::make('content');

@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Schemas\Components\StateCasts\TrimStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -191,6 +192,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
         return [
             ...parent::getDefaultStateCasts(),
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
+            app(TrimStateCast::class, ['isTrimmed' => $this->isTrimmed(...), 'isArray' => true]),
         ];
     }
 

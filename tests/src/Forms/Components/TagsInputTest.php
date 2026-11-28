@@ -159,6 +159,24 @@ describe('`tagSuffix()`', function (): void {
 });
 
 describe('state hydration', function (): void {
+    it('splits serialized tags before evaluating `trim()` conditions', function (string $state, string $separator, array $rawTags, array $trimmedTags, string $submitted): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = TagsInput::make('tags')
+                    ->separator($separator)
+                    ->trim(static fn (array $state): bool => count($state) > 0),
+            ])
+            ->fill(['tags' => $state]);
+
+        expect($schema->getRawState()['tags'])->toBe($rawTags)
+            ->and($field->getState())->toBe($trimmedTags)
+            ->and($schema->getState()['tags'])->toBe($submitted);
+    })->with([
+        [' | alpha | ', ' | ', ['alpha'], ['alpha'], 'alpha'],
+        [' alpha , beta ', ',', [' alpha ', ' beta '], ['alpha', 'beta'], 'alpha,beta'],
+    ]);
+
     it('keeps array state as-is, including blank values', function (): void {
         $livewire = Livewire::make();
         $state = [1 => '', 3 => ' ', 5 => '0', 7 => 'one'];
@@ -314,6 +332,20 @@ describe('state dehydration', function (): void {
 });
 
 describe('state', function (): void {
+    it('exposes trimmed tags without changing raw array values', function (): void {
+        $rawTags = ['first' => '　alpha　', 'second' => ' beta ', 'number' => 123, 'null' => null, 'boolean' => true];
+        $expectedTags = ['first' => 'alpha', 'second' => 'beta', 'number' => 123, 'null' => null, 'boolean' => true];
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$tags = TagsInput::make('tags')->trim()])
+            ->fill(['tags' => $rawTags]);
+
+        expect($tags->getState())->toBe($expectedTags)
+            ->and($tags->getGetCallback()('tags'))->toBe($expectedTags)
+            ->and($schema->getRawState()['tags'])->toBe($rawTags)
+            ->and($schema->getState()['tags'])->toBe($expectedTags);
+    });
+
     it('can trim whitespace from `TagsInput` array values', function (mixed $input, mixed $expected): void {
         livewire(TestComponentWithTagsInputTrim::class)
             ->fillForm(['tags' => $input])

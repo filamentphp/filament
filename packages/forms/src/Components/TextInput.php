@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Schemas\Components\StateCasts\TrimStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
@@ -322,9 +323,14 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 'isNullable' => true,
                 'isInteger' => $this->isInteger(),
                 'stripCharacters' => $this->getStripCharacters(),
+                'isTrimmed' => $this->isTrimmed(...),
             ]);
-        } elseif ($this->hasStripCharacters()) {
-            $casts[] = app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()]);
+        } else {
+            if ($this->hasStripCharacters()) {
+                $casts[] = app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()]);
+            }
+
+            $casts[] = app(TrimStateCast::class, ['isTrimmed' => $this->isTrimmed(...)]);
         }
 
         return $casts;

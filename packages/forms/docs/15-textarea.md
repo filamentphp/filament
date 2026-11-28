@@ -115,6 +115,8 @@ Textarea::make('description')
     ->trim()
 ```
 
+Trimming applies to PHP state reads, including `$get()` and the `$state` and `$old` values injected into lifecycle hooks, as well as validation and submitted values. It does not trim the browser input while the user types. Use `$rawState` in a callback when you need the untrimmed input. Custom state casts and `dehydrateStateUsing()` callbacks receive the trimmed value; `mutateStateForValidationUsing()` remains validation-only.
+
 You may want to enable trimming globally for all textareas, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 
 ```php

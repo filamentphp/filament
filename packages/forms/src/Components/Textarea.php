@@ -7,6 +7,7 @@ use Filament\Forms\Components\Concerns\CanDisableGrammarly;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Schemas\Components\StateCasts\TrimStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
@@ -156,6 +157,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
         return [
             ...parent::getDefaultStateCasts(),
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
+            app(TrimStateCast::class, ['isTrimmed' => $this->isTrimmed(...)]),
         ];
     }
 

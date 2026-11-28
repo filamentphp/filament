@@ -149,6 +149,8 @@ TagsInput::make('tags')
     ->trim()
 ```
 
+Trimming applies to each tag in PHP state reads, including `$get()` and the `$state` and `$old` values injected into lifecycle hooks, as well as validation and submitted values. It does not rewrite the raw tag array while the user edits it. Use `$rawState` in a callback when you need the untrimmed tags. Custom state casts and `dehydrateStateUsing()` callbacks receive the trimmed tags; `mutateStateForValidationUsing()` remains validation-only. When using `separator()`, each tag is trimmed before the tags are joined.
+
 You may want to enable trimming globally for all tags inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 
 ```php

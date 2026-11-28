@@ -1,6 +1,8 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\RawJs;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -8,6 +10,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 use function Filament\Tests\livewire;
 
@@ -476,6 +479,49 @@ describe('`isPasswordRevealable()` logic', function (): void {
 });
 
 describe('state', function (): void {
+    it('uses trimmed logical state for dependent conditions without changing raw input', function (bool $usesRequiredIf): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $input = TextInput::make('name')->trim(),
+                $dependent = TextInput::make('dependent'),
+            ])
+            ->fill(['name' => '  Alice  ', 'dependent' => null]);
+
+        if ($usesRequiredIf) {
+            $dependent->requiredIf('name', 'Alice');
+        } else {
+            $dependent->required(static fn (Get $get): bool => $get('name') === 'Alice');
+        }
+
+        expect(fn () => $schema->validate())->toThrow(ValidationException::class);
+
+        expect($input->getState())->toBe('Alice')
+            ->and($input->getGetCallback()('name'))->toBe('Alice')
+            ->and($schema->getRawState()['name'])->toBe('  Alice  ');
+
+        $dependent->state('present');
+
+        expect($schema->getState())->toBe(['name' => 'Alice', 'dependent' => 'present'])
+            ->and($schema->getRawState()['name'])->toBe('  Alice  ');
+    })->with([false, true]);
+
+    it('can require an alternative when trimmed recovery input is empty', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                TextInput::make('recovery')->trim(),
+                TextInput::make('alternative')->required(static fn (Get $get): bool => blank($get('recovery'))),
+            ])
+            ->fill(['recovery' => '　', 'alternative' => null]);
+
+        expect(fn () => $schema->validate())->toThrow(ValidationException::class);
+
+        $schema->fill(['recovery' => '　recovery-code　', 'alternative' => null]);
+
+        expect($schema->getState()['recovery'])->toBe('recovery-code');
+    });
+
     it('can `trim()` whitespace from `TextInput`', function (mixed $input, mixed $expected): void {
         livewire(TestComponentWithTextInputTrim::class)
             ->fillForm(['name' => $input])
@@ -493,6 +539,61 @@ describe('state', function (): void {
         ['   ', ''],
         ["\t\n　", ''],
     ]);
+
+    it('trims after stripping and before converting raw numeric input', function (string $mode, string $input, string | array $stripCharacters, int | float | null $expected): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$field = TextInput::make('amount')->{$mode}()->stripCharacters($stripCharacters)->trim()])
+            ->fill(['amount' => $input], shouldApplyStateCasts: false);
+
+        expect($field->getState())->toBe($expected)
+            ->and($schema->getRawState()['amount'])->toBe($input)
+            ->and($schema->getState()['amount'])->toBe($expected);
+    })->with([
+        ['numeric', '#　1,234.5　#', ['#', ','], 1234.5],
+        ['integer', '#　1234　#', '#', 1234],
+        ['numeric', '1122', '12', 12.0],
+        ['numeric', '　', '#', null],
+    ]);
+
+    it('keeps validation mutations separate while trimming before custom casts and dehydration callbacks', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = TextInput::make('value')
+                    ->trim()
+                    ->stateCast(new class implements StateCast
+                    {
+                        public function get(mixed $state): mixed
+                        {
+                            return "[{$state}]";
+                        }
+
+                        public function set(mixed $state): mixed
+                        {
+                            return $state;
+                        }
+                    })
+                    ->mutateStateForValidationUsing(static fn (string $state): string => "{$state}-validation-only")
+                    ->dehydrateStateUsing(static fn (string $state): string => "  <{$state}>  ")
+                    ->mutateDehydratedStateUsing(static fn (string $state): string => "saved:{$state}"),
+            ])
+            ->fill(['value' => '  Alice  ']);
+
+        expect($field->getState())->toBe('[Alice]')
+            ->and($schema->validate()['data']['value'])->toBe('Alice-validation-only')
+            ->and($schema->getState()['value'])->toBe('saved:<[Alice]>')
+            ->and($schema->getRawState()['value'])->toBe('  Alice  ');
+    });
+
+    it('exposes trimmed current and old state to lifecycle hooks without trimming display state', function (): void {
+        livewire(TestComponentWithTrimmedStateHooks::class)
+            ->assertSet('hydratedState', 'Alice')
+            ->assertSet('hydratedRawState', '  Alice  ')
+            ->set('data.name', '  Bob  ')
+            ->assertSet('updatedState', ['Bob', 'Alice', '  Bob  ', '  Alice  '])
+            ->assertSet('data.name', '  Bob  ');
+    });
 
     it('can strip characters before applying `numeric()` state cast', function (mixed $input, mixed $expected): void {
         livewire(TestComponentWithNumericAndStripCharacters::class)
@@ -667,7 +768,7 @@ describe('browser interactions', function (): void {
         $page = visit('/text-input-browser-test', [
             'permissions' => ['clipboard-read', 'clipboard-write'],
         ])
-            ->type('[data-testid="text-input"] input', 'John Doe');
+            ->type('[data-testid="text-input"] input', '  John Doe  ');
 
         $page
             ->click('[data-testid="text-input"] .fi-input-wrp-prefix')
@@ -677,6 +778,8 @@ describe('browser interactions', function (): void {
 
         $page
             ->type('[data-testid="copyable-input"] input', 'ABC123')
+            ->assertSee('Logical name: [John Doe]')
+            ->assertValue('[data-testid="text-input"] input', '  John Doe  ')
             ->click('[data-testid="copyable-input"] button')
             ->assertScript('navigator.clipboard.readText()', 'ABC123')
             ->assertNoSmoke()
@@ -1119,5 +1222,36 @@ class RenderTextInputWithPlaceholder extends Livewire
     public function form(Schema $form): Schema
     {
         return $form->schema([TextInput::make('name')->placeholder('Enter name...')])->statePath('data');
+    }
+}
+
+class TestComponentWithTrimmedStateHooks extends Livewire
+{
+    public mixed $hydratedState = null;
+
+    public mixed $hydratedRawState = null;
+
+    public array $updatedState = [];
+
+    public function mount(): void
+    {
+        $this->form->fill(['name' => '  Alice  ']);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->trim()
+                    ->afterStateHydrated(function ($state, $rawState): void {
+                        $this->hydratedState = $state;
+                        $this->hydratedRawState = $rawState;
+                    })
+                    ->afterStateUpdated(function ($state, $old, $rawState, $oldRaw): void {
+                        $this->updatedState = [$state, $old, $rawState, $oldRaw];
+                    }),
+            ])
+            ->statePath('data');
     }
 }
