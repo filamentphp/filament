@@ -2560,6 +2560,19 @@ describe('file attachment URLs', function (): void {
 });
 
 describe('output sanitization', function (): void {
+    it('bounds document depth before TipTap traverses stored content', function (int $depth): void {
+        $document = ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Deep text']]];
+
+        for ($level = 0; $level < $depth; $level++) {
+            $document = ['type' => 'blockquote', 'content' => [$document]];
+        }
+
+        $document = ['type' => 'doc', 'content' => [$document]];
+        $text = RichContentRenderer::make($document)->toText();
+
+        expect($text)->toBe($depth > 47 ? '' : 'Deep text');
+    })->with([47, 48, 240]);
+
     it('strips `<script>` tags from the rendered HTML via `toHtml()`', function (): void {
         $html = RichContentRenderer::make('<p>Hello</p><script>alert(1)</script>')->toHtml();
 

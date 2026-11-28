@@ -2,11 +2,15 @@
 
 use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Livewire\ImagesTable;
+use Filament\Tests\Fixtures\Models\Image;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithDissociateBulkActionRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Exceptions;
@@ -43,6 +47,26 @@ it('can dissociate selected records using `DissociateBulkAction`', function (): 
     foreach ($posts as $post) {
         expect($post->refresh()->author_id)->toBeNull();
     }
+});
+
+it('can dissociate `MorphMany` records with `fetchSelectedRecords(false)`', function (): void {
+    $image = Image::factory()->for(auth()->user(), 'imageable')->create();
+
+    livewire(new class extends ImagesTable
+    {
+        public function table(Table $table): Table
+        {
+            return $table
+                ->relationship(static fn (): MorphMany => auth()->user()->morphMany(Image::class, 'imageable'))
+                ->toolbarActions([
+                    DissociateBulkAction::make()->fetchSelectedRecords(false),
+                ]);
+        }
+    })
+        ->callTableBulkAction(DissociateBulkAction::class, [$image]);
+
+    expect($image->refresh()->imageable_id)->toBeNull()
+        ->and($image->imageable_type)->toBeNull();
 });
 
 it('does not delete records when dissociating', function (): void {
