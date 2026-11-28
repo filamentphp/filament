@@ -86,7 +86,12 @@ document.addEventListener(
 document.addEventListener('alpine:init', () => {
     window.Alpine.data(
         'filamentSchema',
-        ({ livewireId, schemaKey, isLazyLoaded = false }) => ({
+        ({
+            livewireId,
+            schemaKey,
+            isLazyLoaded = false,
+            loadAfterRender = false,
+        }) => ({
             intersectionObserver: null,
             stopInterceptingSchemaRequest: null,
             isLoadingSchema: false,
@@ -98,76 +103,87 @@ document.addEventListener('alpine:init', () => {
                     return
                 }
 
-                this.intersectionObserver = new IntersectionObserver(
-                    async (entries) => {
-                        if (
-                            !entries[0]?.isIntersecting ||
-                            this.isLoadingSchema ||
-                            this.isDestroyed
-                        ) {
-                            return
+                const loadSchema = async () => {
+                    if (
+                        this.isLoadingSchema ||
+                        this.isDestroyed ||
+                        !this.$el.isConnected
+                    ) {
+                        return
+                    }
+
+                    this.isLoadingSchema = true
+                    this.intersectionObserver?.disconnect()
+
+                    this.stopInterceptingSchemaRequest =
+                        Livewire.interceptRequest(({ request, onError }) => {
+                            const { components } = request.payload
+
+                            if (
+                                !components.some(
+                                    (component) =>
+                                        JSON.parse(component.snapshot).memo
+                                            .id === livewireId &&
+                                        component.calls.some(
+                                            (call) =>
+                                                call.method ===
+                                                    'loadLazySchema' &&
+                                                call.params[0] === schemaKey,
+                                        ),
+                                )
+                            ) {
+                                return
+                            }
+
+                            onError(({ response, preventDefault }) => {
+                                if (
+                                    response.status !== 419 &&
+                                    components.every(
+                                        (component) =>
+                                            !Object.keys(component.updates)
+                                                .length &&
+                                            component.calls.length &&
+                                            component.calls.every(
+                                                (call) =>
+                                                    call.method ===
+                                                    'loadLazySchema',
+                                            ),
+                                    )
+                                ) {
+                                    preventDefault()
+                                }
+                            })
+                        })
+
+                    try {
+                        await this.$wire.loadLazySchema(schemaKey)
+                    } catch {
+                        if (!this.isDestroyed) {
+                            this.hasSchemaLoadingFailed = true
+                        }
+                    } finally {
+                        if (!this.isDestroyed) {
+                            this.isLoadingSchema = false
                         }
 
-                        this.isLoadingSchema = true
-                        this.intersectionObserver.disconnect()
+                        this.stopInterceptingSchemaRequest?.()
+                        this.stopInterceptingSchemaRequest = null
+                    }
+                }
 
-                        this.stopInterceptingSchemaRequest =
-                            Livewire.interceptRequest(
-                                ({ request, onError }) => {
-                                    const { components } = request.payload
+                if (loadAfterRender) {
+                    // Give the browser a chance to render before starting the request.
+                    requestAnimationFrame(() =>
+                        requestAnimationFrame(loadSchema),
+                    )
 
-                                    if (
-                                        !components.some(
-                                            (component) =>
-                                                JSON.parse(component.snapshot)
-                                                    .memo.id === livewireId &&
-                                                component.calls.some(
-                                                    (call) =>
-                                                        call.method ===
-                                                            'loadLazySchema' &&
-                                                        call.params[0] ===
-                                                            schemaKey,
-                                                ),
-                                        )
-                                    ) {
-                                        return
-                                    }
+                    return
+                }
 
-                                    onError(({ response, preventDefault }) => {
-                                        if (
-                                            response.status !== 419 &&
-                                            components.every(
-                                                (component) =>
-                                                    !Object.keys(
-                                                        component.updates,
-                                                    ).length &&
-                                                    component.calls.length &&
-                                                    component.calls.every(
-                                                        (call) =>
-                                                            call.method ===
-                                                            'loadLazySchema',
-                                                    ),
-                                            )
-                                        ) {
-                                            preventDefault()
-                                        }
-                                    })
-                                },
-                            )
-
-                        try {
-                            await this.$wire.loadLazySchema(schemaKey)
-                        } catch {
-                            if (!this.isDestroyed) {
-                                this.hasSchemaLoadingFailed = true
-                            }
-                        } finally {
-                            if (!this.isDestroyed) {
-                                this.isLoadingSchema = false
-                            }
-
-                            this.stopInterceptingSchemaRequest?.()
-                            this.stopInterceptingSchemaRequest = null
+                this.intersectionObserver = new IntersectionObserver(
+                    (entries) => {
+                        if (entries[0]?.isIntersecting) {
+                            loadSchema()
                         }
                     },
                 )

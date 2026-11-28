@@ -269,7 +269,7 @@ Section::make('Customer details')
 
 The lazy schema initially renders a loading indicator. When the loading indicator enters the viewport, only that schema is rendered in a new request. If the schema contains a validation error before it has loaded, it is loaded automatically so the validation error can be revealed.
 
-If a lazy schema is inside a concealed component, such as a collapsed section or an inactive tab, it will not load until its parent is revealed and it enters the viewport. Once a schema has loaded, it remains loaded for the lifetime of the Livewire component.
+With the default viewport trigger, a lazy schema inside a collapsed section or an inactive tab loads when it becomes visible and enters the viewport. Once a schema has loaded, it remains loaded for the lifetime of the Livewire component.
 
 Every lazy schema needs a unique key. In this example, the child schema inherits the `customerDetails` key from the section. You can instead call `key()` on the child schema itself. If multiple child schemas of the same component are lazy, such as a section's content and footer schemas, you must call `key()` on each additional schema so that they do not inherit the same key. If you lazy load the schema for a repeater item or builder block, each item schema automatically receives a unique key from its state path:
 
@@ -291,6 +291,39 @@ Repeater::make('members')
 ```
 
 You may also pass a boolean or function to `lazyLoaded()` to control it conditionally.
+
+### Loading a child schema after rendering
+
+Use `lazyLoadTrigger(SchemaLoadTrigger::AfterRender)` with `lazyLoaded()` to load a child schema after its placeholder enters the DOM and the browser has had a chance to render. This lets you load the second tab of an action modal while the first tab is selected.
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Enums\SchemaLoadTrigger;
+use Filament\Schemas\Schema;
+
+Action::make('editSettings')
+    ->schema([
+        Tabs::make('Settings')
+            ->key('settingsTabs')
+            ->tabs([
+                Tab::make('Profile')
+                    ->schema([TextInput::make('name')]),
+                Tab::make('Notifications')
+                    ->key('notificationsTab')
+                    ->schema(
+                        Schema::make()
+                            ->components([TextInput::make('notification_email')->email()])
+                            ->lazyLoaded()
+                            ->lazyLoadTrigger(SchemaLoadTrigger::AfterRender),
+                    ),
+            ]),
+    ])
+```
+
+If you select the second tab before the load finishes, Filament displays the loading placeholder. Both tabs still contribute to the same action data. When you use `livewireProperty()` on the tabs, Filament renders each tab's contents only when that tab is selected.
 
 ### Customizing the loading placeholder
 

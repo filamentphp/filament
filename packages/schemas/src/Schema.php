@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Enums\SchemaLoadTrigger;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasAlignment;
@@ -58,6 +59,8 @@ class Schema extends ViewComponent implements HasEmbeddedView
     protected string $viewIdentifier = 'schema';
 
     protected bool | Closure $isLazyLoaded = false;
+
+    protected SchemaLoadTrigger $lazyLoadTrigger = SchemaLoadTrigger::InViewport;
 
     /**
      * @param  (LivewireComponent & HasSchemas) | null  $livewire
@@ -155,6 +158,13 @@ class Schema extends ViewComponent implements HasEmbeddedView
     public function lazyLoaded(bool | Closure $condition = true): static
     {
         $this->isLazyLoaded = $condition;
+
+        return $this;
+    }
+
+    public function lazyLoadTrigger(SchemaLoadTrigger $trigger): static
+    {
+        $this->lazyLoadTrigger = $trigger;
 
         return $this;
     }
@@ -293,7 +303,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'wire:partial' => "schema.{$schemaKey}",
-                'x-data' => 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($schemaKey) . ', isLazyLoaded: true })',
+                'x-data' => 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($schemaKey) . ', isLazyLoaded: true, loadAfterRender: ' . Js::from($this->lazyLoadTrigger === SchemaLoadTrigger::AfterRender) . ' })',
                 'role' => 'status',
                 'x-bind:role' => "hasSchemaLoadingFailed ? 'alert' : 'status'",
                 'aria-busy' => 'true',
