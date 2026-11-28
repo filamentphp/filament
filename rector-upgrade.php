@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
+use Filament\Upgrade\Rector\RenameFrontendKeysRector;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -24,6 +25,10 @@ return static function (RectorConfig $rectorConfig): void {
         // Keep deliberate coverage of the supported legacy relationship accessors.
         RenameDeprecatedForwardingMethodsRector::class => [
             __DIR__ . '/tests/src/Tables/Filters/SelectFilterTest.php',
+        ],
+        // Preserve the legacy source keys in the migration rule's own mapping.
+        RenameFrontendKeysRector::class => [
+            __DIR__ . '/packages/upgrade/src/Rector/RenameFrontendKeysRector.php',
         ],
     ]);
 

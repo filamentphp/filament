@@ -2597,9 +2597,9 @@ class RendererTestConfigBlock extends RichContentCustomBlock
         return 'config-block';
     }
 
-    public static function toHtml(array $config, array $data): string
+    public static function toHtml(array $configuration, array $data): string
     {
-        return '<p>' . e(json_encode($config, JSON_THROW_ON_ERROR)) . ' ' . e($data['message']) . '</p>';
+        return '<p>' . e(json_encode($configuration, JSON_THROW_ON_ERROR)) . ' ' . e($data['message']) . '</p>';
     }
 }
 

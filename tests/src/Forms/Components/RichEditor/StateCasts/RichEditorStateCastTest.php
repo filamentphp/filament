@@ -1091,19 +1091,19 @@ class StateCastConfigBlock extends RichContentCustomBlock
         return 'config-block';
     }
 
-    public static function getPreviewLabel(array $config): string
+    public static function getPreviewLabel(array $configuration): string
     {
-        return json_encode($config, JSON_THROW_ON_ERROR);
+        return json_encode($configuration, JSON_THROW_ON_ERROR);
     }
 
-    public static function toPreviewHtml(array $config): string
+    public static function toPreviewHtml(array $configuration): string
     {
-        return '<p>' . e(json_encode($config, JSON_THROW_ON_ERROR)) . '</p>';
+        return '<p>' . e(json_encode($configuration, JSON_THROW_ON_ERROR)) . '</p>';
     }
 
-    public static function shouldApplyProseStylingToPreview(array $config): bool
+    public static function shouldApplyProseStylingToPreview(array $configuration): bool
     {
-        return $config['prose'] ?? false;
+        return $configuration['prose'] ?? false;
     }
 }
 
