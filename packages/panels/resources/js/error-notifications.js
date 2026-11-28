@@ -1,3 +1,23 @@
+// The error notification is sent by a request to the notifications component. If that request also fails, a
+// notification about it would fail the same way and repeat forever.
+const isNotificationsComponentRequest = (request) => {
+    try {
+        const payload = request?.payload
+
+        if (!payload || payload.components.length !== 1) {
+            return false
+        }
+
+        return payload.components.every(
+            (component) =>
+                JSON.parse(component.snapshot).data
+                    .isFilamentNotificationsComponent,
+        )
+    } catch (error) {
+        return false
+    }
+}
+
 document.addEventListener('livewire:init', () => {
     Livewire.interceptRequest(({ request, onError, onFailure }) => {
         onError(({ response, preventDefault }) => {
@@ -7,20 +27,8 @@ document.addEventListener('livewire:init', () => {
                 return
             }
 
-            try {
-                const payload = request?.payload
-                if (payload && payload.components.length === 1) {
-                    for (const component of payload.components) {
-                        if (
-                            JSON.parse(component.snapshot).data
-                                .isFilamentNotificationsComponent
-                        ) {
-                            return
-                        }
-                    }
-                }
-            } catch (error) {
-                //
+            if (isNotificationsComponentRequest(request)) {
+                return
             }
 
             const status = response?.status ?? ''
@@ -48,6 +56,10 @@ document.addEventListener('livewire:init', () => {
             const errorNotifications = window.filamentErrorNotifications
 
             if (!errorNotifications) {
+                return
+            }
+
+            if (isNotificationsComponentRequest(request)) {
                 return
             }
 
