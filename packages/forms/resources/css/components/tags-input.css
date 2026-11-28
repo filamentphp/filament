@@ -11,10 +11,6 @@
             @apply hidden;
         }
 
-        &:has(.fi-fo-tags-input-tags-ctn) .fi-input {
-            @apply hidden;
-        }
-
         & .fi-fo-tags-input-tags-ctn {
             @apply border-t-0;
         }

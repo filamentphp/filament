@@ -258,6 +258,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'type' => 'text',
                 'x-bind' => 'input',
+                'x-show' => $isDisabled ? '! state?.length' : null,
             ], escape: false)
             ->class([
                 'fi-input',

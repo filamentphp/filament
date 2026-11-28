@@ -22,7 +22,6 @@ class TagsInputBrowserTest extends Page
     {
         $this->form->fill([
             'separator_tags' => 'alpha,,0,',
-            'disabled_tags' => ['alpha'],
         ]);
     }
 
@@ -50,11 +49,6 @@ class TagsInputBrowserTest extends Page
                         'Filament',
                     ])
                     ->extraAttributes(['data-testid' => 'suggested-tags']),
-
-                TagsInput::make('disabled_tags')
-                    ->label('Disabled Tags')
-                    ->disabled()
-                    ->extraAttributes(['data-testid' => 'disabled-tags']),
             ])
             ->statePath('data');
     }
