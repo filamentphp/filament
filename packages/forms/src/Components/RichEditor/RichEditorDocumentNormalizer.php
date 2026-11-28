@@ -37,7 +37,7 @@ class RichEditorDocumentNormalizer
             return ['type' => 'doc', 'content' => []];
         }
 
-        $content = $this->normalizeCustomBlockConfiguration($content);
+        $content = $this->normalizeCustomBlockConfigurationNode($content);
 
         if (json_encode($content, depth: self::MAX_DEPTH) === false) {
             return ['type' => 'doc', 'content' => []];
@@ -64,6 +64,20 @@ class RichEditorDocumentNormalizer
             $content = $document;
         }
 
+        if (! $this->isWithinDepth($content)) {
+            return ['type' => 'doc', 'content' => []];
+        }
+
+        return $this->normalizeCustomBlockConfigurationNode($content);
+    }
+
+    /**
+     * @param  array<string, mixed>  $content
+     * @return array<string, mixed>
+     */
+    protected function normalizeCustomBlockConfigurationNode(array $content): array
+    {
+
         if (($content['type'] ?? null) === 'customBlock') {
             $attributes = $content['attrs'] ?? null;
 
@@ -75,7 +89,7 @@ class RichEditorDocumentNormalizer
         if (is_array($content['content'] ?? null)) {
             foreach ($content['content'] as $index => $node) {
                 if (is_array($node)) {
-                    $content['content'][$index] = $this->normalizeCustomBlockConfiguration($node);
+                    $content['content'][$index] = $this->normalizeCustomBlockConfigurationNode($node);
                 }
             }
         }
