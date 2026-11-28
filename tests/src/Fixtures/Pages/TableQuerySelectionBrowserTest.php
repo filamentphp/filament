@@ -31,6 +31,8 @@ class TableQuerySelectionBrowserTest extends Page implements HasTable
 
     public bool $currentPageOnly = false;
 
+    public bool $trackDeselectedRecords = true;
+
     public int $pageSize = 2;
 
     public ?int $selectionLimit = null;
@@ -44,6 +46,7 @@ class TableQuerySelectionBrowserTest extends Page implements HasTable
     {
         $this->nested = request()->boolean('nested');
         $this->currentPageOnly = request()->boolean('currentPageOnly');
+        $this->trackDeselectedRecords = request()->boolean('trackDeselectedRecords', true);
         $this->pageSize = request()->integer('pageSize', 2);
         $this->selectionLimit = request()->integer('selectionLimit') ?: null;
     }
@@ -67,6 +70,7 @@ class TableQuerySelectionBrowserTest extends Page implements HasTable
             ->defaultSort('id')
             ->paginationPageOptions([$this->pageSize])
             ->selectCurrentPageOnly($this->currentPageOnly)
+            ->trackDeselectedRecords($this->trackDeselectedRecords)
             ->maxSelectableRecords($this->selectionLimit)
             ->selectableRecordsQuery(static fn (Builder $query): Builder => $query->where('is_published', true))
             ->toolbarActions([

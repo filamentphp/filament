@@ -80,6 +80,50 @@ it('keeps the deselect-all button enabled while the table polls', function (): v
     expect($stayedEnabled)->toBeTrue();
 });
 
+it('only allows deselection after the select-all request finishes', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+    $posts = Post::factory()->count(3)->create(['is_published' => true]);
+    $page = visit('/table-query-selection-browser-test?trackDeselectedRecords=0');
+
+    // Hold the real response so the loading state can be checked without a timed delay.
+    $page->script(<<<'JS'
+        (() => {
+            const originalFetch = window.fetch;
+
+            window.fetch = async (...parameters) => {
+                const response = await originalFetch(...parameters);
+
+                if (String(parameters[1]?.body).includes('getAllSelectableTableRecordKeys')) {
+                    window.fetch = originalFetch;
+                    await new Promise(resolve => window.releaseSelectionResponse = resolve);
+                }
+
+                return response;
+            };
+        })()
+        JS);
+
+    $page->click('thead input[type="checkbox"]')
+        ->click('Select all 3')
+        ->assertScript('typeof window.releaseSelectionResponse', 'function');
+
+    try {
+        $page->assertDisabled('button:has-text("Deselect all")');
+    } finally {
+        $page->script('window.releaseSelectionResponse()');
+    }
+
+    $page->assertEnabled('button:has-text("Deselect all")')
+        ->click('[data-testid="inspect-selection"]')
+        ->assertScript('document.querySelector(\'[data-testid="selected-keys"]\').textContent.trim()', $posts->pluck('id')->implode(','))
+        ->click('Deselect all')
+        ->assertNotChecked('tbody input[type="checkbox"][value="' . $posts[0]->id . '"]')
+        ->assertNotChecked('tbody input[type="checkbox"][value="' . $posts[1]->id . '"]')
+        ->assertMissing('[data-testid="inspect-selection"]')
+        ->assertNoSmoke();
+});
+
 it('selects and deselects only owned row inputs on the current page', function (bool $nested, bool $currentPageOnly): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
