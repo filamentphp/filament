@@ -58,6 +58,7 @@ use Filament\Tests\Fixtures\Pages\NotificationBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputSubmitOnCompletionBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingBrowserTest;
+use Filament\Tests\Fixtures\Pages\PhoneInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
 use Filament\Tests\Fixtures\Pages\RadioBrowserTest;
 use Filament\Tests\Fixtures\Pages\RelationshipKeyBrowserTest;
@@ -194,6 +195,7 @@ class AdminPanelProvider extends PanelProvider
                 OneTimeCodeInputBrowserTest::class,
                 OneTimeCodeInputSubmitOnCompletionBrowserTest::class,
                 PartialRenderingBrowserTest::class,
+                PhoneInputBrowserTest::class,
                 QueryBuilderTableBrowserTest::class,
                 RadioBrowserTest::class,
                 RelationshipKeyBrowserTest::class,

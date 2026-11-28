@@ -416,6 +416,21 @@ return [
 
     ],
 
+    'phone_input' => [
+
+        'country_button' => [
+            'label' => 'País',
+        ],
+
+        'search_input' => [
+            'label' => 'Pesquisar países',
+            'placeholder' => 'Pesquisar',
+        ],
+
+        'no_search_results_message' => 'Nenhum país corresponde à sua pesquisa.',
+
+    ],
+
     'radio' => [
 
         'boolean' => [

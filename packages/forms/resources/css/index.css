@@ -9,6 +9,7 @@
 @import './components/key-value.css' layer(components);
 @import './components/markdown-editor.css' layer(components);
 @import './components/modal-table-select.css' layer(components);
+@import './components/phone-input.css' layer(components);
 @import './components/radio.css' layer(components);
 @import './components/repeater.css' layer(components);
 @import './components/rich-editor.css' layer(components);

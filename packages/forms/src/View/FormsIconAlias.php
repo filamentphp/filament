@@ -54,6 +54,8 @@ class FormsIconAlias
 
     const COMPONENTS_MODAL_TABLE_SELECT_ACTIONS_SELECT = 'forms::components.modal-table-select.actions.select';
 
+    const COMPONENTS_PHONE_INPUT_COUNTRY_BUTTON = 'forms::components.phone-input.country-button';
+
     const COMPONENTS_REPEATER_ACTIONS_CLONE = 'forms::components.repeater.actions.clone';
 
     const COMPONENTS_REPEATER_ACTIONS_COLLAPSE = 'forms::components.repeater.actions.collapse';

@@ -160,6 +160,7 @@ Using class `Filament\Forms\View\FormsIconAlias`
 - `FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE` - Trigger button of a delete action in a key-value field item
 - `FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_REORDER` - Trigger button of a reorder action in a key-value field item
 - `FormsIconAlias::COMPONENTS_MODAL_TABLE_SELECT_ACTIONS_SELECT` - Trigger button of the select action in a modal table select field
+- `FormsIconAlias::COMPONENTS_PHONE_INPUT_COUNTRY_BUTTON` - Button to choose the country in a phone input
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_CLONE` - Trigger button of a clone action in a repeater item
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE` - Trigger button of a collapse action in a repeater item
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE` - Trigger button of a delete action in a repeater item
