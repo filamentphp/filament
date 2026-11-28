@@ -35,6 +35,9 @@ class TextInputBrowserTest extends Page
                     ->label('Name')
                     ->prefix('Prefix')
                     ->suffix('Suffix')
+                    ->trim()
+                    ->live(onBlur: true)
+                    ->helperText(static fn ($state): string => "Logical name: [{$state}]")
                     ->required()
                     ->extraAttributes(['data-testid' => 'text-input']),
 

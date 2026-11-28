@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Schemas\Components\StateCasts\TrimStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
@@ -322,9 +323,14 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 'isNullable' => true,
                 'isInteger' => $this->isInteger(),
                 'stripCharacters' => $this->getStripCharacters(),
+                'isTrimmed' => $this->isTrimmed(...),
             ]);
-        } elseif ($this->hasStripCharacters()) {
-            $casts[] = app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()]);
+        } else {
+            if ($this->hasStripCharacters()) {
+                $casts[] = app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()]);
+            }
+
+            $casts[] = app(TrimStateCast::class, ['isTrimmed' => $this->isTrimmed(...)]);
         }
 
         return $casts;
@@ -443,24 +449,12 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         );
     }
 
-    public function mutateDehydratedState(mixed $state): mixed
-    {
-        $state = $this->trimState($state);
-
-        return parent::mutateDehydratedState($state);
-    }
-
     public function mutateStateForValidation(mixed $state): mixed
     {
         $state = $this->stripCharactersFromState($state);
         $state = $this->trimState($state);
 
         return parent::mutateStateForValidation($state);
-    }
-
-    public function mutatesDehydratedState(): bool
-    {
-        return parent::mutatesDehydratedState() || $this->isTrimmed();
     }
 
     public function mutatesStateForValidation(): bool

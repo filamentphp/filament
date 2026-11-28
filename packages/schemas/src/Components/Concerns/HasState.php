@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\StateCasts\Contracts\ReadOnlyStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -493,7 +494,10 @@ trait HasState
             $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
         }
 
-        if ($shouldApplyStateCasts && filled($stateCasts = $this->getStateCasts())) {
+        if ($shouldApplyStateCasts && filled($stateCasts = array_filter(
+            $this->getStateCasts(),
+            static fn (StateCast $stateCast): bool => ! ($stateCast instanceof ReadOnlyStateCast),
+        ))) {
             $statePath = $this->getStatePath();
 
             if (blank($statePath) || ! isset($appliedStateCastPaths[$statePath])) {
