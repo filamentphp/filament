@@ -251,12 +251,20 @@ describe('authentication flow', function (): void {
         $this->assertAuthenticatedAs($userToAuthenticate);
     });
 
-    it('will authenticate the user with a valid recovery code while an invalid one-time code is still entered', function (string $code): void {
+    it('will authenticate the user with a valid recovery code while an invalid one-time code is still entered', function (?string $code): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
             ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
             ->create();
+
+        if ($code === null) {
+            $code = ($appAuthentication->getCurrentCode($userToAuthenticate) === '000000') ? '111111' : '000000';
+
+            while ($appAuthentication->verifyCode($code, $appAuthentication->getSecret($userToAuthenticate))) {
+                $code = sprintf('%06d', ((int) $code) + 1);
+            }
+        }
 
         livewire(Login::class)
             ->fillForm([
@@ -288,7 +296,7 @@ describe('authentication flow', function (): void {
         expect($userToAuthenticate->fresh()->getAppAuthenticationRecoveryCodes())
             ->toHaveCount(count($recoveryCodes) - 1);
     })->with([
-        'a complete code' => '000000',
+        'a complete code' => null,
         'a partial code' => '123',
         'a non-numeric code' => 'abcdef',
     ]);

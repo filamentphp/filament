@@ -124,8 +124,18 @@ describe('disabling authentication', function (): void {
             ->toBeFalse();
     });
 
-    it('can disable authentication with a valid recovery code while an invalid one-time code is still entered', function (string $code): void {
+    it('can disable authentication with a valid recovery code while an invalid one-time code is still entered', function (?string $code): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
         $user = auth()->user();
+
+        if ($code === null) {
+            $code = ($appAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000';
+
+            while ($appAuthentication->verifyCode($code, $appAuthentication->getSecret($user))) {
+                $code = sprintf('%06d', ((int) $code) + 1);
+            }
+        }
 
         // The user typed a wrong one-time code before switching to a recovery code, and it's still in the field.
         livewire(EditProfile::class)
@@ -146,7 +156,7 @@ describe('disabling authentication', function (): void {
         expect(filled($user->getAppAuthenticationSecret()))
             ->toBeFalse();
     })->with([
-        'a complete code' => '000000',
+        'a complete code' => null,
         'a partial code' => '123',
         'a non-numeric code' => 'abcdef',
     ]);
