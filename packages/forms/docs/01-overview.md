@@ -994,7 +994,7 @@ Attributes you provide override Filament's accessibility defaults; an explicit `
 
 ##### Preserving accessibility in custom field views
 
-Keep a label for each field, using `hiddenLabel()` if it should be visually hidden. Use `required()` for validation and required-state semantics; `markAsRequired()` only controls the visual marker.
+Keep a label for each field, using `hiddenLabel()` if it should be visually hidden. Use `required()` for validation; `markAsRequired()` only controls the marker and does not add validation. The marker includes screen-reader text by default. Built-in fields omit this text when they already expose their required state separately. Custom fields can [opt out of the text](custom-fields#controlling-required-marker-announcements) when their controls provide that information.
 
 If you replace a field wrapper, preserve the label, helper text, and error IDs in your custom markup. JavaScript-created controls synchronize independently of the wrapper. The plain wrapper used by `FusedGroup` suppresses child instructions and leaves error descriptions on the group.
 

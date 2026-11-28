@@ -75,6 +75,12 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
         return (bool) $this->evaluate($this->shouldAutosize);
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled()) && (! $this->isReadOnly())));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $isDisabled = $this->isDisabled();

@@ -330,6 +330,16 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return $casts;
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled()) && (! $this->isReadOnly()) && (
+                $this->isPasswordRevealable()
+                || filled($this->getMask())
+                || (! in_array(strtolower($this->getType()), ['hidden', 'range', 'color', 'button', 'submit', 'reset', 'image']))
+            )));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $extraAlpineAttributes = $this->getExtraAlpineAttributes();

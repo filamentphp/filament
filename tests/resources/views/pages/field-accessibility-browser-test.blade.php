@@ -4,6 +4,23 @@
             Your details are only shared with the membership team.
         </p>
 
+        <x-filament-forms::field-wrapper
+            id="custom-required"
+            label="Custom required field"
+            required
+            :should-render-required-mark-description="false"
+        >
+            <input id="custom-required" required />
+        </x-filament-forms::field-wrapper>
+
+        <x-filament-forms::field-wrapper
+            id="custom-marker"
+            label="Custom marker field"
+            required
+        >
+            <input id="custom-marker" />
+        </x-filament-forms::field-wrapper>
+
         {{ $this->form }}
 
         <x-filament::button type="submit" data-testid="save">
