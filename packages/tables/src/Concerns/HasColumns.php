@@ -22,6 +22,10 @@ trait HasColumns
     #[Exposed]
     public function callTableColumnAction(string $name, string $recordKey): mixed
     {
+        if ($this->getTable()->isReadOnly()) {
+            return null;
+        }
+
         $record = $this->getTableRecord($recordKey);
 
         if (! $record) {
@@ -34,7 +38,7 @@ trait HasColumns
             return null;
         }
 
-        if ($column->isHidden()) {
+        if ($column->record($record)->isHidden()) {
             return null;
         }
 
@@ -44,7 +48,7 @@ trait HasColumns
             return null;
         }
 
-        return $column->record($record)->evaluate($action);
+        return $column->evaluate($action);
     }
 
     #[Exposed]
@@ -56,10 +60,6 @@ trait HasColumns
             return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
-        if ($column->isHidden()) {
-            return ['error' => __('filament-tables::table.columns.editable.unavailable')];
-        }
-
         $record = $this->getTableRecord($record);
 
         if (! $record) {
@@ -68,7 +68,7 @@ trait HasColumns
 
         $column->record($record);
 
-        if ($column->isDisabled()) {
+        if ($column->isHidden() || $column->isDisabled()) {
             return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
@@ -219,10 +219,6 @@ trait HasColumns
             return null;
         }
 
-        if ($column->isHidden()) {
-            return null;
-        }
-
         if (! method_exists($column, $method)) {
             return null;
         }
@@ -244,6 +240,10 @@ trait HasColumns
         }
 
         $column->record($record);
+
+        if ($column->isHidden()) {
+            return null;
+        }
 
         return $column->{$method}(...$arguments);
     }

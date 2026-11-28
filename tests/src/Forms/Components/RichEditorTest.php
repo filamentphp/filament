@@ -1945,6 +1945,49 @@ describe('custom block grouping', function (): void {
     });
 });
 
+it('round-trips bounded extension data through Livewire snapshots without rewriting it', function (int $depth, string $source): void {
+    $payload = ['value' => 'Preserved extension data'];
+
+    for ($level = 5; $level < $depth; $level++) {
+        $payload = ['nested' => $payload];
+    }
+
+    $document = ['type' => 'doc', 'content' => [[
+        'type' => 'paragraph',
+        'attrs' => ['extensionData' => $payload],
+        'content' => [['type' => 'text', 'text' => 'Visible text']],
+    ]]];
+    $expectedDocument = ($depth <= 100) ? $document : ['type' => 'doc', 'content' => []];
+    $component = livewire(RenderRichEditorWithJson::class, ['document' => ($source === 'stored') ? $document : null]);
+
+    if ($source === 'submitted') {
+        $component->set('data.content', $document);
+    }
+
+    $component->call('$refresh')
+        ->assertSet('data.content', $expectedDocument);
+
+    expect(json_encode($component->snapshot, JSON_THROW_ON_ERROR))->toBeString();
+})->with([100, 101, 260])->with(['stored', 'submitted']);
+
+it('normalizes submitted array shapes before rendering and snapshotting', function (): void {
+    livewire(RenderRichEditorWithJson::class)
+        ->set('data.content', ['type' => 'doc', 'content' => [[
+            'type' => 'paragraph',
+            'attrs' => false,
+            'content' => [
+                ['type' => false],
+                ['type' => 'text', 'text' => ['invalid']],
+                ['type' => 'text', 'text' => 'Preserved sibling'],
+            ],
+        ]]])
+        ->call('$refresh')
+        ->assertSet('data.content', ['type' => 'doc', 'content' => [[
+            'type' => 'paragraph',
+            'content' => [['type' => 'text', 'text' => 'Preserved sibling']],
+        ]]]);
+});
+
 describe('browser interactions', function (): void {
     it('normalizes persisted documents before JSON, HTML-backed and disabled editors render and reload', function (): void {
         $this->actingAs(User::factory()->create());
@@ -1957,8 +2000,10 @@ describe('browser interactions', function (): void {
                     'type' => 'blockquote',
                     'content' => [
                         ['type' => true, 'attrs' => ['id' => 'callout', 'preview' => $preview]],
+                        ['type' => 'text', 'text' => ['invalid']],
                         [
                             'type' => 'paragraph',
+                            'attrs' => false,
                             'content' => [[
                                 'type' => 'text',
                                 'text' => 'Preserved sibling',
@@ -2523,6 +2568,47 @@ describe('browser interactions', function (): void {
             ->assertScript('window.mentionFocusAttributeExecuted ?? false', false)
             ->assertScript('window.mentionAlpineAttributeExecuted ?? false', false)
             ->assertNoSmoke();
+    });
+
+    it('only renders supported stored JSON text alignments in a disabled editor', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-style-attributes-browser-test');
+
+        foreach (['p', 'h2'] as $tag) {
+            $page->assertScript(<<<JS
+                Array.from(document.querySelectorAll('[data-testid="style-attributes-rich-editor"] [role="textbox"] > {$tag}'))
+                    .map((element) => [element.style.textAlign, element.hasAttribute('style')])
+                JS, array_map(static fn (string $alignment): array => [$alignment, $alignment !== ''], [
+                'start', 'center', 'end', 'justify', 'left', 'right', '', '', '', '', '', '', '', '',
+            ]));
+        }
+
+        $page
+            ->assertAttribute('[data-testid="style-attributes-rich-editor"] [role="textbox"]', 'contenteditable', 'false')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()
+            ->assertCount('[data-testid="style-attributes-rich-editor"] th', 14)
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('only renders supported stored JSON table cell and header alignments', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-style-attributes-browser-test');
+
+        foreach (['td', 'th'] as $tag) {
+            $page->assertScript(<<<JS
+                Array.from(document.querySelectorAll('[data-testid="style-attributes-rich-editor"] {$tag}'))
+                    .map((element) => [element.style.textAlign, element.hasAttribute('style')])
+                JS, array_map(static fn (string $alignment): array => [$alignment, $alignment !== ''], [
+                '', 'center', '', '', 'left', 'right', '', '', '', '', '', '', '', '',
+            ]));
+        }
+
+        $page->assertNoSmoke();
     });
 
     it('sanitizes stored CSS values before rendering them in the editor', function (): void {
@@ -3348,6 +3434,11 @@ class RenderRichEditorWithClosureUploadingFileMessage extends Livewire
 
 class RenderRichEditorWithJson extends Livewire
 {
+    public function mount(?array $document = null): void
+    {
+        $this->form->fill(['content' => $document]);
+    }
+
     public function form(Schema $form): Schema
     {
         return $form->schema([RichEditor::make('content')->json()])->statePath('data');

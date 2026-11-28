@@ -45,6 +45,13 @@ class TableSelect extends Field implements HasEmbeddedView
      */
     protected array | Closure $tableArguments = [];
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->prohibited(static fn (TableSelect $component): bool => filled($component->getRawState()) && blank($component->getState()));
+    }
+
     public function tableConfiguration(string | Closure $tableConfiguration): static
     {
         $this->tableConfiguration = $tableConfiguration;

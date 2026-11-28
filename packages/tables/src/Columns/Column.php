@@ -159,7 +159,7 @@ class Column extends ViewComponent
 
         $this->inline();
 
-        $action = $this->getAction();
+        $action = $this->getTable()->isReadOnly() ? null : $this->getAction();
         $url = $this->getUrl();
         $isClickDisabled = $this->isClickDisabled();
 
@@ -219,7 +219,7 @@ class Column extends ViewComponent
 
         try {
 
-            $action = $this->getAction();
+            $action = $table->isReadOnly() ? null : $this->getAction();
             $url = $this->getUrl();
             $hasStateBasedUrls = $this->hasStateBasedUrls();
             $isClickDisabled = $this->isClickDisabled() || ($isReordering ?? $table->isReordering());

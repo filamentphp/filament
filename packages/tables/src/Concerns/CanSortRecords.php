@@ -61,6 +61,10 @@ trait CanSortRecords
     public function updatedTableSort(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
+            if (($this->tableSort !== null) && (! mb_check_encoding($this->tableSort, 'UTF-8'))) {
+                $this->tableSort = null;
+            }
+
             session()->put(
                 $this->getTableSortSessionKey(),
                 $this->tableSort,
@@ -77,6 +81,10 @@ trait CanSortRecords
     public function updatedTableSortDirection(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
+            if (($this->tableSort !== null) && (! mb_check_encoding($this->tableSort, 'UTF-8'))) {
+                $this->tableSort = null;
+            }
+
             session()->put(
                 $this->getTableSortSessionKey(),
                 $this->tableSort,

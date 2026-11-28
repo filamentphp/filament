@@ -91,7 +91,15 @@ trait CanSummarizeRecords
      */
     protected function hasRenderSummary(): bool
     {
-        return $this->cachedHasRenderSummary ??= $this->hasSummary($this->getLivewire()->getAllTableSummaryQuery());
+        if ($this->cachedHasRenderSummary !== null) {
+            return $this->cachedHasRenderSummary;
+        }
+
+        $query = $this->getLivewire()->getAllTableSummaryQuery();
+
+        return $this->cachedHasRenderSummary = collect($this->getColumns())->contains(
+            static fn (Column $column): bool => filled($column->getVisibleSummarizers($query)),
+        );
     }
 
     /**
@@ -166,7 +174,7 @@ trait CanSummarizeRecords
 
             foreach ($this->iterateRenderLoop($columns) as $column) {
                 $loop = $viewFactory->getLastLoop();
-                $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+                $columnHasSummary = ($pageTableSummaryQuery && filled($column->getVisibleSummarizers($pageTableSummaryQuery))) || filled($column->getVisibleSummarizers($allTableSummaryQuery));
 
                 if ((! $placeholderColumns) && (! $columnHasSummary)) {
                     continue;
@@ -286,7 +294,7 @@ trait CanSummarizeRecords
         $columnsWithSummary = [];
 
         foreach ($columns as $columnKey => $column) {
-            $summarizers = $column->getSummarizers($query);
+            $summarizers = $column->getVisibleSummarizers($query);
             $columnsWithSummary[$columnKey] = [
                 'summarizers' => $summarizers,
                 'hasSummary' => (bool) count($summarizers),

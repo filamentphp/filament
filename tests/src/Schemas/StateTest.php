@@ -4,6 +4,7 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -391,6 +392,90 @@ describe('hydrating state', function (): void {
 });
 
 describe('`afterStateUpdated()` hooks', function (): void {
+    test('partial rendering excludes descendants of hidden ancestors after state is updated', function (bool $hideSchema): void {
+        $livewire = livewire(new class extends Livewire
+        {
+            public bool $hideSchema = false;
+
+            public function form(Schema $form): Schema
+            {
+                return $form
+                    ->components([
+                        TextInput::make('trigger')
+                            ->live()
+                            ->partiallyRenderComponentsAfterStateUpdated(['visibleTarget', 'hiddenTarget', 'absentTarget']),
+                        Html::make('visible-target-marker')->key('visibleTarget'),
+                        Html::make('hidden-target-marker')->key('hiddenTarget')->hidden(),
+                        Section::make('Ancestor')
+                            ->hidden(fn (): bool => ! $this->hideSchema)
+                            ->schema(Schema::make()
+                                ->hidden(fn (): bool => $this->hideSchema)
+                                ->components([
+                                    Section::make('Intermediate')
+                                        ->schema([
+                                            Html::make('absent-target-marker')->key('absentTarget'),
+                                        ]),
+                                ])),
+                    ])
+                    ->statePath('data');
+            }
+        }, ['hideSchema' => $hideSchema]);
+
+        $livewire
+            ->assertDontSee('absent-target-marker')
+            ->set('data.trigger', 'updated');
+
+        $partials = $livewire->effects['partials'];
+
+        expect($partials)
+            ->toHaveKeys(['schema-component::form.visibleTarget', 'schema-component::form.hiddenTarget'])
+            ->not->toHaveKey('schema-component::form.absentTarget')
+            ->and($partials['schema-component::form.visibleTarget'])->toContain('visible-target-marker')
+            ->and($partials['schema-component::form.hiddenTarget'])
+            ->toContain('wire:partial="schema-component::form.hiddenTarget"')
+            ->not->toContain('hidden-target-marker')
+            ->and(implode('', $partials))->not->toContain('absent-target-marker')
+            ->and($livewire->effects)->not->toHaveKey('html');
+    })->with(['hidden component ancestor' => false, 'hidden schema ancestor' => true]);
+
+    test('schema partial rendering excludes child schemas beneath a hidden root after state is updated', function (bool $hideRoot): void {
+        $livewire = livewire(new class extends Livewire
+        {
+            public bool $hideRoot = false;
+
+            public function form(Schema $form): Schema
+            {
+                return $form
+                    ->hidden(fn (): bool => $this->hideRoot)
+                    ->components([
+                        Section::make('Details')
+                            ->key('details')
+                            ->schema(Schema::make()
+                                ->statePath('nested')
+                                ->partiallyRender()
+                                ->components([
+                                    TextInput::make('trigger')->live(),
+                                    Html::make('child-schema-marker'),
+                                ])),
+                    ])
+                    ->statePath('data');
+            }
+        }, ['hideRoot' => $hideRoot]);
+
+        $livewire->set('data.nested.trigger', 'updated');
+
+        $partials = $livewire->effects['partials'];
+
+        if ($hideRoot) {
+            expect($partials)->toBe([])
+                ->and(implode('', $partials))->not->toContain('child-schema-marker');
+        } else {
+            expect($partials['schema.form.details.nested'])->toContain('child-schema-marker');
+        }
+
+        expect($livewire->effects)->not->toHaveKey('html');
+    })->with(['visible root' => false, 'hidden root' => true]);
+
     test('custom logic can be executed after state is updated', function (): void {
         Schema::make($livewire = Livewire::make())
             ->statePath('data')
@@ -885,6 +970,90 @@ describe('dehydrating state', function (): void {
         'not dehydrated',
         'hidden',
     ]);
+
+    test('excluded layouts remove only ineligible descendants when an included layout shares their state path', function (string $exclusion, bool $reverseOrder): void {
+        $excluded = Section::make('Excluded')
+            ->statePath('group')
+            ->schema([
+                Field::make('excluded')->key('first-excluded'),
+                Field::make('excluded')->key('second-excluded'),
+                Field::make('shared')->dehydrated(),
+            ]);
+
+        match ($exclusion) {
+            'disabled' => $excluded->disabled(),
+            'not dehydrated' => $excluded->dehydrated(false),
+        };
+
+        $components = [
+            $excluded,
+            Section::make('Included')
+                ->statePath('group')
+                ->schema([
+                    Field::make('included'),
+                    Field::make('shared'),
+                ]),
+        ];
+
+        $schema = StateTestLivewire::make()
+            ->data(['scope' => [
+                'group' => ['excluded' => 'client excluded', 'included' => 'client included', 'shared' => 'client shared'],
+                'group_other' => 'boundary value',
+            ]])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                Section::make('Scope')
+                    ->statePath('scope')
+                    ->schema([
+                        ...($reverseOrder ? array_reverse($components) : $components),
+                        Field::make('group_other'),
+                    ]),
+            ]);
+
+        expect($schema->getState())->toEqual(['scope' => [
+            'group' => ['included' => 'client included', 'shared' => 'client shared'],
+            'group_other' => 'boundary value',
+        ]]);
+    })->with(['disabled', 'not dehydrated'])->with([false, true]);
+
+    test('differently keyed fields preserve shared client state only for an eligible owner', function (string $exclusion, bool $reverseOrder): void {
+        $first = Field::make('shared')->key('first');
+        $second = Field::make('shared')->key('second');
+
+        foreach ([$first, $second] as $field) {
+            match ($exclusion) {
+                'disabled' => $field->disabled(),
+                'hidden' => $field->hidden(),
+                'not dehydrated' => $field->dehydrated(false),
+            };
+        }
+
+        $components = [$first, $second, Field::make('other')];
+        $schema = StateTestLivewire::make()
+            ->data(['group' => ['shared' => 'client shared', 'other' => 'client other']])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                Section::make('Details')
+                    ->statePath('group')
+                    ->schema($reverseOrder ? array_reverse($components) : $components),
+            ]);
+
+        $state = ['data' => $schema->getLivewire()->data];
+        $schema->dehydrateState($state);
+
+        expect($state)->toBe(['data' => ['group' => ['other' => 'client other']]]);
+        expect($schema->getState())->toBe(['group' => ['other' => 'client other']]);
+
+        match ($exclusion) {
+            'disabled' => $first->disabled(false),
+            'hidden' => $first->dehydratedWhenHidden(),
+            'not dehydrated' => $first->dehydrated(),
+        };
+
+        expect($schema->getState())->toEqual(['group' => ['shared' => 'client shared', 'other' => 'client other']]);
+    })->with(['disabled', 'hidden', 'not dehydrated'])->with([false, true]);
 
     test('components in a hidden parent component with a grandparent component with a state path are excluded from state dehydration', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')

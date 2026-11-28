@@ -5,11 +5,14 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\GridDirection;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -499,6 +502,58 @@ describe('validation', function (): void {
             ->assertHasNoFormErrors();
     });
 
+    it('rejects blank-only client state before clearing a required relationship', function (array $state): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+
+        CheckboxList::configureUsing(
+            static fn (CheckboxList $component) => $component->required(),
+            during: fn () => livewire(CheckboxListWithBelongsToManyRelationshipValidation::class, ['record' => $user])
+                ->set('data.teams', $state)
+                ->call('save')
+                ->assertHasFormErrors(['teams' => ['prohibited']]),
+        );
+
+        expect($user->fresh()->teams->modelKeys())->toBe([$team->id]);
+    })->with([
+        'empty string' => [['']],
+        'whitespace' => [[' ']],
+    ]);
+
+    it('preserves valid selections and optional blanks through validation and dehydration', function (mixed $state, array $expected, ?string $cast = null): void {
+        $component = CheckboxList::make('options')
+            ->options(['one' => 'One', 0 => 'Zero'])
+            ->required(filled($state));
+
+        if ($cast === 'enum') {
+            $component->options(IntegerBackedEnum::class);
+        } elseif ($cast === 'custom') {
+            $component->stateCast(app(OptionsArrayStateCast::class, ['shouldCastToInteger' => false]));
+        }
+
+        $form = Schema::make(Livewire::make()->data(['options' => $state]))
+            ->statePath('data')
+            ->components([$component]);
+
+        expect($form->getState())->toBe(['options' => $expected]);
+    })->with([
+        'valid option' => [['one'], ['one']],
+        'integer zero' => [[0], [0]],
+        'string zero' => [['0'], [0]],
+        'null' => [null, []],
+        'empty array' => [[], []],
+        'enum zero' => [['0'], [IntegerBackedEnum::Zero], 'enum'],
+        'custom cast zero' => [['0'], ['0'], 'custom'],
+    ]);
+
+    it('rejects nested client state with option membership validation', function (): void {
+        livewire(CheckboxListWithStaticOptionsValidation::class)
+            ->set('data.options', [['one']])
+            ->call('save')
+            ->assertHasFormErrors(['options.0' => ['in']]);
+    });
+
     it('rejects existing values excluded by `modifyQueryUsing()` on a `BelongsToMany` relationship', function (): void {
         $user = User::factory()->create();
         $inScope = Team::factory()->create(['name' => 'Alpha Team']);
@@ -519,12 +574,14 @@ describe('validation', function (): void {
         $user = User::factory()->create();
         $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
 
-        livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
-            ->set('data.teams', (string) $outOfScope->id)
-            ->call('save')
-            ->assertHasFormErrors(['teams' => ['array']]);
+        foreach ([(string) $outOfScope->id, json_encode([(string) $outOfScope->id]), false, 0] as $state) {
+            livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+                ->set('data.teams', $state)
+                ->call('save')
+                ->assertHasFormErrors(['teams' => ['array']]);
 
-        expect($user->fresh()->teams)->toBeEmpty();
+            expect($user->fresh()->teams)->toBeEmpty();
+        }
     });
 });
 

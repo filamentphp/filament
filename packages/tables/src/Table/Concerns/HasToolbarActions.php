@@ -76,7 +76,7 @@ trait HasToolbarActions
      */
     public function getToolbarActions(): array
     {
-        return $this->toolbarActions;
+        return $this->isReadOnly() ? [] : $this->toolbarActions;
     }
 
     /**

@@ -15,7 +15,10 @@ use Filament\Tables\Columns\Layout\View;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Component as LivewireComponent;
 
 use function Filament\Tests\livewire;
@@ -254,6 +257,177 @@ describe('rendering', function (): void {
         Post::factory()->create();
         livewire(RenderTableWithPanel::class)->assertSuccessful();
     });
+});
+
+describe('layout visibility', function (): void {
+    it('hides layout controls while allowing visible rows to be edited and called', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        $hidden = Post::factory()->create(['title' => 'Hidden', 'is_published' => false]);
+        $visible = Post::factory()->create(['title' => 'Visible', 'content' => 'Publish', 'is_published' => true]);
+
+        $page = visit('/columns-browser-test?hiddenLayout=record');
+        $input = '[data-testid="layout-title-' . $visible->getKey() . '"] input:not([type="hidden"])';
+        $page->assertMissing('[data-testid="layout-title-' . $hidden->getKey() . '"]')
+            ->assertMissing('[data-testid="layout-action-' . $hidden->getKey() . '"]')
+            ->assertValue($input, 'Visible')
+            ->fill($input, 'Updated')
+            ->keys($input, 'Tab')
+            ->assertValue($input, 'Updated')
+            ->assertAttributeMissing($input, 'aria-busy')
+            ->click('[data-testid="layout-action-' . $visible->getKey() . '"]')
+            ->assertSeeIn('[data-testid="layout-action-' . $visible->getKey() . '"]', 'Action called')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        expect($visible->fresh())->title->toBe('Updated')->content->toBe('Action called');
+        expect($hidden->fresh())->title->toBe('Hidden')->content->not->toBe('Action called');
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
+
+    it('inherits static visibility through nested layouts without changing responsive visibility', function (): void {
+        $column = TextColumn::make('title');
+        $layout = Stack::make([Split::make([$column])])->hidden();
+        $layout->getColumns();
+
+        expect($column->isHidden())->toBeTrue()
+            ->and($column->renderInLayout())->toBeNull();
+
+        $layout->hidden(false)->visible(false);
+        expect($column->isHidden())->toBeTrue();
+
+        $layout->visible()->hiddenFrom('md');
+        expect($column->isVisible())->toBeTrue();
+
+        $column->layout(null);
+        expect($column->isVisible())->toBeTrue();
+    });
+
+    it('uses the child record rather than a previously rendered layout record', function (): void {
+        $column = TextColumn::make('title');
+        $layout = Stack::make([Split::make([$column])])
+            ->hidden(static fn (?Post $record): bool => $record !== null && (! $record->is_published));
+        $layout->getColumns();
+        $published = Post::factory()->make(['is_published' => true]);
+        $draft = Post::factory()->make(['is_published' => false]);
+
+        $layout->record($published);
+        expect($column->record($draft)->isHidden())->toBeTrue();
+
+        $layout->record($draft);
+        expect($column->record($published)->isVisible())->toBeTrue();
+    });
+
+    it('honors layout visibility in direct column calls after binding the target record', function (bool $recordDependent): void {
+        $hidden = Post::factory()->create(['title' => 'Hidden', 'is_published' => false]);
+        $visible = Post::factory()->create(['title' => 'Visible', 'is_published' => true]);
+
+        $component = livewire(ColumnsBrowserTest::class, ['hiddenLayout' => $recordDependent ? 'record' : 'static']);
+
+        $component->call('updateTableColumnState', 'title', (string) $hidden->getKey(), 'Changed')
+            ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')])
+            ->call('callTableColumnAction', 'content', (string) $hidden->getKey())
+            ->call('callTableColumnMethod', 'rating', (string) $hidden->getKey(), 'getOptionsForJs')
+            ->assertReturned(null);
+
+        expect($hidden->fresh())->title->toBe('Hidden')->content->not->toBe('Action called');
+
+        if ($recordDependent) {
+            $component->call('updateTableColumnState', 'title', (string) $visible->getKey(), 'Changed')
+                ->call('callTableColumnAction', 'content', (string) $visible->getKey())
+                ->call('callTableColumnMethod', 'rating', (string) $visible->getKey(), 'getOptionsForJs')
+                ->assertReturned([['label' => 'Low', 'value' => '1', 'isDisabled' => false]]);
+
+            expect($visible->fresh())->title->toBe('Changed')->content->toBe('Action called');
+        }
+    })->with([false, true]);
+
+    it('excludes statically hidden children from search and sort but not record-dependent children', function (): void {
+        $first = Post::factory()->create(['title' => 'Zulu', 'is_published' => false]);
+        $second = Post::factory()->create(['title' => 'Alpha', 'is_published' => true]);
+
+        livewire(ColumnsBrowserTest::class, ['hiddenLayout' => 'static'])
+            ->sortTable('title')
+            ->assertCanSeeTableRecords([$first, $second], inOrder: true)
+            ->searchTable('Alpha')
+            ->assertCanNotSeeTableRecords([$first, $second])
+            ->searchTable('')
+            ->searchTableColumns(['title' => 'Alpha'])
+            ->assertCanSeeTableRecords([$first, $second]);
+
+        $component = livewire(ColumnsBrowserTest::class, ['hiddenLayout' => 'record']);
+        $component->instance()->getTable()->getColumn('title')->record($first);
+        $component->sortTable('title')
+            ->assertCanSeeTableRecords([$second, $first], inOrder: true)
+            ->searchTable('Alpha')
+            ->assertCanSeeTableRecords([$second])
+            ->assertCanNotSeeTableRecords([$first]);
+    });
+
+    it('uses the null-record visibility default for table-wide capabilities without changing row visibility', function (bool $isHiddenWithoutRecord): void {
+        $table = livewire(ColumnsBrowserTest::class, ['hiddenLayout' => 'record'])->instance()->getTable();
+        $column = $table->getColumn('title');
+        $layout = $column->getLayout()->getLayout();
+        $record = Post::factory()->make(['is_published' => false]);
+        $layout->hidden(static fn (?Post $record): bool => $record ? (! $record->is_published) : $isHiddenWithoutRecord)
+            ->record($record);
+        $table->flushCachedVisibleColumns();
+
+        expect($column->record($record)->isHidden())->toBeTrue()
+            ->and($table->getSortableVisibleColumn('title'))->toBe($isHiddenWithoutRecord ? null : $column)
+            ->and($table->isSearchableByColumn())->toBe(! $isHiddenWithoutRecord)
+            ->and(array_key_exists('title', $table->getVisibleColumns()))->toBe(! $isHiddenWithoutRecord)
+            ->and($column->getRecord())->toBe($record)
+            ->and($layout->getRecord())->toBe($record);
+    })->with([false, true]);
+
+    it('preserves table and Livewire injection for table-wide layout callbacks', function (): void {
+        $component = livewire(ColumnsBrowserTest::class, ['hiddenLayout' => 'record'])->instance();
+        $table = $component->getTable();
+        $table->getColumn('title')->getLayout()
+            ->hidden(static fn (Table $table, Tables\Contracts\HasTable $livewire): bool => $table === $livewire->getTable());
+
+        expect($table->getSortableVisibleColumn('title'))->toBeNull()
+            ->and($table->isSearchableByColumn())->toBeFalse();
+    });
+
+    it('does not reuse a rendered row loop for table-wide nested layout visibility', function (): void {
+        Post::factory()->create(['title' => 'First visible']);
+        Post::factory()->create(['title' => 'Last hidden']);
+
+        $component = livewire(ColumnsBrowserTest::class, ['hiddenLayout' => 'rowLoop'])
+            ->assertSee('First visible')
+            ->assertDontSee('Last hidden');
+        $table = $component->instance()->getTable();
+
+        expect($table->getSortableVisibleColumn('title'))->not->toBeNull()
+            ->and($table->isSearchableByColumn())->toBeTrue();
+    });
+
+    it('does not reuse a rendered row loop for direct nested column calls', function (string $method, string $column, array $arguments, bool $isHiddenWithoutRowLoop): void {
+        $first = Post::factory()->create(['title' => 'First visible']);
+        $last = Post::factory()->create(['title' => 'Last hidden', 'content' => 'Unchanged']);
+
+        $component = livewire(ColumnsBrowserTest::class, ['hiddenLayout' => $isHiddenWithoutRowLoop ? 'rowLoopHiddenWithoutLoop' : 'rowLoop'])
+            ->assertSee('First visible')
+            ->assertDontSee('Last hidden')
+            ->instance();
+
+        $response = $component->{$method}($column, (string) $last->getKey(), ...$arguments);
+
+        match ($method) {
+            'updateTableColumnState' => expect($last->fresh()->title)->toBe($isHiddenWithoutRowLoop ? 'Last hidden' : 'Changed'),
+            'callTableColumnAction' => expect($last->fresh()->content)->toBe($isHiddenWithoutRowLoop ? 'Unchanged' : 'Action called'),
+            'callTableColumnMethod' => expect($response)->toBe($isHiddenWithoutRowLoop ? null : [['label' => 'Low', 'value' => '1', 'isDisabled' => false]]),
+        };
+
+        expect($first->fresh()->title)->toBe('First visible');
+    })->with([
+        ['updateTableColumnState', 'title', ['Changed']],
+        ['callTableColumnAction', 'content', []],
+        ['callTableColumnMethod', 'rating', ['getOptionsForJs']],
+    ])->with([false, true]);
 });
 
 class RenderTableWithStackAlignment extends LivewireComponent implements HasActions, HasSchemas, Tables\Contracts\HasTable

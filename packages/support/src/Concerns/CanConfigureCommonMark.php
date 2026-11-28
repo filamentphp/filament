@@ -38,10 +38,13 @@ trait CanConfigureCommonMark
             'relatedRecord' => $relatedRecord,
         ] : [];
 
-        return $this->evaluate(
-            $this->commonMarkOptions,
-            $evaluationParameters,
-        ) ?? [];
+        return [
+            'max_nesting_level' => 100,
+            ...($this->evaluate(
+                $this->commonMarkOptions,
+                $evaluationParameters,
+            ) ?? []),
+        ];
     }
 
     /**

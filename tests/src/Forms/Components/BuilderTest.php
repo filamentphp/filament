@@ -1288,6 +1288,9 @@ describe('item schemas', function (): void {
     })->with([
         'state-path sanitization collision' => ['a"'],
         'blank state path' => [' '],
+        'character reference' => ['key&#39;value'],
+        'embedded backslash' => ['key\\value'],
+        'template expression' => ['key${globalThis[99]=true}'],
     ]);
 
     it('updates item schemas after the state changes', function (): void {

@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -23,12 +24,17 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\HiddenDepartmentTicket;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -783,6 +789,94 @@ describe('item schemas', function (): void {
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
 
+    it('isolates non-record item entry state from the parent record', function (mixed $itemData, ?string $expectedTitle): void {
+        $record = Post::factory()->create([
+            'config' => ['item' => ['title' => 'Parent-only title']],
+        ]);
+
+        $repeater = Repeater::make('config')
+            ->schema([TextEntry::make('title')]);
+
+        Schema::make(Livewire::make()->data([
+            'config' => ['item' => $itemData],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $item = $repeater->getItems()['item'];
+
+        expect($item->getComponents()[0]->getState())->toBe($expectedTitle)
+            ->and($item->getConstantState())->toBe(is_array($itemData) ? $itemData : []);
+    })->with([
+        'scalar string' => ['malformed', null],
+        'integer' => [42, null],
+        'boolean' => [false, null],
+        'null' => [null, null],
+        'empty array' => [[], null],
+        'item array' => [['title' => 'Item-only title'], 'Item-only title'],
+    ]);
+
+    it('does not traverse parent relationships through a non-record item key', function (): void {
+        $team = Team::factory()->create(['name' => 'Parent-only team name']);
+        $author = User::factory()->create(['team_id' => $team->getKey()]);
+        $record = Post::factory()->create(['author_id' => $author->getKey()]);
+
+        $repeater = Repeater::make('author')
+            ->schema([TextEntry::make('name')]);
+
+        Schema::make(Livewire::make()->data([
+            'author' => ['team' => 'malformed'],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $item = $repeater->getItems()['team'];
+
+        expect($item->getComponents()[0]->getState())->toBeNull()
+            ->and($item->getConstantState())->toBe([])
+            ->and($record->relationLoaded('author'))->toBeFalse();
+    });
+
+    it('resolves relationship-backed item entries from their own record', function (mixed $itemData): void {
+        $record = User::factory()->create(['name' => 'Parent name']);
+        $post = Post::factory()->create([
+            'author_id' => $record->getKey(),
+            'title' => 'Related record title',
+        ]);
+
+        $repeater = Repeater::make('posts')
+            ->relationship('posts')
+            ->schema([TextEntry::make('title')]);
+
+        Schema::make(Livewire::make()->data([
+            'posts' => [
+                'record-' . $post->getKey() => $itemData,
+                'new' => 'malformed',
+                'array' => ['title' => 'New item title'],
+            ],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $items = $repeater->getItems();
+        $item = $items['record-' . $post->getKey()];
+
+        expect($item->getComponents()[0]->getState())->toBe('Related record title')
+            ->and($item->getRecord()->is($post))->toBeTrue()
+            ->and($items['new']->getComponents()[0]->getState())->toBeNull()
+            ->and($items['new']->getConstantState())->toBe([])
+            ->and($items['array']->getComponents()[0]->getState())->toBe('New item title');
+    })->with([
+        'item array' => [['title' => 'Unsaved item title']],
+        'scalar string' => ['malformed'],
+    ]);
+
     it('rekeys unsafe item state-path keys before building schemas', function (string $unsafeItemKey): void {
         $repeater = Repeater::make('items')
             ->schema([
@@ -821,6 +915,14 @@ describe('item schemas', function (): void {
         'multiple trailing backslashes' => ['part\\\\'],
         'quote stripped from state paths' => ['a"'],
         'control character stripped from state paths' => ["a\na"],
+        'character reference' => ['key&#39;value'],
+        'ampersand' => ['key&value'],
+        'embedded backslash' => ['key\\value'],
+        'template expression' => ['key${globalThis[99]=true}'],
+        'embedded whitespace' => ['key value'],
+        'colon' => ['key:value'],
+        'slash' => ['key/value'],
+        'invalid UTF-8' => ["key\xFF"],
     ]);
 
     it('uses numeric replacement keys when UUID generation is disabled', function (): void {
@@ -1829,6 +1931,28 @@ describe('relationships', function (): void {
             ->toBe(3);
     });
 
+    it('does not prefill hidden pivot attributes or related-column collisions from `BelongsToMany` records', function (bool $isLoaded, bool $isTranslatable): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70]);
+        $record = RepeaterHiddenPivotTicket::findOrFail($ticket->getKey());
+
+        if ($isLoaded) {
+            $record->setRelation('departments', $record->departments()->getQuery()->select([
+                'department_ticket.*',
+                'departments.*',
+                'department_ticket.quantity as pivot_quantity',
+                'department_ticket.created_at as pivot_created_at',
+            ])->get());
+        }
+
+        $component = livewire(RepeaterWithHiddenPivot::class, ['record' => $record, 'isTranslatable' => $isTranslatable]);
+        $state = array_values($component->get('data.departments'))[0];
+
+        expect(Arr::only($state, ['quantity', 'pivot_quantity', 'created_at', 'pivot_created_at', 'price']))
+            ->toEqual(['quantity' => null, 'pivot_quantity' => null, 'created_at' => null, 'pivot_created_at' => null, 'price' => 70]);
+    })->with([false, true])->with([false, true]);
+
     it('can load state from a `HasMany` relationship using eager loaded data without additional queries', function (): void {
         $undoRepeaterFake = Repeater::fake();
 
@@ -2222,6 +2346,130 @@ describe('relationship ordering and mutation', function (): void {
 });
 
 describe('relationship persistence', function (): void {
+    it('hydrates polls and edits relationship descendants with supported record keys', function (string $recordKey): void {
+        Artisan::call('filament:assets');
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $post = Post::factory()->create([
+            'author_id' => $user->id,
+            'title' => $recordKey,
+            'is_published' => false,
+            'config' => [],
+            'content' => 'Original markdown',
+        ]);
+
+        $page = visit('/relationship-key-browser-test');
+        $livewire = 'Livewire.find(document.querySelector("[data-testid=save-relationship]").closest("[wire\\\\:id]").getAttribute("wire:id"))';
+        $page->assertScript('Object.keys(' . $livewire . '.get("data").posts)', ['record-' . $recordKey])
+            ->assertScript('Object.values(' . $livewire . '.get("data").posts)[0].content', 'Original markdown');
+        $control = $page->script('document.querySelector("[data-testid=poll-control]").textContent');
+        $stamp = $page->script('document.querySelector("[data-testid=poll-stamp]").textContent');
+        $page->assertScript('document.querySelector("[data-testid=poll-stamp]").textContent !== ' . json_encode($stamp), true)
+            ->assertScript('document.querySelector("[data-testid=poll-control]").textContent', $control)
+            ->assertAttribute('[data-testid="published-toggle"]', 'aria-checked', 'false')
+            ->click('[data-testid="published-toggle"]')
+            ->assertAttribute('[data-testid="published-toggle"]', 'aria-checked', 'true')
+            ->click('[data-testid="post-builder"] button:has-text("Add to config")')
+            ->click('[data-testid="post-builder"] button:has-text("Paragraph")')
+            ->assertScript('document.querySelector("[data-testid=block-text]").getAttribute("wire:model").includes(' . json_encode($recordKey) . ')', true)
+            ->fill('[data-testid="block-text"]', 'Exact block content')
+            ->keys('[data-testid="post-markdown"] textarea[aria-label="Content"]', 'ControlOrMeta+Home')
+            ->typeSlowly('[data-testid="post-markdown"] textarea[aria-label="Content"]', 'Updated ', 0)
+            ->click('[data-testid="save-relationship"]')
+            ->assertPresent('[data-testid="relationship-saved"]')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+
+        $configuration = $post->fresh()->config;
+
+        expect($post->fresh()->is_published)->toBeTrue()
+            ->and($configuration)->toHaveCount(1)
+            ->and($configuration[0])->toHaveCount(2)
+            ->and($configuration[0]['type'])->toBe('paragraph')
+            ->and($configuration[0]['data'])->toBe(['text' => 'Exact block content'])
+            ->and($post->fresh()->content)->toBe('Updated Original markdown')
+            ->and($post->fresh()->title)->toBe($recordKey);
+    })->with([
+        'Unicode letters and separators' => 'order_123-café雪',
+        'UUID' => '550e8400-e29b-41d4-a716-446655440000',
+        'supported punctuation' => 'order@café+雪,123=value~end',
+    ]);
+
+    it('honors `deletable()` when submitted relationship items are missing while still updating existing items', function (bool $isDeletable, bool $useClosure): void {
+        $user = User::factory()->create();
+        $retainedPost = Post::factory()->create(['author_id' => $user->id, 'title' => 'Original']);
+        $omittedPost = Post::factory()->create(['author_id' => $user->id, 'title' => 'Omitted']);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->model($user)
+            ->components([
+                $repeater = Repeater::make('posts')
+                    ->relationship()
+                    ->deletable($useClosure ? static fn (): bool => $isDeletable : $isDeletable)
+                    ->schema([TextInput::make('title')]),
+            ]);
+        $schema->loadStateFromRelationships();
+
+        $repeater->rawState(["record-{$retainedPost->id}" => ['title' => 'Updated']]);
+        $schema->saveRelationships();
+
+        expect($retainedPost->fresh()->title)->toBe('Updated')
+            ->and($omittedPost->fresh()->trashed())->toBe($isDeletable)
+            ->and(array_values($user->posts->modelKeys()))->toEqualCanonicalizing($isDeletable
+                ? [$retainedPost->id]
+                : [$retainedPost->id, $omittedPost->id]);
+    })->with([true, false])->with([false, true]);
+
+    it('saves server default relationship items on a newly created record regardless of `addable()`', function (bool $isAddable, bool $useDefaultItems): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $repeater = Repeater::make('posts')
+                    ->relationship()
+                    ->addable($isAddable)
+                    ->schema([TextInput::make('title')->default('Server default')]),
+            ])
+            ->model(User::class);
+
+        $useDefaultItems
+            ? $repeater->defaultItems(1)
+            : $repeater->default([['title' => 'Server default']]);
+
+        $schema->fill();
+        $user = User::factory()->create();
+        $schema->model($user);
+        expect(array_values($repeater->getRawState()))->toBe([['title' => 'Server default']]);
+
+        $schema->saveRelationships();
+
+        expect($user->posts()->pluck('title')->all())->toBe(['Server default']);
+    })->with([true, false])->with([false, true]);
+
+    it('saves relationship items produced by an enabled clone action regardless of `addable()`', function (bool $isAddable): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => $user->id, 'title' => 'Source']);
+
+        Repeater::configureUsing(
+            static fn (Repeater $component) => $component->addable($isAddable)->cloneable(),
+            during: function () use ($user, $post): void {
+                livewire(RepeaterWithHasManyRelationshipAndOrderColumn::class, ['record' => $user])
+                    ->callAction(TestAction::make('clone')->schemaComponent('posts')->arguments(['item' => "record-{$post->id}"]))
+                    ->assertSchemaStateSet(function (array $state): array {
+                        expect($state['posts'])->toHaveCount(2);
+
+                        return [];
+                    })
+                    ->call('save')
+                    ->assertHasNoFormErrors();
+            },
+        );
+
+        expect($post->fresh()->title)->toBe('Source')
+            ->and($user->posts()->pluck('title')->all())->toBe(['Source', 'Source']);
+    })->with([true, false]);
+
     it('preserves safe string record keys and rejects unsafe keys before changing related records', function (string $recordKey, bool $isSafe): void {
         $user = User::factory()->create();
         $user = RepeaterUserWithStringKeyPosts::findOrFail($user->id);
@@ -2251,7 +2499,22 @@ describe('relationship persistence', function (): void {
         expect($post->fresh()->content)->toBe('Updated')
             ->and($user->posts()->count())->toBe(1);
     })->with([
-        'literal backslash' => ['part\\one', true],
+        'integer-shaped' => ['123', true],
+        'UUID' => ['550e8400-e29b-41d4-a716-446655440000', true],
+        'ULID' => ['01ARZ3NDEKTSV4RRFFQ69G5FAV', true],
+        'Unicode' => ['café-雪', true],
+        'combining Unicode' => ["cafe\u{0301}_雪", true],
+        'ordinary string' => ['order_123-abc', true],
+        'at sign' => ['part@one', true],
+        'plus sign' => ['part+one', true],
+        'comma' => ['part,one', true],
+        'equals sign' => ['part=one', true],
+        'tilde' => ['part~one', true],
+        'entity-shaped' => ['part&#39;&amp;one', false],
+        'literal backslash' => ['part\\one', false],
+        'ampersand' => ['part&one', false],
+        'template expression' => ['part${globalThis[99]=true}', false],
+        'whitespace' => ['part one', false],
         'dot' => ['part.one', false],
         'quote' => ['part"one', false],
     ]);
@@ -4186,6 +4449,50 @@ class RepeaterGetStateLeakCheck extends Component implements HasSchemas
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class RepeaterHiddenPivotTicket extends Ticket
+{
+    protected $table = 'tickets';
+
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'department_ticket', 'ticket_id', 'department_id')
+            ->using(HiddenDepartmentTicket::class)
+            ->withPivot(['id', 'quantity', 'price'])
+            ->as('attachment')
+            ->withTimestamps();
+    }
+}
+
+class RepeaterWithHiddenPivot extends Livewire
+{
+    public Ticket $record;
+
+    public bool $isTranslatable = false;
+
+    public function getFilamentTranslatableContentDriver(): ?string
+    {
+        return $this->isTranslatable ? RecordingTranslatableContentDriver::class : null;
+    }
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->model($this->record)->statePath('data')->components([
+            Repeater::make('departments')->relationship()->schema([
+                TextInput::make('quantity'),
+                TextInput::make('pivot_quantity'),
+                TextInput::make('created_at'),
+                TextInput::make('pivot_created_at'),
+                TextInput::make('price'),
+            ]),
+        ]);
     }
 }
 

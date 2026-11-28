@@ -144,9 +144,17 @@ trait HasState
             return false;
         } finally {
             if ($this->shouldPartiallyRender($path)) {
-                app(PartialsComponentHook::class)->renderPartial($this->getLivewire(), fn (): array => [
-                    "schema.{$this->getKey()}" => $this->toHtml(...),
-                ]);
+                app(PartialsComponentHook::class)->renderPartial($this->getLivewire(), function (): array {
+                    for ($schema = $this; $schema !== null; $schema = $schema->getParentComponent()?->getContainer()) {
+                        if ($schema->isHidden()) {
+                            return [];
+                        }
+                    }
+
+                    return [
+                        "schema.{$this->getKey()}" => $this->toHtml(...),
+                    ];
+                });
             }
         }
     }
@@ -587,6 +595,12 @@ trait HasState
     public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
     {
         return Component::withVisibilityCache(function () use ($shouldCallHooksBefore, $afterValidate): array {
+            if ($this->isRoot()) {
+                // Relationship callbacks run again after a newly created record is bound.
+                // Binding it must not admit components excluded from this submission.
+                $this->cacheRelationshipSaveEligibility();
+            }
+
             $state = $this->validate();
 
             if ($this->isRoot() && $this->isDisabled()) {

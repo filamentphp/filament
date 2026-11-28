@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Tables\Columns;
 
+use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -17,6 +18,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -24,6 +26,64 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 describe('state updates and relationship persistence', function (): void {
+    it('rejects array and object-shaped client state without persisting it', function (string $columnName, string $payload, bool $hasScalarValidation): void {
+        $post = Post::factory()->create(['title2' => 'Original', 'json' => ['title' => 'Original', 'sibling' => 'Preserved']]);
+        $originalAttributes = $post->fresh()->getAttributes();
+        $input = json_decode($payload, associative: true, flags: JSON_THROW_ON_ERROR);
+
+        $component = livewire(TestTableWithScalarTextInputColumn::class, compact('columnName', 'hasScalarValidation'))
+            ->call('updateTableColumnState', $columnName, (string) $post->getKey(), $input)
+            ->assertReturned(['error' => 'Invalid text value.'])
+            ->assertSuccessful();
+
+        expect($post->fresh()->getAttributes())->toBe($originalAttributes);
+
+        $component->call('$refresh')->assertSuccessful();
+        livewire(TestTableWithScalarTextInputColumn::class, compact('columnName', 'hasScalarValidation'))->assertSuccessful();
+    })->with(['title2', 'json.title'])->with([
+        'empty array' => '[]',
+        'list' => '["Invalid"]',
+        'empty object' => '{}',
+        'nested object' => '{"nested":["Invalid"]}',
+    ])->with([false, true]);
+
+    it('preserves scalar and nullable client state', function (mixed $input, mixed $expected): void {
+        $post = Post::factory()->create(['json' => ['title' => 'Original', 'sibling' => 'Preserved']]);
+
+        livewire(TestTableWithScalarTextInputColumn::class)
+            ->call('updateTableColumnState', 'json.title', (string) $post->getKey(), $input)
+            ->assertReturned($expected)
+            ->assertSuccessful();
+
+        expect($post->fresh()->json)->toBe(['title' => $expected, 'sibling' => 'Preserved']);
+    })->with([
+        'string' => ['Updated', 'Updated'],
+        'numeric string' => ['007', '007'],
+        'integer zero' => [0, 0],
+        'float' => [1.25, 1.25],
+        'boolean' => [false, false],
+        'null' => [null, null],
+        'blank string' => ['', null],
+    ]);
+
+    it('preserves scalar validation closures and messages', function (): void {
+        $post = Post::factory()->create(['title2' => 'Original']);
+
+        $component = livewire(TestTableWithScalarTextInputColumn::class, ['columnName' => 'title2', 'hasScalarValidation' => true])
+            ->call('updateTableColumnState', 'title2', (string) $post->getKey(), 'Too long input')
+            ->assertReturned(['error' => 'Too long.'])
+            ->call('updateTableColumnState', 'title2', (string) $post->getKey(), 'blocked')
+            ->assertReturned(['error' => 'Blocked value.']);
+
+        expect($post->fresh()->title2)->toBe('Original');
+
+        $component->call('updateTableColumnState', 'title2', (string) $post->getKey(), 'Updated')
+            ->assertReturned('Updated')
+            ->assertSuccessful();
+
+        expect($post->fresh()->title2)->toBe('Updated');
+    });
+
     it('reports a missing persistence target without changing custom `null` callback results', function (): void {
         $post = Post::factory()->create(['author_id' => null]);
         $column = TextInputColumn::make('author.name')->record($post);
@@ -34,6 +94,61 @@ describe('state updates and relationship persistence', function (): void {
         $column->updateStateUsing(static fn (): mixed => null);
 
         expect($column->updateState('Updated name'))->toBeNull();
+    });
+
+    it('persists the constrained singular relationship target', function (bool $hasBeforeStateUpdatedCallback, string $constraintSource): void {
+        $author = User::factory()->create();
+        $excludedPost = Post::factory()->create([
+            'author_id' => $author->getKey(),
+            'is_published' => true,
+            'rating' => 1,
+            'title' => 'Excluded title',
+        ]);
+        $includedPost = Post::factory()->create([
+            'author_id' => $author->getKey(),
+            'is_published' => true,
+            'rating' => 5,
+            'title' => 'Included title',
+        ]);
+
+        livewire(TestTableWithConstrainedSingularRelationshipTextInputColumn::class, compact('hasBeforeStateUpdatedCallback', 'constraintSource'))
+            ->assertTableColumnEnabled('publishedPost.title', $author)
+            ->assertSee('Included title')
+            ->assertDontSee('Excluded title')
+            ->call('updateTableColumnState', 'publishedPost.title', (string) $author->getKey(), 'Updated title')
+            ->assertReturned('Updated title');
+
+        expect($includedPost->refresh()->title)->toBe('Updated title')
+            ->and($excludedPost->refresh()->title)->toBe('Excluded title');
+    })->with([false, true])->with(['query', 'global-scope', 'filter']);
+
+    it('refuses a singular relationship target excluded by the eager load', function (bool $hasBeforeStateUpdatedCallback, string $constraintSource): void {
+        $author = User::factory()->create();
+        $excludedPost = Post::factory()->create([
+            'author_id' => $author->getKey(),
+            'is_published' => true,
+            'rating' => 1,
+            'title' => 'Excluded title',
+        ]);
+
+        livewire(TestTableWithConstrainedSingularRelationshipTextInputColumn::class, compact('hasBeforeStateUpdatedCallback', 'constraintSource'))
+            ->assertTableColumnEnabled('publishedPost.title', $author)
+            ->assertDontSee('Excluded title')
+            ->call('updateTableColumnState', 'publishedPost.title', (string) $author->getKey(), 'Updated title')
+            ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
+
+        expect($excludedPost->refresh()->title)->toBe('Excluded title');
+    })->with([false, true])->with(['query', 'global-scope', 'filter']);
+
+    it('preserves eager-load constraints on an ancestor of the persistence target', function (): void {
+        $author = User::factory()->create(['name' => 'Original name']);
+        Profile::factory()->create(['user_id' => $author->getKey(), 'bio' => 'Excluded profile']);
+
+        livewire(TestTableWithNestedConstrainedRelationshipTextInputColumn::class)
+            ->call('updateTableColumnState', 'profile.user.name', (string) $author->getKey(), 'Updated name')
+            ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
+
+        expect($author->refresh()->name)->toBe('Original name');
     });
 });
 
@@ -115,7 +230,7 @@ describe('update callbacks and relationship targets', function (): void {
             ->and($draft->refresh()->title)->toBe('Draft title');
     });
 
-    it('resolves the default relationship persistence target after `beforeStateUpdated()`', function (): void {
+    it('resolves the default relationship persistence target after `beforeStateUpdated()`', function (bool $shouldAssociate): void {
         $originalAuthor = User::factory()->create(['name' => 'Original author']);
         $replacementAuthor = User::factory()->create(['name' => 'Replacement author']);
         $post = Post::factory()->create(['author_id' => $originalAuthor->getKey()]);
@@ -123,10 +238,15 @@ describe('update callbacks and relationship targets', function (): void {
 
         $column = TextInputColumn::make('author.name')
             ->record($post)
-            ->beforeStateUpdated(static function (User $relatedRecord) use ($post, $replacementAuthor): void {
+            ->beforeStateUpdated(static function (User $relatedRecord) use ($post, $replacementAuthor, $shouldAssociate): void {
                 expect($relatedRecord->is($post->author))->toBeTrue();
 
-                $post->author()->associate($replacementAuthor);
+                if ($shouldAssociate) {
+                    $post->author()->associate($replacementAuthor);
+                } else {
+                    $post->author_id = $replacementAuthor->getKey();
+                }
+
                 $post->save();
             })
             ->afterStateUpdated(static function (User $relatedRecord) use (&$afterRelatedRecord): void {
@@ -138,6 +258,24 @@ describe('update callbacks and relationship targets', function (): void {
             ->and($replacementAuthor->refresh()->name)->toBe('Updated replacement')
             ->and($afterRelatedRecord)->toBeInstanceOf(User::class)
             ->and($afterRelatedRecord->is($replacementAuthor))->toBeTrue();
+    })->with([false, true]);
+
+    it('persists a missing relationship target created by `beforeStateUpdated()`', function (): void {
+        $author = User::factory()->create();
+
+        $column = TextInputColumn::make('publishedPost.title')
+            ->record($author)
+            ->beforeStateUpdated(static function (?Post $relatedRecord) use ($author): void {
+                expect($relatedRecord)->toBeNull();
+
+                $author->publishedPost()->create([
+                    'title' => 'Created title',
+                    'is_published' => true,
+                ]);
+            });
+
+        expect($column->updateState('Updated title'))->toBe('Updated title')
+            ->and($author->fresh()->publishedPost->title)->toBe('Updated title');
     });
 
     it('recomputes a nested `MorphTo` persistence path after `beforeStateUpdated()`', function (): void {
@@ -431,6 +569,89 @@ class TestTableWithTextInputColumn extends Component implements HasActions, HasS
     public function render(): View
     {
         return view('livewire.table');
+    }
+}
+
+class TestTableWithScalarTextInputColumn extends TestTableWithTextInputColumn
+{
+    public string $columnName = 'json.title';
+
+    public bool $hasScalarValidation = false;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Post::query())->columns([
+            TextInputColumn::make($this->columnName)
+                ->rules($this->hasScalarValidation ? static fn (string $state): array => [
+                    'max:8',
+                    static function (string $attribute, string $value, Closure $fail): void {
+                        if ($value === 'blocked') {
+                            $fail('Blocked value.');
+                        }
+                    },
+                ] : [])
+                ->validationMessages([
+                    'string' => static fn (): string => 'Invalid text value.',
+                    'max' => static fn (): string => 'Too long.',
+                ])
+                ->beforeStateUpdated(static function (mixed $state): void {
+                    expect(is_array($state))->toBeFalse();
+                }),
+        ]);
+    }
+}
+
+class TestTableWithConstrainedSingularRelationshipTextInputColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public bool $hasBeforeStateUpdatedCallback = false;
+
+    public string $constraintSource = 'query';
+
+    public function table(Table $table): Table
+    {
+        $applyEagerLoads = static fn (Builder $query): Builder => $query->with([
+            'publishedPost' => static fn ($query) => $query->where('rating', '>=', 5)->orderBy('id'),
+        ]);
+
+        return $table
+            ->query(match ($this->constraintSource) {
+                'global-scope' => User::query()->withGlobalScope('publishedPostRating', $applyEagerLoads),
+                'filter' => User::query(),
+                default => $applyEagerLoads(User::query()),
+            })
+            ->filters($this->constraintSource === 'filter' ? [
+                Tables\Filters\Filter::make('rating')->default()->baseQuery($applyEagerLoads),
+            ] : [])
+            ->columns([
+                TextInputColumn::make('publishedPost.title')
+                    ->disabled(static fn (User $record): bool => ($record->publishedPost?->rating ?? 5) < 5)
+                    ->beforeStateUpdated($this->hasBeforeStateUpdatedCallback ? static function (?Post $relatedRecord): void {
+                        expect($relatedRecord === null || $relatedRecord->rating >= 5)->toBeTrue();
+                    } : null),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithNestedConstrainedRelationshipTextInputColumn extends TestTableWithConstrainedSingularRelationshipTextInputColumn
+{
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query()->with([
+                'profile' => static fn ($query) => $query->where('bio', 'Included profile'),
+            ]))
+            ->columns([
+                TextInputColumn::make('profile.user.name'),
+            ]);
     }
 }
 

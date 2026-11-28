@@ -128,6 +128,9 @@ TextColumn::make('users_count')->counts([
 ])
 ```
 
+> [!NOTE]
+> When Filament fetches a record for a table action or editable column update, the count remains available on `$record`, even if the column is hidden or toggled off. This does not guarantee its availability when rendering table rows.
+
 #### Determining relationship existence
 
 If you simply wish to indicate whether related records exist in a column, you may use the `exists()` method:
@@ -154,6 +157,9 @@ TextColumn::make('users_exists')->exists([
 ])
 ```
 
+> [!NOTE]
+> When Filament fetches a record for a table action or editable column update, the existence attribute remains available on `$record`, even if the column is hidden or toggled off. This does not guarantee its availability when rendering table rows.
+
 #### Aggregating relationships
 
 Filament provides several methods for aggregating a relationship field, including `avg()`, `max()`, `min()` and `sum()`. For instance, if you wish to show the average of a field on all related records in a column, you may use the `avg()` method:
@@ -176,6 +182,9 @@ TextColumn::make('users_avg_age')->avg([
     'users' => fn (Builder $query) => $query->where('is_active', true),
 ], 'age')
 ```
+
+> [!NOTE]
+> When Filament fetches a record for a table action or editable column update, the aggregate attributes remain available on `$record`, even if the column is hidden or toggled off. This does not guarantee their availability when rendering table rows.
 
 ## Setting a column's label
 
@@ -855,6 +864,11 @@ TextColumn::make('role')
 TextColumn::make('role')
     ->visible(FeatureFlag::active())
 ```
+
+Visibility callbacks for columns and [layouts](../layout#hiding-layouts-conditionally) are also evaluated without a record when Filament determines table-wide visibility, search, and sort capabilities. If your callback uses `$record`, accept a nullable record and handle `null` explicitly. Return `false` from `hidden()` or `true` from `visible()` when there is no record if the column should remain available to these table-wide features. When rendering or interacting with a particular record, Filament evaluates visibility with that record instead.
+
+> [!WARNING]
+> Visibility callbacks using `$rowLoop` must accept `?stdClass` and handle `null`: the loop is only available during row rendering, not table-wide checks or direct server interactions. Hiding content for individual records does not prevent those records from matching searches or affecting sorting. Visibility is not a substitute for authorization or query scoping. Use [editable-column authorization](#authorizing-editable-columns) or `disabled()` to restrict edits, and scope the table query to restrict access to records.
 
 ### Allowing users to manage columns
 

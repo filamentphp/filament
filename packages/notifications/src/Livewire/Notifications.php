@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications\Livewire;
 
+use Filament\Actions\ActionGroup;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Filament\Notifications\NotificationMailbox;
@@ -19,6 +20,12 @@ use Livewire\Livewire;
 
 class Notifications extends Component
 {
+    private const MAX_NOTIFICATION_NODES = 100;
+
+    private const MAX_NOTIFICATION_PULL_WORK = 50;
+
+    private const MAX_NOTIFICATION_ACTION_GROUP_DEPTH = 10;
+
     // Used to check if Livewire messages should trigger notification animations.
     #[Locked]
     public bool $isFilamentNotificationsComponent = true;
@@ -82,6 +89,17 @@ class Notifications extends Component
     #[On('notificationsSent')]
     public function pullNotifications(array $batches = []): void
     {
+        abort_if(count($batches) > self::MAX_NOTIFICATION_PULL_WORK, 419);
+
+        abort_unless($this->areBatchIdentifiersStrings($batches), 419);
+
+        $pullWork = max(count($batches), 1);
+        $remainingPullWork = request()->attributes->getInt('filament.notifications.remainingPullWork', self::MAX_NOTIFICATION_PULL_WORK);
+
+        abort_if($pullWork > $remainingPullWork, 419);
+
+        request()->attributes->set('filament.notifications.remainingPullWork', $remainingPullWork - $pullWork);
+
         validator(['batches' => $batches], [
             'batches' => ['array', 'max:50'],
             'batches.*' => ['required', 'string', 'regex:/\A[a-f0-9]{40}\z/'],
@@ -101,7 +119,7 @@ class Notifications extends Component
     #[On('notificationSent')]
     public function pushNotificationFromEvent(array $notification): void
     {
-        $notification = Notification::fromArray($notification);
+        $notification = Collection::fromLivewire([$notification])->first();
 
         $this->pushNotification($notification);
     }
@@ -127,15 +145,72 @@ class Notifications extends Component
             return;
         }
 
-        $this->pushNotification(Notification::fromArray($notification));
+        $notification = Collection::fromLivewire([$notification])->first();
+
+        $this->pushNotification($notification);
     }
 
     protected function pushNotification(Notification $notification): void
     {
+        $notificationNodeCount = $this->getNotificationNodeCount($notification);
+
+        if ($notificationNodeCount === null) {
+            return;
+        }
+
+        $this->notifications->forget($notification->getId());
+
+        while (($this->getNotificationsNodeCount() + $notificationNodeCount) > self::MAX_NOTIFICATION_NODES) {
+            $this->notifications->shift();
+        }
+
         $this->notifications->put(
             $notification->getId(),
             $notification,
         );
+    }
+
+    private function getNotificationsNodeCount(): int
+    {
+        return $this->notifications->sum(
+            fn (Notification $notification): int => $this->getNotificationNodeCount($notification) ?? 0,
+        );
+    }
+
+    private function getNotificationNodeCount(Notification $notification): ?int
+    {
+        $remainingNodes = self::MAX_NOTIFICATION_NODES - 1;
+        $pendingActionLists = [[$notification->getActions(), 0]];
+
+        while ($pendingActionLists !== []) {
+            [$actions, $depth] = array_pop($pendingActionLists);
+
+            if (($depth > self::MAX_NOTIFICATION_ACTION_GROUP_DEPTH) || (count($actions) > $remainingNodes)) {
+                return null;
+            }
+
+            $remainingNodes -= count($actions);
+
+            foreach ($actions as $action) {
+                if ($action instanceof ActionGroup) {
+                    $pendingActionLists[] = [$action->getActions(), $depth + 1];
+                }
+            }
+        }
+
+        return self::MAX_NOTIFICATION_NODES - $remainingNodes;
+    }
+
+    /** @param array<mixed> $batches */
+    private function areBatchIdentifiersStrings(array $batches): bool
+    {
+        foreach ($batches as $batch) {
+            if (! is_string($batch)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     #[Unexposed]

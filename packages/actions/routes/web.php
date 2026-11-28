@@ -1,12 +1,13 @@
 <?php
 
 use Filament\Actions\Exports\Http\Controllers\DownloadExport;
+use Filament\Actions\Http\Middleware\AuthenticateDownload;
 use Filament\Actions\Imports\Http\Controllers\DownloadImportFailureCsv;
 use Illuminate\Support\Facades\Route;
 
 $prefix = config('filament.system_route_prefix', 'filament');
 
-Route::middleware('filament.actions')
+Route::middleware(['filament.actions', AuthenticateDownload::class])
     ->name('filament.')
     ->prefix($prefix)
     ->group(function (): void {

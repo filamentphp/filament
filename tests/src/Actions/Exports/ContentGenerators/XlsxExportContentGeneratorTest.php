@@ -83,3 +83,60 @@ it('writes CSV header and data rows', function (): void {
         ['2', 'Beta'],
     ]);
 });
+
+it('preserves quoted CSV cells across semicolon-delimited chunks with a BOM', function (): void {
+    Storage::fake('local');
+
+    $export = app(Export::class);
+    $export->id = 1;
+    $export->file_disk = 'local';
+    $export->exporter = TestXlsxExportContentGeneratorExporter::class;
+
+    $directory = $export->getFileDirectory();
+    $disk = Storage::disk('local');
+
+    $disk->put($directory . DIRECTORY_SEPARATOR . 'headers.csv', "\xEF\xBB\xBFid;\"name\\\"\";HEADER_MARKER\"\r\n");
+    $disk->put($directory . DIRECTORY_SEPARATOR . '0000000000000001.csv', "1;\"quote\\\"\";CELL_MARKER\"\r\n2;\"trailing;slash\\\"\r\n");
+    $disk->put($directory . DIRECTORY_SEPARATOR . '0000000000000002.csv', "3;\"line one\nline two\"\r\n4;ordinary\r\n");
+
+    $temporaryFile = tempnam(sys_get_temp_dir(), 'filament-xlsx-export-content');
+
+    if ($temporaryFile === false) {
+        throw new RuntimeException('Unable to create a temporary XLSX file.');
+    }
+
+    $reader = null;
+
+    try {
+        $writer = app(XlsxWriter::class);
+        $writer->openToFile($temporaryFile);
+        app(XlsxExportContentGenerator::class)($export, $writer);
+        $writer->close();
+
+        $reader = app(XlsxReader::class);
+        $reader->open($temporaryFile);
+
+        $rows = [];
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $rows[] = $row->toArray();
+            }
+        }
+
+        $reader->close();
+        $reader = null;
+    } finally {
+        $reader?->close();
+
+        unlink($temporaryFile);
+    }
+
+    expect($rows)->toBe([
+        ['id', 'name\\";HEADER_MARKER'],
+        ['1', 'quote\\";CELL_MARKER'],
+        ['2', 'trailing;slash\\'],
+        ['3', "line one\nline two"],
+        ['4', 'ordinary'],
+    ]);
+});

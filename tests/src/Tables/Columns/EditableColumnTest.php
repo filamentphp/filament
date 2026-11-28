@@ -8,6 +8,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
@@ -16,6 +17,7 @@ use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
@@ -47,6 +49,29 @@ it('persists boolean changes through `updateTableColumnState()` and rejects vali
 
     expect(data_get($post->fresh(), $columnName))->toBeFalse();
 })->with(['is_published', 'json.approved']);
+
+it('rejects inline edits in `readOnly()` mode and restores editing when it becomes false', function (string $columnName, mixed $state): void {
+    $post = Post::factory()->create(['is_published' => false, 'json' => ['approved' => false], 'title' => 'Original title', 'rating' => 1]);
+    $originalState = data_get($post, $columnName);
+
+    $component = livewire(ColumnsBrowserTest::class, ['editableColumns' => true, 'readOnly' => true])
+        ->assertTableColumnDisabled($columnName, $post)
+        ->call('updateTableColumnState', $columnName, (string) $post->getKey(), $state)
+        ->assertReturned(['error' => __('filament-tables::table.columns.editable.unavailable')]);
+
+    expect(data_get($post->fresh(), $columnName))->toBe($originalState);
+
+    $component->set('readOnly', false)
+        ->assertTableColumnEnabled($columnName, $post)
+        ->call('updateTableColumnState', $columnName, (string) $post->getKey(), $state);
+
+    expect(data_get($post->fresh(), $columnName))->toBe($state);
+})->with([
+    'checkbox' => ['is_published', true],
+    'toggle' => ['json.approved', true],
+    'text input' => ['title', 'Changed title'],
+    'select' => ['rating', 2],
+]);
 
 it('renders the configured cells instead of the whole table after `updateTableColumnState()`', function (string $saveScenario, array $expectedPartiallyRenderedColumns): void {
     if ($saveScenario === 'partial-row-loop') {
@@ -103,6 +128,23 @@ it('renders the whole table after `updateTableColumnState()` by default', functi
 
     expect($component->effects['html'])->toContain('value="Updated title"')->not->toContain('wire:partial="table.record.')
         ->and($component->effects['partials'] ?? [])->toBe([]);
+});
+
+it('refreshes query-dependent summaries after a partially rendered edit changes their values', function (): void {
+    $post = Post::factory()->create(['title' => 'Original title', 'rating' => 1]);
+
+    Sum::configureUsing(
+        fn (Sum $summarizer) => $summarizer->visible(fn (Builder $query): bool => $query->exists()),
+        during: function () use ($post): void {
+            $component = livewire(ColumnsBrowserTest::class, ['editableColumns' => true, 'saveScenario' => 'partial-summary'])
+                ->call('updateTableColumnState', 'title', (string) $post->getKey(), 'Updated title');
+
+            expect($post->fresh()->rating)->toBe(2)
+                ->and($component->effects)->toHaveKey('html')
+                ->and($component->effects['html'])->toContain('rating-total')
+                ->and($component->effects['partials'] ?? [])->toBe([]);
+        },
+    );
 });
 
 it('encodes the record key and column name in `getTableCellPartialName()` without collisions', function (): void {
@@ -350,6 +392,28 @@ describe('browser interactions', function (): void {
         Artisan::call('filament:assets');
 
         $this->actingAs(User::factory()->create());
+    });
+
+    it('disables every inline editing control in `readOnly()` mode', function (): void {
+        Post::factory()->create(['is_published' => false, 'title' => 'Read-only post', 'rating' => 1, 'content' => 'draft', 'json' => ['approved' => false, 'status' => 'draft']]);
+
+        $page = visit('/columns-browser-test?editableColumns=1&readOnly=1');
+
+        foreach ([
+            'is_published' => 'input[type="checkbox"]',
+            'json-approved' => '[role="switch"]',
+            'title' => 'input:not([type="hidden"])',
+            'rating' => 'select',
+            'content' => '[role="combobox"]',
+            'json-status' => 'button[aria-haspopup="listbox"]',
+        ] as $name => $controlSelector) {
+            $page->assertDisabled('[data-testid="editable-' . $name . '"] ' . $controlSelector);
+        }
+
+        $page->assertNoAccessibilityIssues()
+            ->assertNoSmoke();
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 
     it('describes validation errors at the focus owner and clears them on correction', function (): void {

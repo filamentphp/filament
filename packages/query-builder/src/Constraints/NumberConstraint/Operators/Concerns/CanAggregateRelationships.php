@@ -40,7 +40,7 @@ trait CanAggregateRelationships
 
     public function queriesRelationshipsUsingSubSelect(): bool
     {
-        return parent::queriesRelationshipsUsingSubSelect() && blank($this->getSettings()[static::getAggregateSelectName()]);
+        return parent::queriesRelationshipsUsingSubSelect() && ($this->getAggregate() === null);
     }
 
     protected function getNumericCastType(Builder $query): string
@@ -88,8 +88,18 @@ trait CanAggregateRelationships
         $subQuery->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})");
 
         if ($modifyRelationshipQueryUsing) {
+            $relationshipQuery = clone $subQuery->getQuery();
             $subQuery = $this->evaluate($modifyRelationshipQueryUsing, ['query' => $subQuery]) ?? $subQuery;
+
+            // Keep the relationship correlation mandatory even if the callback adds an `orWhere()`.
+            $modifiedQuery = clone $subQuery->getQuery();
+            $subQuery->getQuery()->wheres = [];
+            $subQuery->getQuery()->setBindings([], 'where');
+            $subQuery->getQuery()->addNestedWhereQuery($relationshipQuery);
+            $subQuery->getQuery()->addNestedWhereQuery($modifiedQuery);
         }
+
+        $subQuery = $subQuery->toBase();
 
         return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
     }

@@ -82,6 +82,8 @@ class ModalTableSelect extends Field implements HasEmbeddedView
     {
         parent::setUp();
 
+        $this->prohibited(static fn (ModalTableSelect $component): bool => filled($component->getRawState()) && blank($component->getState()));
+
         $this->registerActions([
             fn (ModalTableSelect $component): Action => $component->getSelectAction(),
         ]);
@@ -326,7 +328,9 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-        $relationshipQuery->where($this->getQualifiedRelatedKeyNameForRelationship($relationship), $state);
+        $qualifiedRelatedKeyName = $this->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+        $relationshipQuery->where($qualifiedRelatedKeyName, $state);
 
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
@@ -335,7 +339,13 @@ class ModalTableSelect extends Field implements HasEmbeddedView
             ]) ?? $relationshipQuery;
         }
 
-        return $relationshipQuery->first();
+        $record = $relationshipQuery->first();
+
+        if ((! $record) || ((string) $record->getAttribute(Str::afterLast($qualifiedRelatedKeyName, '.')) !== (string) $state)) {
+            return null;
+        }
+
+        return $record;
     }
 
     /**

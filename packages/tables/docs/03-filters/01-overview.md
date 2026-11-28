@@ -180,9 +180,7 @@ public function table(Table $table): Table
 
 ## Modifying the base query
 
-By default, modifications to the Eloquent query performed in the `query()` method will be applied inside a scoped `where()` clause. This is to ensure that the query does not clash with any other filters that may be applied, especially those that use `orWhere()`.
-
-However, the downside of this is that the `query()` method cannot be used to modify the query in other ways, such as removing global scopes, since the base query needs to be modified directly, not the scoped query.
+Filters' `query()` callbacks run together inside a `where()` group. Group your own `orWhere()` conditions inside another `where()` callback so they do not bypass other filters.
 
 To modify the base query directly, you may use the `baseQuery()` method, passing a closure that receives the base query:
 

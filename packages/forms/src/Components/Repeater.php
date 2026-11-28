@@ -917,7 +917,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             $items[$itemKey] = $this
                 ->getChildSchema()
                 ->statePath($itemKey)
-                ->constantState(((! ($relationship && $records->has($itemKey))) && is_array($itemData)) ? $itemData : null)
+                ->constantState(($relationship && $records->has($itemKey)) ? null : (is_array($itemData) ? $itemData : []))
                 ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
                 ->inlineLabel(false)
                 ->getClone();
@@ -1062,7 +1062,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         $recordsToDelete = [];
 
         foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
-            if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+            if ((! $this->isDeletable()) || array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
                 continue;
             }
 
@@ -1194,9 +1194,21 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         }
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
+        $relationship = $this->getRelationship();
 
         return $records
-            ->map(function (Model $record) use ($translatableContentDriver): array {
+            ->map(function (Model $record) use ($translatableContentDriver, $relationship): array {
+                if ($relationship instanceof BelongsToMany) {
+                    $pivotAccessor = $relationship->getPivotAccessor();
+                    $pivot = $record->relationLoaded($pivotAccessor) ? $record->getRelation($pivotAccessor) : $relationship->newPivot();
+                    $hiddenPivotAttributes = $pivot->getHidden();
+
+                    $record->makeHidden([
+                        ...$hiddenPivotAttributes,
+                        ...array_map(static fn (string $attribute): string => "pivot_{$attribute}", $hiddenPivotAttributes),
+                    ]);
+                }
+
                 $data = $translatableContentDriver ?
                     $translatableContentDriver->getRecordAttributesToArray($record) :
                     $record->attributesToArray();

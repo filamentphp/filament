@@ -21,8 +21,10 @@ By default, the editor outputs raw Markdown and HTML, and sends it to the backen
 When Filament outputs raw HTML from the database in components such as `TextColumn` and `TextEntry`, it sanitizes it to remove any dangerous JavaScript. However, if you are outputting the HTML from a Markdown editor in your own Blade view, this is your responsibility. One option is to use Filament's `sanitizeHtml()` helper to do this, which is the same tool we use to sanitize HTML in the components mentioned above:
 
 ```blade
-{!! str($record->content)->markdown()->sanitizeHtml() !!}
+{!! str($record->content)->markdown(['max_nesting_level' => 100])->sanitizeHtml() !!}
 ```
+
+The nesting limit bounds deeply nested blocks before sanitization. Filament applies this default when rendering disabled Markdown editors, Markdown text columns, text entries, and table summarizers, but not when you call Laravel's Markdown helpers yourself. See [limiting Markdown nesting](../advanced/security#limiting-markdown-nesting) for the scope and how to override the limit using `commonMarkOptions()`.
 
 > [!CAUTION]
 > Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.

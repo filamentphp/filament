@@ -13,11 +13,13 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
@@ -493,6 +495,84 @@ it('can opt out of panels using `tabPanels()` and a `Closure`', function (): voi
         ->not->toContain('role="tab"', 'role="tabpanel"', 'aria-controls=');
 
     expect($tabs->tabPanels()->hasTabPanels())->toBeTrue();
+});
+
+it('serializes dynamic resource tab keys at the HTML and JavaScript boundaries', function (string $tabKey): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = 'all';
+    };
+
+    Schema::make($livewire)->components([
+        $tabs = Tabs::make()->livewireProperty('activeTab')->tabPanels(false)->tabs([
+            'all' => Tab::make('All'),
+            $tabKey => Tab::make('Stored category'),
+        ]),
+    ])->fill();
+
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">' . $tabs->toHtml());
+    $xpath = new DOMXPath($document);
+    $button = $xpath->query('//*[@data-tab-key]')->item(1);
+
+    expect($button->getAttribute('data-tab-key'))->toBe($tabKey)
+        ->and($button->hasAttribute('data-key-marker'))->toBeFalse()
+        ->and($button->getAttribute('wire:click'))->toBe('$set(\'activeTab\', ' . Js::from($tabKey) . ')')
+        ->and($xpath->query('//*[@data-key-marker]')->length)->toBe(0);
+})->with([
+    'literal' => 'published',
+    'numeric' => '12',
+    'enum-like' => 'in-progress:review',
+    'Unicode and backslash' => '雪 & café\\archive',
+    'quotes and markup' => 'category" data-key-marker="yes"><span data-key-marker="yes">\'&',
+    'entity-shaped' => 'category&quot;&amp;&#39;\\雪',
+]);
+
+it('preserves ordinary tab keys in overflow attributes after HTML decoding', function (): void {
+    $tabKey = 'category&quot;&amp;&#39;\\雪';
+
+    Schema::make(Livewire::make())->components([
+        $tabs = Tabs::make()->scrollable(false)->tabs([
+            Tab::make('Stored category')->key($tabKey),
+        ]),
+    ])->fill();
+
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">' . $tabs->toHtml());
+    $xpath = new DOMXPath($document);
+
+    foreach (['data-tab-key', 'data-tab-trigger-key', 'data-tab-menu-key'] as $attribute) {
+        $elements = $xpath->query('//*[@' . $attribute . ']');
+
+        expect($elements->length)->toBeGreaterThan(0);
+
+        foreach ($elements as $element) {
+            expect($element->getAttribute($attribute))->toBe($tabKey);
+        }
+    }
+});
+
+it('selects a stored dynamic resource tab key without interpreting markup', function (): void {
+    $this->actingAs(User::factory()->create());
+    $tabKey = 'category" data-key-marker="yes" x-init="globalThis.tabKeyMarker=true" &quot;&#39;&\\雪';
+    $post = Post::factory()->create(['title' => $tabKey]);
+    $otherPost = Post::factory()->create(['title' => 'Other category']);
+
+    $tabSelector = '[data-testid="stored-tab-' . $post->getKey() . '"]';
+    $page = visit('/posts/dynamic-tabs');
+    $page->assertScript('document.querySelector(' . json_encode($tabSelector) . ').dataset.tabKey', $tabKey)
+        ->assertMissing('[data-key-marker]')
+        ->assertSee($otherPost->title)
+        ->assertAttribute($tabSelector, 'data-tab-available', 'true')
+        ->click($tabSelector)
+        ->assertAttribute($tabSelector, 'aria-pressed', 'true')
+        ->assertDontSee($otherPost->title)
+        ->assertScript('Livewire.find(document.querySelector(' . json_encode($tabSelector) . ').closest("[wire\\\\:id]").getAttribute("wire:id")).get("activeTab")', $tabKey)
+        ->assertScript('globalThis.tabKeyMarker === undefined', true)
+        ->assertSee($post->title)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 it('links stable tab IDs to custom and empty panel IDs without changing keys', function (): void {

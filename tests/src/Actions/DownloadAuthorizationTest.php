@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
@@ -151,6 +152,54 @@ it('uses only a valid relative signature to select `authGuard` before authorizat
     'tampered default owner remains authorized' => ['tampered', 'owner', 'nonOwner', 200],
     'expired default owner remains authorized' => ['expired', 'owner', 'nonOwner', 200],
 ]);
+
+it('returns the same `401` without download bytes for existing and missing records when the selected guard is unauthenticated', function (string $type, string $signature, bool $json, bool $otherGuardAuthenticated): void {
+    [$download, $route, $parameters] = createSensitiveDownload($type, $this->owner);
+
+    if ($otherGuardAuthenticated) {
+        auth($signature === 'valid' ? 'web' : 'downloads')->setUser($this->owner);
+    }
+
+    auth()->shouldUse('web');
+
+    $this->expectOutputString('');
+
+    foreach ([$download->getKey(), $download->getKey() + 1] as $identifier) {
+        $parameters[$type] = $identifier;
+        $parameters['authGuard'] = 'downloads';
+
+        $url = match ($signature) {
+            'valid' => URL::signedRoute($route, $parameters, absolute: false),
+            'expired' => URL::temporarySignedRoute($route, now()->subMinute(), $parameters, absolute: false),
+            'tampered' => str_replace('authGuard=web', 'authGuard=downloads', URL::signedRoute($route, [...$parameters, 'authGuard' => 'web'], absolute: false)),
+            'unsigned' => route($route, $parameters, absolute: false),
+        };
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+
+        $response = $this->get($url, $json ? ['Accept' => 'application/json'] : []);
+
+        DB::disableQueryLog();
+
+        $response->assertUnauthorized()->assertNotStreamed()->assertDontSee('confidential-', escape: false);
+        expect($response->headers->has('Content-Disposition'))->toBeFalse();
+        expect(collect(DB::getQueryLog())->pluck('query')->implode("\n"))->not->toContain($download->getTable());
+    }
+})->with(['export', 'import'])->with(['valid', 'unsigned', 'tampered', 'expired'])->with([false, true])->with([false, true]);
+
+it('retains `404` for missing records when the selected guard is authenticated', function (string $type): void {
+    [$download, $route, $parameters] = createSensitiveDownload($type, $this->owner);
+
+    auth('downloads')->setUser($this->owner);
+    auth()->shouldUse('web');
+    $parameters[$type] = $download->getKey() + 1;
+
+    $this->expectOutputString('');
+
+    $this->get(URL::signedRoute($route, [...$parameters, 'authGuard' => 'downloads'], absolute: false))
+        ->assertNotFound()->assertNotStreamed()->assertDontSee('confidential-', escape: false);
+})->with(['export', 'import']);
 
 it('passes the signed guard user to the custom `view()` policy instead of the default user', function (string $type): void {
     [$download, $route, $parameters, $content] = createSensitiveDownload($type, $this->owner);

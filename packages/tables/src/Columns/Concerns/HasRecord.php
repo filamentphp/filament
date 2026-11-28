@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use stdClass;
 
 trait HasRecord
 {
@@ -22,8 +23,24 @@ trait HasRecord
     {
         $this->cachedStateCacheKey = null;
         $this->record = $record;
+        $this->rowLoop = null;
 
         return $this;
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     *
+     * @param  Model | array<string, mixed> | null  $record
+     */
+    public function getCloneForRecord(Model | array | null $record, ?stdClass $rowLoop = null): static
+    {
+        $component = clone $this;
+        $component->record = $record;
+        $component->rowLoop = $rowLoop;
+        $component->layout = $this->getLayout()?->getCloneForRecord($record, $rowLoop);
+
+        return $component;
     }
 
     public function recordKey(?string $recordKey): static

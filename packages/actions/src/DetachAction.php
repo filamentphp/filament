@@ -48,6 +48,18 @@ class DetachAction extends Action
                     return (bool) $record->getRelationValue($relationship->getPivotAccessor())->delete();
                 }
 
+                $pivot = $record->getRelationValue($relationship->getPivotAccessor());
+
+                if (in_array($pivot->getKeyName(), $relationship->getPivotColumns(), true)) {
+                    $result = (bool) $pivot->delete();
+
+                    if ($result) {
+                        $relationship->touchIfTouching();
+                    }
+
+                    return $result;
+                }
+
                 return (bool) $relationship->detach($record);
             });
 

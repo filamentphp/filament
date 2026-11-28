@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
@@ -447,6 +448,36 @@ describe('scope enforcement', function (): void {
         expect($user->fresh()->team_id)->toBe($inScopeTeam->id);
     });
 
+    it('rejects a relationship record whose canonical key differs from the submitted state', function (string $modifier, bool $usesCustomLabel): void {
+        $allowed = Team::factory()->create(['name' => 'Allowed']);
+        $excluded = Team::factory()->create(['name' => 'Excluded']);
+
+        Schema::make(Livewire::make())
+            ->model(User::class)
+            ->statePath('data')
+            ->components([
+                $select = ModalTableSelect::make('team_id')
+                    ->relationship('team', 'name', modifyQueryUsing: match ($modifier) {
+                        'orWhere' => static fn (Builder $query, ?string $search): Builder => $query->where('name', 'Missing')->orWhere('name', 'Allowed'),
+                        'replacement' => static fn (): Builder => Team::query()->where('name', 'Allowed'),
+                        'coercion' => null,
+                    })
+                    ->getOptionLabelFromRecordUsing($usesCustomLabel ? static fn (Team $record): string => "Team: {$record->name}" : null),
+            ])
+            ->fill(['team_id' => (string) $allowed->getKey()]);
+
+        expect($select->getOptionLabel(withDefault: false))->toBe($usesCustomLabel ? 'Team: Allowed' : 'Allowed');
+        expect(validator(['team_id' => $select->getState()], ['team_id' => $select->getValidationRules()])->passes())->toBeTrue();
+
+        $select->state($modifier === 'coercion' ? "0{$allowed->getKey()}" : (string) $excluded->getKey());
+
+        $validator = validator(['team_id' => $select->getState()], ['team_id' => $select->getValidationRules()]);
+        expect($validator->fails())->toBeTrue()
+            ->and($validator->failed())->toHaveKey('team_id.In');
+        expect($select->getSelectedRecord())->toBeNull()
+            ->and($select->getOptionLabel(withDefault: false))->toBeNull();
+    })->with(['orWhere', 'replacement', 'coercion'])->with([false, true]);
+
     it('revalidates a cached single relationship record after the state changes', function (): void {
         $inScopeTeam = Team::factory()->create(['name' => 'Active Team']);
         $outOfScopeTeam = Team::factory()->create(['name' => 'Inactive Team']);
@@ -542,6 +573,55 @@ describe('scope enforcement', function (): void {
 
         expect($outOfScopePost->fresh()->author_id)->toBeNull();
         expect($inScopePost->fresh()->author_id)->toBeNull();
+    });
+
+    it('rejects nonempty client state discarded before saving a single relationship', function (mixed $state): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        ModalTableSelect::configureUsing(
+            static fn (ModalTableSelect $component) => $component->required(),
+            during: fn () => livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
+                ->set('data.team_id', $state)
+                ->call('save')
+                ->assertHasFormErrors(['team_id' => ['prohibited']])
+                ->assertSet('record.team_id', $team->id),
+        );
+    })->with([
+        'array' => [['invalid']],
+        'false' => [false],
+    ]);
+
+    it('rejects discarded client state before detaching a multiple relationship', function (array $state): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+
+        livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+            ->set('data.teams', $state)
+            ->call('save')
+            ->assertHasFormErrors(['teams' => ['prohibited']]);
+
+        expect($user->fresh()->teams->modelKeys())->toBe([$team->id]);
+    })->with([
+        'nested array' => [[['invalid']]],
+        'blank string' => [['']],
+        'whitespace string' => [['   ']],
+    ]);
+
+    it('rejects non-array client state before saving a multiple relationship', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+
+        foreach ([(string) $team->id, json_encode([(string) $team->id]), false, 0] as $state) {
+            livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+                ->set('data.teams', $state)
+                ->call('save')
+                ->assertHasFormErrors(['teams' => ['array']]);
+
+            expect($user->fresh()->teams->modelKeys())->toBe([$team->id]);
+        }
     });
 });
 

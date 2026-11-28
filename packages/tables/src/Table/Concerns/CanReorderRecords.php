@@ -106,7 +106,7 @@ trait CanReorderRecords
 
     public function isReorderable(): bool
     {
-        return filled($this->getReorderColumn()) && $this->evaluate($this->isReorderable) && $this->isReorderAuthorized();
+        return (! $this->isReadOnly()) && filled($this->getReorderColumn()) && $this->evaluate($this->isReorderable) && $this->isReorderAuthorized();
     }
 
     public function isReordering(): bool
@@ -117,6 +117,14 @@ trait CanReorderRecords
     public function isReorderAuthorized(): bool
     {
         return (bool) $this->evaluate($this->isReorderAuthorized);
+    }
+
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    public function getReorderAuthorization(): bool | Closure
+    {
+        return $this->isReorderAuthorized;
     }
 
     /**

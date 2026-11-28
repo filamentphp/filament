@@ -269,8 +269,8 @@ describe('browser interactions', function (): void {
         $this->actingAs(User::factory()->create());
 
         $value = '<span data-testid="untrusted-filter-marker">Unmatched & literal</span>';
-        $select = '[data-testid="rating-filter"] [role="combobox"]';
-        $url = PostResource::getUrl('html-filter', ['filters' => ['rating' => ['value' => $value]]]);
+        $select = '[data-testid="title-filter"] [role="combobox"]';
+        $url = PostResource::getUrl('html-filter', ['filters' => ['title' => ['value' => $value]]]);
         $page = visit($url);
 
         $page->assertSeeIn($select, $value)
@@ -283,8 +283,8 @@ describe('browser interactions', function (): void {
             ->assertMissing('[data-testid="untrusted-filter-marker"]')
             ->assertNoAccessibilityIssues();
 
-        visit(PostResource::getUrl('html-filter', ['filters' => ['rating' => ['value' => '5']]]))
-            ->assertSeeIn($select . ' b[data-testid="trusted-rating-label"]', 'Five & trusted')
+        visit(PostResource::getUrl('html-filter', ['filters' => ['title' => ['value' => 'known']]]))
+            ->assertSeeIn($select . ' b[data-testid="trusted-title-label"]', 'Known & trusted')
             ->assertNoSmoke();
     });
 

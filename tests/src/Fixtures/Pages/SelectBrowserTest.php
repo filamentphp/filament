@@ -46,9 +46,18 @@ class SelectBrowserTest extends Page
                     ->default(self::FALLBACK_VALUE)
                     ->extraAttributes(['data-testid' => 'fallback-single']),
                 Select::make('multiple')->label('Mixed multiple')->allowHtml()->multiple()
-                    ->getOptionLabelsUsing(static fn (): array => ['known' => '<b>Known &amp; trusted</b>', self::FALLBACK_VALUE => null])
-                    ->default(['known', self::FALLBACK_VALUE])
+                    ->getOptionLabelsUsing(static fn (array $values): array => [
+                        ...(in_array('fetched', $values) ? ['fetched' => '<b>Fetched &amp; trusted</b>'] : ['known' => '<b>Known &amp; trusted</b>']),
+                        self::FALLBACK_VALUE => null,
+                    ])
+                    ->default(['known', self::FALLBACK_VALUE, 42])
+                    ->suffixAction(Action::make('loadValues')->label('Load values')->icon(Heroicon::OutlinedArrowPath)
+                        ->action(static fn (Select $component) => $component->state(['fetched', self::FALLBACK_VALUE, 42])))
                     ->extraAttributes(['data-testid' => 'fallback-multiple']),
+                Select::make('text')->label('Plain text multiple')->multiple()
+                    ->options(['known' => '<b>Known &amp; trusted</b>'])
+                    ->default(['known', self::FALLBACK_VALUE, 42])
+                    ->extraAttributes(['data-testid' => 'fallback-text']),
                 Select::make('refreshed')->label('Callback label')->allowHtml()->searchable()
                     ->getOptionLabelUsing(fn (): ?HtmlString => $this->hasFallbackLabel ? new HtmlString('<b>Callback &amp; trusted</b>') : null)
                     ->getSearchResultsUsing(static fn (): array => [])

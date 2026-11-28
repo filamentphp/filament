@@ -82,6 +82,31 @@ it('aborts when the authenticated user cannot access the tenant', function (): v
         ->assertNotFound();
 });
 
+it('returns identical JSON 404 bodies for missing and inaccessible tenants', function (): void {
+    config()->set('app.debug', false);
+
+    $user = InaccessibleTenantUser::query()->create([
+        'email' => 'user-without-tenant-access@example.com',
+        'name' => 'User without tenant access',
+        'password' => 'password',
+    ]);
+
+    $tenant = Team::factory()->create();
+
+    $inaccessibleTenantResponse = $this
+        ->actingAs($user)
+        ->getJson("/identify-tenant/{$tenant->getRouteKey()}")
+        ->assertNotFound();
+
+    $tenant->delete();
+
+    $missingTenantResponse = $this
+        ->getJson("/identify-tenant/{$tenant->getRouteKey()}")
+        ->assertNotFound();
+
+    expect($missingTenantResponse->getContent())->toBe($inaccessibleTenantResponse->getContent());
+});
+
 it('identifies an accessible tenant before continuing', function (): void {
     $tenant = Team::factory()->create();
 

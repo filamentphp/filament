@@ -124,9 +124,17 @@ trait InteractsWithSchemas
             }
 
             if ($schemaToPartiallyRender) {
-                app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
-                    "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
-                ]);
+                app(PartialsComponentHook::class)->renderPartial($this, function () use ($schemaToPartiallyRender): array {
+                    for ($schema = $schemaToPartiallyRender; $schema !== null; $schema = $schema->getParentComponent()?->getContainer()) {
+                        if ($schema->isHidden()) {
+                            return [];
+                        }
+                    }
+
+                    return [
+                        "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
+                    ];
+                });
             }
         }
 
@@ -209,17 +217,25 @@ trait InteractsWithSchemas
 
         $this->loadedLazySchemas[$schemaKey] = true;
 
-        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
-            "schema.{$schemaKey}" => function () use ($schema, $schemaKey): string {
-                $html = $schema->toHtml();
-
-                if (filled($html)) {
-                    return $html;
+        app(PartialsComponentHook::class)->renderPartial($this, function () use ($schema, $schemaKey): array {
+            for ($ancestorSchema = $schema; $ancestorSchema !== null; $ancestorSchema = $ancestorSchema->getParentComponent()?->getContainer()) {
+                if ($ancestorSchema->isHidden()) {
+                    return [];
                 }
+            }
 
-                return '<div wire:partial="' . e("schema.{$schemaKey}") . '" hidden></div>';
-            },
-        ]);
+            return [
+                "schema.{$schemaKey}" => function () use ($schema, $schemaKey): string {
+                    $html = $schema->toHtml();
+
+                    if (filled($html)) {
+                        return $html;
+                    }
+
+                    return '<div wire:partial="' . e("schema.{$schemaKey}") . '" hidden></div>';
+                },
+            ];
+        });
     }
 
     /**
@@ -754,6 +770,10 @@ trait InteractsWithSchemas
                 }
 
                 if ($component->getStatePath() !== $statePath) {
+                    continue;
+                }
+
+                if ($component->isDisabled()) {
                     continue;
                 }
 

@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -38,6 +39,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
@@ -61,6 +63,102 @@ it('can list posts', function (): void {
         ->assertCanSeeTableRecords($posts);
 });
 
+describe('linked resource page actions', function (): void {
+    it('does not mount URL-only actions directly or through default action URLs', function (string $name, bool $fromUrl): void {
+        $post = Post::factory()->create();
+        $context = ($name === 'create') ? [] : ['table' => true, 'recordKey' => (string) $post->getKey()];
+
+        if ($fromUrl) {
+            Livewire::withQueryParams(($name === 'create')
+                ? ['action' => $name]
+                : ['tableAction' => $name, 'tableActionRecord' => (string) $post->getKey()]);
+        }
+
+        $component = livewire(ListPosts::class);
+        $action = ($name === 'create') ? $name : TestAction::make($name)->table($post);
+
+        $component->assertActionHasUrl($action, PostResource::getUrl($name, ($name === 'create') ? [] : ['record' => $post]));
+
+        if ($fromUrl) {
+            $component->call('mountDefaultActions');
+        } else {
+            $component->call('mountAction', $name, [], $context);
+        }
+
+        $component->assertActionNotMounted();
+    })->with(['create', 'view', 'edit'])->with([false, true]);
+
+    it('does not restore or submit URL-only actions from hydrated state', function (string $name, string $actionClass): void {
+        $post = Post::factory()->create(['title' => 'Original title']);
+
+        $actionClass::configureUsing(
+            static fn (Action $action) => $action->after(static fn ($livewire) => $livewire->dispatch('linked-action-called')),
+            during: static function () use ($name, $post): void {
+                $component = livewire(ListPosts::class)
+                    ->set('mountedActions', [[
+                        'name' => $name,
+                        'arguments' => [],
+                        'context' => ($name === 'create') ? [] : ['table' => true, 'recordKey' => (string) $post->getKey()],
+                        'data' => ['title' => 'Submitted title', 'author_id' => $post->author_id, 'rating' => 4],
+                    ]])
+                    ->call('callMountedAction')
+                    ->assertHasNoActionErrors()
+                    ->assertNotDispatched('linked-action-called')
+                    ->assertActionNotMounted();
+
+                expect($component->instance()->getSchemaComponent('mountedActionSchema0.title'))->toBeNull();
+            },
+        );
+
+        expect(Post::query()->count())->toBe(1)
+            ->and($post->fresh()->title)->toBe('Original title');
+    })->with([
+        ['create', CreateAction::class],
+        ['view', ViewAction::class],
+        ['edit', EditAction::class],
+    ]);
+
+    it('can mount and submit actions with explicit modal or Livewire click handling', function (string $name, string $actionClass, bool $useModal): void {
+        $post = Post::factory()->create(['title' => 'Original title']);
+
+        $actionClass::configureUsing(
+            static fn (Action $action) => $action
+                ->when($useModal, static fn (Action $action) => $action->modal(), static fn (Action $action) => $action->livewireClickHandlerEnabled())
+                ->beforeFormFilled(static fn ($livewire) => $livewire->dispatch('linked-action-filled'))
+                ->after(static fn ($livewire) => $livewire->dispatch('linked-action-called')),
+            during: static function () use ($name, $post, $useModal): void {
+                $action = ($name === 'create') ? $name : TestAction::make($name)->table($post);
+                $component = livewire(ListPosts::class);
+
+                if ($useModal) {
+                    $component->assertActionExists($action, checkActionUsing: static fn (Action $action): bool => $action->getUrl() === null);
+                } else {
+                    $component->assertActionHasUrl($action, PostResource::getUrl($name, ($name === 'create') ? [] : ['record' => $post]));
+                }
+
+                $component->mountAction($action)
+                    ->assertActionMounted($action)
+                    ->assertDispatched('linked-action-filled')
+                    ->fillForm(['title' => 'Submitted title', 'author_id' => $post->author_id, 'rating' => 4])
+                    ->call('callMountedAction')
+                    ->assertHasNoActionErrors()
+                    ->assertDispatched('linked-action-called');
+            },
+        );
+
+        expect(Post::query()->count())->toBe(($name === 'create') ? 2 : 1)
+            ->and($post->fresh()->title)->toBe(($name === 'edit') ? 'Submitted title' : 'Original title');
+
+        if ($name === 'create') {
+            expect(Post::query()->latest('id')->first()->title)->toBe('Submitted title');
+        }
+    })->with([
+        ['create', CreateAction::class],
+        ['view', ViewAction::class],
+        ['edit', EditAction::class],
+    ])->with([true, false]);
+});
+
 it('does not discover unmounted action schemas through pagination hooks', function (string $schemaName, string $pageName): void {
     $component = livewire(ListPosts::class)
         ->call('setPage', $schemaName, $pageName);
@@ -80,15 +178,20 @@ it('does not expose an unmounted action form as a standalone schema', function (
 it('exposes authorized action schemas without registering standalone forms', function (string $action): void {
     $post = Post::factory()->create();
 
-    $component = livewire(ListPosts::class)
-        ->call('mountAction', $action, [], ($action === 'create') ? [] : ['table' => true, 'recordKey' => (string) $post->getKey()])
-        ->assertSet('mountedActions.0.name', $action)
-        ->call('partiallyRenderSchemaComponent', 'mountedActionSchema0.title');
+    Action::configureUsing(
+        static fn (Action $action) => $action->modal(),
+        during: static function () use ($action, $post): void {
+            $component = livewire(ListPosts::class)
+                ->call('mountAction', $action, [], ($action === 'create') ? [] : ['table' => true, 'recordKey' => (string) $post->getKey()])
+                ->assertSet('mountedActions.0.name', $action)
+                ->call('partiallyRenderSchemaComponent', 'mountedActionSchema0.title');
 
-    expect($component->instance()->getSchemaComponent('mountedActionSchema0.title'))->not->toBeNull()
-        ->and($component->instance()->discoveredSchemaNames)->not->toContain('form', 'infolist')
-        ->and($component->instance()->getSchemaComponent('form.title'))->toBeNull()
-        ->and($component->instance()->getSchemaComponent('infolist.title'))->toBeNull();
+            expect($component->instance()->getSchemaComponent('mountedActionSchema0.title'))->not->toBeNull()
+                ->and($component->instance()->discoveredSchemaNames)->not->toContain('form', 'infolist')
+                ->and($component->instance()->getSchemaComponent('form.title'))->toBeNull()
+                ->and($component->instance()->getSchemaComponent('infolist.title'))->toBeNull();
+        },
+    );
 })->with(['create', 'edit', 'view']);
 
 it('uses no-panel filters without changing default queries or pagination updates', function (): void {
@@ -457,10 +560,16 @@ it('does not save relationships when a view-only user calls the `ViewAction`', f
     expect(TicketResource::canView($ticket))->toBeTrue()
         ->and(TicketResource::canEdit($ticket))->toBeFalse();
 
-    livewire($pageClass)
-        ->call('mountAction', 'view', [], ['table' => true, 'recordKey' => (string) $ticket->getKey()])
-        ->set('mountedActions.0.data.departments', [$forgedDepartment->getKey()])
-        ->callMountedAction();
+    ViewAction::configureUsing(
+        static fn (ViewAction $action) => $action->modal(),
+        during: static function () use ($pageClass, $ticket, $forgedDepartment): void {
+            livewire($pageClass)
+                ->call('mountAction', 'view', [], ['table' => true, 'recordKey' => (string) $ticket->getKey()])
+                ->assertActionMounted(TestAction::make('view')->table($ticket))
+                ->set('mountedActions.0.data.departments', [$forgedDepartment->getKey()])
+                ->call('callMountedAction');
+        },
+    );
 
     expect($ticket->fresh()->departments()->pluck('departments.id')->all())->toBe([$originalDepartment->getKey()]);
 })->with([
@@ -478,11 +587,17 @@ it('does not save forged field or relationship state when an `EditAction` schema
         'author_id' => $originalAuthor->getKey(),
     ]);
 
-    livewire(ListPostsWithDisabledEditAction::class)
-        ->call('mountAction', 'edit', [], ['table' => true, 'recordKey' => (string) $post->getKey()])
-        ->set('mountedActions.0.data.title', 'Changed title')
-        ->set('mountedActions.0.data.author_id', $submittedAuthor->getKey())
-        ->callMountedAction();
+    EditAction::configureUsing(
+        static fn (EditAction $action) => $action->modal(),
+        during: static function () use ($post, $submittedAuthor): void {
+            livewire(ListPostsWithDisabledEditAction::class)
+                ->call('mountAction', 'edit', [], ['table' => true, 'recordKey' => (string) $post->getKey()])
+                ->assertActionMounted(TestAction::make('edit')->table($post))
+                ->set('mountedActions.0.data.title', 'Changed title')
+                ->set('mountedActions.0.data.author_id', $submittedAuthor->getKey())
+                ->call('callMountedAction');
+        },
+    );
 
     expect($post->fresh())
         ->title->toBe($isPublished ? 'Original title' : 'Changed title')
@@ -501,6 +616,7 @@ it('authorizes `CreateAction` using its model', function (bool $isCrossModel, bo
     CreateAction::configureUsing(
         static fn (CreateAction $action) => $action
             ->model(static fn (): string => $isCrossModel ? Department::class : Ticket::class)
+            ->livewireClickHandlerEnabled()
             ->authorize($authorization),
         during: function () use ($isCrossModel, $authorization, $expectedAllowed, $ownerResponse, $actionResponse): void {
             $component = livewire(ListTickets::class)
