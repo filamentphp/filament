@@ -15,7 +15,6 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Livewire\Attributes\Url;
 
 class TableQuerySelectionBrowserTest extends Page implements HasTable
 {
@@ -31,29 +30,16 @@ class TableQuerySelectionBrowserTest extends Page implements HasTable
 
     public bool $currentPageOnly = false;
 
-    public bool $trackDeselectedRecords = true;
-
     public int $pageSize = 2;
 
     public ?int $selectionLimit = null;
-
-    #[Url]
-    public bool $pollSelection = false;
-
-    public int $pollCount = 0;
 
     public function mount(): void
     {
         $this->nested = request()->boolean('nested');
         $this->currentPageOnly = request()->boolean('currentPageOnly');
-        $this->trackDeselectedRecords = request()->boolean('trackDeselectedRecords', true);
         $this->pageSize = request()->integer('pageSize', 2);
         $this->selectionLimit = request()->integer('selectionLimit') ?: null;
-    }
-
-    public function countSelectionPoll(): void
-    {
-        $this->pollCount++;
     }
 
     public function table(Table $table): Table
@@ -70,7 +56,6 @@ class TableQuerySelectionBrowserTest extends Page implements HasTable
             ->defaultSort('id')
             ->paginationPageOptions([$this->pageSize])
             ->selectCurrentPageOnly($this->currentPageOnly)
-            ->trackDeselectedRecords($this->trackDeselectedRecords)
             ->maxSelectableRecords($this->selectionLimit)
             ->selectableRecordsQuery(static fn (Builder $query): Builder => $query->where('is_published', true))
             ->toolbarActions([
@@ -87,9 +72,6 @@ class TableQuerySelectionBrowserTest extends Page implements HasTable
             EmbeddedTable::make(),
             Text::make(fn (): string => $this->selectedKeys)->extraAttributes(['data-testid' => 'selected-keys', 'role' => 'status']),
             Text::make(fn (): string => $this->submittedKeys)->extraAttributes(['data-testid' => 'submitted-keys', 'role' => 'status']),
-            Text::make(fn (): string => (string) $this->pollCount)
-                ->extraAttributes(['data-testid' => 'selection-poll', 'wire:poll.500ms.keep-alive' => 'countSelectionPoll'])
-                ->visible(fn (): bool => $this->pollSelection),
         ]);
     }
 }
