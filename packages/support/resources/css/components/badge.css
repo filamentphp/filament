@@ -45,10 +45,18 @@
 
     &.fi-size-xs {
         @apply min-w-[theme(spacing.4)] px-0.5 py-0 tracking-tighter;
+
+        & .fi-badge-delete-btn {
+            @apply my-0 -me-0.5 p-0.5;
+        }
     }
 
     &.fi-size-sm {
         @apply min-w-[theme(spacing.5)] px-1.5 py-0.5 tracking-tight;
+
+        & .fi-badge-delete-btn {
+            @apply -me-1.5;
+        }
     }
 
     &.fi-color {
