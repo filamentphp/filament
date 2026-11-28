@@ -2332,6 +2332,129 @@ describe('relationship ordering and mutation', function (): void {
         expect($posts->pluck('title')->all())->toBe(['First', 'Second', 'Third']);
     });
 
+    it('honors `reorderable()` when saving submitted relationship order', function (bool $isReorderable, bool $useClosure, array $ratings): void {
+        $user = User::factory()->create();
+        $posts = collect($ratings)->map(fn (int $rating): Post => Post::factory()->create([
+            'author_id' => $user->id,
+            'rating' => $rating,
+        ]));
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->model($user)
+            ->components([
+                $repeater = Repeater::make('posts')
+                    ->relationship()
+                    ->orderColumn('rating')
+                    ->reorderable($useClosure ? static fn (): bool => $isReorderable : $isReorderable)
+                    ->schema([TextInput::make('title'), TextInput::make('rating')->numeric()]),
+            ]);
+        $schema->loadStateFromRelationships();
+
+        $repeater->rawState($posts->reverse()->mapWithKeys(static fn (Post $post): array => [
+            "record-{$post->id}" => ['title' => "Updated {$post->id}", 'rating' => -100],
+        ])->all());
+        $schema->saveRelationships();
+
+        expect($user->posts()->orderBy('rating')->pluck('id')->all())->toBe($isReorderable
+            ? $posts->reverse()->pluck('id')->all()
+            : $posts->pluck('id')->all());
+
+        foreach ($posts->values() as $index => $post) {
+            expect($post->fresh()->rating)->toBe($isReorderable ? (3 - $index) : $ratings[$index])
+                ->and($post->fresh()->title)->toBe("Updated {$post->id}");
+        }
+    })->with([false, true])->with([false, true])->with([
+        'sequential order' => [[1, 2, 3]],
+        'noncontiguous order' => [[4, 11, 27]],
+    ]);
+
+    it('preserves persisted order and appends records when `reorderable(false)` and loaded records omit the order column', function (bool $isEagerLoaded, bool $withTrashed): void {
+        $user = User::factory()->create();
+        $firstPost = Post::factory()->create(['author_id' => $user->id, 'rating' => 4]);
+        $lastPost = Post::factory()->create(['author_id' => $user->id, 'rating' => 27]);
+
+        if ($withTrashed) {
+            $lastPost->delete();
+        }
+
+        $modifyQueryUsing = fn ($query) => $query
+            ->withTrashed($withTrashed)
+            ->select(['posts.id', 'posts.author_id', 'posts.title']);
+
+        if ($isEagerLoaded) {
+            $user->load(['posts' => $modifyQueryUsing]);
+        }
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->model($user)
+            ->components([
+                $repeater = Repeater::make('posts')
+                    ->relationship(modifyQueryUsing: $isEagerLoaded ? null : $modifyQueryUsing)
+                    ->orderColumn('rating')
+                    ->reorderable(false)
+                    ->schema([TextInput::make('title')]),
+            ]);
+        $schema->loadStateFromRelationships();
+
+        $repeater->rawState([
+            "record-{$lastPost->id}" => ['title' => 'Updated last'],
+            'new' => ['title' => 'New'],
+            "record-{$firstPost->id}" => ['title' => 'Updated first'],
+        ]);
+        $schema->saveRelationships();
+
+        expect($firstPost->fresh()->rating)->toBe(4)
+            ->and($firstPost->fresh()->title)->toBe('Updated first')
+            ->and($lastPost->fresh()->rating)->toBe(27)
+            ->and($lastPost->fresh()->title)->toBe('Updated last')
+            ->and($user->posts()->where('title', 'New')->sole()->rating)->toBe(28);
+    })->with([false, true])->with([false, true]);
+
+    it('appends new relationship records without reordering existing records and honors `deletable()` when `reorderable(false)`', function (bool $isDeletable): void {
+        $user = User::factory()->create();
+        $firstPost = Post::factory()->create(['author_id' => $user->id, 'rating' => 4, 'is_published' => true]);
+        $secondPost = Post::factory()->create(['author_id' => $user->id, 'rating' => 11, 'is_published' => true]);
+        $omittedPost = Post::factory()->create(['author_id' => $user->id, 'rating' => 27, 'is_published' => true]);
+        $outOfScopePost = Post::factory()->create(['author_id' => $user->id, 'rating' => 90, 'is_published' => false]);
+        $unrelatedPost = Post::factory()->create(['rating' => 100, 'is_published' => true]);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->model($user)
+            ->components([
+                $repeater = Repeater::make('posts')
+                    ->relationship(modifyQueryUsing: fn ($query) => $query->where('is_published', true))
+                    ->orderColumn('rating')
+                    ->reorderable(false)
+                    ->deletable($isDeletable)
+                    ->schema([TextInput::make('title'), TextInput::make('rating')->numeric()]),
+            ]);
+        $schema->loadStateFromRelationships();
+
+        $repeater->rawState([
+            'new-first' => ['title' => 'New first', 'rating' => -100],
+            "record-{$secondPost->id}" => ['title' => 'Updated second', 'rating' => -100],
+            'new-second' => ['title' => 'New second', 'rating' => -100],
+            "record-{$firstPost->id}" => ['title' => 'Updated first', 'rating' => -100],
+        ]);
+        $schema->saveRelationships();
+
+        expect($firstPost->fresh()->rating)->toBe(4)
+            ->and($firstPost->fresh()->title)->toBe('Updated first')
+            ->and($secondPost->fresh()->rating)->toBe(11)
+            ->and($secondPost->fresh()->title)->toBe('Updated second')
+            ->and($omittedPost->fresh()->trashed())->toBe($isDeletable)
+            ->and($omittedPost->fresh()->rating)->toBe(27)
+            ->and($outOfScopePost->fresh()->trashed())->toBeFalse()
+            ->and($outOfScopePost->fresh()->rating)->toBe(90)
+            ->and($unrelatedPost->fresh()->trashed())->toBeFalse()
+            ->and($unrelatedPost->fresh()->rating)->toBe(100)
+            ->and($user->posts()->where('title', 'New first')->sole()->rating)->toBe($isDeletable ? 12 : 28)
+            ->and($user->posts()->where('title', 'New second')->sole()->rating)->toBe($isDeletable ? 13 : 29);
+    })->with([false, true]);
+
     it('skips updating an existing record when `mutateRelationshipDataBeforeSaveUsing()` returns `null`', function (): void {
         $user = User::factory()->create();
         $post = Post::factory()->create(['author_id' => $user->id, 'title' => 'Original Title']);

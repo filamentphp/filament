@@ -1086,21 +1086,32 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                 });
         }
 
-        $itemOrder = 1;
         $orderColumn = $this->getOrderColumn();
+        $isReorderable = (! $orderColumn) || $this->isReorderable();
+        $itemOrder = 1;
+
+        if ($orderColumn && (! $isReorderable)) {
+            $itemOrder = ($this->getRelationship()
+                ->withoutGlobalScopes()
+                ->whereKey($existingRecords->modelKeys())
+                ->max($relationship->getRelated()->qualifyColumn($orderColumn)) ?? 0) + 1;
+        }
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
         foreach ($this->getItems() as $itemKey => $item) {
             $itemData = $item->getState(shouldCallHooksBefore: false);
+            $record = $existingRecords[$itemKey] ?? null;
 
             if ($orderColumn) {
-                $itemData[$orderColumn] = $itemOrder;
-
-                $itemOrder++;
+                if ($record && (! $isReorderable)) {
+                    unset($itemData[$orderColumn]);
+                } else {
+                    $itemData[$orderColumn] = $itemOrder++;
+                }
             }
 
-            if ($record = ($existingRecords[$itemKey] ?? null)) {
+            if ($record) {
                 $itemData = $this->mutateRelationshipDataBeforeSave($itemData, record: $record);
 
                 if ($itemData === null) {
