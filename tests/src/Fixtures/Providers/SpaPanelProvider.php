@@ -8,6 +8,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Tests\Fixtures\Pages\ErrorNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
@@ -29,7 +30,10 @@ class SpaPanelProvider extends PanelProvider
             ->path('spa')
             ->login()
             ->spa()
-            ->pages([ScopedActionsBrowserTest::class])
+            ->pages([
+                ErrorNotificationsBrowserTest::class,
+                ScopedActionsBrowserTest::class,
+            ])
             ->livewireComponents([ScopedDepartmentsRelationManager::class])
             ->resources([
                 PostResource::class,
