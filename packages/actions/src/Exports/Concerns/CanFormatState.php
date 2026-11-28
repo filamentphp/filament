@@ -120,6 +120,8 @@ trait CanFormatState
                 : implode(', ', $state);
         }
 
+        $state = ($state === null) ? null : (string) $state;
+
         if ($this->shouldPreventFormulaInjection()) {
             // Security: Neutralize CSV/spreadsheet formula injection
             // (CWE-1236) on the final written value by prefixing a
@@ -130,9 +132,9 @@ trait CanFormatState
         return $state;
     }
 
-    protected function sanitizeStateAgainstFormulaInjection(mixed $state): mixed
+    protected function sanitizeStateAgainstFormulaInjection(?string $state): ?string
     {
-        if (! is_string($state) || ($state === '')) {
+        if (($state === null) || ($state === '')) {
             return $state;
         }
 

@@ -12,10 +12,12 @@ use Filament\Tests\Fixtures\Exports\WorkerPostExporter;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader as CsvReader;
 use League\Flysystem\UnableToWriteFile;
+use OpenSpout\Common\Entity\Cell\FormulaCell;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
 
 uses(TestCase::class);
@@ -172,4 +174,75 @@ it('preserves CSV cells and records in exports', function (string $format, bool 
     }
 
     expect($rows)->toBe($expected);
+})->with(['csv', 'xlsx'])->with([false, true]);
+
+it('applies `preventFormulaInjection()` to native strings and `AsStringable` attributes in export files', function (string $format, bool $preventFormulaInjection): void {
+    app()->bind(Authenticatable::class, User::class);
+    $disk = Storage::fake('local');
+    $posts = collect(['=2+3', 'Ordinary text', '+42', '-5'])
+        ->map(static fn (string $value): Post => Post::factory()->create([
+            'title' => $value,
+            'content' => $value,
+        ]));
+    $export = Export::create([
+        'user_id' => auth()->id(),
+        'exporter' => WorkerPostExporter::class,
+        'file_disk' => 'local',
+        'file_name' => 'posts',
+        'total_rows' => $posts->count(),
+    ]);
+    $query = EloquentSerializeFacade::serialize(Post::query()->withCasts(['content' => AsStringable::class])->orderBy('id'));
+    $columnMap = ['title' => 'Native string', 'content' => 'Stringable'];
+
+    (new PrepareCsvExport($export, $query, $columnMap, records: []))->withFakeBatch()[0]->handle();
+    ExportColumn::configureUsing(
+        static fn (ExportColumn $column) => $column->preventFormulaInjection($preventFormulaInjection),
+        during: fn () => (new ExportCsv($export, $query, $posts->pluck('id')->all(), 1, $columnMap))->handle(),
+    );
+
+    $formula = $preventFormulaInjection ? "'=2+3" : '=2+3';
+    $expected = [
+        ['Native string', 'Stringable'],
+        [$formula, $formula],
+        ['Ordinary text', 'Ordinary text'],
+        ['+42', '+42'],
+        ['-5', '-5'],
+    ];
+
+    if ($format === 'csv') {
+        $response = app(CsvDownloader::class)($export);
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+
+        expect(array_values(iterator_to_array(CsvReader::fromString($content)->getRecords())))->toBe($expected);
+
+        return;
+    }
+
+    (new CreateXlsxFile($export, $columnMap))->handle();
+
+    $reader = new XlsxReader;
+    $reader->open($disk->path($export->getFileDirectory() . '/posts.xlsx'));
+    $rows = [];
+    $formulaCellCount = 0;
+
+    try {
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                foreach ($row->getCells() as $cell) {
+                    if ($cell instanceof FormulaCell) {
+                        $formulaCellCount++;
+                    }
+                }
+
+                $rows[] = $row->toArray();
+            }
+        }
+    } finally {
+        $reader->close();
+    }
+
+    expect($formulaCellCount)->toBe($preventFormulaInjection ? 0 : 2)
+        ->and($rows)->toBe($expected);
 })->with(['csv', 'xlsx'])->with([false, true]);
