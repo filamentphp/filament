@@ -5,8 +5,10 @@ use Filament\Support\View\Concerns\CanGenerateButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
 use Filament\Support\View\Concerns\CanGenerateIconButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateLinkHtml;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -24,6 +26,74 @@ $embeddedHtmlGenerator = function (): object {
 };
 
 uses(TestCase::class);
+
+it('can submit a form after its button is re-enabled', function (string $renderer, string $disabledMode): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/form-button-browser-test?' . http_build_query(compact('renderer', 'disabledMode')));
+
+    $page->assertDisabled('[data-testid="send"]')
+        ->click('[data-testid="set-token"]')
+        ->assertSee('Token: abc')
+        ->keys('input[id="content.email"]', 'Enter')
+        ->assertSee('Submissions: 1')
+        ->click('[data-testid="reset-token"]')
+        ->assertSee('Token: empty')
+        ->assertAttribute('[data-testid="send"]', 'aria-disabled', 'true')
+        ->keys('input[id="content.email"]', 'Enter')
+        ->click('[data-testid="set-token"]')
+        ->assertSee('Token: abc')
+        ->click('[data-testid="send"]')
+        ->assertSee('Submissions: 2')
+        ->assertNoJavaScriptErrors();
+
+    if (($renderer === 'embedded') && ($disabledMode === 'disabled')) {
+        $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    }
+})->with(['embedded', 'blade'])->with(['disabled', 'tooltip', 'aria']);
+
+it('keeps a re-enabled form button unavailable until all processing finishes', function (string $renderer): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/form-button-browser-test?renderer=' . $renderer);
+
+    $page->script(<<<'JS'
+        for (let index = 0; index < 2; index++) {
+            document.getElementById('send-form').dispatchEvent(new CustomEvent('form-processing-started', {
+                detail: { message: 'Uploading' },
+            }));
+        }
+        JS);
+
+    $page->assertAttribute('[data-testid="send"]', 'aria-busy', 'true')
+        ->click('[data-testid="set-token"]')
+        ->assertSee('Token: abc')
+        ->assertAttribute('[data-testid="send"]', 'aria-disabled', 'true')
+        ->keys('input[id="content.email"]', 'Enter');
+
+    $page->script("document.getElementById('send-form').dispatchEvent(new CustomEvent('form-processing-finished'))");
+
+    $page->assertAttribute('[data-testid="send"]', 'aria-busy', 'true')
+        ->keys('input[id="content.email"]', 'Enter')
+        ->click('[data-testid="reset-token"]')
+        ->assertSee('Token: empty');
+
+    $page->script("document.getElementById('send-form').dispatchEvent(new CustomEvent('form-processing-finished'))");
+
+    $page->assertAttributeMissing('[data-testid="send"]', 'aria-busy')
+        ->assertAttribute('[data-testid="send"]', 'aria-disabled', 'true')
+        ->keys('input[id="content.email"]', 'Enter')
+        ->click('[data-testid="set-token"]')
+        ->assertSee('Token: abc')
+        ->click('[data-testid="send"]')
+        ->assertSee('Submissions: 1')
+        ->assertNoJavaScriptErrors();
+})->with(['embedded', 'blade']);
 
 it('uses the `fi-disabled` class instead of the `disabled` attribute on loading Blade buttons', function (): void {
     $htmlOutputs = [

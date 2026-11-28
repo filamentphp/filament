@@ -131,6 +131,7 @@
                 'aria-disabled' => $disabled ? 'true' : null,
                 // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in the slot.
                 'aria-label' => $labelSrOnly ? e(trim(strip_tags($slot->toHtml())), doubleEncode: false) : null,
+                'data-disabled' => ($hasFormProcessingLoadingIndicator && ($disabled || in_array($attributes->get('aria-disabled'), [true, 'true'], true))) ? true : null,
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
                 'tabindex' => (($tag === 'a') && $disabled && $hasTooltip) ? '0' : null,
@@ -139,7 +140,7 @@
                 'wire:loading.class' => $tag === 'button' ? $attributes->prepends('fi-disabled') : null,
                 'wire:loading.class.delay.' . $loadingDelay => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                'x-bind:aria-disabled' => $hasFormProcessingLoadingIndicator ? ('isProcessing || isLoading || ' . Js::from($disabled || in_array($attributes->get('aria-disabled'), [true, 'true'], true))) : null,
+                'x-bind:aria-disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing || isLoading || isDisabled' : null,
                 'x-bind:aria-label' => ($labelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags($slot->toHtml())))) : null,
             ], escape: false)
             ->when(
