@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -556,7 +557,7 @@ describe('state', function (): void {
         ['numeric', '　', '#', null],
     ]);
 
-    it('keeps validation mutations separate while trimming before custom casts and dehydration callbacks', function (): void {
+    it('keeps validation mutations separate without re-trimming custom dehydration output', function (bool $usesDehydrationCallback): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -566,7 +567,7 @@ describe('state', function (): void {
                     {
                         public function get(mixed $state): mixed
                         {
-                            return "[{$state}]";
+                            return " [{$state}] ";
                         }
 
                         public function set(mixed $state): mixed
@@ -575,15 +576,35 @@ describe('state', function (): void {
                         }
                     })
                     ->mutateStateForValidationUsing(static fn (string $state): string => "{$state}-validation-only")
-                    ->dehydrateStateUsing(static fn (string $state): string => "  <{$state}>  ")
+                    ->dehydrateStateUsing($usesDehydrationCallback ? static fn (string $state): string => "  <{$state}>  " : null)
                     ->mutateDehydratedStateUsing(static fn (string $state): string => "saved:{$state}"),
             ])
             ->fill(['value' => '  Alice  ']);
 
-        expect($field->getState())->toBe('[Alice]')
+        $expectedSubmitted = $usesDehydrationCallback ? 'saved:  < [Alice] >  ' : 'saved: [Alice] ';
+
+        expect($field->getState())->toBe(' [Alice] ')
             ->and($schema->validate()['data']['value'])->toBe('Alice-validation-only')
-            ->and($schema->getState()['value'])->toBe('saved:<[Alice]>')
+            ->and($schema->getState()['value'])->toBe($expectedSubmitted)
+            ->and($schema->getStateSnapshot()['value'])->toBe($expectedSubmitted)
             ->and($schema->getRawState()['value'])->toBe('  Alice  ');
+    })->with([false, true]);
+
+    it('does not re-trim output from an ancestor dehydration callback', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Section::make('Group')
+                    ->statePath('group')
+                    ->schema([$field = TextInput::make('name')->trim()])
+                    ->dehydrateStateUsing(static fn (array $state): array => ['name' => "  {$state['name']}  "]),
+            ])
+            ->fill(['group' => ['name' => '  Alice  ']]);
+
+        expect($schema->getState())->toBe(['group' => ['name' => '  Alice  ']])
+            ->and($schema->getStateSnapshot())->toBe(['group' => ['name' => '  Alice  ']])
+            ->and($field->getState())->toBe('Alice')
+            ->and($schema->getRawState()['group']['name'])->toBe('  Alice  ');
     });
 
     it('exposes trimmed current and old state to lifecycle hooks without trimming display state', function (): void {

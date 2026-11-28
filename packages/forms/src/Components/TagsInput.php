@@ -196,19 +196,6 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
         ];
     }
 
-    public function mutateDehydratedState(mixed $state): mixed
-    {
-        if (is_array($state)) {
-            $state = array_map(function (mixed $value): mixed {
-                return $this->trimState($value);
-            }, $state);
-        } else {
-            $state = $this->trimState($state);
-        }
-
-        return parent::mutateDehydratedState($state);
-    }
-
     public function mutateStateForValidation(mixed $state): mixed
     {
         if (is_array($state)) {
@@ -392,11 +379,6 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-tags-input-wrp'],
         );
-    }
-
-    public function mutatesDehydratedState(): bool
-    {
-        return parent::mutatesDehydratedState() || $this->isTrimmed();
     }
 
     public function mutatesStateForValidation(): bool

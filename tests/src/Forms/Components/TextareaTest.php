@@ -34,16 +34,21 @@ it('can `trim()` whitespace from `Textarea`', function (mixed $input, mixed $exp
     ["\t\n　", ''],
 ]);
 
-it('exposes trimmed `Textarea` state without changing raw input', function (): void {
+it('trims `Textarea` input without re-trimming dehydration callback output', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
-        ->components([$textarea = Textarea::make('content')->trim()->stripCharacters('#')])
+        ->components([
+            $textarea = Textarea::make('content')
+                ->trim()
+                ->stripCharacters('#')
+                ->dehydrateStateUsing(static fn (string $state): string => "  {$state}  "),
+        ])
         ->fill(['content' => "#　first\nsecond　#"]);
 
     expect($textarea->getState())->toBe("first\nsecond")
         ->and($textarea->getGetCallback()('content'))->toBe("first\nsecond")
         ->and($schema->getRawState()['content'])->toBe("　first\nsecond　")
-        ->and($schema->getState()['content'])->toBe("first\nsecond");
+        ->and($schema->getState()['content'])->toBe("  first\nsecond  ");
 });
 
 describe('autosizing', function (): void {

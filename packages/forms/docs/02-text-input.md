@@ -324,7 +324,7 @@ TextInput::make('name')
     ->trim()
 ```
 
-Trimming applies to PHP state reads, including `$get()` and the `$state` and `$old` values injected into lifecycle hooks, as well as validation and submitted values. It does not trim the browser input while the user types. Use `$rawState` in a callback when you need the untrimmed input. Custom state casts and `dehydrateStateUsing()` callbacks receive the trimmed value; `mutateStateForValidationUsing()` remains validation-only.
+Trimming applies to PHP state reads (including `$get()`), validation, and submitted input, without changing the browser value. Use `$rawState` for untrimmed input. Trimming runs before custom casts and dehydration callbacks, not on their output.
 
 You may want to enable trimming globally for all text inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 

@@ -314,11 +314,11 @@ describe('state dehydration', function (): void {
         [null, ',', [], ''],
     ]);
 
-    it('joins array state with separator without filtering array values', function (array $state, string $separator, string $expected): void {
+    it('joins trimmed array values without trimming the separator or filtering blanks', function (array $state, string $separator, string $expected): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
-                TagsInput::make('tags')->separator($separator),
+                TagsInput::make('tags')->trim()->separator($separator),
             ])
             ->fill(['tags' => $state]);
 
@@ -328,7 +328,23 @@ describe('state dehydration', function (): void {
         'blank and `0` array values' => [['alpha', '', '0', ''], ',', 'alpha,,0,'],
         'custom multi-character separator' => [['alpha', '0', 'beta'], '||', 'alpha||0||beta'],
         'separator regex characters' => [['alpha', '0', 'beta'], '.*', 'alpha.*0.*beta'],
+        'blank final tag with padded separator' => [[' alpha ', '　'], ' | ', 'alpha | '],
+        'blank first tag with padded separator' => [[' ', ' beta '], ' | ', ' | beta'],
     ]);
+
+    it('does not trim tags returned by dehydration callbacks', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')
+                    ->trim()
+                    ->dehydrateStateUsing(static fn (array $state): array => [...$state, ' beta ']),
+            ])
+            ->fill(['tags' => [' alpha ']]);
+
+        expect($schema->getState())->toBe(['tags' => ['alpha', ' beta ']])
+            ->and($schema->getRawState()['tags'])->toBe([' alpha ']);
+    });
 });
 
 describe('state', function (): void {
