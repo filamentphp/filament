@@ -15,6 +15,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -26,12 +27,17 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\HiddenDepartmentTicket;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -786,6 +792,94 @@ describe('item schemas', function (): void {
             ->and(array_keys($items))->toBe(array_keys($repeater->getRawState()))
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
+
+    it('isolates non-record item entry state from the parent record', function (mixed $itemData, ?string $expectedTitle): void {
+        $record = Post::factory()->create([
+            'config' => ['item' => ['title' => 'Parent-only title']],
+        ]);
+
+        $repeater = Repeater::make('config')
+            ->schema([TextEntry::make('title')]);
+
+        Schema::make(Livewire::make()->data([
+            'config' => ['item' => $itemData],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $item = $repeater->getItems()['item'];
+
+        expect($item->getComponents()[0]->getState())->toBe($expectedTitle)
+            ->and($item->getConstantState())->toBe(is_array($itemData) ? $itemData : []);
+    })->with([
+        'scalar string' => ['malformed', null],
+        'integer' => [42, null],
+        'boolean' => [false, null],
+        'null' => [null, null],
+        'empty array' => [[], null],
+        'item array' => [['title' => 'Item-only title'], 'Item-only title'],
+    ]);
+
+    it('does not traverse parent relationships through a non-record item key', function (): void {
+        $team = Team::factory()->create(['name' => 'Parent-only team name']);
+        $author = User::factory()->create(['team_id' => $team->getKey()]);
+        $record = Post::factory()->create(['author_id' => $author->getKey()]);
+
+        $repeater = Repeater::make('author')
+            ->schema([TextEntry::make('name')]);
+
+        Schema::make(Livewire::make()->data([
+            'author' => ['team' => 'malformed'],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $item = $repeater->getItems()['team'];
+
+        expect($item->getComponents()[0]->getState())->toBeNull()
+            ->and($item->getConstantState())->toBe([])
+            ->and($record->relationLoaded('author'))->toBeFalse();
+    });
+
+    it('resolves relationship-backed item entries from their own record', function (mixed $itemData): void {
+        $record = User::factory()->create(['name' => 'Parent name']);
+        $post = Post::factory()->create([
+            'author_id' => $record->getKey(),
+            'title' => 'Related record title',
+        ]);
+
+        $repeater = Repeater::make('posts')
+            ->relationship('posts')
+            ->schema([TextEntry::make('title')]);
+
+        Schema::make(Livewire::make()->data([
+            'posts' => [
+                'record-' . $post->getKey() => $itemData,
+                'new' => 'malformed',
+                'array' => ['title' => 'New item title'],
+            ],
+        ]))
+            ->statePath('data')
+            ->model($record)
+            ->components([$repeater])
+            ->getComponents();
+
+        $items = $repeater->getItems();
+        $item = $items['record-' . $post->getKey()];
+
+        expect($item->getComponents()[0]->getState())->toBe('Related record title')
+            ->and($item->getRecord()->is($post))->toBeTrue()
+            ->and($items['new']->getComponents()[0]->getState())->toBeNull()
+            ->and($items['new']->getConstantState())->toBe([])
+            ->and($items['array']->getComponents()[0]->getState())->toBe('New item title');
+    })->with([
+        'item array' => [['title' => 'Unsaved item title']],
+        'scalar string' => ['malformed'],
+    ]);
 
     it('rekeys unsafe item state-path keys before building schemas', function (string $unsafeItemKey): void {
         $repeater = Repeater::make('items')
@@ -1851,6 +1945,28 @@ describe('relationships', function (): void {
         expect($user->posts()->count())
             ->toBe(3);
     });
+
+    it('does not prefill hidden pivot attributes or related-column collisions from `BelongsToMany` records', function (bool $isLoaded, bool $isTranslatable): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 70]);
+        $record = RepeaterHiddenPivotTicket::findOrFail($ticket->getKey());
+
+        if ($isLoaded) {
+            $record->setRelation('departments', $record->departments()->getQuery()->select([
+                'department_ticket.*',
+                'departments.*',
+                'department_ticket.quantity as pivot_quantity',
+                'department_ticket.created_at as pivot_created_at',
+            ])->get());
+        }
+
+        $component = livewire(RepeaterWithHiddenPivot::class, ['record' => $record, 'isTranslatable' => $isTranslatable]);
+        $state = array_values($component->get('data.departments'))[0];
+
+        expect(Arr::only($state, ['quantity', 'pivot_quantity', 'created_at', 'pivot_created_at', 'price']))
+            ->toEqual(['quantity' => null, 'pivot_quantity' => null, 'created_at' => null, 'pivot_created_at' => null, 'price' => 70]);
+    })->with([false, true])->with([false, true]);
 
     it('can load state from a `HasMany` relationship using eager loaded data without additional queries', function (): void {
         $undoRepeaterFake = Repeater::fake();
@@ -4348,6 +4464,50 @@ class RepeaterGetStateLeakCheck extends Component implements HasSchemas
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class RepeaterHiddenPivotTicket extends Ticket
+{
+    protected $table = 'tickets';
+
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'department_ticket', 'ticket_id', 'department_id')
+            ->using(HiddenDepartmentTicket::class)
+            ->withPivot(['id', 'quantity', 'price'])
+            ->as('attachment')
+            ->withTimestamps();
+    }
+}
+
+class RepeaterWithHiddenPivot extends Livewire
+{
+    public Ticket $record;
+
+    public bool $isTranslatable = false;
+
+    public function getFilamentTranslatableContentDriver(): ?string
+    {
+        return $this->isTranslatable ? RecordingTranslatableContentDriver::class : null;
+    }
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->model($this->record)->statePath('data')->components([
+            Repeater::make('departments')->relationship()->schema([
+                TextInput::make('quantity'),
+                TextInput::make('pivot_quantity'),
+                TextInput::make('created_at'),
+                TextInput::make('pivot_created_at'),
+                TextInput::make('price'),
+            ]),
+        ]);
     }
 }
 

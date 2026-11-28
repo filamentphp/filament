@@ -234,6 +234,7 @@ class RichContentRenderer implements Htmlable
             }
 
             $nodeConfig = json_decode(json_encode($node->attrs->config ?? []), associative: true);
+            $nodeConfig = is_array($nodeConfig) ? $nodeConfig : [];
 
             $node->type = 'renderedCustomBlock';
             $node->html = $this->getCustomBlockHtml($node->attrs->id, $nodeConfig);
@@ -368,6 +369,10 @@ class RichContentRenderer implements Htmlable
     {
         $editor->descendants(function (object &$node): void {
             if ($node->type === 'mention') {
+                if (isset($node->attrs->char) && ! is_string($node->attrs->char)) {
+                    unset($node->attrs->char);
+                }
+
                 unset($node->attrs->href);
             }
         });
@@ -566,7 +571,7 @@ class RichContentRenderer implements Htmlable
         $editor = app(Editor::class, ['configuration' => $this->getTipTapPhpConfiguration()]);
 
         if (filled($this->content)) {
-            $editor->setContent($this->content);
+            $editor->setContent(app(RichEditorDocumentNormalizer::class)->normalizeCustomBlockConfiguration($this->content));
         }
 
         return $editor;
@@ -598,25 +603,29 @@ class RichContentRenderer implements Htmlable
         $this->processMentions($editor);
         $this->processNodes($editor);
 
-        if (! $shouldSanitize) {
-            return $editor->getHTML();
-        }
-
         $customBlockHtml = [];
 
-        $editor->descendants(function (object &$node) use (&$customBlockHtml): void {
-            if ($node->type !== 'renderedCustomBlock') {
-                return;
-            }
+        if ($shouldSanitize) {
+            $editor->descendants(function (object &$node) use (&$customBlockHtml): void {
+                if ($node->type !== 'renderedCustomBlock') {
+                    return;
+                }
 
-            // Only registered block renderers may bypass sanitization. Incoming
-            // `renderedCustomBlock` nodes were reset by `processCustomBlocks()`.
-            $placeholder = '<div data-id="' . Str::random(40) . '"></div>';
-            $customBlockHtml[$placeholder] = $node->html ?? '';
-            $node->html = $placeholder;
-        });
+                // Only registered block renderers may bypass sanitization. Incoming
+                // `renderedCustomBlock` nodes were reset by `processCustomBlocks()`.
+                $placeholder = '<div data-id="' . Str::random(40) . '"></div>';
+                $customBlockHtml[$placeholder] = $node->html ?? '';
+                $node->html = $placeholder;
+            });
+        }
 
-        return strtr(Str::sanitizeHtml($editor->getHTML()), $customBlockHtml);
+        try {
+            $html = $editor->getHTML();
+        } catch (Throwable) {
+            return '';
+        }
+
+        return $shouldSanitize ? strtr(Str::sanitizeHtml($html), $customBlockHtml) : $html;
     }
 
     public function toText(): string

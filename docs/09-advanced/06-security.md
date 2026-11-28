@@ -231,6 +231,10 @@ Similarly, the `ColorColumn` and `ColorEntry` components render their state into
 
 The `RichEditor` applies the same principle to the CSS it generates from stored content: text color marks route their color through `Str::sanitizeCssColor()`, and the grid layout blocks cast their column counts to integers before interpolating them into a `style` attribute. This matters because the HTML sanitizer that cleans rich content allows the `style` attribute through without parsing the CSS inside it, so any value emitted into a `style` string must be sanitized before it gets there.
 
+This automatic color sanitization does not apply to [registered palettes](../styling/colors#customizing-the-default-colors) passed to `FilamentColor::register()` or a panel's `colors()` method, or to [CSS variables](assets#registering-css-variables) passed to `FilamentAsset::registerCssVariables()`. Palette names, shade keys, shade values, and CSS variable names and values are trusted application configuration. Malicious content can inject additional CSS declarations or rules into the global stylesheet, even when the output is HTML-escaped.
+
+Map user selections to application-defined palettes or CSS values wherever possible. If you accept user-defined colors or other CSS values, strictly validate them for the syntax you intend to support before registration, and keep names and shade keys application-controlled or validate them against an allowlist. Values read from a database or returned from a configuration closure still require validation if users can control them. Color conversion and palette generation are not security validators.
+
 The `icon()` method expects either a Blade icon name (like `heroicon-o-user`) or an image URL (any string containing `/`). Icon name strings are resolved via Blade's icon system, and URL strings are escaped before rendering into `src` attributes. However, passing an invalid icon name from user input will cause a rendering error, so you should still validate icon values against a known allowlist if they are user-controlled.
 
 Methods like `extraAttributes()`, `extraInputAttributes()`, `extraCellAttributes()`, and other `extra*Attributes()` methods render their values into HTML without escaping. This is by design, as these methods are often used to pass Alpine.js directives and Livewire attributes that must not be escaped. However, if you pass user-controlled data as attribute names or values, an attacker could break out of the HTML attribute and inject arbitrary markup, leading to XSS. Always ensure that any dynamic values passed to these methods are validated or sourced from trusted data.
@@ -339,6 +343,24 @@ public function register(): void
 
 Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
 
+### Limiting Markdown nesting
+
+Disabled Markdown editors, Markdown text columns, text entries, and table summarizers use a CommonMark `max_nesting_level` of `100` by default. This bounds block nesting, such as nested blockquotes and lists, before HTML sanitization runs. Beyond the limit, additional block markers are rendered as text instead of creating deeper blocks. This does not limit the total input size or inline nesting; you should still validate the size of untrusted Markdown in your application.
+
+You may override the limit using `commonMarkOptions()` on the component:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')
+    ->markdown()
+    ->commonMarkOptions(['max_nesting_level' => 50])
+```
+
+Other CommonMark options do not remove the default limit. Passing `commonMarkOptions(null)` restores the default. Only raise the limit for trusted content that requires deeper nesting, since doing so increases rendering resource usage.
+
+This default does not apply to Laravel's `Str::markdown()` or `str()->markdown()` helpers, the `Filament\Support\Markdown` helper, or the editable Markdown editor's JavaScript preview. When rendering stored Markdown in your own views, pass the nesting limit explicitly, as shown below.
+
 ### Sanitizing in Blade views
 
 When outputting rich text content (from a rich editor or Markdown editor) in your own Blade views, you are responsible for sanitizing it. You can use Filament's `sanitizeHtml()` string helper:
@@ -350,7 +372,7 @@ When outputting rich text content (from a rich editor or Markdown editor) in you
 Never use `{!! $content !!}` with unsanitized user content. If you need to render Markdown as HTML, chain the helpers:
 
 ```blade
-{!! str($record->content)->markdown()->sanitizeHtml() !!}
+{!! str($record->content)->markdown(['max_nesting_level' => 100])->sanitizeHtml() !!}
 ```
 
 ## Panel access

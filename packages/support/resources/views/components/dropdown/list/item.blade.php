@@ -122,6 +122,16 @@
     @endif
 
     @if ($image)
+        {{-- format-ignore-start --}}
+        @php
+            $image = str_replace(
+                ['\\', "'", "\r", "\n", "\f"],
+                ['\\\\', "\\'", '\d ', '\a ', '\c '],
+                ($image instanceof Htmlable) ? html_entity_decode($image->toHtml(), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $image,
+            );
+        @endphp
+        {{-- format-ignore-end --}}
+
         <div
             class="fi-dropdown-list-item-image"
             style="background-image: url('{{ $image }}')"

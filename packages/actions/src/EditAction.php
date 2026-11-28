@@ -90,7 +90,7 @@ class EditAction extends Action
                     $pivotColumns = $relationship->getPivotColumns();
                     $pivotData = Arr::only($data, $pivotColumns);
 
-                    if (count($pivotColumns)) {
+                    if (count($pivotData)) {
                         if ($translatableContentDriver) {
                             $translatableContentDriver->updateRecord($pivot, $pivotData);
                         } else {

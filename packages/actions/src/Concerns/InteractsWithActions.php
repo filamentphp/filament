@@ -627,9 +627,17 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             return;
         }
 
-        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
-            "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
-        ]);
+        app(PartialsComponentHook::class)->renderPartial($this, function () use ($schemaToPartiallyRender): array {
+            for ($schema = $schemaToPartiallyRender; $schema !== null; $schema = $schema->getParentComponent()?->getContainer()) {
+                if ($schema->isHidden()) {
+                    return [];
+                }
+            }
+
+            return [
+                "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
+            ];
+        });
     }
 
     protected function afterActionCalled(Action $action): void {}

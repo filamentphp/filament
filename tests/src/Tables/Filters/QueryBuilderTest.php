@@ -2,6 +2,7 @@
 
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsAfterOperator;
@@ -38,10 +39,12 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableBrowserTest;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema as DatabaseSchema;
+use Illuminate\Validation\ValidationException;
 use Livewire\Features\SupportTesting\Testable;
 
 use function Filament\Tests\livewire;
@@ -1084,6 +1087,86 @@ describe('`RelationshipConstraint` operators', function () use ($applyQueryBuild
 
         expect($filtered->count())->toBe(0);
     });
+
+    it('composes relationship scopes for `IsRelatedToOperator` options, search, and validation', function (bool $isMultiple, string $operation): void {
+        $author = User::factory()->create();
+        $allowedPost = Post::factory()->create(['author_id' => $author->id, 'title' => 'Scoped allowed', 'is_published' => true, 'rating' => 8]);
+        $searchExcludedPost = Post::factory()->create(['author_id' => $author->id, 'title' => 'Scoped search exclusion', 'is_published' => true, 'rating' => 6]);
+        $constraintExcludedPost = Post::factory()->create(['author_id' => $author->id, 'title' => 'Scoped unpublished', 'is_published' => false, 'rating' => 8]);
+        $operatorExcludedPost = Post::factory()->create(['author_id' => $author->id, 'title' => 'Scoped low rating', 'is_published' => true, 'rating' => 2]);
+        Post::factory()->create(['author_id' => $author->id, 'title' => 'Scoped deleted', 'is_published' => true, 'rating' => 8])->delete();
+
+        $constraint = RelationshipConstraint::make('posts')
+            ->model(User::class)
+            ->multiple($isMultiple)
+            ->modifyRelationshipQueryUsing(static fn (Builder $query, RelationshipConstraint $constraint): Builder => $query->where('is_published', $constraint->getName() === 'posts'));
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->titleAttribute('title')
+            ->multiple($isMultiple)
+            ->searchable()
+            ->preload()
+            ->modifyRelationshipQueryUsing(static fn (Builder $query, Select $component, ?string $search): Builder => $query->where('rating', '>=', ($search === 'Scoped') && $component->isSearchable() ? 7 : 5));
+
+        $schema = Schema::make(TestLivewire::make())->statePath('data')->components($operator->getFormSchema());
+        $operator->constraint(null);
+        $fieldName = $isMultiple ? 'values' : 'value';
+        $schema->fill([$fieldName => $isMultiple ? [$allowedPost->id] : $allowedPost->id]);
+        $field = $schema->getComponent($fieldName);
+
+        if ($operation === 'options') {
+            expect($field->getOptions())->toBe([$allowedPost->id => $allowedPost->title, $searchExcludedPost->id => $searchExcludedPost->title]);
+
+            return;
+        }
+
+        if ($operation === 'search') {
+            expect($field->getSearchResults('Scoped'))->toBe([$allowedPost->id => $allowedPost->title]);
+
+            return;
+        }
+
+        $schema->validate();
+
+        foreach ([$constraintExcludedPost, $operatorExcludedPost] as $excludedPost) {
+            $field->state($isMultiple ? [$excludedPost->id] : $excludedPost->id);
+
+            expect(fn () => $schema->validate())->toThrow(ValidationException::class);
+        }
+    })->with([false, true])->with(['options', 'search', 'validation']);
+
+    it('composes relationship scopes for `IsRelatedToOperator` filtering and summaries', function (bool $isInverse, string $operation): void {
+        $allowedAuthor = User::factory()->create();
+        $excludedAuthor = User::factory()->create();
+        $unrelatedAuthor = User::factory()->create();
+        $allowedPost = Post::factory()->create(['author_id' => $allowedAuthor->id, 'title' => 'Allowed title', 'is_published' => true, 'rating' => 8]);
+        $constraintExcludedPost = Post::factory()->create(['author_id' => $excludedAuthor->id, 'title' => 'Unpublished title', 'is_published' => false, 'rating' => 8]);
+        $operatorExcludedPost = Post::factory()->create(['author_id' => $excludedAuthor->id, 'title' => 'Low rating title', 'is_published' => true, 'rating' => 2]);
+
+        $constraint = RelationshipConstraint::make('posts')
+            ->model(User::class)
+            ->multiple()
+            ->modifyRelationshipQueryUsing(static fn (Builder $query): Builder => $query->where('is_published', true));
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->titleAttribute('title')
+            ->inverse($isInverse)
+            ->settings(['values' => [$allowedPost->id, $constraintExcludedPost->id, $operatorExcludedPost->id]])
+            ->modifyRelationshipQueryUsing(static fn (Builder $query): Builder => $query->where('rating', '>=', 5));
+
+        if ($operation === 'query') {
+            expect($operator->applyToBaseQuery(User::query())->orderBy('id')->pluck('id')->all())
+                ->toBe($isInverse ? [$excludedAuthor->id, $unrelatedAuthor->id] : [$allowedAuthor->id]);
+
+            return;
+        }
+
+        expect($operator->getSummary())->toContain($allowedPost->title)
+            ->not->toContain($constraintExcludedPost->title)
+            ->not->toContain($operatorExcludedPost->title);
+    })->with([false, true])->with(['query', 'summary']);
 
     it('applies `modifyRelationshipQueryUsing()` inside `IsEmptyOperator` count check', function () use ($applyQueryBuilderFilter): void {
         // Author A has 1 published + 0 unpublished — should NOT match isEmpty under the published-only scope.
@@ -2341,6 +2424,77 @@ describe('`relationship()` constraints', function () use ($applyQueryBuilderFilt
             ->assertCanSeeTableRecords([$inScopeUser])
             ->assertCanNotSeeTableRecords([$outOfScopeUser]);
     });
+
+    it('keeps aggregate correlation mandatory with a disjunctive relationship modifier', function (string $relationshipName, string $callbackReturn, bool $isInverse): void {
+        $highUser = User::factory()->create();
+        $lowUser = User::factory()->create();
+        User::factory()->create();
+
+        if ($relationshipName === 'posts') {
+            Post::factory()->create(['author_id' => $highUser->id, 'rating' => 8]);
+            Post::factory()->create(['author_id' => $lowUser->id, 'rating' => 30]);
+            Post::factory()->create(['author_id' => $lowUser->id, 'rating' => 2]);
+            Post::factory()->create(['author_id' => $lowUser->id, 'rating' => 100])->delete();
+            $attribute = 'rating';
+        } else {
+            $highUser->teams()->attach(Team::factory()->create(['budget' => 8]));
+            $lowUser->teams()->attach(Team::factory()->create(['budget' => 2]));
+            $attribute = 'budget';
+        }
+
+        $constraint = NumberConstraint::make("{$relationshipName}.{$attribute}")
+            ->modifyRelationshipQueryUsing(static function (Builder $query) use ($attribute, $callbackReturn, $relationshipName): ?Builder {
+                if ($callbackReturn === 'clone') {
+                    $query = clone $query;
+                }
+
+                if ($relationshipName === 'posts') {
+                    $query->withGlobalScope('ratingLimit', static fn (Builder $query): Builder => $query->where('rating', '<', 20));
+                }
+
+                $query->where($query->qualifyColumn($attribute), '<', 0)
+                    ->orWhere($query->qualifyColumn($attribute), '>=', 1);
+
+                return $callbackReturn === 'null' ? null : $query;
+            });
+
+        $operator = IsMinOperator::make()
+            ->constraint($constraint)
+            ->inverse($isInverse)
+            ->settings(['number' => 7, 'aggregate' => 'sum']);
+
+        expect($operator->applyToBaseQuery(User::query())->orderBy('id')->pluck('id')->all())
+            ->toBe([$isInverse ? $lowUser->id : $highUser->id]);
+    })->with(['posts', 'teams'])->with(['null', 'builder', 'clone'])->with([false, true]);
+
+    it('keeps unrecognized aggregates on the related column rather than a same-named parent column', function (mixed $aggregate, string $operatorClass): void {
+        $databaseConnection = QueryBuilderItem::query()->getConnection();
+        $originalTablePrefix = $databaseConnection->getTablePrefix();
+        $databaseConnection->setTablePrefix('fo_');
+
+        try {
+            $matchingParent = QueryBuilderItem::query()->create(['length' => 1]);
+            $matchingParent->children()->create(['length' => 700]);
+            $nonMatchingParent = QueryBuilderItem::query()->create(['length' => 900]);
+            $nonMatchingParent->children()->create(['length' => 2]);
+
+            $operator = $operatorClass::make()
+                ->constraint(NumberConstraint::make('children.length'))
+                ->settings(['number' => $operatorClass === IsMaxOperator::class ? 699 : 700, 'aggregate' => $aggregate]);
+
+            expect($operator->applyToBaseQuery(QueryBuilderItem::query()->whereNull('parent_id'))->pluck('id')->all())
+                ->toBe([$operatorClass === IsMaxOperator::class ? $nonMatchingParent->id : $matchingParent->id])
+                ->and($operator->getSummary())->toBeString();
+        } finally {
+            $databaseConnection->setTablePrefix($originalTablePrefix);
+        }
+    })->with([
+        'unknown' => 'unknown',
+        'malformed' => [['sum']],
+        'blank malformed' => [[]],
+        'absent control' => null,
+        'valid control' => 'sum',
+    ])->with([IsMinOperator::class, IsMaxOperator::class, NumberEqualsOperator::class]);
 
 });
 

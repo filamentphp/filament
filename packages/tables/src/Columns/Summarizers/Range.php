@@ -109,8 +109,8 @@ class Range extends Summarizer
                 return $state;
             }
 
-            $originalFromCharacters = str_split($originalFrom);
-            $originalToCharacters = str_split($originalTo);
+            $originalFromCharacters = mb_str_split($originalFrom, 1, 'UTF-8');
+            $originalToCharacters = mb_str_split($originalTo, 1, 'UTF-8');
 
             $from = '';
             $to = '';
@@ -120,10 +120,13 @@ class Range extends Summarizer
             $characterIndex = 0;
 
             foreach (($isFromLonger ? $originalToCharacters : $originalFromCharacters) as $characterIndex => $character) {
-                $from .= ($isFromLonger ? $originalFromCharacters[$characterIndex] : $character);
-                $to .= ($isFromLonger ? $character : $originalToCharacters[$characterIndex]);
+                $fromCharacter = ($isFromLonger ? $originalFromCharacters[$characterIndex] : $character);
+                $toCharacter = ($isFromLonger ? $character : $originalToCharacters[$characterIndex]);
 
-                if (Str::lower($from) !== Str::lower($to)) {
+                $from .= $fromCharacter;
+                $to .= $toCharacter;
+
+                if (Str::lower($fromCharacter) !== Str::lower($toCharacter)) {
                     break;
                 }
             }

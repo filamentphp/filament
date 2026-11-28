@@ -206,7 +206,7 @@ class Type
 
             $record = $query->first();
 
-            if (! $record) {
+            if ((! $record) || ((string) $record->getKey() !== (string) $value)) {
                 return null;
             }
 

@@ -51,9 +51,32 @@ class ColumnsBrowserTest extends Page implements HasTable
     #[Url]
     public bool $imageTooltips = false;
 
+    #[Url]
+    public string $hiddenLayout = '';
+
     public function table(Table $table): Table
     {
         $table->readOnly(fn (): bool => $this->readOnly);
+
+        if ($this->hiddenLayout !== '') {
+            return $table->query(Post::query())->columns([
+                Tables\Columns\TextColumn::make('id')->searchable(),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextInputColumn::make('title')->searchable(isIndividual: true)->sortable()
+                            ->extraAttributes(static fn (Post $record): array => ['data-testid' => 'layout-title-' . $record->getKey()]),
+                        Tables\Columns\TextColumn::make('content')
+                            ->action(static fn (Post $record) => $record->update(['content' => 'Action called']))
+                            ->extraAttributes(static fn (Post $record): array => ['data-testid' => 'layout-action-' . $record->getKey()]),
+                        Tables\Columns\SelectColumn::make('rating')->native(false)->options([1 => 'Low']),
+                    ]),
+                ])->hidden(match ($this->hiddenLayout) {
+                    'static' => true,
+                    'rowLoop', 'rowLoopHiddenWithoutLoop' => fn (?stdClass $rowLoop): bool => $rowLoop?->parent?->last ?? ($this->hiddenLayout === 'rowLoopHiddenWithoutLoop'),
+                    default => static fn (?Post $record): bool => $record && (! $record->is_published),
+                }),
+            ]);
+        }
 
         if ($this->selectFallbackLabels) {
             return $table->query(Post::query())->columns([

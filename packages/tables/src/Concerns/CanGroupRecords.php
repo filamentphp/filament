@@ -35,6 +35,10 @@ trait CanGroupRecords
     public function updatedTableGrouping(): void
     {
         if ($this->getTable()->persistsGroupInSession()) {
+            if (($this->tableGrouping !== null) && (! mb_check_encoding($this->tableGrouping, 'UTF-8'))) {
+                $this->tableGrouping = null;
+            }
+
             session()->put(
                 $this->getTableGroupingSessionKey(),
                 $this->tableGrouping,

@@ -118,6 +118,16 @@ class ExportColumn extends Component
             ->ucfirst();
     }
 
+    /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    public function formatLabel(string $label): string
+    {
+        return $this->shouldPreventFormulaInjection()
+            ? $this->sanitizeStateAgainstFormulaInjection($label)
+            : $label;
+    }
+
     public function applyRelationshipAggregates(EloquentBuilder $query): EloquentBuilder
     {
         return $query->when(

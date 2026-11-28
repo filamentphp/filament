@@ -448,6 +448,9 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.||Search;;?string;;$search;;The current search input value, if the field is searchable.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
 
+> [!NOTE]
+> Group any `orWhere()` conditions inside a `where()` callback so the query's other conditions still apply. If you return a new query, keep the relationship's existing constraints. If you select specific columns, include the related key. The default lookup rejects an option whose key does not match the selected value, but does not fix the query itself.
+
 ### Customizing the relationship option labels
 
 If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you could use a virtual column in your database migration:
@@ -722,6 +725,9 @@ MorphToSelect::make('commentable')
 > If `$team` is stored in a public Livewire property, Filament does not re-query or authorize it on later requests. Re-query and authorize the team before using it to scope the options, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 <UtilityInjection set="formFields" extras="Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
+> [!NOTE]
+> Group any `orWhere()` conditions inside a `where()` callback so the query's other conditions still apply. If you return a new query, keep the relationship's existing constraints. If you select specific columns, include the related key. The default lookup rejects an option whose key does not match the selected value, but does not fix the query itself.
 
 > [!TIP]
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
@@ -1070,6 +1076,9 @@ ModalTableSelect::make('category_id')
     ->relationship('category', 'name')
     ->tableConfiguration(CategoriesTable::class)
 ```
+
+> [!NOTE]
+> When customizing the `relationship()` query, group any `orWhere()` conditions inside a `where()` callback so the query's other conditions still apply. If you return a new query, keep the relationship's existing constraints. If you select specific columns, include the related key. The default lookup rejects an option whose key does not match the selected value, but does not fix the query itself.
 
 You can also use the `multiple()` method with a multiple relationship such as `BelongsToMany`:
 

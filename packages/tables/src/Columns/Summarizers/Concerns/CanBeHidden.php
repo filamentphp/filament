@@ -3,8 +3,11 @@
 namespace Filament\Tables\Columns\Summarizers\Concerns;
 
 use Closure;
+use DateTimeInterface;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Arr;
+use ReflectionFunction;
+use Stringable;
 
 trait CanBeHidden
 {
@@ -69,18 +72,42 @@ trait CanBeHidden
 
     public function isHidden(): bool
     {
-        $query = $this->getQuery();
-        $querySql = $query ? md5($query->toRawSql()) : '';
+        $query = $this->getQuery()?->toBase()->clone();
+        $queryKey = $query ? hash('sha256', serialize([
+            $query->toSql(),
+            array_map(
+                static fn (mixed $binding): mixed => match (true) {
+                    $binding instanceof DateTimeInterface => $binding->format($query->getGrammar()->getDateFormat()),
+                    $binding instanceof Stringable => (string) $binding,
+                    default => $binding,
+                },
+                $query->getBindings(),
+            ),
+        ])) : '';
 
-        if (array_key_exists($querySql, $this->visibilityCache)) {
-            return $this->visibilityCache[$querySql];
+        if (array_key_exists($queryKey, $this->visibilityCache)) {
+            return $this->visibilityCache[$queryKey];
+        }
+
+        if (! $query) {
+            foreach ([$this->isHidden, $this->isVisible] as $condition) {
+                if (! $condition instanceof Closure) {
+                    continue;
+                }
+
+                foreach ((new ReflectionFunction($condition))->getParameters() as $parameter) {
+                    if (($parameter->getName() === 'query') && (! $parameter->allowsNull())) {
+                        return $this->visibilityCache[$queryKey] = true;
+                    }
+                }
+            }
         }
 
         if ($this->evaluate($this->isHidden)) {
-            return $this->visibilityCache[$querySql] = true;
+            return $this->visibilityCache[$queryKey] = true;
         }
 
-        return $this->visibilityCache[$querySql] = ! $this->evaluate($this->isVisible);
+        return $this->visibilityCache[$queryKey] = ! $this->evaluate($this->isVisible);
     }
 
     public function isVisible(): bool

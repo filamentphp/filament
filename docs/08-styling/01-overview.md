@@ -6,6 +6,9 @@ title: Overview
 
 In the [configuration](../panel-configuration), you can easily change the colors that are used. Filament ships with 6 predefined colors that are used everywhere within the framework. They are customizable as follows:
 
+> [!WARNING]
+> The `colors()` method accepts trusted application configuration. Palette names, shade keys, and shade values are not sanitized for CSS and can inject additional declarations or rules into the global stylesheet if you pass unvalidated user content. Map user selections to application-defined palettes, or strictly validate user-controlled input before passing it to `colors()`, including values read from a database. See [color registration security](colors#customizing-the-default-colors).
+
 ```php
 use Filament\Panel;
 use Filament\Support\Colors\Color;

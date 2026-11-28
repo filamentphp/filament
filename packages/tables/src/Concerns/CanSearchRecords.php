@@ -27,6 +27,10 @@ trait CanSearchRecords
     public function updatedTableSearch(): void
     {
         if ($this->getTable()->persistsSearchInSession()) {
+            if (is_string($this->tableSearch) && (! mb_check_encoding($this->tableSearch, 'UTF-8'))) {
+                $this->tableSearch = '';
+            }
+
             session()->put(
                 $this->getTableSearchSessionKey(),
                 $this->tableSearch,
@@ -55,6 +59,11 @@ trait CanSearchRecords
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
+            if (! mb_check_encoding($this->tableColumnSearches, 'UTF-8')) {
+                $this->tableColumnSearches = [];
+                $this->fillReservedTableColumnSearchKeys();
+            }
+
             session()->put(
                 $this->getTableColumnSearchesSessionKey(),
                 $this->tableColumnSearches,
@@ -92,7 +101,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            if ($column->isHidden()) {
+            if ($column->getCloneForRecord(null)->isHidden()) {
                 continue;
             }
 
@@ -135,10 +144,15 @@ trait CanSearchRecords
      */
     protected function extractTableSearchWords(string $search): array
     {
-        return array_filter(
+        // Match the search input's `maxlength` before expanding words into query constraints.
+        $search = mb_substr($search, 0, 1000, 'UTF-8');
+
+        $searchWords = array_filter(
             str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
+
+        return (count($searchWords) > 50) ? [$search] : $searchWords;
     }
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
@@ -160,7 +174,7 @@ trait CanSearchRecords
                 $isFirst = true;
 
                 foreach ($this->getTable()->getColumns() as $column) {
-                    if ($column->isHidden()) {
+                    if ($column->getCloneForRecord(null)->isHidden()) {
                         continue;
                     }
 
@@ -186,7 +200,7 @@ trait CanSearchRecords
                 $isFirst = true;
 
                 foreach ($this->getTable()->getColumns() as $column) {
-                    if ($column->isHidden()) {
+                    if ($column->getCloneForRecord(null)->isHidden()) {
                         continue;
                     }
 
@@ -289,7 +303,7 @@ trait CanSearchRecords
         $indicators = [];
 
         foreach ($this->getTable()->getColumns() as $column) {
-            if ($column->isHidden()) {
+            if ($column->getCloneForRecord(null)->isHidden()) {
                 continue;
             }
 

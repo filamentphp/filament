@@ -119,6 +119,7 @@ class ImportAction extends Action
                     }
 
                     $csvReader = CsvReader::from($csvStream);
+                    $csvReader->setEscape('');
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
@@ -168,6 +169,7 @@ class ImportAction extends Action
                     }
 
                     $csvReader = CsvReader::from($csvStream);
+                    $csvReader->setEscape('');
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
@@ -198,6 +200,7 @@ class ImportAction extends Action
             }
 
             $csvReader = CsvReader::from($csvStream);
+            $csvReader->setEscape('');
 
             if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                 $csvReader->setDelimiter($csvDelimiter);
@@ -284,6 +287,7 @@ class ImportAction extends Action
                     $columns = $this->getImporter()::getColumns();
 
                     $csv = Writer::fromString();
+                    $csv->setEscape('');
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                         $csv->setDelimiter($csvDelimiter);
@@ -377,22 +381,6 @@ class ImportAction extends Action
 
     protected function detectCsvEncoding(mixed $resource): ?string
     {
-        rewind($resource);
-
-        $lineCount = 0;
-        $contentSample = '';
-
-        while ((! feof($resource)) && ($lineCount < 20)) {
-            $line = fgets($resource);
-
-            if ($line === false) {
-                break;
-            }
-
-            $contentSample .= $line;
-            $lineCount++;
-        }
-
         // The encoding of a subset should be declared before the encoding of its superset.
         $encodings = [
             'UTF-8',
@@ -405,15 +393,50 @@ class ImportAction extends Action
             'EUC-JP',
         ];
 
-        foreach ($encodings as $encoding) {
-            if (! mb_check_encoding($contentSample, $encoding)) {
-                continue;
+        try {
+            foreach ($encodings as $encoding) {
+                if ($this->isCsvEncodingValid($resource, $encoding)) {
+                    return $encoding;
+                }
             }
 
-            return $encoding;
+            return null;
+        } finally {
+            rewind($resource);
+        }
+    }
+
+    protected function isCsvEncodingValid(mixed $resource, string $encoding): bool
+    {
+        rewind($resource);
+
+        $pendingBytes = '';
+
+        while (! feof($resource)) {
+            $chunk = fread($resource, length: 8192);
+
+            if (($chunk === false) || (($chunk === '') && (! feof($resource)))) {
+                return false;
+            }
+
+            $content = $pendingBytes . $chunk;
+
+            // Each candidate uses at most four bytes per character. Retain a
+            // potentially incomplete suffix until the next read or EOF.
+            for ($pendingLength = 0; $pendingLength <= 3; $pendingLength++) {
+                if (! mb_check_encoding($pendingLength ? substr($content, 0, -$pendingLength) : $content, $encoding)) {
+                    continue;
+                }
+
+                $pendingBytes = $pendingLength ? substr($content, -$pendingLength) : '';
+
+                continue 2;
+            }
+
+            return false;
         }
 
-        return null;
+        return mb_check_encoding($pendingBytes, $encoding);
     }
 
     public static function getDefaultName(): ?string
@@ -579,6 +602,7 @@ class ImportAction extends Action
                 }
 
                 $csvReader = CsvReader::from($csvStream);
+                $csvReader->setEscape('');
 
                 if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                     $csvReader->setDelimiter($csvDelimiter);

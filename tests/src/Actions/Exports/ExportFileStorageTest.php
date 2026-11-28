@@ -1,6 +1,8 @@
 <?php
 
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
+use Filament\Actions\Exports\Downloaders\CsvDownloader;
+use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCsv;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
@@ -110,3 +112,64 @@ it('rejects a failed export file write and can execute the original serialized p
         }
     }
 })->with(['header', 'chunk', 'xlsx'])->with(['returns false' => false, 'throws' => true]);
+
+it('preserves CSV cells and records in exports', function (string $format, bool $preventFormulaInjection): void {
+    app()->bind(Authenticatable::class, User::class);
+    $disk = Storage::fake('local');
+    $values = ['quote\\",CELL_MARKER', 'trailing,slash\\', "line one\nline two", 'ordinary', "\tINERT_MARKER"];
+    $posts = collect($values)->map(static fn (string $title): Post => Post::factory()->create([
+        'title' => $title,
+        'content' => 'NEIGHBOR_MARKER',
+    ]));
+    $export = Export::create([
+        'user_id' => auth()->id(),
+        'exporter' => WorkerPostExporter::class,
+        'file_disk' => 'local',
+        'file_name' => 'posts',
+        'total_rows' => count($values),
+    ]);
+    $query = EloquentSerializeFacade::serialize(Post::query()->orderBy('id'));
+    $columnMap = ['title' => 'Title', 'content' => 'Body\\",HEADER_MARKER,slash\\'];
+
+    (new PrepareCsvExport($export, $query, $columnMap, records: []))->withFakeBatch()[0]->handle();
+    ExportColumn::configureUsing(
+        static fn (ExportColumn $column) => $column->preventFormulaInjection($preventFormulaInjection),
+        during: fn () => (new ExportCsv($export, $query, $posts->pluck('id')->all(), 1, $columnMap))->handle(),
+    );
+    if ($preventFormulaInjection) {
+        $values[4] = "'\tINERT_MARKER";
+    }
+    $expected = [array_values($columnMap), ...array_map(static fn (string $value): array => [$value, 'NEIGHBOR_MARKER'], $values)];
+
+    if ($format === 'csv') {
+        $response = app(CsvDownloader::class)($export);
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+        $reader = CsvReader::fromString($content);
+        $reader->setEscape('');
+
+        expect(str_starts_with($content, "\xEF\xBB\xBF"))->toBeTrue()
+            ->and(array_values(iterator_to_array($reader->getRecords())))->toBe($expected);
+
+        return;
+    }
+
+    (new CreateXlsxFile($export, $columnMap))->handle();
+
+    $reader = new XlsxReader;
+    $reader->open($disk->path($export->getFileDirectory() . '/posts.xlsx'));
+    $rows = [];
+
+    try {
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $rows[] = $row->toArray();
+            }
+        }
+    } finally {
+        $reader->close();
+    }
+
+    expect($rows)->toBe($expected);
+})->with(['csv', 'xlsx'])->with([false, true]);

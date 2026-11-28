@@ -293,6 +293,32 @@ describe('searching', function (): void {
             ->assertCanNotSeeTableRecords($posts->where('content', '!=', $content));
     });
 
+    it('bounds split search query bindings without discarding excess terms', function (string $searchPath, int $wordCount, array $expectedBindings): void {
+        $component = livewire(PostsTable::class)->instance();
+        $component->getTable()
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable(isIndividual: true)
+                    ->splitIndividualSearchTerms($searchPath === 'column override' ? true : null),
+            ])
+            ->splitSearchTerms($searchPath !== 'column override');
+
+        $search = str_repeat('a ', $wordCount - 1) . '0';
+
+        if ($searchPath === 'table') {
+            $component->tableSearch = $search;
+        } else {
+            $component->tableColumnSearches = ['title' => $search];
+        }
+
+        expect($component->getFilteredTableQuery()->getBindings())->toBe($expectedBindings);
+    })->with(['table', 'column', 'column override'])->with([
+        '50 terms' => [50, [...array_fill(0, 49, '%a%'), '%0%']],
+        '51 terms' => [51, ['%' . str_repeat('a ', 50) . '0%']],
+        'many terms' => [2000, ['%' . str_repeat('a ', 500) . '%']],
+        'much larger input' => [100000, ['%' . str_repeat('a ', 500) . '%']],
+    ]);
+
     it('can search posts with relationship', function (): void {
         $matchingPost = Post::factory()->create([
             'author_id' => User::factory()->state(['name' => 'Morgan Ashford']),
@@ -679,6 +705,44 @@ describe('column properties and assertions', function (): void {
             }
         }
     })->with([false, true]);
+
+    it('enforces nested layout visibility when mounting and submitting a column action object', function (): void {
+        $hiddenPost = Post::factory()->create(['is_published' => false]);
+        $visiblePost = Post::factory()->create(['is_published' => true]);
+        $hiddenAction = TestAction::make('column-action')->table($hiddenPost);
+        $visibleAction = TestAction::make('column-action')->table($visiblePost);
+
+        $component = livewire(ColumnActionsTable::class, ['hasLayout' => true, 'hasModal' => true]);
+
+        $component->mountAction($hiddenAction)
+            ->assertActionNotMounted()
+            ->call('callMountedAction')
+            ->assertNotDispatched('column-action-called');
+
+        $component->set('isHidden', true)
+            ->mountAction($visibleAction)
+            ->assertActionNotMounted()
+            ->call('callMountedAction')
+            ->assertNotDispatched('column-action-called');
+
+        $component->set('isHidden', false)
+            ->mountAction($visibleAction)
+            ->assertActionMounted($visibleAction)
+            ->assertNotDispatched('column-action-called');
+
+        $visiblePost->update(['is_published' => false]);
+
+        $component->call('callMountedAction')
+            ->assertNotDispatched('column-action-called');
+
+        $visiblePost->update(['is_published' => true]);
+
+        $component->unmountAction()
+            ->mountAction($visibleAction)
+            ->assertActionMounted($visibleAction)
+            ->call('callMountedAction')
+            ->assertDispatched('column-action-called', recordKey: $visiblePost->getKey());
+    });
 
     it('refuses hidden callable column actions', function (): void {
         $post = Post::factory()->create();
@@ -2556,6 +2620,8 @@ class ColumnActionsTable extends PostsTable
 
     public bool $isGrouped = false;
 
+    public bool $hasLayout = false;
+
     public bool $hasModal = false;
 
     public bool $isDynamic = false;
@@ -2589,15 +2655,24 @@ class ColumnActionsTable extends PostsTable
             ->action($callback);
         $columns = [
             TextColumn::make('title')
-                ->hidden($isHidden)
+                ->hidden($this->hasLayout ? false : $isHidden)
                 ->action($action),
-            TextColumn::make('content')->hidden($isHidden)->action($callback),
+            TextColumn::make('content')->hidden($this->hasLayout ? false : $isHidden)->action($callback),
         ];
 
         if ($this->hasDuplicateColumnAction) {
             $columns[] = TextColumn::make('rating')
                 ->hidden(! $this->isHidden)
                 ->action($this->isActionReused ? $action : Action::make('column-action')->action(fn () => $this->dispatch('duplicate-column-action-called')));
+        }
+
+        if ($this->hasLayout) {
+            $columns = [
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make($columns)
+                        ->hidden(static fn (?Post $record): bool => $record?->is_published === false),
+                ])->hidden(fn (): bool => $this->isHidden),
+            ];
         }
 
         return $table->query(Post::query())

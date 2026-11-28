@@ -151,6 +151,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     {
         $state = $this->getState();
 
+        if (is_float($state) || is_bool($state) || is_array($state) || is_array($this->getStateUsingCallback())) {
+            return [
+                ...$this->getBaseRules(),
+                'string',
+            ];
+        }
+
         if (blank($state)) {
             return $this->getBaseRules();
         }
@@ -757,7 +764,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             $relatedRecord = $relationshipQuery->first();
         }
 
-        if (! $relatedRecord) {
+        if ((! $relatedRecord) || ((string) $relatedRecord->getAttribute($this->getRelatedKeyNameForOptionsRelationship($relationship)) !== (string) $state)) {
             return null;
         }
 

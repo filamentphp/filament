@@ -34,7 +34,7 @@ abstract class Exporter
     /** @var array<ExportColumn> */
     protected array $cachedColumns;
 
-    protected ?Model $record;
+    protected ?Model $record = null;
 
     /**
      * @var class-string<Model>|null

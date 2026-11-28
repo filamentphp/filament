@@ -120,6 +120,14 @@ trait CanReorderRecords
     }
 
     /**
+     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
+     */
+    public function getReorderAuthorization(): bool | Closure
+    {
+        return $this->isReorderAuthorized;
+    }
+
+    /**
      * @param  array<int | string>  $order
      */
     public function callBeforeReordering(array $order): void
