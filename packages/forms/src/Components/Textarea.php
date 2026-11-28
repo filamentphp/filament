@@ -7,6 +7,7 @@ use Filament\Forms\Components\Concerns\CanDisableGrammarly;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Schemas\Components\StateCasts\TrimStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
@@ -73,6 +74,12 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
     public function shouldAutosize(): bool
     {
         return (bool) $this->evaluate($this->shouldAutosize);
+    }
+
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled()) && (! $this->isReadOnly())));
     }
 
     public function toEmbeddedHtml(): string
@@ -150,14 +157,8 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
         return [
             ...parent::getDefaultStateCasts(),
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
+            app(TrimStateCast::class, ['isTrimmed' => $this->isTrimmed(...)]),
         ];
-    }
-
-    public function mutateDehydratedState(mixed $state): mixed
-    {
-        $state = $this->trimState($state);
-
-        return parent::mutateDehydratedState($state);
     }
 
     public function mutateStateForValidation(mixed $state): mixed
@@ -166,11 +167,6 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
         $state = $this->trimState($state);
 
         return parent::mutateStateForValidation($state);
-    }
-
-    public function mutatesDehydratedState(): bool
-    {
-        return parent::mutatesDehydratedState() || $this->isTrimmed();
     }
 
     public function mutatesStateForValidation(): bool

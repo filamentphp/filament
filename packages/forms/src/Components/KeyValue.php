@@ -147,6 +147,13 @@ class KeyValue extends Field implements HasEmbeddedView
             ]) ?? $action;
         }
 
+        if (! $this->modifyReorderActionUsing) {
+            $action->extraAttributes([
+                'x-bind:tabindex' => 'rows.length > 1 ? -1 : 0',
+                'x-bind:aria-hidden' => "rows.length > 1 ? 'true' : null",
+            ], merge: true);
+        }
+
         return $action;
     }
 
@@ -402,13 +409,6 @@ class KeyValue extends Field implements HasEmbeddedView
 
         $alpineDivAttributes = $this->getExtraAlpineAttributeBag()
             ->class(['fi-fo-key-value-table-ctn']);
-
-        if (! $this->modifyReorderActionUsing) {
-            $reorderAction->extraAttributes([
-                'x-bind:tabindex' => 'rows.length > 1 ? -1 : 0',
-                'x-bind:aria-hidden' => "rows.length > 1 ? 'true' : null",
-            ], merge: true);
-        }
 
         ob_start(); ?>
 

@@ -99,6 +99,12 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         );
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isNative() && $this->isRequired() && (! $this->isDisabled()) && (! $this->isReadOnly())));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $disabledDates = $this->getDisabledDates();

@@ -244,6 +244,25 @@ Filament provides a `$applyStateBindingModifiers()` function that you may use in
 </x-dynamic-component>
 ```
 
+## Controlling required marker announcements
+
+The required asterisk is hidden from screen readers and has a text equivalent by default. If your custom control already exposes its required state, for example through the native `required` attribute, you can omit this text to avoid repeating that information:
+
+```php
+use Filament\Forms\Components\Field;
+
+class LocationPicker extends Field
+{
+    protected string $view = 'filament.forms.components.location-picker';
+
+    protected bool $shouldRenderRequiredMarkDescription = false;
+}
+```
+
+Only suppress the text while your control exposes the required state separately. This property does not add validation or accessibility attributes to your control. You may override `shouldRenderRequiredMarkDescription()` when the decision depends on the rendered control's configuration. The wrapper also omits the text when the field already has a `getRequiredDescription()` association.
+
+Fields extending a built-in field inherit its marker-description behavior. If you replace its control markup, check whether that behavior is still appropriate. When using the field wrapper Blade component without a field instance, you can opt out using `:should-render-required-mark-description="false"`.
+
 ## Calling field methods from JavaScript
 
 You can call methods on your custom field class from JavaScript in a Blade view. For example, a location picker might call a geocoding service in PHP. Expose the method using `#[Exposed]`.
