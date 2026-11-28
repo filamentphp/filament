@@ -36,6 +36,10 @@ trait HasFilters /** @phpstan-ignore trait.unused */
             $this->filters = session()->get($filtersSessionKey);
         }
 
+        if ($shouldPersistFiltersInSession && ($this->filters !== null) && $this->hasInvalidFilterEncoding($this->filters)) {
+            $this->filters = null;
+        }
+
         // https://github.com/filamentphp/filament/pull/7999
         if ($this->filters) {
             $this->normalizeFilterValuesFromQueryString($this->filters);
@@ -85,11 +89,33 @@ trait HasFilters /** @phpstan-ignore trait.unused */
     public function updatedFilters(): void
     {
         if ($this->persistsFiltersInSession()) {
+            if (($this->filters !== null) && $this->hasInvalidFilterEncoding($this->filters)) {
+                $this->filters = null;
+            }
+
             session()->put(
                 $this->getFiltersSessionKey(),
                 $this->filters,
             );
         }
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $state
+     */
+    protected function hasInvalidFilterEncoding(array $state): bool
+    {
+        foreach ($state as $key => $value) {
+            if (
+                (is_string($key) && (! mb_check_encoding($key, 'UTF-8'))) ||
+                (is_string($value) && (! mb_check_encoding($value, 'UTF-8'))) ||
+                (is_array($value) && $this->hasInvalidFilterEncoding($value))
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     #[Unexposed]

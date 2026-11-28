@@ -293,6 +293,32 @@ describe('searching', function (): void {
             ->assertCanNotSeeTableRecords($posts->where('content', '!=', $content));
     });
 
+    it('bounds split search query bindings without discarding excess terms', function (string $searchPath, int $wordCount, array $expectedBindings): void {
+        $component = livewire(PostsTable::class)->instance();
+        $component->getTable()
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable(isIndividual: true)
+                    ->splitIndividualSearchTerms($searchPath === 'column override' ? true : null),
+            ])
+            ->splitSearchTerms($searchPath !== 'column override');
+
+        $search = str_repeat('a ', $wordCount - 1) . '0';
+
+        if ($searchPath === 'table') {
+            $component->tableSearch = $search;
+        } else {
+            $component->tableColumnSearches = ['title' => $search];
+        }
+
+        expect($component->getFilteredTableQuery()->getBindings())->toBe($expectedBindings);
+    })->with(['table', 'column', 'column override'])->with([
+        '50 terms' => [50, [...array_fill(0, 49, '%a%'), '%0%']],
+        '51 terms' => [51, ['%' . str_repeat('a ', 50) . '0%']],
+        'many terms' => [2000, ['%' . str_repeat('a ', 500) . '%']],
+        'much larger input' => [100000, ['%' . str_repeat('a ', 500) . '%']],
+    ]);
+
     it('can search posts with relationship', function (): void {
         $matchingPost = Post::factory()->create([
             'author_id' => User::factory()->state(['name' => 'Morgan Ashford']),

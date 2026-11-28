@@ -1904,6 +1904,45 @@ describe('item actions', function (): void {
 
         $undoRepeaterFake();
     });
+
+    it('describes each item action with the position of its item', function (Closure $configureRepeater, bool $isNested): void {
+        $repeater = $configureRepeater(Repeater::make('people'))
+            ->cloneable()
+            ->extraItemActions([Action::make('flag')->icon('heroicon-m-flag')]);
+        $items = ['first' => ['name' => 'Alex'], 'second' => ['name' => 'Sam']];
+
+        $html = Schema::make(Livewire::make())
+            ->components([$isNested ? Repeater::make('groups')->schema([$repeater])->deletable(false)->reorderable(false) : $repeater])
+            ->fill($isNested ? ['groups' => ['one' => ['people' => $items], 'two' => ['people' => $items]]] : ['people' => $items])
+            ->toHtml();
+
+        $document = new DOMDocument;
+        $previous = libxml_use_internal_errors(true);
+        $document->loadHTML('<meta charset="UTF-8">' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        $xpath = new DOMXPath($document);
+
+        foreach (['flag', 'clone', 'delete'] as $actionName) {
+            $buttons = $xpath->query('//button[@*[name() = "wire:click" and starts-with(., "mountAction(\'' . $actionName . '\'")]]');
+
+            expect($buttons->length)->toBe($isNested ? 4 : 2);
+            $descriptionIds = [];
+
+            foreach ($buttons as $index => $button) {
+                $descriptionIds[] = $descriptionId = $button->getAttribute('aria-describedby');
+                $description = $xpath->query('//*[@id="' . $descriptionId . '"]')->item(0);
+
+                expect($description?->textContent)->toBe('Item, position ' . (($index % 2) + 1) . ' of 2');
+            }
+
+            expect(array_unique($descriptionIds))->toHaveCount($buttons->length);
+        }
+    })->with([
+        'default' => [static fn (Repeater $repeater): Repeater => $repeater->schema([TextInput::make('name')])],
+        'simple' => [static fn (Repeater $repeater): Repeater => $repeater->simple(TextInput::make('name'))],
+        'table' => [static fn (Repeater $repeater): Repeater => $repeater->schema([TextInput::make('name')])->table([Repeater\TableColumn::make('Name')])],
+    ])->with(['standalone' => false, 'nested' => true]);
 });
 
 describe('relationships', function (): void {
@@ -2756,6 +2795,21 @@ describe('shared `statePath` `Group` components', function (): void {
 });
 
 describe('rendering', function (): void {
+    it('preserves accessible header markers without requiring the column fields', function (): void {
+        $schema = Schema::make(Livewire::make())->components([
+            Repeater::make('people')->schema([TextInput::make('name')])->table([
+                Repeater\TableColumn::make('Name')->markAsRequired(),
+            ]),
+        ])->fill(['people' => [['name' => 'Alex']]]);
+        $document = new DOMDocument;
+        @$document->loadHTML($schema->toHtml());
+        $query = new DOMXPath($document);
+
+        expect($query->query('//th[.//sup]')->item(0)->textContent)->toContain('(required)')
+            ->and($query->query('//sup')->item(0)->getAttribute('aria-hidden'))->toBe('true')
+            ->and($query->query('//*[@required or @aria-required]')->length)->toBe(0);
+    });
+
     it('can render with `addable(false)`', function (): void {
         livewire(RenderRepeaterWithNotAddable::class)->assertSuccessful();
     });

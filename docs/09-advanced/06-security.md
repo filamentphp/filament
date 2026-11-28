@@ -343,6 +343,24 @@ public function register(): void
 
 Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
 
+### Limiting Markdown nesting
+
+Disabled Markdown editors, Markdown text columns, text entries, and table summarizers use a CommonMark `max_nesting_level` of `100` by default. This bounds block nesting, such as nested blockquotes and lists, before HTML sanitization runs. Beyond the limit, additional block markers are rendered as text instead of creating deeper blocks. This does not limit the total input size or inline nesting; you should still validate the size of untrusted Markdown in your application.
+
+You may override the limit using `commonMarkOptions()` on the component:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')
+    ->markdown()
+    ->commonMarkOptions(['max_nesting_level' => 50])
+```
+
+Other CommonMark options do not remove the default limit. Passing `commonMarkOptions(null)` restores the default. Only raise the limit for trusted content that requires deeper nesting, since doing so increases rendering resource usage.
+
+This default does not apply to Laravel's `Str::markdown()` or `str()->markdown()` helpers, the `Filament\Support\Markdown` helper, or the editable Markdown editor's JavaScript preview. When rendering stored Markdown in your own views, pass the nesting limit explicitly, as shown below.
+
 ### Sanitizing in Blade views
 
 When outputting rich text content (from a rich editor or Markdown editor) in your own Blade views, you are responsible for sanitizing it. You can use Filament's `sanitizeHtml()` string helper:
@@ -354,7 +372,7 @@ When outputting rich text content (from a rich editor or Markdown editor) in you
 Never use `{!! $content !!}` with unsanitized user content. If you need to render Markdown as HTML, chain the helpers:
 
 ```blade
-{!! str($record->content)->markdown()->sanitizeHtml() !!}
+{!! str($record->content)->markdown(['max_nesting_level' => 100])->sanitizeHtml() !!}
 ```
 
 ## Panel access

@@ -27,6 +27,11 @@ RichEditor::make('content')
 
 The JSON is in [TipTap's](https://tiptap.dev) format, which is a structured representation of the content.
 
+> [!WARNING]
+> JSON documents loaded into or submitted through the rich editor field must have a nesting depth of at most 100, counting every object and array, including attributes and custom block configuration. Deeper documents are reset to an empty document before processing, regardless of whether you store the field as JSON or HTML. This leaves room for Livewire's snapshot metadata within PHP's JSON depth limit.
+>
+> Documents must also render with the registered PHP TipTap extensions. Filament runs their HTML serialization callbacks when hydrating and saving the field, even in JSON mode, without replacing valid JSON with HTML or coercing extension attributes. A serialization failure resets the whole field document to an empty document; saving it replaces the original content. `RichContentRenderer` returns empty HTML for serialization failures in existing stored content without changing storage.
+
 If you're saving the JSON content using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
 ```php

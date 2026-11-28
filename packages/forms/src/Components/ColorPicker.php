@@ -69,6 +69,12 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         return $this->evaluate($this->format);
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled())));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $extraAttributeBag = $this->getExtraAttributeBag();

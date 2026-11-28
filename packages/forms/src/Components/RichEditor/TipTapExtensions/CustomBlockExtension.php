@@ -39,7 +39,11 @@ class CustomBlockExtension extends Node
     {
         return [
             'config' => [
-                'parseHTML' => fn ($DOMNode) => json_decode($DOMNode->getAttribute('data-config')) ?: null,
+                'parseHTML' => function ($DOMNode) {
+                    $config = json_decode($DOMNode->getAttribute('data-config'));
+
+                    return (json_encode($config) === false) ? null : ($config ?: null);
+                },
                 'renderHTML' => fn ($attributes) => ['data-config' => json_encode($attributes->config ?? null)],
             ],
             'id' => [
@@ -51,7 +55,7 @@ class CustomBlockExtension extends Node
                 'rendered' => false,
             ],
             'preview' => [
-                'parseHTML' => fn ($DOMNode) => base64_decode($DOMNode->getAttribute('data-preview') ?: ''),
+                'parseHTML' => fn () => null,
                 'rendered' => false,
             ],
         ];

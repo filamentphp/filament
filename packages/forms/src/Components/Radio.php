@@ -47,6 +47,12 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
         return (bool) $this->evaluate($this->isInline);
     }
 
+    public function shouldRenderRequiredMarkDescription(): bool
+    {
+        return parent::shouldRenderRequiredMarkDescription()
+            && (! ($this->isRequired() && (! $this->isDisabled())));
+    }
+
     public function toEmbeddedHtml(): string
     {
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()->merge($this->getAccessibilityAttributes(), escape: false);

@@ -402,7 +402,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(fn (array $arguments): array => $this->getItemActionAttributes($arguments), merge: true);
     }
 
     public function cloneAction(?Closure $callback): static
@@ -448,7 +448,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(fn (array $arguments): array => $this->getItemActionAttributes($arguments), merge: true);
     }
 
     public function deleteAction(?Closure $callback): static
@@ -494,7 +494,10 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(
+            fn (Action $action): array => $this->getReorderingActionAttributes($action, 'down', ! $this->isReorderableWithButtons()),
+            merge: true,
+        );
     }
 
     public function moveDownAction(?Closure $callback): static
@@ -540,7 +543,10 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(
+            fn (Action $action): array => $this->getReorderingActionAttributes($action, 'up', ! $this->isReorderableWithButtons()),
+            merge: true,
+        );
     }
 
     public function moveUpAction(?Closure $callback): static
@@ -588,7 +594,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(['x-sortable-handle' => true], merge: true);
     }
 
     public function reorderAction(?Closure $callback): static
@@ -1706,10 +1712,10 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                         $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                         $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
-                        $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveDownAction, 'down', ! $isReorderableWithButtons), merge: true);
+                        $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled());
                         $moveDownActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveDownAction->isVisible();
                         $itemMoveUpAction = $moveUpAction(['item' => $itemKey]);
-                        $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveUpAction, 'up', ! $isReorderableWithButtons), merge: true);
+                        $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled());
                         $moveUpActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveUpAction->isVisible();
                         $hasItemHeader = $hasItemHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                         ?>
@@ -1742,7 +1748,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                         <ul class="fi-fo-repeater-item-header-start-actions">
                                             <?php if ($reorderActionIsVisible) { ?>
                                                 <li x-on:click.stop>
-                                                    <?= $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true)->toHtml() ?>
+                                                    <?= $reorderAction->toHtml() ?>
                                                 </li>
                                             <?php } ?>
 
@@ -1909,10 +1915,10 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                         $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                         $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
-                        $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveDownAction, 'down', ! $isReorderableWithButtons), merge: true);
+                        $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled());
                         $moveDownActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveDownAction->isVisible();
                         $itemMoveUpAction = $moveUpAction(['item' => $itemKey]);
-                        $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveUpAction, 'up', ! $isReorderableWithButtons), merge: true);
+                        $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled());
                         $moveUpActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveUpAction->isVisible();
                         ?>
 
@@ -1929,7 +1935,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                 <ul class="fi-fo-simple-repeater-item-actions">
                                     <?php if ($reorderActionIsVisible) { ?>
                                         <li x-on:click.stop>
-                                            <?= $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true)->toHtml() ?>
+                                            <?= $reorderAction->toHtml() ?>
                                         </li>
                                     <?php } ?>
 
@@ -2070,7 +2076,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                 ?>
                                 <th scope="col" <?= $thAttributes->toHtml() ?>>
                                     <?php if (! $column->isHeaderLabelHidden()) { ?>
-                                        <?= e($column->getLabel()) ?><?php if ($column->isMarkedAsRequired()) { ?><sup class="fi-fo-table-repeater-header-required-mark">*</sup><?php } ?>
+                                        <?= e($column->getLabel()) ?><?php if ($column->isMarkedAsRequired()) { ?><sup aria-hidden="true" class="fi-fo-table-repeater-header-required-mark">*</sup><span class="fi-sr-only"> <?= e(__('filament::components/required-mark.label')) ?></span><?php } ?>
                                     <?php } else { ?>
                                         <span class="fi-sr-only">
                                             <?= e($column->getLabel()) ?>
@@ -2104,10 +2110,10 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                             $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
                             $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                             $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
-                            $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveDownAction, 'down', ! $isReorderableWithButtons), merge: true);
+                            $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled());
                             $moveDownActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveDownAction->isVisible();
                             $itemMoveUpAction = $moveUpAction(['item' => $itemKey]);
-                            $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveUpAction, 'up', ! $isReorderableWithButtons), merge: true);
+                            $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled());
                             $moveUpActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveUpAction->isVisible();
                             ?>
 
@@ -2121,7 +2127,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                                             <div class="fi-fo-table-repeater-actions">
                                                 <?php if ($reorderActionIsVisible) { ?>
                                                     <div x-on:click.stop>
-                                                        <?= $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true)->toHtml() ?>
+                                                        <?= $reorderAction->toHtml() ?>
                                                     </div>
                                                 <?php } ?>
 
@@ -2320,7 +2326,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             ...($isVisuallyHidden ? ['tabindex' => -1, 'data-reorder-hidden' => true] : []),
             'data-reorder-direction' => $direction,
             'data-reorder-action' => ($action->getActionFunction() && (! $action->getLivewireEventClickHandler()) && blank($action->getParentActionCallLivewireClickHandler())) ? $action->getLivewireClickHandler() : null,
-            'aria-describedby' => $this->getId() . '-item-' . md5((string) $action->getArguments()['item']),
+            ...$this->getItemActionAttributes($action->getArguments()),
         ];
     }
 

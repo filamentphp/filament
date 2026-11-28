@@ -135,13 +135,19 @@ class Count extends Summarizer
                             <?php $color = json_decode($color); ?>
 
                             <?php foreach ($icons as $icon => $count) { ?>
+                                <?php
+                                if (blank($icon = unserialize($icon))) {
+                                    continue;
+                                }
+                                ?>
+
                                 <li>
                                     <span>
                                         <?= $count ?>
                                     </span>
 
                                     <?= generate_icon_html(
-                                        unserialize($icon),
+                                        $icon,
                                         attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $color),
                                         size: IconSize::Large,
                                     )->toHtml() ?>

@@ -65,7 +65,7 @@ class ColumnsBrowserTest extends Page implements HasTable
                     Tables\Columns\Layout\Split::make([
                         Tables\Columns\TextInputColumn::make('title')->searchable(isIndividual: true)->sortable()
                             ->extraAttributes(static fn (Post $record): array => ['data-testid' => 'layout-title-' . $record->getKey()]),
-                        Tables\Columns\TextColumn::make('content')->state('Publish')
+                        Tables\Columns\TextColumn::make('content')
                             ->action(static fn (Post $record) => $record->update(['content' => 'Action called']))
                             ->extraAttributes(static fn (Post $record): array => ['data-testid' => 'layout-action-' . $record->getKey()]),
                         Tables\Columns\SelectColumn::make('rating')->native(false)->options([1 => 'Low']),

@@ -97,9 +97,11 @@
                 </span>
             </span>
 
-            {{ \Filament\Support\generate_icon_html(Heroicon::ChevronDown, alias: PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new ComponentAttributeBag([
+            {{
+                \Filament\Support\generate_icon_html(Heroicon::ChevronDown, alias: PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new ComponentAttributeBag([
                     'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
-                ])) }}
+                ]))
+            }}
         </button>
     </x-slot>
 
@@ -146,9 +148,11 @@
                                 class="fi-dropdown-list-item"
                             >
                                 @if ($tenantImage)
+                                    {{-- format-ignore-start --}}
                                     @php
                                         $tenantImage = str_replace(['\\', "'", "\r", "\n", "\f"], ['\\\\', "\\'", '\d ', '\a ', '\c '], $tenantImage);
-                                    '@endphp
+                                    @endphp
+                                    {{-- format-ignore-end --}}
 
                                     <div
                                         class="fi-dropdown-list-item-image"
