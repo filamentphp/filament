@@ -11,6 +11,8 @@ trait CanTrimState
 
     protected ?bool $cachedIsTrimmed = null;
 
+    protected bool $isEvaluatingTrimmed = false;
+
     public function trim(bool | Closure $condition = true): static
     {
         $this->isTrimmed = $condition;
@@ -22,7 +24,22 @@ trait CanTrimState
 
     public function isTrimmed(): bool
     {
-        return $this->cachedIsTrimmed ??= (bool) $this->evaluate($this->isTrimmed);
+        // A condition may read this field's state before its trimming decision is known.
+        if ($this->isEvaluatingTrimmed) {
+            return false;
+        }
+
+        if ($this->cachedIsTrimmed !== null) {
+            return $this->cachedIsTrimmed;
+        }
+
+        $this->isEvaluatingTrimmed = true;
+
+        try {
+            return $this->cachedIsTrimmed = (bool) $this->evaluate($this->isTrimmed);
+        } finally {
+            $this->isEvaluatingTrimmed = false;
+        }
     }
 
     protected function trimState(mixed $state): mixed

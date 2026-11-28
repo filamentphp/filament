@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Schemas\Components\StateCasts\TrimStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -191,20 +192,8 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
         return [
             ...parent::getDefaultStateCasts(),
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
+            app(TrimStateCast::class, ['isTrimmed' => $this->isTrimmed(...), 'isArray' => true]),
         ];
-    }
-
-    public function mutateDehydratedState(mixed $state): mixed
-    {
-        if (is_array($state)) {
-            $state = array_map(function (mixed $value): mixed {
-                return $this->trimState($value);
-            }, $state);
-        } else {
-            $state = $this->trimState($state);
-        }
-
-        return parent::mutateDehydratedState($state);
     }
 
     public function mutateStateForValidation(mixed $state): mixed
@@ -258,6 +247,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'type' => 'text',
                 'x-bind' => 'input',
+                'x-show' => $isDisabled ? '! state?.length' : null,
             ], escape: false)
             ->class([
                 'fi-input',
@@ -389,11 +379,6 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-tags-input-wrp'],
         );
-    }
-
-    public function mutatesDehydratedState(): bool
-    {
-        return parent::mutatesDehydratedState() || $this->isTrimmed();
     }
 
     public function mutatesStateForValidation(): bool

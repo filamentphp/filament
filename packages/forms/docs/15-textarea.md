@@ -115,6 +115,8 @@ Textarea::make('description')
     ->trim()
 ```
 
+Trimming applies to PHP state reads (including `$get()`), validation, and submitted input, without changing the browser value. Use `$rawState` for untrimmed input. Trimming runs before custom casts and dehydration callbacks, not on their output.
+
 You may want to enable trimming globally for all textareas, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 
 ```php

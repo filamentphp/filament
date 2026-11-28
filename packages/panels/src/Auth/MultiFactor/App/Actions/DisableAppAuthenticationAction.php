@@ -69,6 +69,8 @@ class DisableAppAuthenticationAction
                         ->visible(fn (): bool => $isRecoverable && (! $get('useRecoveryCode'))))
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.validation_attribute'))
                     ->required(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
+                    ->dehydrated(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
+                    ->validatedWhenNotDehydrated(false)
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             if (is_string($value) && $appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
@@ -85,7 +87,7 @@ class DisableAppAuthenticationAction
                     ->revealable(Filament::arePasswordsRevealable())
                     ->autocomplete('one-time-code')
                     // Validate the normalized value without making the input natively required when a one-time code is used.
-                    ->rule('required', fn (Get $get): bool => blank($get('code')))
+                    ->rule('required', fn (Get $get): bool => filled($get('recoveryCode')))
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             if (blank($value)) {

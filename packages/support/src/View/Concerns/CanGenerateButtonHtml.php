@@ -143,6 +143,7 @@ trait CanGenerateButtonHtml
                 'aria-disabled' => $isDisabled ? 'true' : null,
                 // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
                 'aria-label' => $isLabelSrOnly ? e(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))), doubleEncode: false) : null,
+                'data-disabled' => ($hasFormProcessingLoadingIndicator && ($isDisabled || in_array($attributes->get('aria-disabled'), [true, 'true'], true))) ? true : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
                 'tabindex' => (($tag === 'a') && $isDisabled && $hasTooltip) ? '0' : null,
@@ -155,7 +156,7 @@ trait CanGenerateButtonHtml
                 'wire:loading.class' => ($tag === 'button' && $isDisabledDuringLoading) ? $attributes->prepends('fi-disabled') : null,
                 'wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') => ($hasLoadingIndicator && (! $hasSeparateLoadingIndicatorTarget)) ? $attributes->prepends('fi-loading') : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                'x-bind:aria-disabled' => $hasFormProcessingLoadingIndicator ? ('isProcessing || isLoading || ' . Js::from($isDisabled || in_array($attributes->get('aria-disabled'), [true, 'true'], true))) : null,
+                'x-bind:aria-disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing || isLoading || isDisabled' : null,
                 'x-bind:aria-label' => ($isLabelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))))) : null,
             ], escape: false)
             ->when(

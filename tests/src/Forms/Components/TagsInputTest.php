@@ -161,6 +161,24 @@ describe('`tagSuffix()`', function (): void {
 });
 
 describe('state hydration', function (): void {
+    it('splits serialized tags before evaluating `trim()` conditions', function (string $state, string $separator, array $rawTags, array $trimmedTags, string $submitted): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = TagsInput::make('tags')
+                    ->separator($separator)
+                    ->trim(static fn (array $state): bool => count($state) > 0),
+            ])
+            ->fill(['tags' => $state]);
+
+        expect($schema->getRawState()['tags'])->toBe($rawTags)
+            ->and($field->getState())->toBe($trimmedTags)
+            ->and($schema->getState()['tags'])->toBe($submitted);
+    })->with([
+        [' | alpha | ', ' | ', ['alpha'], ['alpha'], 'alpha'],
+        [' alpha , beta ', ',', [' alpha ', ' beta '], ['alpha', 'beta'], 'alpha,beta'],
+    ]);
+
     it('keeps array state as-is, including blank values', function (): void {
         $livewire = Livewire::make();
         $state = [1 => '', 3 => ' ', 5 => '0', 7 => 'one'];
@@ -298,11 +316,11 @@ describe('state dehydration', function (): void {
         [null, ',', [], ''],
     ]);
 
-    it('joins array state with separator without filtering array values', function (array $state, string $separator, string $expected): void {
+    it('joins trimmed array values without trimming the separator or filtering blanks', function (array $state, string $separator, string $expected): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
-                TagsInput::make('tags')->separator($separator),
+                TagsInput::make('tags')->trim()->separator($separator),
             ])
             ->fill(['tags' => $state]);
 
@@ -312,10 +330,40 @@ describe('state dehydration', function (): void {
         'blank and `0` array values' => [['alpha', '', '0', ''], ',', 'alpha,,0,'],
         'custom multi-character separator' => [['alpha', '0', 'beta'], '||', 'alpha||0||beta'],
         'separator regex characters' => [['alpha', '0', 'beta'], '.*', 'alpha.*0.*beta'],
+        'blank final tag with padded separator' => [[' alpha ', '　'], ' | ', 'alpha | '],
+        'blank first tag with padded separator' => [[' ', ' beta '], ' | ', ' | beta'],
     ]);
+
+    it('does not trim tags returned by dehydration callbacks', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')
+                    ->trim()
+                    ->dehydrateStateUsing(static fn (array $state): array => [...$state, ' beta ']),
+            ])
+            ->fill(['tags' => [' alpha ']]);
+
+        expect($schema->getState())->toBe(['tags' => ['alpha', ' beta ']])
+            ->and($schema->getRawState()['tags'])->toBe([' alpha ']);
+    });
 });
 
 describe('state', function (): void {
+    it('exposes trimmed tags without changing raw array values', function (): void {
+        $rawTags = ['first' => '　alpha　', 'second' => ' beta ', 'number' => 123, 'null' => null, 'boolean' => true];
+        $expectedTags = ['first' => 'alpha', 'second' => 'beta', 'number' => 123, 'null' => null, 'boolean' => true];
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$tags = TagsInput::make('tags')->trim()])
+            ->fill(['tags' => $rawTags]);
+
+        expect($tags->getState())->toBe($expectedTags)
+            ->and($tags->getGetCallback()('tags'))->toBe($expectedTags)
+            ->and($schema->getRawState()['tags'])->toBe($rawTags)
+            ->and($schema->getState()['tags'])->toBe($expectedTags);
+    });
+
     it('can trim whitespace from `TagsInput` array values', function (mixed $input, mixed $expected): void {
         livewire(TestComponentWithTagsInputTrim::class)
             ->fillForm(['tags' => $input])
