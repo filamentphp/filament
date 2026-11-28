@@ -3,6 +3,7 @@
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -909,20 +910,22 @@ describe('action modifier callbacks', function (): void {
 });
 
 describe('item action descriptions', function (): void {
-    it('describes each item action with the position of its item', function (): void {
+    it('describes each item action with the position of its item', function (bool $isNested): void {
         $builder = Builder::make('content')
             ->blocks([
                 Builder\Block::make('paragraph')->schema([TextInput::make('text')]),
             ])
+            ->blockPreviews()
             ->cloneable()
             ->extraItemActions([Action::make('flag')->icon('heroicon-m-flag')]);
+        $items = [
+            'first' => ['type' => 'paragraph', 'data' => ['text' => 'Alpha']],
+            'second' => ['type' => 'paragraph', 'data' => ['text' => 'Beta']],
+        ];
 
         $html = Schema::make(Livewire::make())
-            ->components([$builder])
-            ->fill(['content' => [
-                'first' => ['type' => 'paragraph', 'data' => ['text' => 'Alpha']],
-                'second' => ['type' => 'paragraph', 'data' => ['text' => 'Beta']],
-            ]])
+            ->components([$isNested ? Repeater::make('groups')->schema([$builder])->deletable(false)->reorderable(false) : $builder])
+            ->fill($isNested ? ['groups' => ['one' => ['content' => $items], 'two' => ['content' => $items]]] : ['content' => $items])
             ->toHtml();
 
         $document = new DOMDocument;
@@ -932,18 +935,22 @@ describe('item action descriptions', function (): void {
         libxml_use_internal_errors($previous);
         $xpath = new DOMXPath($document);
 
-        foreach (['flag', 'clone', 'delete'] as $actionName) {
+        foreach (['flag', 'clone', 'delete', 'edit'] as $actionName) {
             $buttons = $xpath->query('//button[@*[name() = "wire:click" and starts-with(., "mountAction(\'' . $actionName . '\'")]]');
 
-            expect($buttons->length)->toBe(2);
+            expect($buttons->length)->toBe($isNested ? 4 : 2);
+            $descriptionIds = [];
 
             foreach ($buttons as $index => $button) {
-                $description = $xpath->query('//*[@id="' . $button->getAttribute('aria-describedby') . '"]')->item(0);
+                $descriptionIds[] = $descriptionId = $button->getAttribute('aria-describedby');
+                $description = $xpath->query('//*[@id="' . $descriptionId . '"]')->item(0);
 
-                expect($description?->textContent)->toBe('Paragraph, position ' . ($index + 1) . ' of 2');
+                expect($description?->textContent)->toBe('Paragraph, position ' . (($index % 2) + 1) . ' of 2');
             }
+
+            expect(array_unique($descriptionIds))->toHaveCount($buttons->length);
         }
-    });
+    })->with(['standalone' => false, 'nested' => true]);
 });
 
 describe('block labels', function (): void {

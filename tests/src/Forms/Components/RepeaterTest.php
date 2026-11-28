@@ -1803,14 +1803,15 @@ describe('item actions', function (): void {
         $undoRepeaterFake();
     });
 
-    it('describes each item action with the position of its item', function (Closure $configureRepeater): void {
+    it('describes each item action with the position of its item', function (Closure $configureRepeater, bool $isNested): void {
         $repeater = $configureRepeater(Repeater::make('people'))
             ->cloneable()
             ->extraItemActions([Action::make('flag')->icon('heroicon-m-flag')]);
+        $items = ['first' => ['name' => 'Alex'], 'second' => ['name' => 'Sam']];
 
         $html = Schema::make(Livewire::make())
-            ->components([$repeater])
-            ->fill(['people' => ['first' => ['name' => 'Alex'], 'second' => ['name' => 'Sam']]])
+            ->components([$isNested ? Repeater::make('groups')->schema([$repeater])->deletable(false)->reorderable(false) : $repeater])
+            ->fill($isNested ? ['groups' => ['one' => ['people' => $items], 'two' => ['people' => $items]]] : ['people' => $items])
             ->toHtml();
 
         $document = new DOMDocument;
@@ -1823,19 +1824,23 @@ describe('item actions', function (): void {
         foreach (['flag', 'clone', 'delete'] as $actionName) {
             $buttons = $xpath->query('//button[@*[name() = "wire:click" and starts-with(., "mountAction(\'' . $actionName . '\'")]]');
 
-            expect($buttons->length)->toBe(2);
+            expect($buttons->length)->toBe($isNested ? 4 : 2);
+            $descriptionIds = [];
 
             foreach ($buttons as $index => $button) {
-                $description = $xpath->query('//*[@id="' . $button->getAttribute('aria-describedby') . '"]')->item(0);
+                $descriptionIds[] = $descriptionId = $button->getAttribute('aria-describedby');
+                $description = $xpath->query('//*[@id="' . $descriptionId . '"]')->item(0);
 
-                expect($description?->textContent)->toBe('Item, position ' . ($index + 1) . ' of 2');
+                expect($description?->textContent)->toBe('Item, position ' . (($index % 2) + 1) . ' of 2');
             }
+
+            expect(array_unique($descriptionIds))->toHaveCount($buttons->length);
         }
     })->with([
         'default' => [static fn (Repeater $repeater): Repeater => $repeater->schema([TextInput::make('name')])],
         'simple' => [static fn (Repeater $repeater): Repeater => $repeater->simple(TextInput::make('name'))],
         'table' => [static fn (Repeater $repeater): Repeater => $repeater->schema([TextInput::make('name')])->table([Repeater\TableColumn::make('Name')])],
-    ]);
+    ])->with(['standalone' => false, 'nested' => true]);
 });
 
 describe('relationships', function (): void {

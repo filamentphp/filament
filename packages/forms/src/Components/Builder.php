@@ -428,7 +428,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(fn (array $arguments): array => $this->getItemActionAttributes($arguments), merge: true);
     }
 
     public function cloneAction(?Closure $callback): static
@@ -474,7 +474,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(fn (array $arguments): array => $this->getItemActionAttributes($arguments), merge: true);
     }
 
     public function deleteAction(?Closure $callback): static
@@ -524,7 +524,10 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(
+            fn (Action $action): array => $this->getReorderingActionAttributes($action, 'down', ! $this->isReorderableWithButtons()),
+            merge: true,
+        );
     }
 
     public function moveDownAction(?Closure $callback): static
@@ -574,7 +577,10 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(
+            fn (Action $action): array => $this->getReorderingActionAttributes($action, 'up', ! $this->isReorderableWithButtons()),
+            merge: true,
+        );
     }
 
     public function moveUpAction(?Closure $callback): static
@@ -629,7 +635,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(['x-sortable-handle' => true], merge: true);
     }
 
     public function reorderAction(?Closure $callback): static
@@ -811,7 +817,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(fn (array $arguments): array => $this->getItemActionAttributes($arguments), merge: true);
     }
 
     public function editAction(?Closure $callback): static
@@ -1785,18 +1791,18 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                             $extraItemActions,
                             fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                         );
-                        $itemCloneAction = $cloneAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
+                        $itemCloneAction = $cloneAction(['item' => $itemKey]);
                         $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                        $itemDeleteAction = $deleteAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
+                        $itemDeleteAction = $deleteAction(['item' => $itemKey]);
                         $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
-                        $itemEditAction = $editAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true);
+                        $itemEditAction = $editAction(['item' => $itemKey]);
                         $editActionIsVisible = $hasBlockPreviews && $itemEditAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                         $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
-                        $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveDownAction, 'down', ! $isReorderableWithButtons), merge: true);
+                        $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled());
                         $moveDownActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveDownAction->isVisible();
                         $itemMoveUpAction = $moveUpAction(['item' => $itemKey]);
-                        $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveUpAction, 'up', ! $isReorderableWithButtons), merge: true);
+                        $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled());
                         $moveUpActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveUpAction->isVisible();
                         $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                         ?>
@@ -1830,7 +1836,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         <ul class="fi-fo-builder-item-header-start-actions">
                                             <?php if ($reorderActionIsVisible) { ?>
                                                 <li x-on:click.stop>
-                                                    <?= $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true)->toHtml() ?>
+                                                    <?= $reorderAction->toHtml() ?>
                                                 </li>
                                             <?php } ?>
 
@@ -1868,7 +1874,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                     <?php if ($editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions) { ?>
                                         <ul class="fi-fo-builder-item-header-end-actions">
                                             <?php foreach ($visibleExtraItemActions as $extraItemAction) { ?>
-                                                <li x-on:click.stop><?= $extraItemAction(['item' => $itemKey])->extraAttributes($this->getItemActionAttributes($itemKey), merge: true)->toHtml() ?></li>
+                                                <li x-on:click.stop><?= $extraItemAction(['item' => $itemKey])->toHtml() ?></li>
                                             <?php } ?>
 
                                             <?php if ($editActionIsVisible) { ?>
@@ -2005,19 +2011,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ...($isVisuallyHidden ? ['tabindex' => -1, 'data-reorder-hidden' => true] : []),
             'data-reorder-direction' => $direction,
             'data-reorder-action' => ($action->getActionFunction() && (! $action->getLivewireEventClickHandler()) && blank($action->getParentActionCallLivewireClickHandler())) ? $action->getLivewireClickHandler() : null,
-            ...$this->getItemActionAttributes((string) $action->getArguments()['item']),
-        ];
-    }
-
-    /**
-     * @internal Never call or override this method. It is not part of the public API and may change in minor and patch releases.
-     *
-     * @return array<string, mixed>
-     */
-    protected function getItemActionAttributes(string $itemKey): array
-    {
-        return [
-            'aria-describedby' => $this->getId() . '-item-' . md5($itemKey),
+            ...$this->getItemActionAttributes($action->getArguments()),
         ];
     }
 
